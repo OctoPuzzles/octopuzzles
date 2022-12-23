@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { description, editorHistory, gameHistory, sudokuTitle } from '$stores/sudokuStore';
+  import { editorHistory, gameHistory } from '$stores/sudokuStore';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import type { PageData } from './$types';
@@ -8,6 +8,9 @@
   import WalkthroughViewer from '$features/walkthroughs/WalkthroughViewer.svelte';
 
   export let data: PageData;
+
+  const sudokuTitle = editorHistory.title;
+  const description = editorHistory.description;
 
   $: if (data.walkthrough?.steps) {
     // Just so ts will shut up

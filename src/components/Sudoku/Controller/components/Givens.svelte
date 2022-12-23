@@ -11,7 +11,7 @@
     const positions = get(selectedCells);
     if (positions.length === 0) return;
 
-    const currentGivens = get(editorHistory.getClue('givens'));
+    const currentGivens = editorHistory.getClue('givens');
     const newGivens = deepCopy(currentGivens);
 
     // Whether there has been any changes

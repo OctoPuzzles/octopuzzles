@@ -2,24 +2,20 @@
   import html2canvas from 'html2canvas';
   import SudokuGame from '$components/Sudoku/Game.svelte';
   import SudokuInfo from '$components/Sudoku/SudokuInfo.svelte';
-  import {
-    description,
-    editorHistory,
-    gameHistory,
-    sudokuTitle,
-    wrongCells
-  } from '$stores/sudokuStore';
+  import { editorHistory, gameHistory, wrongCells } from '$stores/sudokuStore';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { openModal } from '$stores/modalStore';
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
   import { getUserSolution } from '$utils/getSolution';
-  import { get } from 'svelte/store';
   import type { PageData } from './$types';
   import { walkthroughStore } from '$stores/walkthroughStore';
   import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
 
   export let data: PageData;
+
+  const sudokuTitle = editorHistory.title;
+  const description = editorHistory.description;
 
   $: if (data.walkthrough?.steps) {
     // Just so ts will shut up
@@ -82,16 +78,7 @@
     gameHistory.reset();
   });
 
-  let givens = editorHistory.getClue('givens');
-  let borderClues = editorHistory.getClue('borderclues');
-  let cellClues = editorHistory.getClue('cellclues');
-  let regions = editorHistory.getClue('regions');
-  let cells = editorHistory.getClue('cells');
-  let editorColors = editorHistory.getClue('editorcolors');
-  let cages = editorHistory.getClue('cages');
-  let paths = editorHistory.getClue('paths');
-  let dimensions = editorHistory.getClue('dimensions');
-  let logic = editorHistory.getClue('logic');
+  const sudokuClues = editorHistory.subscribeToClues();
 
   let values = gameHistory.getValue('values');
   let gameColors = gameHistory.getValue('colors');
@@ -112,7 +99,7 @@
     }
 
     let userSolution = getUserSolution({
-      givens: get(editorHistory.getClue('givens')),
+      givens: $sudokuClues.givens,
       values: numbers
     });
 
@@ -183,16 +170,16 @@
 </div>
 
 <SudokuGame
-  givens={$givens}
-  borderClues={$borderClues}
-  cellClues={$cellClues}
-  regions={$regions}
-  cells={$cells}
-  editorColors={$editorColors}
-  cages={$cages}
-  paths={$paths}
-  dimensions={$dimensions}
-  logic={$logic}
+  givens={$sudokuClues.givens}
+  borderClues={$sudokuClues.borderclues}
+  cellClues={$sudokuClues.cellclues}
+  regions={$sudokuClues.regions}
+  cells={$sudokuClues.cells}
+  editorColors={$sudokuClues.editorcolors}
+  cages={$sudokuClues.cages}
+  paths={$sudokuClues.paths}
+  dimensions={$sudokuClues.dimensions}
+  logic={$sudokuClues.logic}
   values={$values}
   gameColors={$gameColors}
   cornermarks={$cornermarks}

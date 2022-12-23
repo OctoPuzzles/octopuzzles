@@ -2,12 +2,11 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import SudokuGame from '$components/Sudoku/Game.svelte';
-  import { description, editorHistory, gameHistory, sudokuTitle } from '$stores/sudokuStore';
+  import { editorHistory, gameHistory } from '$stores/sudokuStore';
   import { decompressFromBase64 } from '$utils/compressor';
   import { defaultValues } from '$utils/defaults';
   import { importFPuzzleIntoEditorHistory } from '$utils/importFPuzzleIntoEditor';
   import { onMount } from 'svelte';
-  import { get } from 'svelte/store';
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
   let now = Date.now();
@@ -21,6 +20,9 @@
   $: minutes = `0${Math.floor(t / 60) % 60}`.slice(-2);
   $: hours = t >= 3600 ? `0${Math.floor(t / 3600) % 24}`.slice(-2) + ':' : '';
   $: days = t >= 86400 ? Math.floor(t / 86400) + 'd' : '';
+
+  const sudokuTitle = editorHistory.title;
+  const description = editorHistory.description;
 
   // When the page is not visible, the timer should not run, but it should also not stop, but be incremented by the number of seconds the user was off screen
   function handleVisibilityChange(): void {
@@ -57,21 +59,12 @@
 
     importFPuzzleIntoEditorHistory(jsonString);
 
-    let dim = get(editorHistory.getClue('dimensions'));
+    let dim = editorHistory.getClue('dimensions');
     gameHistory.set({ values: defaultValues(dim) });
     loading = false;
   });
 
-  let givens = editorHistory.getClue('givens');
-  let borderClues = editorHistory.getClue('borderclues');
-  let cellClues = editorHistory.getClue('cellclues');
-  let regions = editorHistory.getClue('regions');
-  let cells = editorHistory.getClue('cells');
-  let editorColors = editorHistory.getClue('editorcolors');
-  let cages = editorHistory.getClue('cages');
-  let paths = editorHistory.getClue('paths');
-  let dimensions = editorHistory.getClue('dimensions');
-  let logic = editorHistory.getClue('logic');
+  const sudokuClues = editorHistory.subscribeToClues();
 
   let values = gameHistory.getValue('values');
   let gameColors = gameHistory.getValue('colors');
@@ -103,16 +96,16 @@
   </div>
 
   <SudokuGame
-    givens={$givens}
-    borderClues={$borderClues}
-    cellClues={$cellClues}
-    regions={$regions}
-    cells={$cells}
-    editorColors={$editorColors}
-    cages={$cages}
-    paths={$paths}
-    dimensions={$dimensions}
-    logic={$logic}
+    givens={$sudokuClues.givens}
+    borderClues={$sudokuClues.borderclues}
+    cellClues={$sudokuClues.cellclues}
+    regions={$sudokuClues.regions}
+    cells={$sudokuClues.cells}
+    editorColors={$sudokuClues.editorcolors}
+    cages={$sudokuClues.cages}
+    paths={$sudokuClues.paths}
+    dimensions={$sudokuClues.dimensions}
+    logic={$sudokuClues.logic}
     values={$values}
     gameColors={$gameColors}
     cornermarks={$cornermarks}

@@ -16,14 +16,7 @@
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import { getUserSolution } from '$utils/getSolution';
-  import {
-    description,
-    editorHistory,
-    gameHistory,
-    sudokuTitle,
-    labels,
-    mode
-  } from '$stores/sudokuStore';
+  import { editorHistory, gameHistory, mode } from '$stores/sudokuStore';
   import Label from '$ui/Label.svelte';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
@@ -34,6 +27,10 @@
   import RichTextEditor from '$components/RichTextEditor.svelte';
 
   export let data: PageData;
+
+  const sudokuTitle = editorHistory.title;
+  const description = editorHistory.description;
+  const labels = editorHistory.labels;
 
   $: if (data.walkthrough?.steps) {
     // Just so ts will shut up
@@ -64,7 +61,7 @@
     let solution: InferMutationInput<'sudokus:provideSolutionToPuzzle'>['solution'] = undefined;
     // create solution
     if (provideSolution) {
-      solution = { numbers: getUserSolution({ givens: $givens, values: $values }) };
+      solution = { numbers: getUserSolution({ givens: $sudokuClues.givens, values: $values }) };
     }
     await trpc().mutation('sudokus:provideSolutionToPuzzle', {
       sudokuId: id,
@@ -137,16 +134,7 @@
   let loading = false;
   let provideSolution = false;
 
-  let givens = editorHistory.getClue('givens');
-  let borderclues = editorHistory.getClue('borderclues');
-  let cellclues = editorHistory.getClue('cellclues');
-  let regions = editorHistory.getClue('regions');
-  let cells = editorHistory.getClue('cells');
-  let editorColors = editorHistory.getClue('editorcolors');
-  let cages = editorHistory.getClue('cages');
-  let paths = editorHistory.getClue('paths');
-  let dimensions = editorHistory.getClue('dimensions');
-  let logic = editorHistory.getClue('logic');
+  const sudokuClues = editorHistory.subscribeToClues();
 
   let values = gameHistory.getValue('values');
   let gameColors = gameHistory.getValue('colors');
@@ -162,16 +150,16 @@
         sudoku: {
           title: $sudokuTitle,
           description: $description,
-          dimensions: $dimensions,
-          borderclues: $borderclues,
-          cellclues: $cellclues,
-          regions: $regions,
-          cells: $cells,
-          colors: $editorColors,
-          givens: $givens,
-          extendedcages: $cages,
-          paths: $paths,
-          logic: $logic
+          dimensions: $sudokuClues.dimensions,
+          borderclues: $sudokuClues.borderclues,
+          cellclues: $sudokuClues.cellclues,
+          regions: $sudokuClues.regions,
+          cells: $sudokuClues.cells,
+          colors: $sudokuClues.editorcolors,
+          givens: $sudokuClues.givens,
+          extendedcages: $sudokuClues.cages,
+          paths: $sudokuClues.paths,
+          logic: $sudokuClues.logic
         },
         labels: $labels.filter((l) => l.selected).map((l) => l.label.id)
       });
@@ -209,16 +197,16 @@
         sudokuUpdates: {
           title: $sudokuTitle,
           description: $description,
-          dimensions: $dimensions,
-          borderclues: $borderclues,
-          cellclues: $cellclues,
-          regions: $regions,
-          cells: $cells,
-          colors: $editorColors,
-          givens: $givens,
-          extendedcages: $cages,
-          paths: $paths,
-          logic: $logic
+          dimensions: $sudokuClues.dimensions,
+          borderclues: $sudokuClues.borderclues,
+          cellclues: $sudokuClues.cellclues,
+          regions: $sudokuClues.regions,
+          cells: $sudokuClues.cells,
+          colors: $sudokuClues.editorcolors,
+          givens: $sudokuClues.givens,
+          extendedcages: $sudokuClues.cages,
+          paths: $sudokuClues.paths,
+          logic: $sudokuClues.logic
         },
         labels: $labels.filter((l) => l.selected).map((l) => l.label.id)
       });
@@ -279,9 +267,9 @@
   }
 
   function doesSolutionHaveHoles(): boolean {
-    if (!$givens || !$values) return false;
+    if (!$sudokuClues.givens || !$values) return false;
 
-    let userSolution = getUserSolution({ givens: $givens, values: $values });
+    let userSolution = getUserSolution({ givens: $sudokuClues.givens, values: $values });
 
     for (const row of userSolution) {
       for (const cell of row) {
@@ -295,7 +283,7 @@
   }
 
   let solutionHasHoles = false;
-  $: if ($values && $givens) {
+  $: if ($values && $sudokuClues.givens) {
     solutionHasHoles = doesSolutionHaveHoles();
   }
 </script>
@@ -312,16 +300,16 @@
 
 {#if tab === 'editor'}
   <SudokuGame
-    givens={$givens}
-    borderClues={$borderclues}
-    cellClues={$cellclues}
-    regions={$regions}
-    cells={$cells}
-    editorColors={$editorColors}
-    cages={$cages}
-    paths={$paths}
-    dimensions={$dimensions}
-    logic={$logic}
+    givens={$sudokuClues.givens}
+    borderClues={$sudokuClues.borderclues}
+    cellClues={$sudokuClues.cellclues}
+    regions={$sudokuClues.regions}
+    cells={$sudokuClues.cells}
+    editorColors={$sudokuClues.editorcolors}
+    cages={$sudokuClues.cages}
+    paths={$sudokuClues.paths}
+    dimensions={$sudokuClues.dimensions}
+    logic={$sudokuClues.logic}
     values={[]}
     gameColors={[]}
     cornermarks={[]}
@@ -330,16 +318,16 @@
   />
 {:else if tab === 'game'}
   <SudokuGame
-    givens={$givens}
-    borderClues={$borderclues}
-    cellClues={$cellclues}
-    regions={$regions}
-    cells={$cells}
-    editorColors={$editorColors}
-    cages={$cages}
-    paths={$paths}
-    dimensions={$dimensions}
-    logic={$logic}
+    givens={$sudokuClues.givens}
+    borderClues={$sudokuClues.borderclues}
+    cellClues={$sudokuClues.cellclues}
+    regions={$sudokuClues.regions}
+    cells={$sudokuClues.cells}
+    editorColors={$sudokuClues.editorcolors}
+    cages={$sudokuClues.cages}
+    paths={$sudokuClues.paths}
+    dimensions={$sudokuClues.dimensions}
+    logic={$sudokuClues.logic}
     values={$values}
     gameColors={$gameColors}
     cornermarks={$cornermarks}

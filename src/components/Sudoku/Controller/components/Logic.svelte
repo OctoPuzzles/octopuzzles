@@ -1,15 +1,16 @@
 <script lang="ts">
   import Input from '$ui/Input.svelte';
   import Checkbox from '$ui/Checkbox.svelte';
-  import { editorHistory, labels } from '$stores/sudokuStore';
+  import { editorHistory } from '$stores/sudokuStore';
   import Label from '$ui/Label.svelte';
   import { logicFlagNames, logicFlagsToLabel } from '$constants';
   import type { Logic, LogicFlag } from '$models/Sudoku';
 
-  let logic = editorHistory.getClue('logic');
+  const sudokuClues = editorHistory.subscribeToClues();
+  const labels = editorHistory.labels;
 
-  let digits = $logic.digits ?? '1-9';
-  let flags = $logic.flags ?? [];
+  let digits = $sudokuClues.logic.digits ?? '1-9';
+  let flags = $sudokuClues.logic.flags ?? [];
   $: nonstandard = flags.indexOf('NonStandard') !== -1;
   $: diagonalPos = flags.indexOf('DiagonalPos') !== -1;
   $: diagonalNeg = flags.indexOf('DiagonalNeg') !== -1;

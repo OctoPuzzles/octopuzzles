@@ -80,11 +80,17 @@ function createEditorHistoryStore() {
     step.update((step) => step + 1);
   }
 
-  function getCluesAtStep(_editorHistory: EditorHistoryStepWithNumbers[], s: number): EditorHistoryStep {
+  function getCluesAtStep(
+    _editorHistory: EditorHistoryStepWithNumbers[],
+    s: number
+  ): EditorHistoryStep {
     const historyStep = _editorHistory[s];
     for (const [clueType, clue] of Object.entries(historyStep)) {
-      if (typeof clue === "number") {
-        historyStep[clueType as keyof EditorHistoryStep] = _editorHistory[clue][clueType as keyof EditorHistoryStep] as any;
+      if (typeof clue === 'number') {
+        historyStep[clueType as keyof EditorHistoryStep] = _editorHistory[clue][
+          clueType as keyof EditorHistoryStep
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ] as any;
       }
     }
     return historyStep as EditorHistoryStep;
@@ -102,27 +108,27 @@ function createEditorHistoryStore() {
   /**
    * Get the state of the editor at the current step.
    */
-  function subscribe(): Readable<EditorHistoryStep> {
+  function subscribeToClues(): Readable<EditorHistoryStep> {
     return derived([history, step], ([$editorHistory, $editorStep]) => {
       return getCluesAtStep($editorHistory, $editorStep);
     });
   }
 
   /**
- * Get the state of the editor at the current step.
- * @example
- * // To get the current killercages
- * const killercages = getEditorState("killercages");
- */
-  function getClue<T extends keyof EditorHistoryStep>(type: T): Readable<EditorHistoryStep[T]> {
-    return derived([history, step], ([$editorHistory, $editorStep]) => {
-      const res = $editorHistory[$editorStep]?.[type];
-      if (typeof res === 'number') {
-        return $editorHistory[res]?.[type] as EditorHistoryStep[T];
-      } else {
-        return res as EditorHistoryStep[T];
-      }
-    });
+   * Get the state of the editor at the current step.
+   * @example
+   * // To get the current killercages
+   * const killercages = getEditorState("killercages");
+   */
+  function getClue<T extends keyof EditorHistoryStep>(type: T): EditorHistoryStep[T] {
+    const h = get(history);
+    const s = get(step);
+    const res = h[s]?.[type];
+    if (typeof res === 'number') {
+      return h[res]?.[type] as EditorHistoryStep[T];
+    } else {
+      return res as EditorHistoryStep[T];
+    }
   }
 
   /**
@@ -162,8 +168,8 @@ function createEditorHistoryStore() {
 
   /** Clear every input-values, and colors from the specified cells in the editor */
   function clearCells(cells: Position[]): void {
-    const newGivens = get(getClue('givens'));
-    const newColors = get(getClue('editorcolors'));
+    const newGivens = getClue('givens');
+    const newColors = getClue('editorcolors');
     let changes = false;
     cells.forEach((cell) => {
       let newGiven = newGivens[cell.row]?.[cell.column];
@@ -194,7 +200,7 @@ function createEditorHistoryStore() {
     clearCells,
     set,
     update,
-    subscribe,
+    subscribeToClues,
     getClue,
     title,
     description,
@@ -275,7 +281,7 @@ function createGameHistoryStore() {
     selectedCells.set([]);
     highlightedCells.set([]);
     step.set(0);
-    const dim = get(editorHistory.getClue('dimensions'));
+    const dim = editorHistory.getClue('dimensions');
     history.set([
       {
         values: defaultValues(dim),
@@ -448,15 +454,15 @@ export function resetAll(): void {
 }
 
 export function setMargins(margins?: Margins | null): void {
-  const dimensions = get(editorHistory.getClue('dimensions'));
-  const borderclues = get(editorHistory.getClue('borderclues'));
-  const cellclues = get(editorHistory.getClue('cellclues'));
-  const editorColors = get(editorHistory.getClue('editorcolors'));
-  const cages = get(editorHistory.getClue('cages'));
-  const givens = get(editorHistory.getClue('givens'));
-  const paths = get(editorHistory.getClue('paths'));
-  const cells = get(editorHistory.getClue('cells'));
-  const regions = get(editorHistory.getClue('regions'));
+  const dimensions = editorHistory.getClue('dimensions');
+  const borderclues = editorHistory.getClue('borderclues');
+  const cellclues = editorHistory.getClue('cellclues');
+  const editorColors = editorHistory.getClue('editorcolors');
+  const cages = editorHistory.getClue('cages');
+  const givens = editorHistory.getClue('givens');
+  const paths = editorHistory.getClue('paths');
+  const cells = editorHistory.getClue('cells');
+  const regions = editorHistory.getClue('regions');
   const values = get(gameHistory.getValue('values'));
   const gamecolors = get(gameHistory.getValue('colors'));
   const cornermarks = get(gameHistory.getValue('cornermarks'));

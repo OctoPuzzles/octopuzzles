@@ -2,17 +2,18 @@
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
 
   import { closeModal } from '$stores/modalStore';
-  import { labels } from '$stores/sudokuStore';
   import Button from '$ui/Button.svelte';
   import deepCopy from '$utils/deepCopy';
   import classNames from 'classnames';
   import type { Label } from '$models/Label';
+  import { editorHistory } from '$stores/sudokuStore';
 
   export let isOpen: boolean;
   export let currentDescription: string;
   export let addLabel: (label: Label) => string;
 
   let previewedDescription = '';
+  const labels = editorHistory.labels;
 </script>
 
 {#if isOpen}

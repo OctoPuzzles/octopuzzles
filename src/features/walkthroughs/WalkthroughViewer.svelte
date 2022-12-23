@@ -10,16 +10,7 @@
 
   const inModal = !$page.url.pathname.endsWith('/walkthrough');
 
-  let givens = editorHistory.getClue('givens');
-  let borderclues = editorHistory.getClue('borderclues');
-  let cellclues = editorHistory.getClue('cellclues');
-  let regions = editorHistory.getClue('regions');
-  let cells = editorHistory.getClue('cells');
-  let editorColors = editorHistory.getClue('editorcolors');
-  let cages = editorHistory.getClue('cages');
-  let paths = editorHistory.getClue('paths');
-  let dimensions = editorHistory.getClue('dimensions');
-  let logic = editorHistory.getClue('logic');
+  const sudokuClues = editorHistory.subscribeToClues();
 </script>
 
 <div class="h-full flex-1 overflow-y-hidden flex flex-col">
@@ -58,16 +49,16 @@
       <div class="grid gap-2 grid-cols-2">
         <div>
           <SudokuDisplay
-            borderClues={$borderclues}
-            cages={$cages}
-            cellClues={$cellclues}
-            cells={$cells}
-            dimensions={$dimensions}
-            editorColors={$editorColors}
-            givens={$givens}
-            logic={$logic}
-            paths={$paths}
-            regions={$regions}
+            borderClues={$sudokuClues.borderclues}
+            cages={$sudokuClues.cages}
+            cellClues={$sudokuClues.cellclues}
+            cells={$sudokuClues.cells}
+            dimensions={$sudokuClues.dimensions}
+            editorColors={$sudokuClues.editorcolors}
+            givens={$sudokuClues.givens}
+            logic={$sudokuClues.logic}
+            paths={$sudokuClues.paths}
+            regions={$sudokuClues.regions}
             cornermarks={step.cornermarks}
             centermarks={step.centermarks}
             values={step.values}

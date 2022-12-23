@@ -18,19 +18,29 @@
   import { editorHistory, gameHistory, setMargins } from '$stores/sudokuStore';
   import type { Dimensions } from '$models/Sudoku';
 
-  let dimensions = editorHistory.getClue('dimensions');
+  const sudokuClues = editorHistory.subscribeToClues();
 
-  let marginLeft = String($dimensions.margins ? $dimensions.margins.left : 0);
-  let marginRight = String($dimensions.margins ? $dimensions.margins.right : 0);
-  let marginTop = String($dimensions.margins ? $dimensions.margins.top : 0);
-  let marginBottom = String($dimensions.margins ? $dimensions.margins.bottom : 0);
+  let marginLeft = String(
+    $sudokuClues.dimensions.margins ? $sudokuClues.dimensions.margins.left : 0
+  );
+  let marginRight = String(
+    $sudokuClues.dimensions.margins ? $sudokuClues.dimensions.margins.right : 0
+  );
+  let marginTop = String($sudokuClues.dimensions.margins ? $sudokuClues.dimensions.margins.top : 0);
+  let marginBottom = String(
+    $sudokuClues.dimensions.margins ? $sudokuClues.dimensions.margins.bottom : 0
+  );
   let rows = String(
-    $dimensions.rows -
-      ($dimensions.margins ? $dimensions.margins.top + $dimensions.margins.bottom : 0)
+    $sudokuClues.dimensions.rows -
+      ($sudokuClues.dimensions.margins
+        ? $sudokuClues.dimensions.margins.top + $sudokuClues.dimensions.margins.bottom
+        : 0)
   );
   let columns = String(
-    $dimensions.columns -
-      ($dimensions.margins ? $dimensions.margins.left + $dimensions.margins.right : 0)
+    $sudokuClues.dimensions.columns -
+      ($sudokuClues.dimensions.margins
+        ? $sudokuClues.dimensions.margins.left + $sudokuClues.dimensions.margins.right
+        : 0)
   );
 
   function update(): void {
@@ -51,13 +61,17 @@
     if (
       rows !==
         String(
-          $dimensions.rows -
-            ($dimensions.margins ? $dimensions.margins.top + $dimensions.margins.bottom : 0)
+          $sudokuClues.dimensions.rows -
+            ($sudokuClues.dimensions.margins
+              ? $sudokuClues.dimensions.margins.top + $sudokuClues.dimensions.margins.bottom
+              : 0)
         ) ||
       columns !=
         String(
-          $dimensions.columns -
-            ($dimensions.margins ? $dimensions.margins.left + $dimensions.margins.right : 0)
+          $sudokuClues.dimensions.columns -
+            ($sudokuClues.dimensions.margins
+              ? $sudokuClues.dimensions.margins.left + $sudokuClues.dimensions.margins.right
+              : 0)
         )
     ) {
       gameHistory.set({
@@ -79,14 +93,14 @@
       });
     } else {
       let frameChanged = false;
-      if ($dimensions.margins == null) {
+      if ($sudokuClues.dimensions.margins == null) {
         frameChanged = newDimensions.margins !== null;
       } else if (newDimensions.margins !== null) {
         frameChanged =
-          newDimensions.margins?.left !== $dimensions.margins?.left ||
-          newDimensions.margins?.right !== $dimensions.margins?.right ||
-          newDimensions.margins?.top !== $dimensions.margins?.top ||
-          newDimensions.margins?.bottom !== $dimensions.margins?.bottom;
+          newDimensions.margins?.left !== $sudokuClues.dimensions.margins?.left ||
+          newDimensions.margins?.right !== $sudokuClues.dimensions.margins?.right ||
+          newDimensions.margins?.top !== $sudokuClues.dimensions.margins?.top ||
+          newDimensions.margins?.bottom !== $sudokuClues.dimensions.margins?.bottom;
       } else {
         frameChanged = true;
       }

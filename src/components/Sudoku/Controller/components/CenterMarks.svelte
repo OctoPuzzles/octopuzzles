@@ -10,7 +10,7 @@
   const handleClick = (newCentermark: string): void => {
     let currentCentermarks = get(gameHistory.getValue('centermarks'));
     let newCentermarks = deepCopy(currentCentermarks);
-    const givens = get(editorHistory.getClue('givens'));
+    const givens = editorHistory.getClue('givens');
     let positions = deepCopy(get(selectedCells));
 
     positions = positions.filter((p) => givens[p.row][p.column] === '');

@@ -11,7 +11,7 @@
   function handleClick(newCornermark: string): void {
     let currentCornermarks = get(gameHistory.getValue('cornermarks'));
     let newCornermarks = deepCopy(currentCornermarks);
-    const givens = get(editorHistory.getClue('givens'));
+    const givens = editorHistory.getClue('givens');
     let positions = deepCopy(get(selectedCells));
 
     positions = positions.filter((p) => givens[p.row][p.column] === '');

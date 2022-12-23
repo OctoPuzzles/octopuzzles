@@ -10,8 +10,7 @@
     highlightedCells,
     highlightedItemIndex,
     selectedCells,
-    selectedItemIndex,
-    labels
+    selectedItemIndex
   } from '$stores/sudokuStore';
   import type {
     MouseDownHandler,
@@ -41,9 +40,10 @@
   import type { Path, PathType, Position } from '$models/Sudoku';
   import { hasOpenModals } from '$stores/modalStore';
 
-  const paths = editorHistory.getClue('paths');
+  const sudokuClues = editorHistory.subscribeToClues();
+  const labels = editorHistory.labels;
 
-  let type: PathType | 'CUSTOM' = $paths[0]?.type ?? 'CUSTOM';
+  let type: PathType | 'CUSTOM' = $sudokuClues.paths[0]?.type ?? 'CUSTOM';
   let defaultSettings = pathDefaults(type);
   let { color, width, form, fill, arrow, uniqueDigits } = defaultSettings;
   $: hollow = fill === 'Hollow';
@@ -72,7 +72,7 @@
   }
 
   function pathSelected(selectedItemIndex: number): void {
-    const path = $paths[selectedItemIndex];
+    const path = $sudokuClues.paths[selectedItemIndex];
     if (path == null) return;
     updateSettings(path);
   }
@@ -121,7 +121,7 @@
     if ($selectedItemIndex === -1) return;
 
     let newPaths: Path[] = [];
-    $paths.forEach((path, i) => {
+    $sudokuClues.paths.forEach((path, i) => {
       if (i !== $selectedItemIndex) {
         newPaths = [...newPaths, path];
       } else {
@@ -136,7 +136,7 @@
   }
 
   function deletePathAtIndex(index: number): void {
-    const newPaths = $paths.filter((_, i) => index !== i);
+    const newPaths = $sudokuClues.paths.filter((_, i) => index !== i);
     $selectedCells = [];
     $highlightedCells = [];
     $selectedItemIndex = -1;
@@ -147,15 +147,15 @@
     let newPaths: Path[] = [];
     if (way === 'up') {
       if (index === 0) return;
-      newPaths = moveArrayElement($paths, index, index - 1);
+      newPaths = moveArrayElement($sudokuClues.paths, index, index - 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex--;
       } else if (index - 1 === $selectedItemIndex) {
         $selectedItemIndex++;
       }
     } else if (way === 'down') {
-      if (index === $paths.length - 1) return;
-      newPaths = moveArrayElement($paths, index, index + 1);
+      if (index === $sudokuClues.paths.length - 1) return;
+      newPaths = moveArrayElement($sudokuClues.paths, index, index + 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex++;
       } else if (index + 1 === $selectedItemIndex) {
@@ -181,8 +181,10 @@
 
   function newPathFromSelection(): void {
     if ($selectedCells.length > 0) {
-      editorHistory.set({ paths: [...deepCopy($paths), newPath(deepCopy($selectedCells))] });
-      $selectedItemIndex = $paths.length - 1;
+      editorHistory.set({
+        paths: [...deepCopy($sudokuClues.paths), newPath(deepCopy($selectedCells))]
+      });
+      $selectedItemIndex = $sudokuClues.paths.length - 1;
 
       addLabel();
     }
@@ -202,7 +204,7 @@
     const selectedPathIndex = $selectedItemIndex;
     let removed = false;
 
-    $paths.map((path, i) => {
+    $sudokuClues.paths.map((path, i) => {
       if (i === selectedPathIndex) {
         let found = false;
         let newPositions = path.positions.filter((c) => {
@@ -268,7 +270,7 @@
     const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
     if (lastSelectedCell) {
       const { row, column } = lastSelectedCell;
-      let dim = get(editorHistory.getClue('dimensions'));
+      let dim = editorHistory.getClue('dimensions');
       let newCell: Position | undefined = undefined;
       switch (k.key) {
         case 'ArrowUp':
@@ -350,7 +352,7 @@
       class="bg-gray-200 rounded-md shadow-inner flex flex-col items-center p-2 overflow-hidden h-full"
     >
       <div class="h-full overflow-y-auto w-full">
-        {#each $paths as path, index (index)}
+        {#each $sudokuClues.paths as path, index (index)}
           <button
             class={classNames(
               'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',

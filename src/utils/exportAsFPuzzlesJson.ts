@@ -1,4 +1,4 @@
-import { description, editorHistory, gameHistory, sudokuTitle } from '$stores/sudokuStore';
+import { editorHistory, gameHistory } from '$stores/sudokuStore';
 import type { FPuzzlesJson, HexColor, PositionString } from './compressor';
 import { get } from 'svelte/store';
 import deepCopy from './deepCopy';
@@ -13,16 +13,16 @@ import {
 import type { Color, Position } from '$models/Sudoku';
 
 export function exportAsFPuzzlesJson(): FPuzzlesJson {
-  const givens = get(editorHistory.getClue('givens'));
-  const borderClues = get(editorHistory.getClue('borderclues'));
-  const cellClues = get(editorHistory.getClue('cellclues'));
-  const regions = get(editorHistory.getClue('regions'));
-  //const cells = get(editorHistory.getClue('cells'));
-  const editorColors = get(editorHistory.getClue('editorcolors'));
-  const cages = get(editorHistory.getClue('cages'));
-  const paths = get(editorHistory.getClue('paths'));
-  const dimensions = get(editorHistory.getClue('dimensions'));
-  const logic = get(editorHistory.getClue('logic'));
+  const givens = editorHistory.getClue('givens');
+  const borderClues = editorHistory.getClue('borderclues');
+  const cellClues = editorHistory.getClue('cellclues');
+  const regions = editorHistory.getClue('regions');
+  //const cells = editorHistory.getClue('cells');
+  const editorColors = editorHistory.getClue('editorcolors');
+  const cages = editorHistory.getClue('cages');
+  const paths = editorHistory.getClue('paths');
+  const dimensions = editorHistory.getClue('dimensions');
+  const logic = editorHistory.getClue('logic');
   const flags = logic.flags ?? [];
 
   const values = get(gameHistory.getValue('values'));
@@ -79,10 +79,10 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
     nonconsecutive: flags.some((f) => f === 'Nonconsecutive' || f === 'NegativeWhite')
       ? true
       : undefined,
-    ruleset: get(description),
+    ruleset: get(editorHistory.description),
     size,
     'sumdot(intersection)': [],
-    title: get(sudokuTitle)
+    title: get(editorHistory.title)
   };
 
   for (

@@ -9,16 +9,7 @@
   import ArrowsOutLineVertical from 'phosphor-svelte/lib/ArrowsOutLineVertical/ArrowsOutLineVertical.svelte';
   import RichTextEditor from '$components/RichTextEditor.svelte';
 
-  let givens = editorHistory.getClue('givens');
-  let borderclues = editorHistory.getClue('borderclues');
-  let cellclues = editorHistory.getClue('cellclues');
-  let regions = editorHistory.getClue('regions');
-  let cells = editorHistory.getClue('cells');
-  let editorColors = editorHistory.getClue('editorcolors');
-  let cages = editorHistory.getClue('cages');
-  let paths = editorHistory.getClue('paths');
-  let dimensions = editorHistory.getClue('dimensions');
-  let logic = editorHistory.getClue('logic');
+  const sudokuClues = editorHistory.subscribeToClues();
 
   function updateStepDescription(step: number, html: string): void {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,16 +62,16 @@
         <div class="grid gap-2 grid-cols-2">
           <div>
             <SudokuDisplay
-              borderClues={$borderclues}
-              cages={$cages}
-              cellClues={$cellclues}
-              cells={$cells}
-              dimensions={$dimensions}
-              editorColors={$editorColors}
-              givens={$givens}
-              logic={$logic}
-              paths={$paths}
-              regions={$regions}
+              borderClues={$sudokuClues.borderclues}
+              cages={$sudokuClues.cages}
+              cellClues={$sudokuClues.cellclues}
+              cells={$sudokuClues.cells}
+              dimensions={$sudokuClues.dimensions}
+              editorColors={$sudokuClues.editorcolors}
+              givens={$sudokuClues.givens}
+              logic={$sudokuClues.logic}
+              paths={$sudokuClues.paths}
+              regions={$sudokuClues.regions}
               cornermarks={step.cornermarks}
               centermarks={step.centermarks}
               values={step.values}

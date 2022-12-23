@@ -65,7 +65,7 @@ export const defaultHandleArrows: ArrowHandler = ({ k }) => {
   if (hasOpenModals()) return;
 
   const cells = get(selectedCells);
-  const dim = get(editorHistory.getClue('dimensions'));
+  const dim = editorHistory.getClue('dimensions');
   const lastCell = cells[cells.length - 1];
   if (lastCell == null) return;
   const { row, column } = lastCell;

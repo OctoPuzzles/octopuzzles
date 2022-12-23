@@ -17,7 +17,7 @@
     const newValues = deepCopy(currentValues);
     const newCentermarks = deepCopy(get(gameHistory.getValue('centermarks')));
     const newCornermarks = deepCopy(get(gameHistory.getValue('cornermarks')));
-    const givens = get(editorHistory.getClue('givens'));
+    const givens = editorHistory.getClue('givens');
 
     // Check if we should clear all game cells
     const clearAllGameCells =
