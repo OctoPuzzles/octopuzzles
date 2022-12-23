@@ -22,8 +22,8 @@
   export let cellClues: EditorHistoryStep['cellclues'];
   export let regions: EditorHistoryStep['regions'];
   export let cells: EditorHistoryStep['cells'];
-  export let editorColors: EditorHistoryStep['editorcolors'];
-  export let cages: EditorHistoryStep['cages'];
+  export let editorColors: EditorHistoryStep['colors'];
+  export let cages: EditorHistoryStep['extendedcages'];
   export let paths: EditorHistoryStep['paths'];
   export let dimensions: EditorHistoryStep['dimensions'];
   export let logic: EditorHistoryStep['logic'];

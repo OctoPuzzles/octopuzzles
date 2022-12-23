@@ -43,8 +43,8 @@ function createEditorHistoryStore() {
   const history = writable<EditorHistoryStepWithNumbers[]>([
     {
       givens: defaultGivens(),
-      cages: defaultCages(),
-      editorcolors: defaultEditorColors(),
+      extendedcages: defaultCages(),
+      colors: defaultEditorColors(),
       paths: defaultPaths(),
       borderclues: defaultBorderclues(),
       cellclues: defaultCellclues(),
@@ -153,8 +153,8 @@ function createEditorHistoryStore() {
     history.set([
       {
         givens: startState?.givens || defaultGivens(dim),
-        cages: startState?.cages || defaultCages(),
-        editorcolors: startState?.editorcolors || defaultEditorColors(dim),
+        extendedcages: startState?.extendedcages || defaultCages(),
+        colors: startState?.colors || defaultEditorColors(dim),
         paths: startState?.paths || defaultPaths(),
         borderclues: startState?.borderclues || defaultBorderclues(),
         cellclues: startState?.cellclues || defaultCellclues(),
@@ -169,7 +169,7 @@ function createEditorHistoryStore() {
   /** Clear every input-values, and colors from the specified cells in the editor */
   function clearCells(cells: Position[]): void {
     const newGivens = getClue('givens');
-    const newColors = getClue('editorcolors');
+    const newColors = getClue('colors');
     let changes = false;
     cells.forEach((cell) => {
       let newGiven = newGivens[cell.row]?.[cell.column];
@@ -186,7 +186,7 @@ function createEditorHistoryStore() {
     if (changes) {
       set({
         givens: newGivens,
-        editorcolors: newColors
+        colors: newColors
       });
     }
   }
@@ -452,8 +452,8 @@ export function setMargins(margins?: Margins | null): void {
   const dimensions = editorHistory.getClue('dimensions');
   const borderclues = editorHistory.getClue('borderclues');
   const cellclues = editorHistory.getClue('cellclues');
-  const editorColors = editorHistory.getClue('editorcolors');
-  const cages = editorHistory.getClue('cages');
+  const editorColors = editorHistory.getClue('colors');
+  const cages = editorHistory.getClue('extendedcages');
   const givens = editorHistory.getClue('givens');
   const paths = editorHistory.getClue('paths');
   const cells = editorHistory.getClue('cells');
@@ -506,8 +506,8 @@ export function setMargins(margins?: Margins | null): void {
           };
         })
         .filter((clue) => isValidPosition(clue.position)),
-      editorcolors: offsetMatrix(editorColors, offsets, null),
-      cages: cages
+      colors: offsetMatrix(editorColors, offsets, null),
+      extendedcages: cages
         .map((cage) => {
           return { ...cage, positions: offsetPositions(cage.positions, offsets) };
         })

@@ -1,16 +1,17 @@
 <script lang="ts">
   import { walkthroughStore } from '$stores/walkthroughStore';
-  import { editorHistory, gameHistory } from '$stores/sudokuStore';
+  import { gameHistory } from '$stores/sudokuStore';
   import SudokuDisplay from '$components/Sudoku/Display/index.svelte';
   import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
   import AppWindow from 'phosphor-svelte/lib/AppWindow/AppWindow.svelte';
   import { page } from '$app/stores';
   import classNames from 'classnames';
   import HtmlContent from '$components/Sudoku/HTMLContent.svelte';
+  import type { EditorHistoryStep } from '$types';
 
   const inModal = !$page.url.pathname.endsWith('/walkthrough');
 
-  const sudokuClues = editorHistory.subscribeToClues();
+  export let clues: EditorHistoryStep;
 </script>
 
 <div class="h-full flex-1 overflow-y-hidden flex flex-col">
@@ -49,16 +50,16 @@
       <div class="grid gap-2 grid-cols-2">
         <div>
           <SudokuDisplay
-            borderClues={$sudokuClues.borderclues}
-            cages={$sudokuClues.cages}
-            cellClues={$sudokuClues.cellclues}
-            cells={$sudokuClues.cells}
-            dimensions={$sudokuClues.dimensions}
-            editorColors={$sudokuClues.editorcolors}
-            givens={$sudokuClues.givens}
-            logic={$sudokuClues.logic}
-            paths={$sudokuClues.paths}
-            regions={$sudokuClues.regions}
+            borderClues={clues.borderclues}
+            cages={clues.extendedcages}
+            cellClues={clues.cellclues}
+            cells={clues.cells}
+            dimensions={clues.dimensions}
+            editorColors={clues.colors}
+            givens={clues.givens}
+            logic={clues.logic}
+            paths={clues.paths}
+            regions={clues.regions}
             cornermarks={step.cornermarks}
             centermarks={step.centermarks}
             values={step.values}

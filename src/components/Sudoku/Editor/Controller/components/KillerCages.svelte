@@ -52,7 +52,7 @@
   }
 
   function cageSelected(selectedItemIndex: number): void {
-    updateSettings($sudokuClues.cages[selectedItemIndex]);
+    updateSettings($sudokuClues.extendedcages[selectedItemIndex]);
   }
 
   function updateSettings(cage: Partial<Extendedcage>) {
@@ -88,7 +88,7 @@
     if ($selectedItemIndex === -1) return;
 
     let newCages: Extendedcage[] = [];
-    $sudokuClues.cages.forEach((cage: Extendedcage, i: number) => {
+    $sudokuClues.extendedcages.forEach((cage: Extendedcage, i: number) => {
       if (i !== $selectedItemIndex) {
         newCages = [...newCages, cage];
       } else {
@@ -99,14 +99,14 @@
         }
       }
     });
-    editorHistory.set({ cages: newCages });
+    editorHistory.set({ extendedcages: newCages });
   };
 
   function newKillerCageFromSelection(): void {
     if ($selectedCells.length > 0) {
-      const newCages = [...$sudokuClues.cages, newCage($selectedCells)];
+      const newCages = [...$sudokuClues.extendedcages, newCage($selectedCells)];
 
-      editorHistory.set({ cages: newCages });
+      editorHistory.set({ extendedcages: newCages });
       $selectedItemIndex = newCages.length - 1;
 
       addLabel();
@@ -123,11 +123,11 @@
   }
 
   const deleteKillerCageAtIndex = (index: number): void => {
-    const newCages = $sudokuClues.cages.filter((_, i) => index !== i);
+    const newCages = $sudokuClues.extendedcages.filter((_, i) => index !== i);
     $selectedCells = [];
     $highlightedCells = [];
     $selectedItemIndex = -1;
-    editorHistory.set({ cages: newCages });
+    editorHistory.set({ extendedcages: newCages });
   };
 
   function handleKeyDown(k: KeyboardEvent): void {
@@ -154,7 +154,7 @@
     const selectedCageIndex = $selectedItemIndex;
     let removed = false;
 
-    $sudokuClues.cages.forEach((cage, i) => {
+    $sudokuClues.extendedcages.forEach((cage, i) => {
       if (i === selectedCageIndex) {
         let found = false;
         let newPositions = cage.positions.filter((c) => {
@@ -177,7 +177,7 @@
         newCages.push(cage);
       }
     });
-    editorHistory.set({ cages: newCages });
+    editorHistory.set({ extendedcages: newCages });
     if (!removed) {
       $selectedCells = newCages[selectedCageIndex].positions;
       $selectedItemIndex = selectedCageIndex;
@@ -275,22 +275,22 @@
     let newCages: Extendedcage[] = [];
     if (way === 'up') {
       if (index === 0) return;
-      newCages = moveArrayElement($sudokuClues.cages, index, index - 1);
+      newCages = moveArrayElement($sudokuClues.extendedcages, index, index - 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex--;
       } else if (index - 1 === $selectedItemIndex) {
         $selectedItemIndex++;
       }
     } else if (way === 'down') {
-      if (index === $sudokuClues.cages.length - 1) return;
-      newCages = moveArrayElement($sudokuClues.cages, index, index + 1);
+      if (index === $sudokuClues.extendedcages.length - 1) return;
+      newCages = moveArrayElement($sudokuClues.extendedcages, index, index + 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex++;
       } else if (index + 1 === $selectedItemIndex) {
         $selectedItemIndex--;
       }
     }
-    editorHistory.set({ cages: newCages });
+    editorHistory.set({ extendedcages: newCages });
   };
 
   onMount(() => {
@@ -310,7 +310,7 @@
       class="bg-gray-200 rounded-md shadow-inner flex flex-col items-center p-2 overflow-hidden h-full"
     >
       <div class="h-full overflow-y-auto w-full">
-        {#each $sudokuClues.cages as cage, index}
+        {#each $sudokuClues.extendedcages as cage, index}
           <button
             class={classNames(
               'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',

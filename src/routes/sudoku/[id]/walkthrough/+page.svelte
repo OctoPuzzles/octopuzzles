@@ -6,6 +6,7 @@
   import { walkthroughStore } from '$stores/walkthroughStore';
   import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
   import WalkthroughViewer from '$features/walkthroughs/WalkthroughViewer.svelte';
+  import { fillSudokuWithDefaults } from '$utils/fillSudokuWithDefaults';
 
   export let data: PageData;
 
@@ -35,8 +36,8 @@
       regions: sud.regions ?? undefined,
       givens: sud.givens ?? undefined,
       cells: sud.cells ?? undefined,
-      editorcolors: sud.colors ?? undefined,
-      cages: sud.extendedcages ?? undefined,
+      colors: sud.colors ?? undefined,
+      extendedcages: sud.extendedcages ?? undefined,
       paths: sud.paths ?? undefined,
       dimensions: sud.dimensions,
       logic: sud.logic ?? undefined
@@ -56,5 +57,5 @@
 </svelte:head>
 
 <div class="mx-auto max-w-[100vh] min-w-[50vw]">
-  <WalkthroughViewer />
+  <WalkthroughViewer clues={fillSudokuWithDefaults(data.sudoku)} />
 </div>

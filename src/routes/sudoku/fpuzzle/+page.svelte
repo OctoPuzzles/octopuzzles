@@ -101,8 +101,8 @@
     cellClues={$sudokuClues.cellclues}
     regions={$sudokuClues.regions}
     cells={$sudokuClues.cells}
-    editorColors={$sudokuClues.editorcolors}
-    cages={$sudokuClues.cages}
+    editorColors={$sudokuClues.colors}
+    cages={$sudokuClues.extendedcages}
     paths={$sudokuClues.paths}
     dimensions={$sudokuClues.dimensions}
     logic={$sudokuClues.logic}

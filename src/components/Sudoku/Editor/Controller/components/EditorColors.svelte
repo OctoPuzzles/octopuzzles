@@ -27,7 +27,7 @@
     const positions = get(selectedCells);
     if (positions.length === 0) return;
 
-    const currentColors = editorHistory.getClue('editorcolors');
+    const currentColors = editorHistory.getClue('colors');
     const newColors = deepCopy(currentColors);
 
     // Whether there has been any changes
@@ -67,7 +67,7 @@
 
     // If there has actually been any changes, update the game history
     if (anyChanges) {
-      editorHistory.set({ editorcolors: newColors });
+      editorHistory.set({ colors: newColors });
     }
   };
 

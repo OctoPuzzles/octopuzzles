@@ -71,8 +71,8 @@
       regions: sud.regions ?? undefined,
       givens: sud.givens ?? undefined,
       cells: sud.cells ?? undefined,
-      editorcolors: sud.colors ?? undefined,
-      cages: sud.extendedcages ?? undefined,
+      colors: sud.colors ?? undefined,
+      extendedcages: sud.extendedcages ?? undefined,
       paths: sud.paths ?? undefined,
       dimensions: sud.dimensions,
       logic: sud.logic ?? undefined
@@ -177,8 +177,8 @@
   cellClues={$sudokuClues.cellclues}
   regions={$sudokuClues.regions}
   cells={$sudokuClues.cells}
-  editorColors={$sudokuClues.editorcolors}
-  cages={$sudokuClues.cages}
+  editorColors={$sudokuClues.colors}
+  cages={$sudokuClues.extendedcages}
   paths={$sudokuClues.paths}
   dimensions={$sudokuClues.dimensions}
   logic={$sudokuClues.logic}

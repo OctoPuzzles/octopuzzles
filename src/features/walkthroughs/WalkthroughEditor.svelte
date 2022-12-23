@@ -1,6 +1,6 @@
 <script lang="ts">
   import { walkthroughStore } from '$stores/walkthroughStore';
-  import { editorHistory, gameHistory } from '$stores/sudokuStore';
+  import { gameHistory } from '$stores/sudokuStore';
   import SudokuDisplay from '$components/Sudoku/Display/index.svelte';
   import Button from '$ui/Button.svelte';
   import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
@@ -8,8 +8,9 @@
   import Swap from 'phosphor-svelte/lib/Swap/Swap.svelte';
   import ArrowsOutLineVertical from 'phosphor-svelte/lib/ArrowsOutLineVertical/ArrowsOutLineVertical.svelte';
   import RichTextEditor from '$components/RichTextEditor.svelte';
+  import type { EditorHistoryStep } from '$types';
 
-  const sudokuClues = editorHistory.subscribeToClues();
+  export let clues: EditorHistoryStep;
 
   function updateStepDescription(step: number, html: string): void {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -62,16 +63,16 @@
         <div class="grid gap-2 grid-cols-2">
           <div>
             <SudokuDisplay
-              borderClues={$sudokuClues.borderclues}
-              cages={$sudokuClues.cages}
-              cellClues={$sudokuClues.cellclues}
-              cells={$sudokuClues.cells}
-              dimensions={$sudokuClues.dimensions}
-              editorColors={$sudokuClues.editorcolors}
-              givens={$sudokuClues.givens}
-              logic={$sudokuClues.logic}
-              paths={$sudokuClues.paths}
-              regions={$sudokuClues.regions}
+              borderClues={clues.borderclues}
+              cages={clues.extendedcages}
+              cellClues={clues.cellclues}
+              cells={clues.cells}
+              dimensions={clues.dimensions}
+              editorColors={clues.colors}
+              givens={clues.givens}
+              logic={clues.logic}
+              paths={clues.paths}
+              regions={clues.regions}
               cornermarks={step.cornermarks}
               centermarks={step.centermarks}
               values={step.values}

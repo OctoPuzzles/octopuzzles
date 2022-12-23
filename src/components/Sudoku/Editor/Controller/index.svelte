@@ -43,12 +43,12 @@
     cellclues: { icon: CellCluesIcon, controller: CellClues, label: 'Cell clues' },
     borderclues: { icon: BorderCluesIcon, controller: BorderClues, label: 'Border clues' },
     paths: { icon: PathsIcon, controller: Paths, label: 'Paths' },
-    cages: { icon: KillerCagesIcon, controller: KillerCages, label: 'Cages' },
+    extendedcages: { icon: KillerCagesIcon, controller: KillerCages, label: 'Cages' },
     regions: { icon: RegionsIcon, controller: Regions, label: 'Regions' },
     logic: { icon: LogicIcon, controller: Logic, label: 'Logic' },
     dimensions: { icon: DimensionsIcon, controller: Dimensions, label: 'Dimensions' },
     cells: { icon: CellsIcon, controller: Cells, label: 'Cells' },
-    editorcolors: { icon: ColorPicker, controller: EditorColors, label: 'Colors' }
+    colors: { icon: ColorPicker, controller: EditorColors, label: 'Colors' }
   };
 
   $: controller = $inputMode && controls[$inputMode] ? controls[$inputMode]?.controller : Givens;

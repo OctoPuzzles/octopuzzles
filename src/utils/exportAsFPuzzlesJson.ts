@@ -18,8 +18,8 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
   const cellClues = editorHistory.getClue('cellclues');
   const regions = editorHistory.getClue('regions');
   //const cells = editorHistory.getClue('cells');
-  const editorColors = editorHistory.getClue('editorcolors');
-  const cages = editorHistory.getClue('cages');
+  const editorColors = editorHistory.getClue('colors');
+  const cages = editorHistory.getClue('extendedcages');
   const paths = editorHistory.getClue('paths');
   const dimensions = editorHistory.getClue('dimensions');
   const logic = editorHistory.getClue('logic');

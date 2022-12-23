@@ -1,31 +1,13 @@
-import type {
-  Borderclues,
-  Cellclues,
-  Cells,
-  Dimensions,
-  EditorColors,
-  Extendedcages,
-  Givens,
-  Logic,
-  Paths,
-  Regions
-} from '$models/Sudoku';
+import type { SudokuClues } from '$models/Sudoku';
 import type { SolutionStep } from '$models/Walkthrough';
 
 export type Mode = 'editor' | 'game';
 
-export type EditorHistoryStep = {
-  cages: Extendedcages;
-  regions: Regions;
-  editorcolors: EditorColors;
-  givens: Givens;
-  paths: Paths;
-  borderclues: Borderclues;
-  cellclues: Cellclues;
-  dimensions: Dimensions;
-  cells: Cells;
-  logic: Logic;
+type NonNullableFields<T> = {
+  [P in keyof T]: NonNullable<T[P]>;
 };
+
+export type EditorHistoryStep = NonNullableFields<SudokuClues>;
 
 export type GameHistoryStep = SolutionStep;
 

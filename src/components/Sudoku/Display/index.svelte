@@ -16,9 +16,9 @@
 
   // EDITOR STATE
   export let regions: EditorHistoryStep['regions'];
-  export let editorColors: EditorHistoryStep['editorcolors'];
+  export let editorColors: EditorHistoryStep['colors'];
   export let cells: EditorHistoryStep['cells'];
-  export let cages: EditorHistoryStep['cages'];
+  export let cages: EditorHistoryStep['extendedcages'];
   export let givens: EditorHistoryStep['givens'];
   export let paths: EditorHistoryStep['paths'];
   export let borderClues: EditorHistoryStep['borderclues'];

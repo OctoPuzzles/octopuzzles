@@ -98,8 +98,8 @@
         regions: sud.regions ?? undefined,
         givens: sud.givens ?? undefined,
         cells: sud.cells ?? undefined,
-        editorcolors: sud.colors ?? undefined,
-        cages: sud.extendedcages ?? undefined,
+        colors: sud.colors ?? undefined,
+        extendedcages: sud.extendedcages ?? undefined,
         paths: sud.paths ?? undefined,
         dimensions: sud.dimensions,
         logic: sud.logic ?? undefined
@@ -156,9 +156,9 @@
           cellclues: $sudokuClues.cellclues,
           regions: $sudokuClues.regions,
           cells: $sudokuClues.cells,
-          colors: $sudokuClues.editorcolors,
+          colors: $sudokuClues.colors,
           givens: $sudokuClues.givens,
-          extendedcages: $sudokuClues.cages,
+          extendedcages: $sudokuClues.extendedcages,
           paths: $sudokuClues.paths,
           logic: $sudokuClues.logic
         },
@@ -203,9 +203,9 @@
           cellclues: $sudokuClues.cellclues,
           regions: $sudokuClues.regions,
           cells: $sudokuClues.cells,
-          colors: $sudokuClues.editorcolors,
+          colors: $sudokuClues.colors,
           givens: $sudokuClues.givens,
-          extendedcages: $sudokuClues.cages,
+          extendedcages: $sudokuClues.extendedcages,
           paths: $sudokuClues.paths,
           logic: $sudokuClues.logic
         },
@@ -306,8 +306,8 @@
     cellClues={$sudokuClues.cellclues}
     regions={$sudokuClues.regions}
     cells={$sudokuClues.cells}
-    editorColors={$sudokuClues.editorcolors}
-    cages={$sudokuClues.cages}
+    editorColors={$sudokuClues.colors}
+    cages={$sudokuClues.extendedcages}
     paths={$sudokuClues.paths}
     dimensions={$sudokuClues.dimensions}
     logic={$sudokuClues.logic}
@@ -319,8 +319,8 @@
     cellClues={$sudokuClues.cellclues}
     regions={$sudokuClues.regions}
     cells={$sudokuClues.cells}
-    editorColors={$sudokuClues.editorcolors}
-    cages={$sudokuClues.cages}
+    editorColors={$sudokuClues.colors}
+    cages={$sudokuClues.extendedcages}
     paths={$sudokuClues.paths}
     dimensions={$sudokuClues.dimensions}
     logic={$sudokuClues.logic}
