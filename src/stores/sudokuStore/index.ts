@@ -448,21 +448,6 @@ export const handleArrows = writable<ArrowHandler>(defaultHandleArrows);
 
 // DERIVED STORES
 
-export function resetAll(): void {
-  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex, wrongCells } =
-    highlights;
-  handleArrows.set(defaultHandleArrows);
-  handleMouseDown.set(defaultHandleMouseDown);
-  handleMouseEnter.set(defaultHandleMouseEnter);
-  wrongCells.set([]);
-  selectedItemIndex.set(-1);
-  highlightedItemIndex.set(-1);
-  selectedCells.set([]);
-  highlightedCells.set([]);
-  gameHistory.reset();
-  editorHistory.reset();
-}
-
 export function setMargins(margins?: Margins | null): void {
   const dimensions = editorHistory.getClue('dimensions');
   const borderclues = editorHistory.getClue('borderclues');
