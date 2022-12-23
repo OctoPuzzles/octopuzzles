@@ -311,11 +311,6 @@
     paths={$sudokuClues.paths}
     dimensions={$sudokuClues.dimensions}
     logic={$sudokuClues.logic}
-    values={[]}
-    gameColors={[]}
-    cornermarks={[]}
-    centermarks={[]}
-    notes={[]}
   />
 {:else if tab === 'game'}
   <SudokuGame
