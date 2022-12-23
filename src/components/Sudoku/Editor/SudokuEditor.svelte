@@ -1,8 +1,8 @@
 <script lang="ts">
   import { cellSize } from '$constants';
-  import SudokuDisplay from './Display/index.svelte';
+  import SudokuDisplay from '$components/Sudoku/Display/index.svelte';
   import Controller from './Controller/index.svelte';
-  import Interface from './Display/Clues/Interface.svelte';
+  import Interface from '$components/Sudoku/Display/Clues/Interface.svelte';
   import { highlightedCells, selectedCells, wrongCells, mode } from '$stores/sudokuStore';
   import type { EditorHistoryStep, GameHistoryStep } from '$types';
 

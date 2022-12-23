@@ -1,5 +1,6 @@
 <script lang="ts">
-  import SudokuGame from '$components/Sudoku/Game.svelte';
+  import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
+  import SudokuEditor from '$components/Sudoku/Editor/SudokuEditor.svelte';
   import Button from '$ui/Button.svelte';
   import Input from '$ui/Input.svelte';
   import RadioGroup from '$ui/RadioGroup.svelte';
@@ -299,7 +300,7 @@
 </div>
 
 {#if tab === 'editor'}
-  <SudokuGame
+  <SudokuEditor
     givens={$sudokuClues.givens}
     borderClues={$sudokuClues.borderclues}
     cellClues={$sudokuClues.cellclues}
