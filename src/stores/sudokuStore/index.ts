@@ -55,10 +55,14 @@ function createEditorHistoryStore() {
     }
   ]);
 
+  const title = writable('');
+  const description = writable('');
+  const labels = writable<{ label: Label; selected: boolean }[]>([]);
+
   /**
    * Increase the editor step by one, and specify what changes have been made to the editor since last step. Will keep the state of the non-changed items
    */
-  function set(newClues: Partial<EditorHistoryStepWithNumbers>): void {
+  function set(newClues: Partial<EditorHistoryStep>): void {
     const localHistory = deepCopy(get(history));
     const localStep = deepCopy(get(step));
     const newHistory = deepCopy(localHistory.slice(0, localStep + 1));
@@ -76,12 +80,40 @@ function createEditorHistoryStore() {
     step.update((step) => step + 1);
   }
 
+  function getCluesAtStep(_editorHistory: EditorHistoryStepWithNumbers[], s: number): EditorHistoryStep {
+    const historyStep = _editorHistory[s];
+    for (const [clueType, clue] of Object.entries(historyStep)) {
+      if (typeof clue === "number") {
+        historyStep[clueType as keyof EditorHistoryStep] = _editorHistory[clue][clueType as keyof EditorHistoryStep] as any;
+      }
+    }
+    return historyStep as EditorHistoryStep;
+  }
+
+  /**
+   * Increase the editor step by one, and specify what changes have been made to the editor since last step. Will keep the state of the non-changed items
+   */
+  function update(updater: (EditorHistory: EditorHistoryStep) => Partial<EditorHistoryStep>): void {
+    const clues = getCluesAtStep(get(history), get(step));
+    const newClues = updater(clues);
+    set(newClues);
+  }
+
   /**
    * Get the state of the editor at the current step.
-   * @example
-   * // To get the current killercages
-   * const killercages = getEditorState("killercages");
    */
+  function subscribe(): Readable<EditorHistoryStep> {
+    return derived([history, step], ([$editorHistory, $editorStep]) => {
+      return getCluesAtStep($editorHistory, $editorStep);
+    });
+  }
+
+  /**
+ * Get the state of the editor at the current step.
+ * @example
+ * // To get the current killercages
+ * const killercages = getEditorState("killercages");
+ */
   function getClue<T extends keyof EditorHistoryStep>(type: T): Readable<EditorHistoryStep[T]> {
     return derived([history, step], ([$editorHistory, $editorStep]) => {
       const res = $editorHistory[$editorStep]?.[type];
@@ -161,7 +193,12 @@ function createEditorHistoryStore() {
     reset,
     clearCells,
     set,
-    getClue
+    update,
+    subscribe,
+    getClue,
+    title,
+    description,
+    labels
   };
 }
 /**
@@ -296,10 +333,6 @@ function createGameHistoryStore() {
     getValue
   };
 }
-
-export const sudokuTitle = writable('');
-export const description = writable('');
-export const labels = writable<{ label: Label; selected: boolean }[]>([]);
 
 export const gameHistory = createGameHistoryStore();
 
