@@ -7,10 +7,7 @@
     handleArrows,
     handleMouseDown,
     handleMouseEnter,
-    highlightedCells,
-    highlightedItemIndex,
-    selectedCells,
-    selectedItemIndex
+    highlights
   } from '$stores/sudokuStore';
   import type {
     MouseDownHandler,
@@ -40,6 +37,7 @@
   import type { Path, PathType, Position } from '$models/Sudoku';
   import { hasOpenModals } from '$stores/modalStore';
 
+  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();
   const labels = editorHistory.labels;
 

@@ -2,7 +2,7 @@ import type { Position } from '$models/Sudoku';
 import { hasOpenModals } from '$stores/modalStore';
 import { isCommandKey } from '$utils/isCommandKey';
 import { get } from 'svelte/store';
-import { editorHistory, selectedCells } from '.';
+import { editorHistory, highlights } from '.';
 
 export type MouseDownHandler = ({
   cell,
@@ -31,6 +31,7 @@ export type ArrowHandler = ({
  * Default action to do when user clicks on a cell
  */
 export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
+  const { selectedCells } = highlights;
   if (!metaButtonClicked) {
     const currentSelectedCells = get(selectedCells);
     const firstSelectedCell = currentSelectedCells[0];
@@ -53,6 +54,7 @@ export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClick
  */
 export const defaultHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
   if (mouseDown) {
+    const { selectedCells } = highlights;
     if (get(selectedCells).length > 0) {
       selectedCells.addCell(cell);
     }
@@ -63,6 +65,8 @@ export const defaultHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) 
 export const defaultHandleArrows: ArrowHandler = ({ k }) => {
   //do not accept keyboard input when any modal controls are open
   if (hasOpenModals()) return;
+
+  const { selectedCells } = highlights;
 
   const cells = get(selectedCells);
   const dim = editorHistory.getClue('dimensions');

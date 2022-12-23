@@ -3,8 +3,10 @@
   import SudokuDisplay from '$components/Sudoku/Display/index.svelte';
   import Controller from './Controller/index.svelte';
   import Interface from '$components/Sudoku/Display/Clues/Interface.svelte';
-  import { highlightedCells, selectedCells } from '$stores/sudokuStore';
+  import { highlights } from '$stores/sudokuStore';
   import type { EditorHistoryStep } from '$types';
+
+  const { selectedCells, highlightedCells } = highlights;
 
   // SIZING
   let windowHeight: number;

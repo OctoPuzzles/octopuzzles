@@ -10,7 +10,7 @@
   import NumbersIcon from '$icons/Numbers.svelte';
   import ScannerIcon from '$icons/Scanner.svelte';
   import { openModal } from '$stores/modalStore';
-  import { gameHistory, highlightedCells, inputMode, selectedCells } from '$stores/sudokuStore';
+  import { gameHistory, inputMode, highlights } from '$stores/sudokuStore';
   import { scanner } from '$stores/sudokuStore/scanner';
   import { walkthroughStore } from '$stores/walkthroughStore';
   import type { InputMode } from '$types';
@@ -31,6 +31,8 @@
   import Notes from './components/Notes.svelte';
   import Numbers from './components/Numbers.svelte';
   import Scanner from './components/Scanner.svelte';
+
+  const { selectedCells, highlightedCells } = highlights;
 
   const controls: Record<
     string,

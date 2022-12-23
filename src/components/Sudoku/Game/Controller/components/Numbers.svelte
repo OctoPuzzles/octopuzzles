@@ -1,13 +1,15 @@
 <script lang="ts">
   import SquareButton from '$ui/SquareButton.svelte';
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
-  import { editorHistory, gameHistory, selectedCells } from '$stores/sudokuStore';
+  import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
   import deepCopy from '$utils/deepCopy';
   import { get } from 'svelte/store';
   import { isDeleteKey } from '$utils/isDeleteKey';
   import { hasOpenModals } from '$stores/modalStore';
   import { me } from '$stores/meStore';
   import { scanner } from '$stores/sudokuStore/scanner';
+
+  const { selectedCells } = highlights;
 
   function handleClick(newValue: string): void {
     const positions = get(selectedCells);

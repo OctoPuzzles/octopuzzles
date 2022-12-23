@@ -16,15 +16,7 @@
   import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
-  import {
-    editorHistory,
-    handleArrows,
-    highlightedCells,
-    highlightedItemIndex,
-    selectedCells,
-    selectedItemIndex,
-    setMargins
-  } from '$stores/sudokuStore';
+  import { editorHistory, handleArrows, highlights, setMargins } from '$stores/sudokuStore';
   import deepCopy from '$utils/deepCopy';
   import isArrowKey from '$utils/isArrowKey';
   import moveArrayElement from '$utils/moveArrayElement';
@@ -44,6 +36,7 @@
   } from '$models/Sudoku';
   import { hasOpenModals } from '$stores/modalStore';
 
+  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const labels = editorHistory.labels;
   const sudokuClues = editorHistory.subscribeToClues();
 

@@ -13,10 +13,7 @@
     handleArrows,
     handleMouseDown,
     handleMouseEnter,
-    highlightedCells,
-    highlightedItemIndex,
-    selectedCells,
-    selectedItemIndex
+    highlights
   } from '$stores/sudokuStore';
   import type {
     ArrowHandler,
@@ -36,6 +33,7 @@
   import { hasOpenModals } from '$stores/modalStore';
   import Checkbox from '$ui/Checkbox.svelte';
 
+  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();
   const labels = editorHistory.labels;
 

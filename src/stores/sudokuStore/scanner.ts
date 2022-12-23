@@ -3,7 +3,7 @@ import deepCopy from '$utils/deepCopy';
 import { defaultRegionSize } from '$utils/defaults';
 import type { Position } from '$models/Sudoku';
 import type { ScannerSettings } from '$models/User';
-import { editorHistory, gameHistory, highlightedCells, mode, selectedCells } from '.';
+import { editorHistory, gameHistory, mode, highlights } from '.';
 import { cageDefaults, pathDefaults, regionDefaults } from '$utils/prefabs';
 import { getValuesFromRange } from '$utils/getValuesFromRange';
 
@@ -59,6 +59,7 @@ function createScannerStore() {
       scanNonConsecutive: settings?.scanNonConsecutive ?? true
     });
 
+    const { highlightedCells, selectedCells } = highlights;
     if (get(mode) === 'game') highlightedCells.set(getHighlightedCells(get(selectedCells)));
   }
 
@@ -782,6 +783,8 @@ function createScannerStore() {
           centermarks: newCentermarks,
           cornermarks: newCornermarks
         });
+
+        const { highlightedCells, selectedCells } = highlights;
 
         if (settings.scannerSpeed !== 'Instant') {
           selectedCells.set([cell]);

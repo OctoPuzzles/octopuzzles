@@ -8,10 +8,7 @@
     handleArrows,
     handleMouseDown,
     handleMouseEnter,
-    highlightedCells,
-    highlightedItemIndex,
-    selectedCells,
-    selectedItemIndex
+    highlights
   } from '$stores/sudokuStore';
   import type {
     ArrowHandler,
@@ -34,6 +31,7 @@
   import type { Position, Region, RegionType } from '$models/Sudoku';
   import { hasOpenModals } from '$stores/modalStore';
 
+  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();
   const labels = editorHistory.labels;
 

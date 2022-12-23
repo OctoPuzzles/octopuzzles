@@ -1,11 +1,13 @@
 <script lang="ts">
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
-  import { editorHistory, gameHistory, selectedCells } from '$stores/sudokuStore';
+  import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
   import { get } from 'svelte/store';
   import deepCopy from '$utils/deepCopy';
   import SquareButton from '$ui/SquareButton.svelte';
   import { isDeleteKey } from '$utils/isDeleteKey';
   import { hasOpenModals } from '$stores/modalStore';
+
+  const { selectedCells } = highlights;
 
   const handleClick = (newCentermark: string): void => {
     let currentCentermarks = get(gameHistory.getValue('centermarks'));
