@@ -3,7 +3,7 @@
   import SudokuDisplay from '$components/Sudoku/Display/index.svelte';
   import Controller from './Controller/index.svelte';
   import Interface from '$components/Sudoku/Display/Clues/Interface.svelte';
-  import { highlightedCells, selectedCells, wrongCells, mode } from '$stores/sudokuStore';
+  import { highlightedCells, selectedCells, wrongCells } from '$stores/sudokuStore';
   import type { EditorHistoryStep, GameHistoryStep } from '$types';
 
   // SIZING
@@ -49,22 +49,20 @@
       {notes}
       {paths}
       {regions}
-      cornermarks={$mode === 'editor' ? undefined : cornermarks}
-      centermarks={$mode === 'editor' ? undefined : centermarks}
-      values={$mode === 'editor' ? undefined : values}
-      gameColors={$mode === 'editor' ? undefined : gameColors}
+      {cornermarks}
+      {centermarks}
+      {values}
+      {gameColors}
     >
       <g slot="highlights">
-        {#if $mode === 'game' && $wrongCells}
-          {#each $wrongCells as cell}
-            <rect
-              class="fill-current w-cell h-cell text-red-200"
-              x={cellSize * cell.column}
-              y={cellSize * cell.row}
-              vector-effect="non-scaling-size"
-            />
-          {/each}
-        {/if}
+        {#each $wrongCells as cell}
+          <rect
+            class="fill-current w-cell h-cell text-red-200"
+            x={cellSize * cell.column}
+            y={cellSize * cell.row}
+            vector-effect="non-scaling-size"
+          />
+        {/each}
         {#if $selectedCells}
           {#each $selectedCells as cell}
             <rect
