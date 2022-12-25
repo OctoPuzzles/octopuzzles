@@ -13,7 +13,6 @@
   export let clues: EditorHistoryStep;
 
   function updateStepDescription(step: number, html: string): void {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     walkthroughStore.changeDescriptionOfStep(step, html);
   }
 </script>

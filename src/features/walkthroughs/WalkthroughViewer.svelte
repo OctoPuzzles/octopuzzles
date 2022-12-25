@@ -28,8 +28,10 @@
         href={`${$page.url.pathname}/walkthrough`}
         title="Open in another tab"
         target="_blank"
-        rel="noreferrer noopener"><AppWindow /></a
+        rel="noreferrer noopener"
       >
+        <AppWindow />
+      </a>
     {/if}
     <h2 class="text-center font-bold text-2xl">Walkthrough</h2>
   </div>
