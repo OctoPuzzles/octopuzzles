@@ -1,7 +1,7 @@
 <script lang="ts">
   import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
   import RichTextEditor from '$components/RichTextEditor.svelte';
-  import HtmlContent from '$components/Sudoku/HTMLContent.svelte';
+  import HtmlContent from '$components/HTMLContent.svelte';
   import type { InferQueryOutput } from '$lib/client/trpc';
   import trpc from '$lib/client/trpc';
   import { openModal } from '$stores/modalStore';

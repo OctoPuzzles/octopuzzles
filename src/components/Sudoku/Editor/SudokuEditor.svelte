@@ -2,7 +2,7 @@
   import { cellSize } from '$constants';
   import SudokuDisplay from '$components/Sudoku/Display/index.svelte';
   import Controller from './Controller/index.svelte';
-  import Interface from '$components/Sudoku/Display/Clues/Interface.svelte';
+  import Interface from '$components/Sudoku/Interface.svelte';
   import { highlights } from '$stores/sudokuStore';
   import type { EditorHistoryStep } from '$types';
 

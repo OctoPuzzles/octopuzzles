@@ -2,7 +2,8 @@
   import { page } from '$app/stores';
   import ControllerHelpModal from '$components/Modals/ControllerHelpModal.svelte';
   import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
-  import WalkthroughModal from '$components/Modals/WalkthroughModal.svelte';
+  import WalkthroughEditorModal from '$components/Modals/WalkthroughEditorModal.svelte';
+  import WalkthroughViewerModal from '$components/Modals/WalkthroughViewerModal.svelte';
   import CenterMarksIcon from '$icons/CenterMarks.svelte';
   import ColorPicker from '$icons/ColorPicker.svelte';
   import CornerMarksIcon from '$icons/CornerMarks.svelte';
@@ -10,7 +11,7 @@
   import NumbersIcon from '$icons/Numbers.svelte';
   import ScannerIcon from '$icons/Scanner.svelte';
   import { openModal } from '$stores/modalStore';
-  import { gameHistory, inputMode, highlights } from '$stores/sudokuStore';
+  import { gameHistory, inputMode, highlights, editorHistory } from '$stores/sudokuStore';
   import { scanner } from '$stores/sudokuStore/scanner';
   import { walkthroughStore } from '$stores/walkthroughStore';
   import type { InputMode } from '$types';
@@ -155,9 +156,16 @@
   }
 
   function showWalkthroughEditorModal(): void {
-    openModal(WalkthroughModal, {
-      editable: $page.url.pathname.includes('/sudoku/editor')
-    });
+    if ($page.url.pathname.includes('/sudoku/editor')) {
+      openModal(WalkthroughEditorModal, {
+        clues: get(editorHistory.subscribeToClues())
+      });
+    } else {
+      openModal(WalkthroughViewerModal, {
+        clues: get(editorHistory.subscribeToClues()),
+        walkthrough: $walkthroughStore
+      });
+    }
   }
 </script>
 

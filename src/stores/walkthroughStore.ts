@@ -1,4 +1,4 @@
-import type { SolutionStep } from '$models/Walkthrough';
+import type { WalkthroughStep } from '$models/Walkthrough';
 import deepCopy from '$utils/deepCopy';
 import { get, writable } from 'svelte/store';
 import { gameHistory } from './sudokuStore';
@@ -10,10 +10,10 @@ import { gameHistory } from './sudokuStore';
  */
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createWalkthroughStore() {
-  const steps = writable<{ description: string; step: SolutionStep }[]>([]);
+  const steps = writable<WalkthroughStep[]>([]);
   const currentStepIndex = writable<number>(0);
 
-  function set(newSteps: { description: string; step: SolutionStep }[]) {
+  function set(newSteps: WalkthroughStep[]) {
     steps.set(newSteps);
 
     currentStepIndex.set(0);
