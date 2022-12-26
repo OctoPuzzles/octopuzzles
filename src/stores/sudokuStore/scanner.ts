@@ -267,7 +267,7 @@ function createScannerStore() {
         }
       }
       if (settings.scanCages) {
-        const cages = editorHistory.getClue('cages');
+        const cages = editorHistory.getClue('extendedcages');
         cages.forEach((c, n) => {
           if (c.uniqueDigits ?? cageDefaults(c.type ?? 'CUSTOM').uniqueDigits) {
             if (c.positions.some((p) => p.row === cell.row && p.column === cell.column)) {

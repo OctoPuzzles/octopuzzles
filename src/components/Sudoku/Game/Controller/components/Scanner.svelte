@@ -204,7 +204,7 @@
               />
             </div>
           {/if}
-          {#if $sudokuClues.cages.some((c) => c.uniqueDigits ?? cageDefaults(c.type ?? 'CUSTOM').uniqueDigits)}
+          {#if $sudokuClues.extendedcages.some((c) => c.uniqueDigits ?? cageDefaults(c.type ?? 'CUSTOM').uniqueDigits)}
             <div>
               <Checkbox
                 bind:checked={scanCages}
