@@ -353,6 +353,7 @@
       <Label>Description</Label>
       <div class="relative">
         <button
+          tabindex={-1}
           class="absolute top-2 p-1 right-2 w-6 h-6 rounded-full border border-orange-500 text-orange-500 bg-orange-100 hover:bg-orange-200 hover:text-orange-600 transition-colors shadow flex items-center justify-center"
           title="Add common descriptions"
           type="button"
