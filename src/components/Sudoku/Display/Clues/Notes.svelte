@@ -1,7 +1,9 @@
 <script lang="ts">
   import { cellSize } from '$constants';
   import type { Notes } from '$models/Walkthrough';
-  import { inputMode, selectedCells } from '$stores/sudokuStore';
+  import { inputMode, highlights } from '$stores/sudokuStore';
+
+  const { selectedCells } = highlights;
 
   export let notes: Notes | null;
 

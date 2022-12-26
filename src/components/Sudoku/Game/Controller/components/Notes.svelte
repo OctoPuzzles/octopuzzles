@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { Position } from '$models/Sudoku';
-  import { gameHistory, selectedCells } from '$stores/sudokuStore';
+  import { gameHistory, highlights } from '$stores/sudokuStore';
   import Button from '$ui/Button.svelte';
   import Input from '$ui/Input.svelte';
   import deepCopy from '$utils/deepCopy';
+
+  const { selectedCells } = highlights;
 
   let notes = gameHistory.getValue('notes');
   let input: Input;

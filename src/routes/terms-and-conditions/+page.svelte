@@ -25,15 +25,15 @@
 </div>
 
 <div class="container mx-auto px-4 mt-8">
-  <h1 class="text-3xl font-bold mb-2">NorsePuzzles Website Privacy Policy</h1>
+  <h1 class="text-3xl font-bold mb-2">OctoPuzzles Website Privacy Policy</h1>
 
   <h2 class="text-xl font-bold mt-4 mb-2">Member profile</h2>
 
   <p>
-    Member profile data is obtained when registering to norsepuzzles.com and can be viewed here.
-    This information is never shared with any third party services. The only information required
-    for registering is a username, a valid email address and a password. Your username is public.
-    Your Email address is always private.
+    Member profile data is obtained when registering to octopuzzles.com and can be viewed here. This
+    information is never shared with any third party services. The only information required for
+    registering is a username, a valid email address and a password. Your username is public. Your
+    Email address is always private.
   </p>
   <br />
 

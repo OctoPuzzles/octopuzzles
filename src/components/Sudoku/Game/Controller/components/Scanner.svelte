@@ -38,12 +38,9 @@
   let scanNegativeKropki = scannerSettings.scanNegativeKropki ?? true;
   let scanNonConsecutive = scannerSettings.scanNonConsecutive ?? true;
 
-  let regions = editorHistory.getClue('regions');
-  let cages = editorHistory.getClue('cages');
-  let paths = editorHistory.getClue('paths');
-  let logic = editorHistory.getClue('logic');
+  const sudokuClues = editorHistory.subscribeToClues();
 
-  let flags = $logic.flags ?? [];
+  let flags = $sudokuClues.logic.flags ?? [];
   let diagonalPos = flags.indexOf('DiagonalPos') !== -1;
   let diagonalNeg = flags.indexOf('DiagonalNeg') !== -1;
   let antiknight = flags.indexOf('Antiknight') !== -1;
@@ -207,7 +204,7 @@
               />
             </div>
           {/if}
-          {#if $cages.some((c) => c.uniqueDigits ?? cageDefaults(c.type ?? 'CUSTOM').uniqueDigits)}
+          {#if $sudokuClues.extendedcages.some((c) => c.uniqueDigits ?? cageDefaults(c.type ?? 'CUSTOM').uniqueDigits)}
             <div>
               <Checkbox
                 bind:checked={scanCages}
@@ -219,7 +216,7 @@
               />
             </div>
           {/if}
-          {#if $paths.some((l) => l.uniqueDigits ?? pathDefaults(l.type ?? 'CUSTOM').uniqueDigits)}
+          {#if $sudokuClues.paths.some((l) => l.uniqueDigits ?? pathDefaults(l.type ?? 'CUSTOM').uniqueDigits)}
             <div>
               <Checkbox
                 bind:checked={scanPaths}
@@ -231,7 +228,7 @@
               />
             </div>
           {/if}
-          {#if $regions.some((r) => (r.type ?? 'CUSTOM') !== 'Normal' && (r.uniqueDigits ?? regionDefaults(r.type ?? 'CUSTOM').uniqueDigits))}
+          {#if $sudokuClues.regions.some((r) => (r.type ?? 'CUSTOM') !== 'Normal' && (r.uniqueDigits ?? regionDefaults(r.type ?? 'CUSTOM').uniqueDigits))}
             <div>
               <Checkbox
                 bind:checked={scanExtraRegions}

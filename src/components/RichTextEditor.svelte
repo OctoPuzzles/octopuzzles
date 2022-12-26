@@ -49,6 +49,7 @@
     <div class="flex mb-2">
       <div class="border-r pr-1 mr-1">
         <button
+          tabindex={-1}
           class="rounded p-1 hover:bg-gray-100"
           type="button"
           on:click={() => editor.chain().focus().toggleBold().run()}
@@ -57,6 +58,7 @@
           <TextBolder />
         </button>
         <button
+          tabindex={-1}
           class="rounded p-1 hover:bg-gray-100"
           type="button"
           on:click={() => editor.chain().focus().toggleItalic().run()}
@@ -65,6 +67,7 @@
           <TextItalic />
         </button>
         <button
+          tabindex={-1}
           class="rounded p-1 hover:bg-gray-100"
           type="button"
           on:click={() => editor.chain().focus().toggleStrike().run()}
@@ -76,6 +79,7 @@
 
       <div>
         <button
+          tabindex={-1}
           class="rounded p-1 hover:bg-gray-100"
           type="button"
           on:click={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -84,6 +88,7 @@
           <TextHOne />
         </button>
         <button
+          tabindex={-1}
           class="rounded p-1 hover:bg-gray-100"
           type="button"
           on:click={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
@@ -92,6 +97,7 @@
           <TextHTwo />
         </button>
         <button
+          tabindex={-1}
           class="rounded p-1 hover:bg-gray-100"
           type="button"
           on:click={() => editor.chain().focus().setParagraph().run()}
@@ -101,6 +107,7 @@
         </button>
 
         <button
+          tabindex={-1}
           class="rounded p-1 hover:bg-gray-100"
           type="button"
           on:click={() => editor.chain().focus().toggleBulletList().run()}
@@ -109,6 +116,7 @@
           <ListBullets />
         </button>
         <button
+          tabindex={-1}
           class="rounded p-1 hover:bg-gray-100"
           type="button"
           on:click={() => editor.chain().focus().toggleOrderedList().run()}

@@ -8,11 +8,7 @@
     handleArrows,
     handleMouseDown,
     handleMouseEnter,
-    highlightedCells,
-    highlightedItemIndex,
-    selectedCells,
-    selectedItemIndex,
-    labels
+    highlights
   } from '$stores/sudokuStore';
   import type {
     ArrowHandler,
@@ -35,7 +31,9 @@
   import type { Position, Region, RegionType } from '$models/Sudoku';
   import { hasOpenModals } from '$stores/modalStore';
 
-  const regions = editorHistory.getClue('regions');
+  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
+  const sudokuClues = editorHistory.subscribeToClues();
+  const labels = editorHistory.labels;
 
   let type: RegionType | 'CUSTOM' = 'Normal';
   let defaultSettings = regionDefaults(type);
@@ -50,7 +48,7 @@
   }
 
   function regionSelected(selectedItemIndex: number): void {
-    const region = $regions[selectedItemIndex];
+    const region = $sudokuClues.regions[selectedItemIndex];
     if (region == null) return;
     updateSettings(region);
   }
@@ -84,7 +82,7 @@
     if ($selectedItemIndex === -1) return;
 
     let newRegions: Region[] = [];
-    $regions.forEach((region, i) => {
+    $sudokuClues.regions.forEach((region, i) => {
       if (i !== $selectedItemIndex) {
         newRegions = [...newRegions, region];
       } else {
@@ -113,9 +111,9 @@
 
   function newRegionFromSelection(): void {
     if ($selectedCells.length > 0) {
-      const newRegions: Region[] = type !== 'Normal' ? deepCopy($regions) : [];
+      const newRegions: Region[] = type !== 'Normal' ? deepCopy($sudokuClues.regions) : [];
       if (type === 'Normal') {
-        $regions.forEach((region) => {
+        $sudokuClues.regions.forEach((region) => {
           if (region.type === 'Normal') {
             let newRegion = {
               ...region,
@@ -150,7 +148,7 @@
   }
 
   const deleteRegionAtIndex = (index: number): void => {
-    const newRegions = $regions.filter((_, i) => index !== i);
+    const newRegions = $sudokuClues.regions.filter((_, i) => index !== i);
     $selectedCells = [];
     $highlightedCells = [];
     $selectedItemIndex = -1;
@@ -177,7 +175,7 @@
     let selectedRegionIndex = $selectedItemIndex;
     let removed = false;
 
-    $regions.forEach((region, i) => {
+    $sudokuClues.regions.forEach((region, i) => {
       if (i === $selectedItemIndex) {
         let found = false;
         let newRegion = {
@@ -264,7 +262,7 @@
     let lastSelectedCell = $selectedCells[$selectedCells.length - 1];
     if (lastSelectedCell) {
       const { row, column } = lastSelectedCell;
-      let dim = get(editorHistory.getClue('dimensions'));
+      let dim = editorHistory.getClue('dimensions');
       let newCell: Position | undefined = undefined;
       switch (k.key) {
         case 'ArrowUp':
@@ -318,15 +316,15 @@
     let newRegions: Region[] = [];
     if (way === 'up') {
       if (index === 0) return;
-      newRegions = moveArrayElement($regions, index, index - 1);
+      newRegions = moveArrayElement($sudokuClues.regions, index, index - 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex--;
       } else if (index - 1 === $selectedItemIndex) {
         $selectedItemIndex++;
       }
     } else if (way === 'down') {
-      if (index === $regions.length - 1) return;
-      newRegions = moveArrayElement($regions, index, index + 1);
+      if (index === $sudokuClues.regions.length - 1) return;
+      newRegions = moveArrayElement($sudokuClues.regions, index, index + 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex++;
       } else if (index + 1 === $selectedItemIndex) {
@@ -351,7 +349,7 @@
       class="bg-gray-200 rounded-md shadow-inner flex flex-col items-center p-2 overflow-hidden h-full"
     >
       <div class="h-full overflow-y-auto w-full">
-        {#each $regions as region, index}
+        {#each $sudokuClues.regions as region, index}
           <button
             class={classNames(
               'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',

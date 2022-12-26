@@ -259,20 +259,7 @@ export type Cellclues = z.infer<typeof CellcluesValidator>;
 export const SolutionValidator = z.object({ numbers: z.array(z.array(z.string().max(3))) });
 export type Solution = z.infer<typeof SolutionValidator>;
 
-export const SudokuValidator = z.object({
-  id: z.number().int(),
-  /** The id of the user who created the sudoku */
-  userId: z.number().int().nullable(),
-  /** When this sudoku became public */
-  publicSince: z.date().nullable(),
-  /** The title of the sudoku */
-  title: z.string().max(64).min(1),
-  /** The description of the sudoku, e.g. rules, etc. */
-  description: z.string().max(4096).min(1),
-  /** The upvotes minus the downvotes */
-  points: z.number().int(),
-  /** The calculated points the sudoku has gotten from upvotes/downvotes using the ranking algorithm */
-  rank: z.number(),
+export const SudokuCluesValidator = z.object({
   /** The dimensions of the sudoku, i.e. the number of rows and columns */
   dimensions: DimensionsValidator,
   /** The cells that are interactable in the sudoku. */
@@ -292,7 +279,24 @@ export const SudokuValidator = z.object({
   /** The cellclues of the sudoku. That is, a clue contained within a cell. If null, there are no cell clues */
   cellclues: CellcluesValidator.nullable(),
   /** The global sudoku logic in the grid. */
-  logic: LogicValidator.nullable(),
+  logic: LogicValidator.nullable()
+});
+export type SudokuClues = z.infer<typeof SudokuCluesValidator>;
+
+export const SudokuValidator = SudokuCluesValidator.extend({
+  id: z.number().int(),
+  /** The id of the user who created the sudoku */
+  userId: z.number().int().nullable(),
+  /** When this sudoku became public */
+  publicSince: z.date().nullable(),
+  /** The title of the sudoku */
+  title: z.string().max(64).min(1),
+  /** The description of the sudoku, e.g. rules, etc. */
+  description: z.string().max(4096).min(1),
+  /** The upvotes minus the downvotes */
+  points: z.number().int(),
+  /** The calculated points the sudoku has gotten from upvotes/downvotes using the ranking algorithm */
+  rank: z.number(),
   /** The solution to the puzzle if any is given */
   solution: SolutionValidator.nullable(),
   /** The time when the user was created */
@@ -302,30 +306,10 @@ export const SudokuValidator = z.object({
 });
 export type Sudoku = z.infer<typeof SudokuValidator>;
 
-export const NewSudokuValidator = z.object({
+export const NewSudokuValidator = SudokuCluesValidator.extend({
   /** The title of the sudoku */
   title: z.string().max(64).min(1),
   /** The description of the sudoku, e.g. rules, etc. */
-  description: z.string().max(4096).min(1),
-  /** The dimensions of the sudoku, i.e. the number of rows and columns */
-  dimensions: DimensionsValidator,
-  /** The cells that are interactable in the sudoku. */
-  cells: CellsValidator.optional(),
-  /** The givens in the sudoku.  */
-  givens: GivensValidator.optional(),
-  /** The colors in the cells of the sudoku. */
-  colors: EditorColorsValidator.optional(),
-  /** The regions of the sudoku. */
-  regions: RegionsValidator.optional(),
-  /** The dotted boxes (killer cages) in the grid, with optional rendering settings */
-  extendedcages: ExtendedcagesValidator.optional(),
-  /** The paths in the sudoku, i.e. thermometers, etc. */
-  paths: PathsValidator.optional(),
-  /** The borderclues of the sudoku. That is, a clue lying on a border. If null, there are no border clues */
-  borderclues: BordercluesValidator.optional(),
-  /** The cellclues of the sudoku. That is, a clue contained within a cell. If null, there are no cell clues */
-  cellclues: CellcluesValidator.optional(),
-  /** The global sudoku logic in the grid. */
-  logic: LogicValidator.optional()
+  description: z.string().max(4096).min(1)
 });
 export const UpdateSudokuValidator = NewSudokuValidator.partial();

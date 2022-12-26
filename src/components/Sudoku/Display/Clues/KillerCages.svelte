@@ -1,11 +1,12 @@
 <script lang="ts">
   import { cellSize } from '$constants';
   import classNames from 'classnames';
-  import { highlightedItemIndex, inputMode, selectedItemIndex } from '$stores/sudokuStore';
+  import { inputMode, highlights } from '$stores/sudokuStore';
   import { topLeftOfPositions } from '$utils/topLeftOfPositions';
   import { createEdges } from '$utils/createEdges';
   import type { Dimensions, Extendedcages } from '$models/Sudoku';
 
+  const { selectedItemIndex, highlightedItemIndex } = highlights;
   export let cages: Extendedcages;
 
   export let dimensions: Dimensions;
@@ -30,9 +31,9 @@
           class={classNames('stroke-current', {
             [`text-${cage.color?.toLowerCase()}`]: cage.color != null,
             'text-blue-700':
-              $inputMode === 'cages' && cage.color == null && $highlightedItemIndex === i,
+              $inputMode === 'extendedcages' && cage.color == null && $highlightedItemIndex === i,
             'text-orange-600':
-              $inputMode === 'cages' && cage.color == null && $selectedItemIndex === i
+              $inputMode === 'extendedcages' && cage.color == null && $selectedItemIndex === i
           })}
           x1={edge.x1 * cellSize}
           y1={edge.y1 * cellSize}
@@ -45,9 +46,9 @@
           class={classNames('stroke-current', {
             [`text-${cage.color?.toLowerCase()}`]: cage.color != null,
             'text-blue-700':
-              $inputMode === 'cages' && cage.color == null && $highlightedItemIndex === i,
+              $inputMode === 'extendedcages' && cage.color == null && $highlightedItemIndex === i,
             'text-orange-600':
-              $inputMode === 'cages' && cage.color == null && $selectedItemIndex === i
+              $inputMode === 'extendedcages' && cage.color == null && $selectedItemIndex === i
           })}
           x={cellSize * topLeft.column + 2}
           y={cellSize * topLeft.row + 2}

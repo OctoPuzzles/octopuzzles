@@ -9,15 +9,7 @@
   import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
-  import {
-    editorHistory,
-    handleArrows,
-    highlightedCells,
-    highlightedItemIndex,
-    selectedCells,
-    selectedItemIndex,
-    labels
-  } from '$stores/sudokuStore';
+  import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
   import deepCopy from '$utils/deepCopy';
   import isArrowKey from '$utils/isArrowKey';
   import moveArrayElement from '$utils/moveArrayElement';
@@ -33,9 +25,11 @@
   import type { Borderclue, BorderClueType, Position } from '$models/Sudoku';
   import { hasOpenModals } from '$stores/modalStore';
 
-  let borderClues = editorHistory.getClue('borderclues');
+  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
+  const sudokuClues = editorHistory.subscribeToClues();
+  const labels = editorHistory.labels;
 
-  let type: BorderClueType | 'CUSTOM' = $borderClues[0]?.type ?? 'CUSTOM';
+  let type: BorderClueType | 'CUSTOM' = $sudokuClues.borderclues[0]?.type ?? 'CUSTOM';
   let defaultSettings = borderClueDefaults(type);
   let { shape, color, radius, text } = defaultSettings;
 
@@ -58,7 +52,7 @@
   }
 
   function borderClueSelected(selectedItemIndex: number): void {
-    updateSettings($borderClues[selectedItemIndex]);
+    updateSettings($sudokuClues.borderclues[selectedItemIndex]);
   }
 
   function updateSettings(clue: Partial<Borderclue>) {
@@ -133,10 +127,13 @@
     }
 
     editorHistory.set({
-      borderclues: [...deepCopy($borderClues), newBorderClue(positions as [Position, Position])]
+      borderclues: [
+        ...deepCopy($sudokuClues.borderclues),
+        newBorderClue(positions as [Position, Position])
+      ]
     });
     $selectedCells = positions;
-    $selectedItemIndex = $borderClues.length - 1;
+    $selectedItemIndex = $sudokuClues.borderclues.length - 1;
 
     addLabel();
   };
@@ -156,7 +153,7 @@
     if ($selectedItemIndex === -1) return;
 
     let newBorderClues: Borderclue[] = [];
-    $borderClues.forEach((borderClue, i) => {
+    $sudokuClues.borderclues.forEach((borderClue, i) => {
       if (i !== $selectedItemIndex) {
         newBorderClues = [...newBorderClues, borderClue];
       } else {
@@ -174,7 +171,7 @@
   };
 
   const deleteBorderClueAtIndex = (index: number): void => {
-    const newBorderClues = $borderClues.filter((_, i) => index !== i);
+    const newBorderClues = $sudokuClues.borderclues.filter((_, i) => index !== i);
     $selectedCells = [];
     $highlightedCells = [];
     $selectedItemIndex = -1;
@@ -203,15 +200,15 @@
     let newBorderClues: Borderclue[] = [];
     if (way === 'up') {
       if (index === 0) return;
-      newBorderClues = moveArrayElement($borderClues, index, index - 1);
+      newBorderClues = moveArrayElement($sudokuClues.borderclues, index, index - 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex--;
       } else if (index - 1 === $selectedItemIndex) {
         $selectedItemIndex++;
       }
     } else if (way === 'down') {
-      if (index === $borderClues.length - 1) return;
-      newBorderClues = moveArrayElement($borderClues, index, index + 1);
+      if (index === $sudokuClues.borderclues.length - 1) return;
+      newBorderClues = moveArrayElement($sudokuClues.borderclues, index, index + 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex++;
       } else if (index + 1 === $selectedItemIndex) {
@@ -230,7 +227,7 @@
       class="bg-gray-200 rounded-md shadow-inner flex flex-col items-center p-2 overflow-hidden h-full"
     >
       <div class="h-full overflow-y-auto w-full">
-        {#each $borderClues as borderClue, index (index)}
+        {#each $sudokuClues.borderclues as borderClue, index (index)}
           <button
             class={classNames(
               'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',

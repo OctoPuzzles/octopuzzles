@@ -16,16 +16,7 @@
   import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
-  import {
-    editorHistory,
-    handleArrows,
-    highlightedCells,
-    highlightedItemIndex,
-    selectedCells,
-    selectedItemIndex,
-    setMargins,
-    labels
-  } from '$stores/sudokuStore';
+  import { editorHistory, handleArrows, highlights, setMargins } from '$stores/sudokuStore';
   import deepCopy from '$utils/deepCopy';
   import isArrowKey from '$utils/isArrowKey';
   import moveArrayElement from '$utils/moveArrayElement';
@@ -45,11 +36,11 @@
   } from '$models/Sudoku';
   import { hasOpenModals } from '$stores/modalStore';
 
-  let cellClues = editorHistory.getClue('cellclues');
-  let dimensions = editorHistory.getClue('dimensions');
-  const margins = $dimensions.margins;
+  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
+  const labels = editorHistory.labels;
+  const sudokuClues = editorHistory.subscribeToClues();
 
-  let type: CellClueType | 'CUSTOM' = $cellClues[0]?.type ?? 'CUSTOM';
+  let type: CellClueType | 'CUSTOM' = $sudokuClues.cellclues[0]?.type ?? 'CUSTOM';
   let defaultSettings = cellClueDefaults(type);
   let { location, text, size, symbol, rotation, color } = defaultSettings;
 
@@ -108,7 +99,7 @@
   }
 
   function cellClueSelected(selectedItemIndex: number): void {
-    updateSettings($cellClues[selectedItemIndex]);
+    updateSettings($sudokuClues.cellclues[selectedItemIndex]);
   }
 
   function updateSettings(clue: Partial<Cellclue>) {
@@ -125,10 +116,10 @@
   function changeType(type: CellClueType | 'CUSTOM') {
     if (type !== 'CUSTOM' && isFrameCellClue[type]) {
       setMargins({
-        left: Math.max(1, margins?.left ?? 0),
-        right: Math.max(1, margins?.right ?? 0),
-        top: Math.max(1, margins?.top ?? 0),
-        bottom: Math.max(1, margins?.bottom ?? 0)
+        left: Math.max(1, $sudokuClues.dimensions.margins?.left ?? 0),
+        right: Math.max(1, $sudokuClues.dimensions.margins?.right ?? 0),
+        top: Math.max(1, $sudokuClues.dimensions.margins?.top ?? 0),
+        bottom: Math.max(1, $sudokuClues.dimensions.margins?.bottom ?? 0)
       });
     } else {
       resetMargins();
@@ -142,28 +133,40 @@
   function resetMargins() {
     setMargins({
       left: Math.max(
-        $cellClues.some((clue) => clue.position.column < ($dimensions.margins?.left ?? 0)) ? 1 : 0,
-        margins?.left ?? 0
+        $sudokuClues.cellclues.some(
+          (clue) => clue.position.column < ($sudokuClues.dimensions.margins?.left ?? 0)
+        )
+          ? 1
+          : 0,
+        $sudokuClues.dimensions.margins?.left ?? 0
       ),
       right: Math.max(
-        $cellClues.some(
-          (clue) => clue.position.column >= $dimensions.columns - ($dimensions.margins?.right ?? 0)
+        $sudokuClues.cellclues.some(
+          (clue) =>
+            clue.position.column >=
+            $sudokuClues.dimensions.columns - ($sudokuClues.dimensions.margins?.right ?? 0)
         )
           ? 1
           : 0,
-        margins?.right ?? 0
+        $sudokuClues.dimensions.margins?.right ?? 0
       ),
       top: Math.max(
-        $cellClues.some((clue) => clue.position.row < ($dimensions.margins?.top ?? 0)) ? 1 : 0,
-        margins?.top ?? 0
-      ),
-      bottom: Math.max(
-        $cellClues.some(
-          (clue) => clue.position.row >= $dimensions.rows - ($dimensions.margins?.bottom ?? 0)
+        $sudokuClues.cellclues.some(
+          (clue) => clue.position.row < ($sudokuClues.dimensions.margins?.top ?? 0)
         )
           ? 1
           : 0,
-        margins?.bottom ?? 0
+        $sudokuClues.dimensions.margins?.top ?? 0
+      ),
+      bottom: Math.max(
+        $sudokuClues.cellclues.some(
+          (clue) =>
+            clue.position.row >=
+            $sudokuClues.dimensions.rows - ($sudokuClues.dimensions.margins?.bottom ?? 0)
+        )
+          ? 1
+          : 0,
+        $sudokuClues.dimensions.margins?.bottom ?? 0
       )
     });
   }
@@ -196,9 +199,9 @@
 
   const createNewCellClue = (): void => {
     editorHistory.set({
-      cellclues: [...deepCopy($cellClues), newCellClue($selectedCells[0])]
+      cellclues: [...deepCopy($sudokuClues.cellclues), newCellClue($selectedCells[0])]
     });
-    $selectedItemIndex = $cellClues.length - 1;
+    $selectedItemIndex = $sudokuClues.cellclues.length - 1;
 
     addLabel();
   };
@@ -218,7 +221,7 @@
     if ($selectedItemIndex === -1) return;
 
     let newCellClues: Cellclue[] = [];
-    $cellClues.forEach((cellClue, i) => {
+    $sudokuClues.cellclues.forEach((cellClue, i) => {
       if (i !== $selectedItemIndex) {
         newCellClues = [...newCellClues, cellClue];
       } else {
@@ -233,7 +236,7 @@
   };
 
   const deleteCellClueAtIndex = (index: number): void => {
-    const newCellClues = $cellClues.filter((_, i) => index !== i);
+    const newCellClues = $sudokuClues.cellclues.filter((_, i) => index !== i);
     $selectedCells = [];
     $highlightedCells = [];
     $selectedItemIndex = -1;
@@ -262,15 +265,15 @@
     let newCellClues: Cellclue[] = [];
     if (way === 'up') {
       if (index === 0) return;
-      newCellClues = moveArrayElement($cellClues, index, index - 1);
+      newCellClues = moveArrayElement($sudokuClues.cellclues, index, index - 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex--;
       } else if (index - 1 === $selectedItemIndex) {
         $selectedItemIndex++;
       }
     } else if (way === 'down') {
-      if (index === $cellClues.length - 1) return;
-      newCellClues = moveArrayElement($cellClues, index, index + 1);
+      if (index === $sudokuClues.cellclues.length - 1) return;
+      newCellClues = moveArrayElement($sudokuClues.cellclues, index, index + 1);
       if (index === $selectedItemIndex) {
         $selectedItemIndex++;
       } else if (index + 1 === $selectedItemIndex) {
@@ -293,7 +296,7 @@
       class="bg-gray-200 rounded-md shadow-inner flex flex-col items-center p-2 overflow-hidden h-full"
     >
       <div class="h-full overflow-y-auto w-full">
-        {#each $cellClues as cellClue, index (index)}
+        {#each $sudokuClues.cellclues as cellClue, index (index)}
           <button
             class={classNames(
               'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',

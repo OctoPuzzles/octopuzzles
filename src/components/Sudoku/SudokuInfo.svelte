@@ -19,7 +19,7 @@
   import RedditLogo from 'phosphor-svelte/lib/RedditLogo/RedditLogo.svelte';
   import TwitterLogo from 'phosphor-svelte/lib/TwitterLogo/TwitterLogo.svelte';
   import WhatsappLogo from 'phosphor-svelte/lib/WhatsappLogo/WhatsappLogo.svelte';
-  import HtmlContent from './HTMLContent.svelte';
+  import HtmlContent from '../HTMLContent.svelte';
 
   export let sudoku: Sudoku & {
     user?: Pick<User, 'id' | 'username' | 'role'> | null;

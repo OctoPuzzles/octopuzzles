@@ -3,7 +3,7 @@ import deepCopy from '$utils/deepCopy';
 import { defaultRegionSize } from '$utils/defaults';
 import type { Position } from '$models/Sudoku';
 import type { ScannerSettings } from '$models/User';
-import { editorHistory, gameHistory, highlightedCells, mode, selectedCells } from '.';
+import { editorHistory, gameHistory, mode, highlights } from '.';
 import { cageDefaults, pathDefaults, regionDefaults } from '$utils/prefabs';
 import { getValuesFromRange } from '$utils/getValuesFromRange';
 
@@ -59,6 +59,7 @@ function createScannerStore() {
       scanNonConsecutive: settings?.scanNonConsecutive ?? true
     });
 
+    const { highlightedCells, selectedCells } = highlights;
     if (get(mode) === 'game') highlightedCells.set(getHighlightedCells(get(selectedCells)));
   }
 
@@ -69,9 +70,9 @@ function createScannerStore() {
   }
 
   function initScan(seed?: Position) {
-    const dimensions = get(editorHistory.getClue('dimensions'));
-    const givens = get(editorHistory.getClue('givens'));
-    const logic = get(editorHistory.getClue('logic'));
+    const dimensions = editorHistory.getClue('dimensions');
+    const givens = editorHistory.getClue('givens');
+    const logic = editorHistory.getClue('logic');
 
     const rowOffset = dimensions.margins?.top ?? 0;
     const columnOffset = dimensions.margins?.left ?? 0;
@@ -143,7 +144,7 @@ function createScannerStore() {
   }
 
   function getSeenCells(cell: Position): { row: number; column: number; context: string }[] {
-    const dimensions = get(editorHistory.getClue('dimensions'));
+    const dimensions = editorHistory.getClue('dimensions');
     const rowOffset = dimensions.margins?.top ?? 0;
     const columnOffset = dimensions.margins?.left ?? 0;
     const rows = dimensions.rows - rowOffset - (dimensions.margins?.bottom ?? 0);
@@ -155,7 +156,7 @@ function createScannerStore() {
     const i = cell.row - rowOffset;
     const j = cell.column - columnOffset;
 
-    const logic = get(editorHistory.getClue('logic'));
+    const logic = editorHistory.getClue('logic');
     const flags = logic.flags ?? [];
     const nonstandard = flags.indexOf('NonStandard') !== -1;
     const diagonalPos = flags.indexOf('DiagonalPos') !== -1;
@@ -184,7 +185,7 @@ function createScannerStore() {
       }
     }
 
-    const regions = get(editorHistory.getClue('regions'));
+    const regions = editorHistory.getClue('regions');
     regions.forEach((r) => {
       if (r.type === 'Normal' && (r.uniqueDigits ?? !nonstandard)) {
         if (r.positions.some((p) => p.row === cell.row && p.column === cell.column)) {
@@ -266,7 +267,7 @@ function createScannerStore() {
         }
       }
       if (settings.scanCages) {
-        const cages = get(editorHistory.getClue('cages'));
+        const cages = editorHistory.getClue('extendedcages');
         cages.forEach((c, n) => {
           if (c.uniqueDigits ?? cageDefaults(c.type ?? 'CUSTOM').uniqueDigits) {
             if (c.positions.some((p) => p.row === cell.row && p.column === cell.column)) {
@@ -284,7 +285,7 @@ function createScannerStore() {
         });
       }
       if (settings.scanPaths) {
-        const paths = get(editorHistory.getClue('paths'));
+        const paths = editorHistory.getClue('paths');
         paths.forEach((l, n) => {
           if (l.uniqueDigits ?? pathDefaults(l.type ?? 'CUSTOM').uniqueDigits) {
             if (l.positions.some((p) => p.row === cell.row && p.column === cell.column)) {
@@ -393,7 +394,7 @@ function createScannerStore() {
   function getCornerSets(cell: Position, seen = true): { digit: string; cells: Position[] }[] {
     const sets: { digit: string; cells: Position[] }[] = [];
 
-    const regions = get(editorHistory.getClue('regions'));
+    const regions = editorHistory.getClue('regions');
     const cornermarks = get(gameHistory.getValue('cornermarks'));
 
     if (seen) {
@@ -448,7 +449,7 @@ function createScannerStore() {
   }
 
   function getNbrCells(cell: Position): Position[] {
-    const dimensions = get(editorHistory.getClue('dimensions'));
+    const dimensions = editorHistory.getClue('dimensions');
     const rowOffset = dimensions.margins?.top ?? 0;
     const columnOffset = dimensions.margins?.left ?? 0;
     const rows = dimensions.rows - rowOffset - (dimensions.margins?.bottom ?? 0);
@@ -491,8 +492,8 @@ function createScannerStore() {
   function updateCandidateValues(cell: Position): boolean {
     const context = get(scannerContext);
     const settings = get(scannerSettings);
-    const flags = get(editorHistory.getClue('logic')).flags ?? [];
-    const givens = get(editorHistory.getClue('givens'));
+    const flags = editorHistory.getClue('logic').flags ?? [];
+    const givens = editorHistory.getClue('givens');
     const values = get(gameHistory.getValue('values'));
 
     const candidateValues = context.candidates[cell.row][cell.column];
@@ -548,7 +549,7 @@ function createScannerStore() {
 
     if (newCandidateValues.length > 1 && settings.mode === 'Extreme') {
       //check negative constraints and eliminate any values that would be invalid
-      const borderclues = get(editorHistory.getClue('borderclues'));
+      const borderclues = editorHistory.getClue('borderclues');
       const nbrCells = getNbrCells(cell);
 
       if (
@@ -782,6 +783,8 @@ function createScannerStore() {
           centermarks: newCentermarks,
           cornermarks: newCornermarks
         });
+
+        const { highlightedCells, selectedCells } = highlights;
 
         if (settings.scannerSpeed !== 'Instant') {
           selectedCells.set([cell]);

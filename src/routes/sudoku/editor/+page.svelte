@@ -1,5 +1,6 @@
 <script lang="ts">
-  import SudokuGame from '$components/Sudoku/Game.svelte';
+  import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
+  import SudokuEditor from '$components/Sudoku/Editor/SudokuEditor.svelte';
   import Button from '$ui/Button.svelte';
   import Input from '$ui/Input.svelte';
   import RadioGroup from '$ui/RadioGroup.svelte';
@@ -16,14 +17,7 @@
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import { getUserSolution } from '$utils/getSolution';
-  import {
-    description,
-    editorHistory,
-    gameHistory,
-    sudokuTitle,
-    labels,
-    mode
-  } from '$stores/sudokuStore';
+  import { editorHistory, gameHistory, mode } from '$stores/sudokuStore';
   import Label from '$ui/Label.svelte';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
@@ -34,6 +28,10 @@
   import RichTextEditor from '$components/RichTextEditor.svelte';
 
   export let data: PageData;
+
+  const sudokuTitle = editorHistory.title;
+  const description = editorHistory.description;
+  const labels = editorHistory.labels;
 
   $: if (data.walkthrough?.steps) {
     // Just so ts will shut up
@@ -64,7 +62,7 @@
     let solution: InferMutationInput<'sudokus:provideSolutionToPuzzle'>['solution'] = undefined;
     // create solution
     if (provideSolution) {
-      solution = { numbers: getUserSolution({ givens: $givens, values: $values }) };
+      solution = { numbers: getUserSolution({ givens: $sudokuClues.givens, values: $values }) };
     }
     await trpc().mutation('sudokus:provideSolutionToPuzzle', {
       sudokuId: id,
@@ -100,8 +98,8 @@
         regions: sud.regions ?? undefined,
         givens: sud.givens ?? undefined,
         cells: sud.cells ?? undefined,
-        editorcolors: sud.colors ?? undefined,
-        cages: sud.extendedcages ?? undefined,
+        colors: sud.colors ?? undefined,
+        extendedcages: sud.extendedcages ?? undefined,
         paths: sud.paths ?? undefined,
         dimensions: sud.dimensions,
         logic: sud.logic ?? undefined
@@ -137,16 +135,7 @@
   let loading = false;
   let provideSolution = false;
 
-  let givens = editorHistory.getClue('givens');
-  let borderclues = editorHistory.getClue('borderclues');
-  let cellclues = editorHistory.getClue('cellclues');
-  let regions = editorHistory.getClue('regions');
-  let cells = editorHistory.getClue('cells');
-  let editorColors = editorHistory.getClue('editorcolors');
-  let cages = editorHistory.getClue('cages');
-  let paths = editorHistory.getClue('paths');
-  let dimensions = editorHistory.getClue('dimensions');
-  let logic = editorHistory.getClue('logic');
+  const sudokuClues = editorHistory.subscribeToClues();
 
   let values = gameHistory.getValue('values');
   let gameColors = gameHistory.getValue('colors');
@@ -162,16 +151,16 @@
         sudoku: {
           title: $sudokuTitle,
           description: $description,
-          dimensions: $dimensions,
-          borderclues: $borderclues,
-          cellclues: $cellclues,
-          regions: $regions,
-          cells: $cells,
-          colors: $editorColors,
-          givens: $givens,
-          extendedcages: $cages,
-          paths: $paths,
-          logic: $logic
+          dimensions: $sudokuClues.dimensions,
+          borderclues: $sudokuClues.borderclues,
+          cellclues: $sudokuClues.cellclues,
+          regions: $sudokuClues.regions,
+          cells: $sudokuClues.cells,
+          colors: $sudokuClues.colors,
+          givens: $sudokuClues.givens,
+          extendedcages: $sudokuClues.extendedcages,
+          paths: $sudokuClues.paths,
+          logic: $sudokuClues.logic
         },
         labels: $labels.filter((l) => l.selected).map((l) => l.label.id)
       });
@@ -209,16 +198,16 @@
         sudokuUpdates: {
           title: $sudokuTitle,
           description: $description,
-          dimensions: $dimensions,
-          borderclues: $borderclues,
-          cellclues: $cellclues,
-          regions: $regions,
-          cells: $cells,
-          colors: $editorColors,
-          givens: $givens,
-          extendedcages: $cages,
-          paths: $paths,
-          logic: $logic
+          dimensions: $sudokuClues.dimensions,
+          borderclues: $sudokuClues.borderclues,
+          cellclues: $sudokuClues.cellclues,
+          regions: $sudokuClues.regions,
+          cells: $sudokuClues.cells,
+          colors: $sudokuClues.colors,
+          givens: $sudokuClues.givens,
+          extendedcages: $sudokuClues.extendedcages,
+          paths: $sudokuClues.paths,
+          logic: $sudokuClues.logic
         },
         labels: $labels.filter((l) => l.selected).map((l) => l.label.id)
       });
@@ -279,9 +268,9 @@
   }
 
   function doesSolutionHaveHoles(): boolean {
-    if (!$givens || !$values) return false;
+    if (!$sudokuClues.givens || !$values) return false;
 
-    let userSolution = getUserSolution({ givens: $givens, values: $values });
+    let userSolution = getUserSolution({ givens: $sudokuClues.givens, values: $values });
 
     for (const row of userSolution) {
       for (const cell of row) {
@@ -295,7 +284,7 @@
   }
 
   let solutionHasHoles = false;
-  $: if ($values && $givens) {
+  $: if ($values && $sudokuClues.givens) {
     solutionHasHoles = doesSolutionHaveHoles();
   }
 </script>
@@ -311,35 +300,30 @@
 </div>
 
 {#if tab === 'editor'}
-  <SudokuGame
-    givens={$givens}
-    borderClues={$borderclues}
-    cellClues={$cellclues}
-    regions={$regions}
-    cells={$cells}
-    editorColors={$editorColors}
-    cages={$cages}
-    paths={$paths}
-    dimensions={$dimensions}
-    logic={$logic}
-    values={[]}
-    gameColors={[]}
-    cornermarks={[]}
-    centermarks={[]}
-    notes={[]}
+  <SudokuEditor
+    givens={$sudokuClues.givens}
+    borderClues={$sudokuClues.borderclues}
+    cellClues={$sudokuClues.cellclues}
+    regions={$sudokuClues.regions}
+    cells={$sudokuClues.cells}
+    editorColors={$sudokuClues.colors}
+    cages={$sudokuClues.extendedcages}
+    paths={$sudokuClues.paths}
+    dimensions={$sudokuClues.dimensions}
+    logic={$sudokuClues.logic}
   />
 {:else if tab === 'game'}
   <SudokuGame
-    givens={$givens}
-    borderClues={$borderclues}
-    cellClues={$cellclues}
-    regions={$regions}
-    cells={$cells}
-    editorColors={$editorColors}
-    cages={$cages}
-    paths={$paths}
-    dimensions={$dimensions}
-    logic={$logic}
+    givens={$sudokuClues.givens}
+    borderClues={$sudokuClues.borderclues}
+    cellClues={$sudokuClues.cellclues}
+    regions={$sudokuClues.regions}
+    cells={$sudokuClues.cells}
+    editorColors={$sudokuClues.colors}
+    cages={$sudokuClues.extendedcages}
+    paths={$sudokuClues.paths}
+    dimensions={$sudokuClues.dimensions}
+    logic={$sudokuClues.logic}
     values={$values}
     gameColors={$gameColors}
     cornermarks={$cornermarks}
@@ -369,6 +353,7 @@
       <Label>Description</Label>
       <div class="relative">
         <button
+          tabindex={-1}
           class="absolute top-2 p-1 right-2 w-6 h-6 rounded-full border border-orange-500 text-orange-500 bg-orange-100 hover:bg-orange-200 hover:text-orange-600 transition-colors shadow flex items-center justify-center"
           title="Add common descriptions"
           type="button"

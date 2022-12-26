@@ -43,8 +43,8 @@ function createEditorHistoryStore() {
   const history = writable<EditorHistoryStepWithNumbers[]>([
     {
       givens: defaultGivens(),
-      cages: defaultCages(),
-      editorcolors: defaultEditorColors(),
+      extendedcages: defaultCages(),
+      colors: defaultEditorColors(),
       paths: defaultPaths(),
       borderclues: defaultBorderclues(),
       cellclues: defaultCellclues(),
@@ -55,10 +55,14 @@ function createEditorHistoryStore() {
     }
   ]);
 
+  const title = writable('');
+  const description = writable('');
+  const labels = writable<{ label: Label; selected: boolean }[]>([]);
+
   /**
    * Increase the editor step by one, and specify what changes have been made to the editor since last step. Will keep the state of the non-changed items
    */
-  function set(newClues: Partial<EditorHistoryStepWithNumbers>): void {
+  function set(newClues: Partial<EditorHistoryStep>): void {
     const localHistory = deepCopy(get(history));
     const localStep = deepCopy(get(step));
     const newHistory = deepCopy(localHistory.slice(0, localStep + 1));
@@ -76,21 +80,55 @@ function createEditorHistoryStore() {
     step.update((step) => step + 1);
   }
 
+  function getCluesAtStep(
+    _editorHistory: EditorHistoryStepWithNumbers[],
+    s: number
+  ): EditorHistoryStep {
+    const historyStep = _editorHistory[s];
+    for (const [clueType, clue] of Object.entries(historyStep)) {
+      if (typeof clue === 'number') {
+        historyStep[clueType as keyof EditorHistoryStep] = _editorHistory[clue][
+          clueType as keyof EditorHistoryStep
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ] as any;
+      }
+    }
+    return historyStep as EditorHistoryStep;
+  }
+
+  /**
+   * Increase the editor step by one, and specify what changes have been made to the editor since last step. Will keep the state of the non-changed items
+   */
+  function update(updater: (EditorHistory: EditorHistoryStep) => Partial<EditorHistoryStep>): void {
+    const clues = getCluesAtStep(get(history), get(step));
+    const newClues = updater(clues);
+    set(newClues);
+  }
+
+  /**
+   * Get the state of the editor at the current step.
+   */
+  function subscribeToClues(): Readable<EditorHistoryStep> {
+    return derived([history, step], ([$editorHistory, $editorStep]) => {
+      return getCluesAtStep($editorHistory, $editorStep);
+    });
+  }
+
   /**
    * Get the state of the editor at the current step.
    * @example
    * // To get the current killercages
    * const killercages = getEditorState("killercages");
    */
-  function getClue<T extends keyof EditorHistoryStep>(type: T): Readable<EditorHistoryStep[T]> {
-    return derived([history, step], ([$editorHistory, $editorStep]) => {
-      const res = $editorHistory[$editorStep]?.[type];
-      if (typeof res === 'number') {
-        return $editorHistory[res]?.[type] as EditorHistoryStep[T];
-      } else {
-        return res as EditorHistoryStep[T];
-      }
-    });
+  function getClue<T extends keyof EditorHistoryStep>(type: T): EditorHistoryStep[T] {
+    const h = get(history);
+    const s = get(step);
+    const res = h[s]?.[type];
+    if (typeof res === 'number') {
+      return h[res]?.[type] as EditorHistoryStep[T];
+    } else {
+      return res as EditorHistoryStep[T];
+    }
   }
 
   /**
@@ -115,8 +153,8 @@ function createEditorHistoryStore() {
     history.set([
       {
         givens: startState?.givens || defaultGivens(dim),
-        cages: startState?.cages || defaultCages(),
-        editorcolors: startState?.editorcolors || defaultEditorColors(dim),
+        extendedcages: startState?.extendedcages || defaultCages(),
+        colors: startState?.colors || defaultEditorColors(dim),
         paths: startState?.paths || defaultPaths(),
         borderclues: startState?.borderclues || defaultBorderclues(),
         cellclues: startState?.cellclues || defaultCellclues(),
@@ -130,8 +168,8 @@ function createEditorHistoryStore() {
 
   /** Clear every input-values, and colors from the specified cells in the editor */
   function clearCells(cells: Position[]): void {
-    const newGivens = get(getClue('givens'));
-    const newColors = get(getClue('editorcolors'));
+    const newGivens = getClue('givens');
+    const newColors = getClue('colors');
     let changes = false;
     cells.forEach((cell) => {
       let newGiven = newGivens[cell.row]?.[cell.column];
@@ -148,7 +186,7 @@ function createEditorHistoryStore() {
     if (changes) {
       set({
         givens: newGivens,
-        editorcolors: newColors
+        colors: newColors
       });
     }
   }
@@ -161,7 +199,12 @@ function createEditorHistoryStore() {
     reset,
     clearCells,
     set,
-    getClue
+    update,
+    subscribeToClues,
+    getClue,
+    title,
+    description,
+    labels
   };
 }
 /**
@@ -233,12 +276,13 @@ function createGameHistoryStore() {
 
   /** Reset the game */
   function reset(): void {
+    const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
     selectedItemIndex.set(-1);
     highlightedItemIndex.set(-1);
     selectedCells.set([]);
     highlightedCells.set([]);
     step.set(0);
-    const dim = get(editorHistory.getClue('dimensions'));
+    const dim = editorHistory.getClue('dimensions');
     history.set([
       {
         values: defaultValues(dim),
@@ -297,10 +341,6 @@ function createGameHistoryStore() {
   };
 }
 
-export const sudokuTitle = writable('');
-export const description = writable('');
-export const labels = writable<{ label: Label; selected: boolean }[]>([]);
-
 export const gameHistory = createGameHistoryStore();
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -310,6 +350,7 @@ function createInputModeStore() {
   return {
     subscribe,
     set: (value: InputMode | null) => {
+      const { selectedItemIndex, highlightedItemIndex } = highlights;
       selectedItemIndex.set(-1);
       highlightedItemIndex.set(-1);
       handleArrows.set(defaultHandleArrows);
@@ -322,16 +363,20 @@ function createInputModeStore() {
 
 export const mode = writable<Mode>('game');
 export const inputMode = createInputModeStore();
-export const selectedItemIndex = writable(-1);
-export const highlightedItemIndex = writable(-1);
-/** Cells with wrong solutions */
-export const wrongCells = writable<Position[]>([]);
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function createSelectedCellsStore() {
-  const { subscribe, set: _set, update: _update } = writable<Position[]>([]);
+function createHighlightsStore() {
+  const selectedItemIndex = writable(-1);
+  const highlightedItemIndex = writable(-1);
+  /** Cells with wrong solutions */
+  const wrongCells = writable<Position[]>([]);
+  /**
+   * A list of selected cells.
+   * A selected cell is one that is pressed on with e.g. the mouse
+   */
+  const selectedCells = writable<Position[]>([]);
 
-  function set(newSelectedCells: Position[]): void {
+  function setSelectedCells(newSelectedCells: Position[]): void {
     selectedItemIndex.set(-1);
     highlightedItemIndex.set(-1);
     if (get(mode) === 'game') {
@@ -339,12 +384,12 @@ function createSelectedCellsStore() {
     } else {
       highlightedCells.set([]);
     }
-    _set(newSelectedCells);
+    selectedCells.set(newSelectedCells);
   }
 
-  function addCell(cell: Position, keepIfAlreadySelected = true): void {
+  function addSelectedCell(cell: Position, keepIfAlreadySelected = true): void {
     let found = false;
-    _update((oldSelectedCells) => {
+    selectedCells.update((oldSelectedCells) => {
       let newSelectedCells = oldSelectedCells.filter((c) => {
         if (c.row === cell.row && c.column === cell.column) {
           found = true;
@@ -364,24 +409,26 @@ function createSelectedCellsStore() {
       return newSelectedCells;
     });
   }
+  /**
+   * A list of highlighted cells.
+   * A highlighted cell is e.g. a hovered cell.
+   */
+  const highlightedCells = writable<Position[]>([]);
 
   return {
-    subscribe,
-    set,
-    addCell
+    selectedItemIndex,
+    highlightedItemIndex,
+    wrongCells,
+    selectedCells: {
+      set: setSelectedCells,
+      addCell: addSelectedCell,
+      subscribe: selectedCells.subscribe
+    },
+    highlightedCells
   };
 }
 
-/**
- * A list of selected cells.
- * A selected cell is one that is pressed on with e.g. the mouse
- */
-export const selectedCells = createSelectedCellsStore();
-/**
- * A list of highlighted cells.
- * A highlighted cell is e.g. a hovered cell.
- */
-export const highlightedCells = writable<Position[]>([]);
+export const highlights = createHighlightsStore();
 
 /**
  * The controller components can augment the functionality and how user inputs should be handled by changing this function.
@@ -401,29 +448,16 @@ export const handleArrows = writable<ArrowHandler>(defaultHandleArrows);
 
 // DERIVED STORES
 
-export function resetAll(): void {
-  handleArrows.set(defaultHandleArrows);
-  handleMouseDown.set(defaultHandleMouseDown);
-  handleMouseEnter.set(defaultHandleMouseEnter);
-  wrongCells.set([]);
-  selectedItemIndex.set(-1);
-  highlightedItemIndex.set(-1);
-  selectedCells.set([]);
-  highlightedCells.set([]);
-  gameHistory.reset();
-  editorHistory.reset();
-}
-
 export function setMargins(margins?: Margins | null): void {
-  const dimensions = get(editorHistory.getClue('dimensions'));
-  const borderclues = get(editorHistory.getClue('borderclues'));
-  const cellclues = get(editorHistory.getClue('cellclues'));
-  const editorColors = get(editorHistory.getClue('editorcolors'));
-  const cages = get(editorHistory.getClue('cages'));
-  const givens = get(editorHistory.getClue('givens'));
-  const paths = get(editorHistory.getClue('paths'));
-  const cells = get(editorHistory.getClue('cells'));
-  const regions = get(editorHistory.getClue('regions'));
+  const dimensions = editorHistory.getClue('dimensions');
+  const borderclues = editorHistory.getClue('borderclues');
+  const cellclues = editorHistory.getClue('cellclues');
+  const editorColors = editorHistory.getClue('colors');
+  const cages = editorHistory.getClue('extendedcages');
+  const givens = editorHistory.getClue('givens');
+  const paths = editorHistory.getClue('paths');
+  const cells = editorHistory.getClue('cells');
+  const regions = editorHistory.getClue('regions');
   const values = get(gameHistory.getValue('values'));
   const gamecolors = get(gameHistory.getValue('colors'));
   const cornermarks = get(gameHistory.getValue('cornermarks'));
@@ -472,8 +506,8 @@ export function setMargins(margins?: Margins | null): void {
           };
         })
         .filter((clue) => isValidPosition(clue.position)),
-      editorcolors: offsetMatrix(editorColors, offsets, null),
-      cages: cages
+      colors: offsetMatrix(editorColors, offsets, null),
+      extendedcages: cages
         .map((cage) => {
           return { ...cage, positions: offsetPositions(cage.positions, offsets) };
         })
@@ -499,6 +533,7 @@ export function setMargins(margins?: Margins | null): void {
       notes: offsetMatrix(notes, offsets, '')
     });
 
+    const { selectedCells, highlightedCells, wrongCells } = highlights;
     selectedCells.set(offsetPositions(get(selectedCells), offsets).filter(isValidPosition));
     highlightedCells.set(offsetPositions(get(highlightedCells), offsets).filter(isValidPosition));
     wrongCells.set(offsetPositions(get(wrongCells), offsets).filter(isValidPosition));
