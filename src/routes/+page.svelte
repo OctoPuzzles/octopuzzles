@@ -82,6 +82,7 @@
       activeLabels = [...activeLabels, labelId];
     }
   }
+  $: console.log({ activeLabels, labels: data.labels });
 </script>
 
 <svelte:head>
@@ -119,7 +120,7 @@
             class={classNames(
               'hover:ring-1 hover:ring-orange-500 active:bg-orange-200 transition-colors',
               {
-                'bg-orange-200': selected,
+                '!bg-orange-200': selected,
                 'bg-gray-300': !selected
               }
             )}
