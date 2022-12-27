@@ -34,7 +34,7 @@
   import { pathTypeNames, pathTypesToLabel } from '$constants';
   import { isCommandKey } from '$utils/isCommandKey';
   import { isDeleteKey } from '$utils/isDeleteKey';
-  import { pathDefaults } from '$utils/prefabs';
+  import { pathDefaults } from '$utils/prefabs/paths';
   import Circle from '$icons/shapes/Circle.svelte';
   import Square from '$icons/shapes/Square.svelte';
   import Diamond from '$icons/shapes/Diamond.svelte';

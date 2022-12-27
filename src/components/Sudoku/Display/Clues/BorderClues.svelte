@@ -3,7 +3,7 @@
   import classNames from 'classnames';
   import { borderCluesFontSize } from '$utils/borderCluesFontSize';
   import { highlightedItemIndex, inputMode, selectedItemIndex } from '$stores/sudokuStore';
-  import { getBorderCluesToDraw } from '$utils/prefabs';
+  import { getBorderCluesToDraw } from '$utils/prefabs/borderclues';
   import type { Borderclue, Borderclues } from '$models/Sudoku';
 
   export let borderClues: Borderclues;

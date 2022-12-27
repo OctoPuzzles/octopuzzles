@@ -2,9 +2,11 @@ import { get, writable } from 'svelte/store';
 import deepCopy from '$utils/deepCopy';
 import { defaultRegionSize } from '$utils/defaults';
 import type { Position } from '$models/Sudoku';
-import type { ScannerSettings } from '$models/User';
+import type { ScannerSettings } from '$models/UserSettings';
 import { editorHistory, gameHistory, highlightedCells, mode, selectedCells } from '.';
-import { cageDefaults, pathDefaults, regionDefaults } from '$utils/prefabs';
+import { cageDefaults } from '$utils/prefabs/cages';
+import { pathDefaults } from '$utils/prefabs/paths';
+import { regionDefaults } from '$utils/prefabs/regions';
 import { getValuesFromRange } from '$utils/getValuesFromRange';
 
 // WRITABLES

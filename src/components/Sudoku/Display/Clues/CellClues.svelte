@@ -2,7 +2,7 @@
   import { cellSize, symbolsMap } from '$constants';
   import classNames from 'classnames';
   import { inputMode, selectedItemIndex } from '$stores/sudokuStore';
-  import { getCellCluesToDraw } from '$utils/prefabs';
+  import { getCellCluesToDraw } from '$utils/prefabs/cellclues';
   import { cellCluesFontSize } from '$utils/cellCluesFontSize';
   import type { CellClueLocation, Cellclues } from '$models/Sudoku';
 

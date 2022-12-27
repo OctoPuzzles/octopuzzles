@@ -8,13 +8,15 @@
   import Label from '$ui/Label.svelte';
   import RadioGroup from '$ui/RadioGroup.svelte';
   import Checkbox from '$ui/Checkbox.svelte';
-  import { cageDefaults, pathDefaults, regionDefaults } from '$utils/prefabs';
+  import { cageDefaults } from '$utils/prefabs/cages';
+  import { pathDefaults } from '$utils/prefabs/paths';
+  import { regionDefaults } from '$utils/prefabs/regions';
   import type {
     ScannerHighlightMode,
     ScannerMode,
     ScannerSettings,
     ScannerSpeed
-  } from '$models/User';
+  } from '$models/UserSettings';
 
   import { me } from '$stores/meStore';
   import { scanner } from '$stores/sudokuStore/scanner';

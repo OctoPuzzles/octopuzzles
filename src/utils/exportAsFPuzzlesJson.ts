@@ -5,11 +5,17 @@ import deepCopy from './deepCopy';
 import { defaultRegions } from './defaults';
 import { topLeftOfPositions } from './topLeftOfPositions';
 import {
-  getBorderCluesToDraw,
-  getCellCluesToDraw,
-  getPathsToDraw,
+  getBorderCluesToDraw
+} from './prefabs/borderclues';
+import {
+  getCellCluesToDraw
+} from './prefabs/cellclues';
+import {
+  getPathsToDraw
+} from './prefabs/paths';
+import {
   getRegionsToDraw
-} from './prefabs';
+} from './prefabs/regions';
 import type { Color, Position } from '$models/Sudoku';
 
 export function exportAsFPuzzlesJson(): FPuzzlesJson {
