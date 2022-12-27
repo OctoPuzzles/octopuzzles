@@ -11,7 +11,7 @@
 
   async function getMe() {
     const res = await trpc().query('users:me');
-    const settings = await trpc().query('users:getSettings');
+    const settings = await trpc().query('userSettings:get');
     me.set(res, settings);
   }
 

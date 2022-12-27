@@ -18,6 +18,7 @@
   import type { PageData } from './$types';
   import { walkthroughStore } from '$stores/walkthroughStore';
   import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
+  import trpc from '$lib/client/trpc';
 
   export let data: PageData;
 
@@ -147,6 +148,7 @@
 
   $: if (checkSolution($values)) {
     clearInterval(timer);
+    trpc().mutation('userStats:solved', { sudokuId: data.sudoku.id, solveTime: t });
     showDoneModal();
   }
 

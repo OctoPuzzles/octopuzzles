@@ -37,13 +37,16 @@ model User {
   sudokus      Sudoku[]
   walkthroughs Walkthrough[]
   comments     Comment[]
-  UserSettings UserSettings?
+  userSettings UserSettings?
+  savedGames   SavedGame[]
+  userStats    UserStats[]
 }
 
 model UserSettings {
   userId  Int   @unique
   user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   scanner Json?
+  general Json?
 }
 
 enum TokenKind {
@@ -89,6 +92,8 @@ model Sudoku {
   votes         Vote[]
   walkthroughs  Walkthrough[]
   comments      Comment[]
+  savedGames    SavedGame[]
+  userStats     UserStats[]
 
   @@unique([userId, title])
 }
@@ -123,4 +128,28 @@ model Comment {
   body      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model SavedGame {
+  sudokuId Int
+  sudoku   Sudoku   @relation(fields: [sudokuId], references: [id], onDelete: Cascade)
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameData Json
+  savedOn  DateTime @default(now())
+
+  @@unique(fields: [sudokuId, userId], name: "uniqueKey")
+}
+
+model UserStats {
+  sudokuId     Int
+  sudoku       Sudoku    @relation(fields: [sudokuId], references: [id], onDelete: Cascade)
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastViewedOn DateTime  @default(now())
+  bookmarked   Boolean?
+  solvedOn     DateTime?
+  solveTime    Int?
+
+  @@unique(fields: [sudokuId, userId], name: "uniqueKey")
 }

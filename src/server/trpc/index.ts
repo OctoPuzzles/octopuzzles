@@ -5,7 +5,10 @@ import trpcTransformer from 'trpc-transformer';
 import labels from './labels';
 import sudokus from './sudokus';
 import users from './users';
+import userSettings from './userSettings';
 import walkthroughs from './walkthroughs';
+import savedGames from './savedGames';
+import userStats from './userStats';
 import votes from './votes';
 import comments from './comments';
 import prisma from '$utils/prisma';
@@ -23,8 +26,11 @@ export const router = trpc
   .transformer(trpcTransformer)
   .merge('labels:', labels)
   .merge('users:', users)
+  .merge('userSettings:', userSettings)
   .merge('votes:', votes)
   .merge('walkthroughs:', walkthroughs)
+  .merge('savedGames:', savedGames)
+  .merge('userStats:', userStats)
   .merge('sudokus:', sudokus)
   .merge('comments:', comments);
 

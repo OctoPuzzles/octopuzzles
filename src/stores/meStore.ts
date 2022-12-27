@@ -1,5 +1,6 @@
 import trpc from '$lib/client/trpc';
-import type { User, UserSettings } from '$models/User';
+import type { User } from '$models/User';
+import type { UserSettings } from '$models/UserSettings';
 import { get, writable } from 'svelte/store';
 import { scanner } from './sudokuStore/scanner';
 
@@ -28,7 +29,7 @@ function createMeStore() {
 
     const userData = get(user);
     if (userData?.id) {
-      await trpc().mutation('users:saveSettings', newSettings);
+      await trpc().mutation('userSettings:save', newSettings);
     }
   }
 

@@ -5,7 +5,7 @@ import * as trpc from '@trpc/server';
 import type { TRPCContext } from '.';
 import { sendVerifyUserMail } from '$server/email';
 import pick from 'lodash/pick';
-import { UpdateUserSettingsValidator, UserSettingsValidator, UserValidator } from '$models/User';
+import { UserValidator } from '$models/User';
 import { setCookie } from '$utils/jwt/setCookie';
 import type { Prisma } from '@prisma/client';
 
@@ -159,40 +159,5 @@ export default trpc
     }),
     resolve: async ({ input, ctx }) => {
       return ctx.prisma.user.findUnique({ where: { id: input.id } });
-    }
-  })
-  .query('getSettings', {
-    resolve: async ({ ctx }) => {
-      if (ctx.token != null) {
-        const settingsRaw = await ctx.prisma.userSettings.findUnique({
-          where: { userId: ctx.token.id }
-        });
-        if (settingsRaw != null) {
-          const settings = UserSettingsValidator.parse(settingsRaw);
-          if (settings != null) {
-            return settings;
-          }
-        }
-      }
-
-      return null;
-    }
-  })
-  .mutation('saveSettings', {
-    input: UpdateUserSettingsValidator,
-    resolve: async ({ input, ctx }) => {
-      if (ctx.token == null) {
-        throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
-      }
-      try {
-        await ctx.prisma.userSettings.create({
-          data: { userId: ctx.token.id, ...input }
-        });
-      } catch (e) {
-        await ctx.prisma.userSettings.update({
-          where: { userId: ctx.token.id },
-          data: { userId: ctx.token.id, ...input }
-        });
-      }
     }
   });

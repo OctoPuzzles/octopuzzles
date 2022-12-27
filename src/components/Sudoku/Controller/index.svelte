@@ -21,6 +21,8 @@
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
+  import Check from 'phosphor-svelte/lib/Check/Check.svelte';
+  import FloppyDisk from 'phosphor-svelte/lib/FloppyDisk/FloppyDisk.svelte';
   import PersonSimpleWalk from 'phosphor-svelte/lib/PersonSimpleWalk/PersonSimpleWalk.svelte';
   import Question from 'phosphor-svelte/lib/Question/Question.svelte';
   import Givens from './components/Givens.svelte';
@@ -59,6 +61,7 @@
   import type { EditorHistoryStep, GameHistoryStep, InputMode } from '$types';
   import Scanner from './components/Scanner.svelte';
   import { scanner } from '$stores/sudokuStore/scanner';
+  import trpc from '$lib/client/trpc';
 
   $: canUndo = $mode === 'editor' ? editorHistory.canUndo : gameHistory.canUndo;
   $: canRedo = $mode === 'editor' ? editorHistory.canRedo : gameHistory.canRedo;
@@ -223,6 +226,27 @@
       editable: $page.url.pathname.includes('/sudoku/editor')
     });
   }
+
+  function checkSolution(): void {}
+
+  async function saveProgress(): Promise<void> {
+    const values = get(gameHistory.getValue('values'));
+    const cornermarks = get(gameHistory.getValue('cornermarks'));
+    const centermarks = get(gameHistory.getValue('centermarks'));
+    const notes = get(gameHistory.getValue('notes'));
+    const colors = get(gameHistory.getValue('colors'));
+
+    await trpc().mutation('savedGames:createOrUpdate', {
+      sudokuId: parseInt($page.params.id),
+      gameData: {
+        values,
+        cornermarks,
+        centermarks,
+        notes,
+        colors
+      }
+    });
+  }
 </script>
 
 <svelte:window on:keydown={handleKeyboardShortcuts} on:keyup={handleKeyUp} />
@@ -298,14 +322,33 @@
       <Question size={32} />
     </button>
 
-    {#if ($page.url.pathname.includes('/sudoku/editor') || $walkthroughStore.length > 0) && $mode === 'game'}
-      <button
-        title="Walkthrough"
-        class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
-        on:click={showWalkthroughEditorModal}
-      >
-        <PersonSimpleWalk size={32} />
-      </button>
+    {#if $mode === 'game'}
+      {#if !$page.url.pathname.includes('/sudoku/editor')}
+        <button
+          title="Check digits"
+          class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+          on:click={checkSolution}
+        >
+          <Check size={32} />
+        </button>
+        <button
+          title="Save for later"
+          class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+          on:click={saveProgress}
+        >
+          <FloppyDisk size={32} />
+        </button>
+      {/if}
+
+      {#if $page.url.pathname.includes('/sudoku/editor') || $walkthroughStore.length > 0}
+        <button
+          title="Walkthrough"
+          class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+          on:click={showWalkthroughEditorModal}
+        >
+          <PersonSimpleWalk size={32} />
+        </button>
+      {/if}
     {/if}
 
     <button

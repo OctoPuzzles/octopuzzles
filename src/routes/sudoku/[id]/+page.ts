@@ -8,9 +8,11 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
   const trpcClient = trpc(fetch);
   const sudokuId = parseInt(params.id);
   const dataParam = url.searchParams.get('data');
-  const [sudoku, walkthrough] = await Promise.all([
+  const [sudoku, walkthrough, savedGame] = await Promise.all([
     trpcClient.query('sudokus:get', { id: sudokuId }),
-    trpcClient.query('walkthroughs:get', { sudokuId })
+    trpcClient.query('walkthroughs:get', { sudokuId }),
+    trpcClient.query('savedGames:get', { sudokuId }),
+    trpcClient.mutation('userStats:viewed', { sudokuId })
   ]);
   if (sudoku == null) {
     throw error(404, 'Not found');
@@ -20,6 +22,6 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
     walkthrough,
     gameData: dataParam
       ? (decompressFromBase64(dataParam.replace(/ /g, '+')) as SolutionStep)
-      : null
+      : savedGame?.gameData
   };
 };
