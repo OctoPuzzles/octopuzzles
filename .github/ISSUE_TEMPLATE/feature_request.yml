@@ -1,15 +1,15 @@
 name: Feature Request
 description: Suggest an idea or feature for octopuzzles
-title: "[Feat] "
-labels: ["feature request"]
+title: '[Feat] '
+labels: ['feature request']
 body:
   - type: checkboxes
     attributes:
       label: Is there an existing issue for this?
       description: Please search to see if an issue already exists for the feature you want.
       options:
-      - label: I have searched the existing issues
-        required: true
+        - label: I have searched the existing issues
+          required: true
   - type: textarea
     attributes:
       label: Is your feature request related to a problem? Please describe
