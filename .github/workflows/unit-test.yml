@@ -1,0 +1,23 @@
+name: Test
+on:
+  pull_request:
+jobs:
+  test:
+    env:
+      DATABASE_URL: test
+      SMTP_SERVER: test
+      SMTP_PORT: 1
+      SMTP_LOGIN: test
+      SMTP_PASSWORD: test
+      BASE_URL: test
+      JWT_SECRET: test
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: npm ci
+      - name: Run prisma generate
+        run: npx prisma generate
+      - name: Unit tests
+        run: npm run test:unit

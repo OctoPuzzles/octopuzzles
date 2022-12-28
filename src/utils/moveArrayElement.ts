@@ -12,3 +12,11 @@ const moveArrayElement = <T>(arr: (T | undefined)[], old_index: number, new_inde
 };
 
 export default moveArrayElement;
+
+if (import.meta.vitest) {
+	const { it, expect } = import.meta.vitest
+	it('correctly moves elements around', () => {
+		const a = [1, 2, 3, 4, 5];
+		expect(moveArrayElement(a, 0, 1)).toStrictEqual([2, 1, 3, 4, 5]);
+	})
+}
