@@ -27,7 +27,8 @@ test.describe('Scanner', () => {
 
 		await page.getByRole('button', { name: 'Scan', exact: true }).click();
 
-		await page.waitForTimeout(2000);
+		// Just wait for it to finish
+		await page.waitForTimeout(1000);
 
 		const amountOfNumbers = await page.locator('id=numbers').locator('text').count();
 

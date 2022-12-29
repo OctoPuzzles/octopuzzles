@@ -1,7 +1,4 @@
 import { expect, test as base } from '@playwright/test';
-import { clickCell } from './testUtils/clickCell';
-
-const dimensions = { rows: 6, columns: 6 };
 
 const test = base.extend({
 	page: async ({ page }, use) => {
@@ -45,7 +42,7 @@ test.describe('6x6 sudoku', () => {
 
 	test('Number inputs in the sudoku game, and wrong cell highlights', async ({ page }) => {
 		// Click row 3 cell 3
-		await clickCell({ page, position: { row: 2, column: 2 }, dimensions });
+		await page.locator('id=interface').locator('rect').nth(14).click();
 		// Input digit 5 to see if it shows a wrong cell
 		await page.keyboard.press('Digit5');
 		// Check that there is a 5 in the cell
@@ -77,7 +74,7 @@ test.describe('6x6 sudoku', () => {
 		await page.getByRole('button', { name: 'Corner marks' }).click();
 
 		// Click row 3 cell 3
-		await clickCell({ page, position: { row: 2, column: 2 }, dimensions });
+		await page.locator('id=interface').locator('rect').nth(14).click();
 		// Input digit 5
 		await page.keyboard.press('Digit5');
 		// Check that there is a 5 in the corner of that cell
@@ -91,7 +88,7 @@ test.describe('6x6 sudoku', () => {
 		await page.getByRole('button', { name: 'Center marks' }).click();
 
 		// Click row 3 cell 3
-		await clickCell({ page, position: { row: 2, column: 2 }, dimensions });
+		await page.locator('id=interface').locator('rect').nth(14).click();
 		// Input digit 5
 		await page.keyboard.press('Digit5');
 		expect(
@@ -104,7 +101,7 @@ test.describe('6x6 sudoku', () => {
 		await page.getByRole('button', { name: 'Colors' }).click();
 
 		// Click row 3 cell 3
-		await clickCell({ page, position: { row: 2, column: 2 }, dimensions });
+		await page.locator('id=interface').locator('rect').nth(14).click();
 		// Input digit 5
 		await page.keyboard.press('Digit5');
 		expect(
@@ -114,7 +111,7 @@ test.describe('6x6 sudoku', () => {
 	});
 
 	test('Notes inputs in the sudoku game', async ({ page }) => {
-		await clickCell({ page, position: { row: 2, column: 2 }, dimensions });
+		await page.locator('id=interface').locator('rect').nth(14).click();
 
 		await page.getByRole('button', { name: 'Notes' }).click();
 
