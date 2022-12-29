@@ -7,7 +7,7 @@
 - [ ] I have checked for other existing PR's which might implement the same features/fixes
 - [ ] I have marked & linked relevant issues
 - [ ] I have created new issues found/created in this PR and linked to this PR
-- [ ] I have addded tests to relavant code, and added regression test if this is a bug fix
+- [ ] I have added tests to relevant code, and added regression test if this is a bug fix
 
 ## This PR closes
 
