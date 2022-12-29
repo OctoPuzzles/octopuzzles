@@ -74,7 +74,6 @@ test.describe('6x6 sudoku', () => {
 	});
 
 	test('Cornermark inputs in the sudoku game', async ({ page }) => {
-		// Go to corner marks control
 		await page.getByRole('button', { name: 'Corner marks' }).click();
 
 		// Click row 3 cell 3
@@ -86,5 +85,44 @@ test.describe('6x6 sudoku', () => {
 			await page.locator('id=cornermarks').locator('text').first().textContent(),
 			'R3C3 Should have a 5 in the corner'
 		).toBe('5');
+	});
+
+	test('Centermark inputs in the sudoku game', async ({ page }) => {
+		await page.getByRole('button', { name: 'Center marks' }).click();
+
+		// Click row 3 cell 3
+		await clickCell({ page, position: { row: 2, column: 2 }, dimensions });
+		// Input digit 5
+		await page.keyboard.press('Digit5');
+		expect(
+			await page.locator('id=centermarks').locator('text').first().textContent(),
+			'R3C3 Should have a 5 in the center'
+		).toBe('5');
+	});
+
+	test('Color inputs in the sudoku game', async ({ page }) => {
+		await page.getByRole('button', { name: 'Colors' }).click();
+
+		// Click row 3 cell 3
+		await clickCell({ page, position: { row: 2, column: 2 }, dimensions });
+		// Input digit 5
+		await page.keyboard.press('Digit5');
+		expect(
+			await page.locator('id=colors').locator('path').first().getAttribute('class'),
+			'R3C3 Should have a yellow background'
+		).toMatch(/text-yellow/);
+	});
+
+	test('Notes inputs in the sudoku game', async ({ page }) => {
+		await clickCell({ page, position: { row: 2, column: 2 }, dimensions });
+
+		await page.getByRole('button', { name: 'Notes' }).click();
+
+		// Input digit 5
+		await page.keyboard.press('Digit5');
+		expect(
+			page.locator('id=notes').locator('polygon').first(),
+			'R3C3 Should have a note saying "5"'
+		).toBeDefined();
 	});
 });
