@@ -1,15 +1,15 @@
 {
-  "cookies": [
-    {
-      "name": "token",
-      "value": "",
-      "domain": "localhost",
-      "path": "/",
-      "expires": 1672440904.12835,
-      "httpOnly": true,
-      "secure": false,
-      "sameSite": "Lax"
-    }
-  ],
-  "origins": []
+	"cookies": [
+		{
+			"name": "token",
+			"value": "",
+			"domain": "localhost",
+			"path": "/",
+			"expires": 1672440904.12835,
+			"httpOnly": true,
+			"secure": false,
+			"sameSite": "Lax"
+		}
+	],
+	"origins": []
 }
