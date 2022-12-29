@@ -1,5 +1,3 @@
-import { intervalToDuration } from 'date-fns';
-
 export function rankingAlgorithm(points: number, publicSince: Date): number {
 	const now = new Date();
 	const milliseconds = Math.abs(now.getTime() - publicSince.getTime());
@@ -9,16 +7,15 @@ export function rankingAlgorithm(points: number, publicSince: Date): number {
 }
 
 if (import.meta.vitest) {
-	const { it, expect } = import.meta.vitest
+	const { it, expect } = import.meta.vitest;
 	it('increases if the sudoku gets more points', () => {
 		const date = new Date();
-		expect(rankingAlgorithm(100, date)).toBeLessThan(rankingAlgorithm(101, date))
+		expect(rankingAlgorithm(100, date)).toBeLessThan(rankingAlgorithm(101, date));
 	});
-
 
 	it('increases the points for newer sudokus', () => {
 		const date1 = new Date(2022, 11, 24);
 		const date2 = new Date(2022, 11, 25);
-		expect(rankingAlgorithm(100, date1)).toBeLessThan(rankingAlgorithm(100, date2))
+		expect(rankingAlgorithm(100, date1)).toBeLessThan(rankingAlgorithm(100, date2));
 	});
 }

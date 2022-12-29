@@ -56,7 +56,7 @@
 			{values}
 			{gameColors}
 		>
-			<g slot="highlights">
+			<g slot="highlights" id="highlights">
 				{#each $wrongCells as cell}
 					<rect
 						class="fill-current w-cell h-cell text-red-200"

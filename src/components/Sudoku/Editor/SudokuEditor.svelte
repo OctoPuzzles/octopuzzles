@@ -45,7 +45,7 @@
 			{paths}
 			{regions}
 		>
-			<g slot="highlights">
+			<g slot="highlights" id="highlights">
 				{#if $selectedCells}
 					{#each $selectedCells as cell}
 						<rect

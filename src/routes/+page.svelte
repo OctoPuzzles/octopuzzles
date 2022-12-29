@@ -82,7 +82,6 @@
 			activeLabels = [...activeLabels, labelId];
 		}
 	}
-	$: console.log({ activeLabels, labels: data.labels });
 </script>
 
 <svelte:head>

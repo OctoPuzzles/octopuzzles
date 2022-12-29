@@ -9,9 +9,8 @@ const capitalize = (s: string): string => {
 export default capitalize;
 
 if (import.meta.vitest) {
-	const { it, expect } = import.meta.vitest
+	const { it, expect } = import.meta.vitest;
 	it('capitalizes correctly', () => {
-		expect(capitalize("hello there_man")).toEqual("Hello There Man");
+		expect(capitalize('hello there_man')).toEqual('Hello There Man');
 	});
 }
-

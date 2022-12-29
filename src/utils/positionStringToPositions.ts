@@ -24,10 +24,9 @@ export function positionStringToPosition(
 	return positionFromPositionString(positionStrings);
 }
 
-
 if (import.meta.vitest) {
-	const { it, expect } = import.meta.vitest
+	const { it, expect } = import.meta.vitest;
 	it('creates the correct position from a position string', () => {
-		expect(positionFromPositionString("R5C7")).toStrictEqual({ row: 4, column: 6 });
-	})
+		expect(positionFromPositionString('R5C7')).toStrictEqual({ row: 4, column: 6 });
+	});
 }

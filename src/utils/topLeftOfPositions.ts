@@ -18,8 +18,15 @@ export function topLeftOfPositions(positions: Position[]): Position {
 }
 
 if (import.meta.vitest) {
-	const { it, expect } = import.meta.vitest
+	const { it, expect } = import.meta.vitest;
 	it('finds top left of positions', () => {
-		expect(topLeftOfPositions([{ row: 0, column: 0 }, { row: 1, column: 1 }, { row: 8, column: 6 }, { row: 4, column: 2 }])).toStrictEqual({ row: 0, column: 0 });
-	})
+		expect(
+			topLeftOfPositions([
+				{ row: 0, column: 0 },
+				{ row: 1, column: 1 },
+				{ row: 8, column: 6 },
+				{ row: 4, column: 2 }
+			])
+		).toStrictEqual({ row: 0, column: 0 });
+	});
 }
