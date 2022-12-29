@@ -1,25 +1,42 @@
 name: E2E tests
 on:
   pull_request:
+
+env:
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/octopuzzles?schema=public
+  SMTP_SERVER: test
+  SMTP_PORT: 1
+  SMTP_LOGIN: test
+  SMTP_PASSWORD: test
+  BASE_URL: test
+  JWT_SECRET: test
+
 jobs:
   test:
+    services:
+      # 2. Include a postgres service, this will spin up a database for you in your CI environment (check the script below if you want to use mysql)
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     timeout-minutes: 60
-    env:
-      DATABASE_URL: test
-      SMTP_SERVER: test
-      SMTP_PORT: 1
-      SMTP_LOGIN: test
-      SMTP_PASSWORD: test
-      BASE_URL: test
-      JWT_SECRET: test
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
         run: npm ci
-      - name: Run prisma generate
-        run: npx prisma generate
+      - name: Migrate database
+        run: pnpx prisma migrate reset
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: E2E tests

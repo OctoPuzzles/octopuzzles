@@ -6,10 +6,10 @@ const config: PlaywrightTestConfig = {
 		port: 4173
 	},
 	testDir: 'tests',
-	globalSetup: './tests/testUtils/authedSetup',
+	globalSetup: './tests/setup/authedSetup',
 	use: {
 		// Tell all tests to load signed-in state from 'storageState.json'.
-		storageState: 'storageState.json'
+		storageState: './tests/setup/storageState.json'
 	}
 };
 
