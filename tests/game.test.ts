@@ -1,5 +1,5 @@
 import { expect, test as base } from '@playwright/test';
-import { clickCell } from '@testUtils/clickCell';
+import { clickCell } from './testUtils/clickCell';
 
 const dimensions = { rows: 6, columns: 6 };
 
