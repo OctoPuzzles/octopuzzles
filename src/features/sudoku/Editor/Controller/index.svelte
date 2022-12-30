@@ -2,6 +2,7 @@
 	import ControllerHelpModal from '$components/Modals/ControllerHelpModal.svelte';
 	import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
 	import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
+	import ControllerSkeleton from '$features/sudoku/ControllerSkeleton.svelte';
 	import BorderCluesIcon from '$icons/BorderClues.svelte';
 	import CellCluesIcon from '$icons/CellClues.svelte';
 	import CellsIcon from '$icons/Cells.svelte';
@@ -16,7 +17,6 @@
 	import { editorHistory, inputMode } from '$stores/sudokuStore';
 	import type { InputMode } from '$types';
 	import SquareButton from '$ui/SquareButton.svelte';
-	import classNames from 'classnames';
 	import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
 	import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
 	import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';
@@ -75,35 +75,17 @@
 	}
 </script>
 
-<div
-	class="grid grid-rows-7 sm:grid-rows-6 grid-cols-4 sm:grid-cols-5 gap-2 max-w-96 sm:w-120 h-160 sm:h-140 relative"
+<ControllerSkeleton
+	menuItems={Object.entries(controls).map(([im, info]) => ({
+		icon: info.icon,
+		isSelected: info.label === openControl,
+		onClick: () => setInputMode(im),
+		title: info.label
+	}))}
 >
-	<!-- Main control container -->
-	<div class="row-span-4 col-span-5 sm:col-span-4 bg-gray-100 rounded-md shadow">
-		<svelte:component this={controller} />
-	</div>
+	<svelte:component this={controller} slot="main" />
 
-	<!-- Rightmost controls -->
-	<div
-		class="row-span-1 col-span-4 sm:row-span-5 sm:col-span-1 bg-gray-100 rounded-md shadow flex flex-row sm:flex-col items-center gap-2 px-2 sm:py-2 overflow-x-scroll sm:overflow-y-scroll"
-	>
-		{#each Object.entries(controls) as [im, info]}
-			<SquareButton
-				text={info.label}
-				class={classNames({ 'ring-2 border-white ring-blue-500': info.label === openControl })}
-				on:click={() => {
-					setInputMode(im);
-				}}
-			>
-				<svelte:component this={info.icon} />
-			</SquareButton>
-		{/each}
-	</div>
-
-	<!-- Bottom Controls -->
-	<div
-		class="row-span-1 col-span-5 sm:col-span-4 bg-gray-100 rounded-md shadow flex justify-evenly items-center"
-	>
+	<svelte:fragment slot="bottom">
 		<SquareButton
 			text="Undo"
 			disabled={!editorHistory.canUndo}
@@ -130,10 +112,9 @@
 		>
 			<ArrowCounterClockwise size={32} />
 		</SquareButton>
-	</div>
+	</svelte:fragment>
 
-	<!-- Aux Controls -->
-	<div class="row-span-1 col-span-6 sm:col-span-5 flex justify-evenly items-center">
+	<svelte:fragment slot="aux">
 		<button
 			on:click={showHelp}
 			class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
@@ -156,5 +137,5 @@
 		>
 			<FileArrowDown size={32} />
 		</button>
-	</div>
-</div>
+	</svelte:fragment>
+</ControllerSkeleton>

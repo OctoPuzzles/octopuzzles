@@ -4,7 +4,7 @@
 		stroke-dashoffset="10"
 		fill="none"
 		class="stroke-current"
-		stroke-width="10"
+		stroke-width="8"
 		height="176"
 		width="176"
 		y="40"

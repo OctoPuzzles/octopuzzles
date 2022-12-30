@@ -1,7 +1,7 @@
 <script lang="ts">
 	import html2canvas from 'html2canvas';
-	import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
-	import SudokuInfo from '$components/Sudoku/SudokuInfo.svelte';
+	import SudokuGame from '$features/sudoku/Game/SudokuGame.svelte';
+	import SudokuInfo from '$features/sudoku/SudokuInfo.svelte';
 	import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
+	import SudokuGame from '$features/sudoku/Game/SudokuGame.svelte';
 	import { editorHistory, gameHistory } from '$stores/sudokuStore';
 	import { decompressFromBase64 } from '$features/fpuzzles/compressor';
 	import { defaultValues } from '$utils/defaults';

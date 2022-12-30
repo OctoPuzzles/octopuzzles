@@ -222,7 +222,7 @@
 <svelte:window on:keydown={handleKeyDown} />
 
 <div class="grid grid-cols-2 w-full h-full p-2">
-	<div class="px-2 flex flex-col overflow-hidden justify-between">
+	<div class="px-2 flex flex-col gap-1 overflow-hidden justify-between">
 		<div
 			class="bg-gray-200 rounded-md shadow-inner flex flex-col items-center p-2 overflow-hidden h-full"
 		>

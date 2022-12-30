@@ -22,7 +22,7 @@
 	{id}
 	on:change
 	class={classNames(
-		'relative block rounded-lg text-black border border-gray-300 py-1 px-4 cursor-pointer text-base font-semibold',
+		'relative block rounded-lg text-black border border-gray-300 py-1 px-4 cursor-pointer text-base',
 		className
 	)}
 >

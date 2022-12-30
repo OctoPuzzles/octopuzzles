@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import SudokuDisplay from '$components/Sudoku/Display/index.svelte';
+	import SudokuDisplay from '$features/sudoku/Display/index.svelte';
 	import Controller from './Controller/index.svelte';
-	import Interface from '$components/Sudoku/Interface.svelte';
+	import Interface from '$features/sudoku/Interface.svelte';
 	import { highlights } from '$stores/sudokuStore';
-	import type { EditorHistoryStep, GameHistoryStep } from '$types';
+	import type { EditorHistoryStep } from '$types';
 
-	const { selectedCells, highlightedCells, wrongCells } = highlights;
+	const { selectedCells, highlightedCells } = highlights;
 
 	// SIZING
 	let windowHeight: number;
@@ -27,12 +27,6 @@
 	export let paths: EditorHistoryStep['paths'];
 	export let dimensions: EditorHistoryStep['dimensions'];
 	export let logic: EditorHistoryStep['logic'];
-
-	export let values: GameHistoryStep['values'];
-	export let gameColors: GameHistoryStep['colors'];
-	export let cornermarks: GameHistoryStep['cornermarks'];
-	export let centermarks: GameHistoryStep['centermarks'];
-	export let notes: GameHistoryStep['notes'];
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
@@ -48,23 +42,10 @@
 			{editorColors}
 			{givens}
 			{logic}
-			{notes}
 			{paths}
 			{regions}
-			{cornermarks}
-			{centermarks}
-			{values}
-			{gameColors}
 		>
 			<g slot="highlights" id="highlights">
-				{#each $wrongCells as cell}
-					<rect
-						class="fill-current w-cell h-cell text-red-200"
-						x={cellSize * cell.column}
-						y={cellSize * cell.row}
-						vector-effect="non-scaling-size"
-					/>
-				{/each}
 				{#if $selectedCells}
 					{#each $selectedCells as cell}
 						<rect

@@ -39,9 +39,9 @@
 <li class="rounded-lg shadow border p-2">
 	<div class="flex gap-2 items-center mb-2">
 		<h6 class="font-semibold">{comment.user.username}</h6>
-		<span class="text-sm text-gray-500"
-			>created {formatDistanceToNowStrict(comment.createdAt)} ago</span
-		>
+		<span class="text-sm text-gray-500">
+			created {formatDistanceToNowStrict(comment.createdAt)} ago
+		</span>
 	</div>
 	{#if updatedContent == null}
 		<HtmlContent content={comment.body} />

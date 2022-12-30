@@ -3,7 +3,7 @@
 	import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
 	import { onMount } from 'svelte';
 	import { highlights } from '$stores/sudokuStore';
-	import SudokuList from '$components/Sudoku/SudokuList.svelte';
+	import SudokuList from '$features/sudoku/SudokuList.svelte';
 	import trpc from '$lib/client/trpc';
 	import type { PageData } from './$types';
 

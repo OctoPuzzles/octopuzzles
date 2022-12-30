@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { highlights } from '$stores/sudokuStore';
-	import SudokuList from '$components/Sudoku/SudokuList.svelte';
+	import SudokuList from '$features/sudoku/SudokuList.svelte';
 	import PuzzleLabel from '$ui/PuzzleLabel.svelte';
 	import Filters from '$icons/Filters.svelte';
 	import { page } from '$app/stores';

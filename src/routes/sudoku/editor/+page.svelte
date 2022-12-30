@@ -1,9 +1,8 @@
 <script lang="ts">
-	import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
-	import SudokuEditor from '$components/Sudoku/Editor/SudokuEditor.svelte';
+	import SudokuGame from '$features/sudoku/Game/SudokuGame.svelte';
+	import SudokuEditor from '$features/sudoku/Editor/SudokuEditor.svelte';
 	import Button from '$ui/Button.svelte';
 	import Input from '$ui/Input.svelte';
-	import RadioGroup from '$ui/RadioGroup.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import {
@@ -14,7 +13,7 @@
 	} from '$utils/defaults';
 	import { page } from '$app/stores';
 	import { openModal } from '$stores/modalStore';
-	import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
+	import CommonDescriptionsModal from '$features/sudoku/CommonDescriptionsModal.svelte';
 	import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
 	import { getUserSolution } from '$utils/getSolution';
 	import { editorHistory, gameHistory, mode } from '$stores/sudokuStore';
@@ -290,12 +289,31 @@
 </script>
 
 <div class="flex items-center justify-center h-20 absolute top-0 w-full pointer-events-none">
-	<div class="max-w-48 pointer-events-auto">
-		<RadioGroup
-			options={{ editor: 'Editor', game: 'Solution', form: 'Details' }}
-			bind:value={tab}
-			onChange={undefined}
-		/>
+	<div class="max-w-48 pointer-events-auto border-b border-gray-200 flex gap-2">
+		<button
+			class={classNames(
+				'p-2 border-b-2 border-transparent -mb-px',
+				tab === 'editor' ? 'text-blue-500 border-blue-500' : 'text-black'
+			)}
+			type="button"
+			on:click={() => (tab = 'editor')}>Editor</button
+		>
+		<button
+			class={classNames(
+				'p-2 border-b-2 border-transparent -mb-px',
+				tab === 'game' ? 'text-blue-500 border-blue-500' : 'text-black'
+			)}
+			type="button"
+			on:click={() => (tab = 'game')}>Solution</button
+		>
+		<button
+			class={classNames(
+				'p-2 border-b-2 border-transparent -mb-px',
+				tab === 'form' ? 'text-blue-500 border-blue-500' : 'text-black'
+			)}
+			type="button"
+			on:click={() => (tab = 'form')}>Details</button
+		>
 	</div>
 </div>
 
@@ -351,7 +369,7 @@
 				<p slot="error">{errors.title ? errors.title : ''}</p>
 			</Input>
 			<Label>Description</Label>
-			<div class="relative">
+			<div class="relative w-full">
 				<button
 					tabindex={-1}
 					class="absolute top-2 p-1 right-2 w-6 h-6 rounded-full border border-orange-500 text-orange-500 bg-orange-100 hover:bg-orange-200 hover:text-orange-600 transition-colors shadow flex items-center justify-center"
@@ -359,7 +377,7 @@
 					type="button"
 					on:click={openAddDescriptionModal}><Plus size={24} /></button
 				>
-				<div class="rounded-lg border mt-2 p-1">
+				<div class="rounded-lg border mt-2 p-1 min-h-[10rem]">
 					<RichTextEditor bind:content={$description} placeholder="Normal sudoku rules apply..." />
 					{#if errors.description}
 						<p class="text-red-500">
@@ -384,10 +402,10 @@
 
 			<h1 class="font-semibold mt-8">Labels</h1>
 			<p class="mb-2">Pick the labels that match your puzzle</p>
-			<div class="flex flex-wrap gap-2">
-				{#each $labels as label}
+			<div class="flex flex-wrap gap-2 h-96 overflow-y-auto p-4 bg-gray-100">
+				{#each $labels.sort((a, b) => (a.label.name > b.label.name ? 1 : -1)) as label}
 					<Label
-						class={classNames('cursor-pointer p-2 rounded-md shadow w-52', {
+						class={classNames('cursor-pointer p-2 rounded-md shadow w-56 bg-white', {
 							'ring-blue-500 ring-2': label.selected,
 							'ring-gray-300 ring-1': !label.selected
 						})}

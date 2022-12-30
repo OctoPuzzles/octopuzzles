@@ -8,14 +8,14 @@
 		class="stroke-current text-blue-700"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><rect
 		x="40"
 		y="40"
 		width="176"
 		height="176"
 		rx="8"
-		stroke-width="16"
+		stroke-width="8"
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
@@ -28,6 +28,6 @@
 		class="stroke-current text-blue-700"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/></svg
 >
