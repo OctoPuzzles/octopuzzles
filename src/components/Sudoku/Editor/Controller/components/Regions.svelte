@@ -19,7 +19,7 @@
 	import classNames from 'classnames';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import { isCommandKey } from '$utils/isCommandKey';
+	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import deepCopy from '$utils/deepCopy';
 	import Checkbox from '$ui/Checkbox.svelte';

@@ -2,8 +2,8 @@
 	import { closeModal } from '$stores/modalStore';
 	import Button from '$ui/Button.svelte';
 	import Input from '$ui/Input.svelte';
-	import { decompressFromBase64 } from '$utils/compressor';
-	import { importFPuzzleIntoEditorHistory } from '$utils/importFPuzzleIntoEditor';
+	import { decompressFromBase64 } from '$features/fpuzzles/compressor';
+	import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
 
 	export let isOpen: boolean;
 

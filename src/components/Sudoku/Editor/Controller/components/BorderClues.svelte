@@ -11,7 +11,7 @@
 	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
 	import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
 	import deepCopy from '$utils/deepCopy';
-	import isArrowKey from '$utils/isArrowKey';
+	import isArrowKey from '$utils/keyboard/isArrowKey';
 	import moveArrayElement from '$utils/moveArrayElement';
 	import classNames from 'classnames';
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';

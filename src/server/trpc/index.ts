@@ -8,7 +8,7 @@ import users from './users';
 import walkthroughs from './walkthroughs';
 import votes from './votes';
 import comments from './comments';
-import prisma from '$utils/prisma';
+import prisma from '$lib/prisma';
 import { getJwt } from '$utils/jwt/getJwt';
 
 export const createContext = async (event: RequestEvent) => {

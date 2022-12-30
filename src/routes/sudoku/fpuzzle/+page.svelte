@@ -3,9 +3,9 @@
 	import { page } from '$app/stores';
 	import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
 	import { editorHistory, gameHistory } from '$stores/sudokuStore';
-	import { decompressFromBase64 } from '$utils/compressor';
+	import { decompressFromBase64 } from '$features/fpuzzles/compressor';
 	import { defaultValues } from '$utils/defaults';
-	import { importFPuzzleIntoEditorHistory } from '$utils/importFPuzzleIntoEditor';
+	import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
 	import { onMount } from 'svelte';
 
 	// TIMER: one that does not run when the tab is inactive, but runs as if it had.

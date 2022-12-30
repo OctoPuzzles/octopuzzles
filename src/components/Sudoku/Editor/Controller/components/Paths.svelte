@@ -28,7 +28,7 @@
 	import Checkbox from '$ui/Checkbox.svelte';
 	import Range from '$ui/Range.svelte';
 	import { pathTypeNames, pathTypesToLabel } from '$constants';
-	import { isCommandKey } from '$utils/isCommandKey';
+	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import { pathDefaults } from '$utils/prefabs';
 	import Circle from '$icons/shapes/Circle.svelte';

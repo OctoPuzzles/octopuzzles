@@ -3,7 +3,7 @@
 	import type { Cells, Dimensions, Position } from '$models/Sudoku';
 	import { handleArrows, handleMouseDown, handleMouseEnter, mode } from '$stores/sudokuStore';
 	import { defaultCells } from '$utils/defaults';
-	import { isCommandKey } from '$utils/isCommandKey';
+	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 
 	export let cells: Cells;
 	export let dimensions: Dimensions;
