@@ -1,9 +1,8 @@
-name: lintingAndPrettier
-# Controls when the workflow will run
+name: Linting, Prettier and Check
 on:
   pull_request:
 jobs:
-  lint:
+  linting_prettier_check:
     env:
       DATABASE_URL: test
       SMTP_SERVER: test
@@ -17,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
-        run: npm i
+        run: npm ci
       - name: Run prisma generate
         run: npx prisma generate
       - name: Run Prettier
