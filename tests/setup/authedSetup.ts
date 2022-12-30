@@ -3,7 +3,7 @@ import { chromium } from '@playwright/test';
 async function authedSetup() {
 	const browser = await chromium.launch();
 	const page = await browser.newPage();
-	await page.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
+	await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' });
 	await page.getByRole('button', { name: 'Log In' }).click();
 	await page.getByPlaceholder('username or email').fill('dev@octopuzzles.com');
 	await page.getByPlaceholder('password').fill('dev');
