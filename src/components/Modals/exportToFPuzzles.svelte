@@ -1,10 +1,10 @@
 <script lang="ts">
 	import CtCLink from '$components/shareButtons/CtCLink.svelte';
 	import FPuzzlesLink from '$components/shareButtons/FPuzzlesLink.svelte';
+	import { exportAsFPuzzlesJson } from '$features/fpuzzles/exportAsFPuzzlesJson';
 	import CtC from '$icons/CtC.svelte';
 	import FPuzzles from '$icons/FPuzzles.svelte';
-	import { compressToBase64 } from '$utils/compressor';
-	import { exportAsFPuzzlesJson } from '$utils/exportAsFPuzzlesJson';
+	import { compressToBase64 } from '$features/fpuzzles/compressor';
 
 	export let isOpen: boolean;
 

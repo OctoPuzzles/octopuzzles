@@ -1,6 +1,6 @@
 import type { Position } from '$models/Sudoku';
 import { hasOpenModals } from '$stores/modalStore';
-import { isCommandKey } from '$utils/isCommandKey';
+import { isCommandKey } from '$utils/keyboard/isCommandKey';
 import { get } from 'svelte/store';
 import { editorHistory, highlights } from '.';
 

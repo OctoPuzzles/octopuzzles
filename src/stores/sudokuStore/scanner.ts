@@ -5,7 +5,7 @@ import type { Position } from '$models/Sudoku';
 import type { ScannerSettings } from '$models/User';
 import { editorHistory, gameHistory, mode, highlights } from '.';
 import { cageDefaults, pathDefaults, regionDefaults } from '$utils/prefabs';
-import { getValuesFromRange } from '$utils/getValuesFromRange';
+import { getValuesFromRange } from '$utils/keyboard/getValuesFromRange';
 
 // WRITABLES
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

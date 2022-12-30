@@ -1,16 +1,18 @@
 import { editorHistory, gameHistory } from '$stores/sudokuStore';
-import type { FPuzzlesJson, HexColor, PositionString } from './compressor';
+
 import { get } from 'svelte/store';
-import deepCopy from './deepCopy';
-import { defaultRegions } from './defaults';
-import { topLeftOfPositions } from './topLeftOfPositions';
+
+import type { Color, Position } from '$models/Sudoku';
+import type { FPuzzlesJson, HexColor, PositionString } from '$features/fpuzzles/compressor';
+import deepCopy from '$utils/deepCopy';
+import { defaultRegions } from '$utils/defaults';
+import { topLeftOfPositions } from '$utils/topLeftOfPositions';
 import {
 	getBorderCluesToDraw,
 	getCellCluesToDraw,
 	getPathsToDraw,
 	getRegionsToDraw
-} from './prefabs';
-import type { Color, Position } from '$models/Sudoku';
+} from '$utils/prefabs';
 
 export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	const givens = editorHistory.getClue('givens');

@@ -61,6 +61,9 @@ const colors: [Color, Rgb][] = [
 	['Yellow', [250, 204, 21]]
 ];
 
+/**
+ * Finds the one of the 9 standard colors that are closest to he color given
+ */
 export function closestColor(color: HexColor): Color {
 	const rgb1 = convertToRGB(color);
 

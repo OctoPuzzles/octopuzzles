@@ -24,8 +24,8 @@
 	import classNames from 'classnames';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import isArrowKey from '$utils/isArrowKey';
-	import { isCommandKey } from '$utils/isCommandKey';
+	import isArrowKey from '$utils/keyboard/isArrowKey';
+	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import { cageDefaults } from '$utils/prefabs';
 	import moveArrayElement from '$utils/moveArrayElement';
