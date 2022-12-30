@@ -10,7 +10,7 @@ async function authedSetup() {
 
 	await page.getByRole('dialog').getByRole('button', { name: 'Log In' }).click();
 	// Save signed-in state to 'storageState.json'.
-	await page.context().storageState({ path: 'storageState.json' });
+	await page.context().storageState({ path: './tests/setup/storageState.json' });
 	await browser.close();
 }
 
