@@ -36,7 +36,7 @@ jobs:
       - name: Install modules
         run: npm ci
       - name: Migrate database
-        run: pnpx prisma migrate reset
+        run: npx prisma migrate reset
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: E2E tests
