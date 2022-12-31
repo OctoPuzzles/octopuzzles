@@ -4,7 +4,6 @@
 	import WhiteBackground from '$features/sudoku/components/display/killercages/WhiteBackground.svelte';
 
 	export let cages: Extendedcages;
-
 	export let dimensions: Dimensions;
 </script>
 

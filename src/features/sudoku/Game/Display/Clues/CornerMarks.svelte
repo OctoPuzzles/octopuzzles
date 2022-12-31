@@ -5,16 +5,16 @@
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
 	export let dimensions: Dimensions;
-	export let cornermarks: Cornermarks | null;
+	export let cornermarks: Cornermarks;
 	export let givens: Givens;
-	export let values: GameValues | null;
+	export let values: GameValues;
 </script>
 
 <g id="cornermarks" class="pointer-events-none">
 	{#each arrayfrom0ToN(dimensions.rows) as row}
 		{#each arrayfrom0ToN(dimensions.columns) as column}
-			{@const cornermark = cornermarks?.[row]?.[column]}
-			{#if cornermark && cornermark.length > 0 && !givens[row][column] && !values?.[row]?.[column]}
+			{@const cornermark = cornermarks[row][column]}
+			{#if cornermark && cornermark.length > 0 && !givens[row][column] && !values[row][column]}
 				{#each cornermark.split('') as cornerMark, i}
 					<text
 						x={cellSize * (column + 0.18 + 0.3 * (i % 3))}

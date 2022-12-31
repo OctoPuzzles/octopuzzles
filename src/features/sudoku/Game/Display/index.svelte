@@ -26,14 +26,12 @@
 	export let dimensions: EditorHistoryStep['dimensions'];
 	export let logic: EditorHistoryStep['logic'];
 
-	export let interactive = false;
-
 	// GAME STATE
-	export let values: GameHistoryStep['values'] | null = null;
-	export let gameColors: GameHistoryStep['colors'] | null = null;
-	export let cornermarks: GameHistoryStep['cornermarks'] | null = null;
-	export let centermarks: GameHistoryStep['centermarks'] | null = null;
-	export let notes: GameHistoryStep['notes'] | null = null;
+	export let values: GameHistoryStep['values'];
+	export let gameColors: GameHistoryStep['colors'];
+	export let cornermarks: GameHistoryStep['cornermarks'];
+	export let centermarks: GameHistoryStep['centermarks'];
+	export let notes: GameHistoryStep['notes'];
 </script>
 
 <svg
@@ -48,8 +46,8 @@
 	<Cells {cells} />
 	<Notes {notes} />
 	<Regions {regions} {dimensions} />
-	<BorderClues {borderClues} {interactive} />
-	<CellClues {cellClues} {interactive} />
+	<BorderClues {borderClues} />
+	<CellClues {cellClues} />
 	<CornerMarks {values} {givens} {dimensions} {cornermarks} />
 	<CenterMarks {values} {givens} {dimensions} {centermarks} />
 	<Numbers {values} {givens} {dimensions} />

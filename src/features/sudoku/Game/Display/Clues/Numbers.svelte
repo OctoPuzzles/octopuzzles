@@ -6,7 +6,7 @@
 	import classNames from 'classnames';
 
 	export let givens: Givens;
-	export let values: GameValues | null;
+	export let values: GameValues;
 
 	export let dimensions: Dimensions;
 
@@ -27,7 +27,7 @@
 <g id="numbers" class="select-none pointer-events-none">
 	{#each arrayfrom0ToN(dimensions.rows) as row}
 		{#each arrayfrom0ToN(dimensions.columns) as column}
-			{@const val = givens[row][column] || values?.[row]?.[column]}
+			{@const val = givens[row][column] || values[row][column]}
 			{#if val && val.length > 0}
 				<text
 					x={cellSize * (column + 0.5)}

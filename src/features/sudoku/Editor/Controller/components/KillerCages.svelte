@@ -32,6 +32,8 @@
 	import type { CageType, Extendedcage, Position } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
 	import Checkbox from '$ui/Checkbox.svelte';
+	import Killercage from '$features/sudoku/components/display/killercages/Killercage.svelte';
+	import ScaledSvg from '$features/sudoku/components/display/ScaledSvg.svelte';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
@@ -348,14 +350,15 @@
 							</div>
 						</div>
 						<span
-							class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
+							class="hover:bg-gray-100 w-full h-full flex items-center justify-center p-1"
 							on:click={() => {
 								$selectedCells = cage.positions;
 								$selectedItemIndex = index;
 							}}
 						>
-							{cage.type ? cageTypeNames[cage.type] : 'Custom'}: <br /> ({cage.positions
-								.length}-cell{cage.positions.length > 1 ? 's' : ''})
+							<ScaledSvg>
+								<Killercage {cage} dimensions={$sudokuClues.dimensions} />
+							</ScaledSvg>
 						</span>
 						<div
 							class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"

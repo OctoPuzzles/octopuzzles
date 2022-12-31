@@ -2,13 +2,10 @@
 	import { cellSize, shapesToIcon } from '$constants';
 	import classNames from 'classnames';
 	import { borderCluesFontSize } from '$utils/borderCluesFontSize';
-	import { inputMode, highlights } from '$stores/sudokuStore';
 	import { getBorderCluesToDraw } from '$utils/prefabs';
 	import type { Borderclue, Borderclues } from '$models/Sudoku';
 
-	const { selectedItemIndex, highlightedItemIndex } = highlights;
 	export let borderClues: Borderclues;
-	export let interactive = false;
 
 	function cy(bc: Borderclue): number {
 		let maxRow = 0;
@@ -53,31 +50,7 @@
 					(values?.length ?? 0) > 1 ? '123' : borderClue.text ?? '',
 					borderClue.radius ?? 10
 				)}
-				<g
-					class={interactive ? 'cursor-pointer' : 'pointer-events-none'}
-					on:click={() => {
-						if (interactive) {
-							$selectedItemIndex = index;
-							$inputMode = 'borderclues';
-						}
-					}}
-				>
-					{#if $inputMode === 'borderclues' && index === $highlightedItemIndex}
-						<circle
-							cx={(cx(borderClue) + 0.5) * cellSize}
-							cy={(cy(borderClue) + 0.5) * cellSize}
-							r={radius + 4}
-							class={`fill-current text-blue-500 opacity-50`}
-						/>
-					{/if}
-					{#if $inputMode === 'borderclues' && index === $selectedItemIndex}
-						<circle
-							cx={(cx(borderClue) + 0.5) * cellSize}
-							cy={(cy(borderClue) + 0.5) * cellSize}
-							r={radius + 4}
-							class={`fill-current text-orange-500 opacity-50`}
-						/>
-					{/if}
+				<g class="select-none pointer-events-none">
 					{#if borderClue.shape === 'Line'}
 						<line
 							x1={(cx(borderClue) + 0.5) * cellSize -

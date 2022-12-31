@@ -5,7 +5,7 @@
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
 	export let editorColors: EditorColors;
-	export let gameColors: GameColors | null;
+	export let gameColors: GameColors;
 	export let dimensions: Dimensions;
 
 	function polarToCartesian(
@@ -59,7 +59,7 @@
 	{#each arrayfrom0ToN(dimensions.rows) as row}
 		{#each arrayfrom0ToN(dimensions.columns) as column}
 			{@const editorColor = editorColors[row][column]}
-			{@const gameColor = gameColors?.[row]?.[column]}
+			{@const gameColor = gameColors[row][column]}
 			{#if editorColor}
 				<rect
 					x={cellSize * column}
