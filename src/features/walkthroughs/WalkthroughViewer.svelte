@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { gameHistory } from '$stores/sudokuStore';
-	import SudokuDisplay from '$features/sudoku/Display/index.svelte';
+	import SudokuDisplay from '$features/sudoku/Game/Display/index.svelte';
 	import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
 	import AppWindow from 'phosphor-svelte/lib/AppWindow/AppWindow.svelte';
 	import { page } from '$app/stores';

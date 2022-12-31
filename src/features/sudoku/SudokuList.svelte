@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SudokuDisplay from './Display/index.svelte';
+	import SudokuDisplay from './Game/Display/index.svelte';
 	import { formatDistanceToNowStrict } from 'date-fns';
 	import Button from '$ui/Button.svelte';
 	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';

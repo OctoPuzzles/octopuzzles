@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import SudokuDisplay from '$features/sudoku/Display/index.svelte';
+	import SudokuDisplay from './Display/index.svelte';
 	import Controller from './Controller/index.svelte';
 	import Interface from '$features/sudoku/Interface.svelte';
 	import { highlights } from '$stores/sudokuStore';

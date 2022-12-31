@@ -16,7 +16,13 @@
 	import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
 	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
 	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
-	import { editorHistory, handleArrows, highlights, setMargins } from '$stores/sudokuStore';
+	import {
+		editorHistory,
+		handleArrows,
+		highlights,
+		setMargins,
+		inputMode
+	} from '$stores/sudokuStore';
 	import deepCopy from '$utils/deepCopy';
 	import isArrowKey from '$utils/keyboard/isArrowKey';
 	import moveArrayElement from '$utils/moveArrayElement';
