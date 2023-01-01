@@ -7,9 +7,8 @@
 
 	export let cage: Extendedcage;
 	export let dimensions: Dimensions;
-	export let isSelected = false;
-	export let isHighlighted = false;
-	export let interactable = false;
+	export let onClick: (() => void) | undefined = undefined;
+	let interactable = onClick != null;
 
 	const topLeft = topLeftOfPositions(cage.positions);
 </script>
@@ -22,18 +21,12 @@
 			class:notinteractable={!interactable}
 			class={classNames(
 				`stroke-current`,
-				interactable
+				interactable // if interactable, we make a slightly larger cage that can be clicked
 					? 'text-transparent cursor-pointer'
-					: {
-							[`text-${cage.color?.toLowerCase()}`]: cage.color != null,
-							'text-blue-700': isHighlighted,
-							'text-orange-600': isSelected
-					  }
+					: cage.color != null && `text-${cage.color?.toLowerCase()}`
 			)}
-			on:click
-			on:keypress
-			on:mouseenter
-			on:mouseleave
+			on:click={() => onClick?.()}
+			on:keypress={() => onClick?.()}
 			x1={edge.x1 * cellSize}
 			y1={edge.y1 * cellSize}
 			x2={edge.x2 * cellSize}
@@ -42,11 +35,10 @@
 	{/each}
 	{#if cage.text && cage.text.length > 0}
 		<text
-			class={classNames('stroke-current', {
-				[`text-${cage.color?.toLowerCase()}`]: cage.color != null,
-				'text-blue-700': isHighlighted,
-				'text-orange-600': isSelected
-			})}
+			class={classNames(
+				'stroke-current',
+				cage.color != null && `text-${cage.color?.toLowerCase()}`
+			)}
 			x={cellSize * topLeft.column + 2}
 			y={cellSize * topLeft.row + 2}
 			width={cellSize}

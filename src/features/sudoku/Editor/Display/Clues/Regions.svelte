@@ -5,7 +5,6 @@
 	import { getRegionsToDraw } from '$utils/prefabs';
 
 	export let regions: Regions;
-
 	export let dimensions: Dimensions;
 </script>
 

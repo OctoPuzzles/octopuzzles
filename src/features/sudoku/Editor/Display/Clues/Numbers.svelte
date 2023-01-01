@@ -5,7 +5,6 @@
 	import classNames from 'classnames';
 
 	export let givens: Givens;
-
 	export let dimensions: Dimensions;
 
 	const fontSize = (s: string): string => {

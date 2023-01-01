@@ -104,6 +104,7 @@ export type PathType = z.infer<typeof PathTypeValidator>;
 
 export const FormValidator = z.enum(['Square', 'Round', 'Diamond']);
 export type Form = z.infer<typeof FormValidator>;
+export const forms: Form[] = ['Square', 'Round', 'Diamond'];
 
 export const FillValidator = z.enum(['Solid', 'Hollow']);
 export type Fill = z.infer<typeof FillValidator>;
@@ -133,6 +134,7 @@ export type BorderClueType = z.infer<typeof BorderClueTypeValidator>;
 
 export const ShapeValidator = z.enum(['Circle', 'Square', 'Diamond', 'Star', 'Line']);
 export type Shape = z.infer<typeof ShapeValidator>;
+export const shapes: Shape[] = ['Circle', 'Square', 'Diamond', 'Star', 'Line'];
 
 export const BorderclueValidator = z.object({
 	positions: z.array(PositionValidator).length(2),

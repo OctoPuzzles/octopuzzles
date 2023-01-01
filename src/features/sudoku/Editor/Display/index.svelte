@@ -12,31 +12,22 @@
 	import Regions from './Clues/Regions.svelte';
 
 	// EDITOR STATE
-	export let regions: EditorHistoryStep['regions'];
-	export let editorColors: EditorHistoryStep['colors'];
-	export let cells: EditorHistoryStep['cells'];
-	export let cages: EditorHistoryStep['extendedcages'];
-	export let givens: EditorHistoryStep['givens'];
-	export let paths: EditorHistoryStep['paths'];
-	export let borderClues: EditorHistoryStep['borderclues'];
-	export let cellClues: EditorHistoryStep['cellclues'];
-	export let dimensions: EditorHistoryStep['dimensions'];
-	export let logic: EditorHistoryStep['logic'];
+	export let clues: EditorHistoryStep;
 </script>
 
 <svg
-	viewBox="-2 -2 {dimensions.columns * cellSize + 4} {dimensions.rows * cellSize + 4}"
+	viewBox="-2 -2 {clues.dimensions.columns * cellSize + 4} {clues.dimensions.rows * cellSize + 4}"
 	class="max-h-full max-w-full"
 >
-	<Colors {editorColors} {dimensions} />
+	<Colors colors={clues.colors} dimensions={clues.dimensions} />
 	<slot name="highlights" />
 	<slot name="interface" />
-	<Paths {paths} />
-	<KillerCages {cages} {dimensions} />
-	<Cells {cells} />
-	<Regions {regions} {dimensions} />
-	<BorderClues {borderClues} />
-	<CellClues {cellClues} />
-	<Numbers {givens} {dimensions} />
-	<Logic {logic} {dimensions} />
+	<Paths paths={clues.paths} />
+	<KillerCages cages={clues.extendedcages} dimensions={clues.dimensions} />
+	<Cells cells={clues.cells} />
+	<Regions regions={clues.regions} dimensions={clues.dimensions} />
+	<BorderClues borderClues={clues.borderclues} />
+	<CellClues cellClues={clues.cellclues} />
+	<Numbers givens={clues.givens} dimensions={clues.dimensions} />
+	<Logic logic={clues.logic} dimensions={clues.dimensions} />
 </svg>

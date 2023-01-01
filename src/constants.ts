@@ -3,11 +3,6 @@ import Arrow from '$icons/symbols/Arrow.svelte';
 import SmallArrow from '$icons/symbols/SmallArrow.svelte';
 import Arrowhead from '$icons/symbols/Arrowhead.svelte';
 import InvertedArrowhead from '$icons/symbols/InvertedArrowhead.svelte';
-import Square from '$icons/shapes/Square.svelte';
-import Circle from '$icons/shapes/Circle.svelte';
-import Diamond from '$icons/shapes/Diamond.svelte';
-import Star from '$icons/shapes/Star.svelte';
-import Line from '$icons/shapes/Line.svelte';
 import type {
 	BorderClueType,
 	CageType,
@@ -19,7 +14,6 @@ import type {
 	PathType,
 	RegionType,
 	Rotation,
-	Shape,
 	SymbolType
 } from '$models/Sudoku';
 
@@ -187,14 +181,6 @@ export const isFrameCellClue: Record<CellClueType, boolean> = {
 	Sandwich: true,
 	Skyscraper: true,
 	XSum: true
-};
-
-export const shapesToIcon: Record<Shape, typeof Circle> = {
-	Circle: Circle,
-	Square: Square,
-	Diamond: Diamond,
-	Star: Star,
-	Line: Line
 };
 
 export const pathTypesToLabel: Record<PathType, string> = {

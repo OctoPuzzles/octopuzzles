@@ -4,12 +4,10 @@
 	import Killercage from '$features/sudoku/components/display/killercages/Killercage.svelte';
 	import WhiteBackground from '$features/sudoku/components/display/killercages/WhiteBackground.svelte';
 
-	const { selectedItemIndex, highlightedItemIndex, selectedCells } = highlights;
+	const { selectedItemIndex, selectedCells } = highlights;
 	export let cages: Extendedcages;
 
 	export let dimensions: Dimensions;
-
-	let hovered = -1;
 
 	function onClick(cage: Extendedcage, i: number) {
 		$inputMode = 'extendedcages';
@@ -22,36 +20,13 @@
 	<g id="killer-cages">
 		<WhiteBackground />
 		{#each cages as cage, i}
+			<Killercage {cage} {dimensions} />
 			<Killercage
 				{cage}
 				{dimensions}
-				isHighlighted={$inputMode === 'extendedcages' &&
-					cage.color == null &&
-					$highlightedItemIndex === i}
-				isSelected={($inputMode === 'extendedcages' &&
-					cage.color == null &&
-					$selectedItemIndex === i) ||
-					hovered === i}
-			/>
-			<Killercage
-				{cage}
-				{dimensions}
-				isHighlighted={$inputMode === 'extendedcages' &&
-					cage.color == null &&
-					$highlightedItemIndex === i}
-				isSelected={($inputMode === 'extendedcages' &&
-					cage.color == null &&
-					$selectedItemIndex === i) ||
-					hovered === i}
-				interactable
-				on:click={() => {
+				onClick={() => {
 					onClick(cage, i);
 				}}
-				on:keypress={() => {
-					onClick(cage, i);
-				}}
-				on:mouseenter={() => (hovered = i)}
-				on:mouseleave={() => (hovered = -1)}
 			/>
 		{/each}
 	</g>

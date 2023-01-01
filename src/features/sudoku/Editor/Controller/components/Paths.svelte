@@ -31,11 +31,10 @@
 	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import { pathDefaults } from '$utils/prefabs';
-	import Circle from '$icons/shapes/Circle.svelte';
-	import Square from '$icons/shapes/Square.svelte';
-	import Diamond from '$icons/shapes/Diamond.svelte';
-	import type { Path, PathType, Position } from '$models/Sudoku';
+	import { forms, type Path, type PathType, type Position } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
+	import ScaledSvg from '$features/sudoku/components/display/ScaledSvg.svelte';
+	import { default as PathComponent } from '$features/sudoku/components/display/paths/Path.svelte';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
@@ -46,7 +45,7 @@
 	let { color, width, form, fill, arrow, uniqueDigits } = defaultSettings;
 	$: hollow = fill === 'Hollow';
 
-	$: color, updateSelectedPath();
+	$: color, form, updateSelectedPath();
 
 	const pathTypes: PathType[] = [
 		'Arrow',
@@ -438,15 +437,11 @@
 
 		<div>
 			<Label id="pen">Pen</Label>
-			<RadioGroup
-				options={{
-					Round: { icon: Circle, color, size: 16 },
-					Square: { icon: Square, color, size: 16 },
-					Diamond: { icon: Diamond, color, size: 16 }
-				}}
-				bind:value={form}
-				onChange={() => updateSelectedPath()}
-			/>
+			<RadioGroup options={forms} bind:value={form} idFromOption={(o) => o} name="Pen" let:option>
+				<ScaledSvg>
+					<PathComponent path={{ positions: [{ row: 0, column: 0 }], color, form: option }} />
+				</ScaledSvg>
+			</RadioGroup>
 		</div>
 
 		<div>

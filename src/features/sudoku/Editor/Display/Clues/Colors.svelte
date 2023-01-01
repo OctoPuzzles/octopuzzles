@@ -3,14 +3,14 @@
 	import type { Dimensions, EditorColors } from '$models/Sudoku';
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
-	export let editorColors: EditorColors;
+	export let colors: EditorColors;
 	export let dimensions: Dimensions;
 </script>
 
 <g id="colors" class="select-none pointer-events-none">
 	{#each arrayfrom0ToN(dimensions.rows) as row}
 		{#each arrayfrom0ToN(dimensions.columns) as column}
-			{@const editorColor = editorColors[row][column]}
+			{@const editorColor = colors[row][column]}
 			{#if editorColor}
 				<rect
 					x={cellSize * column}

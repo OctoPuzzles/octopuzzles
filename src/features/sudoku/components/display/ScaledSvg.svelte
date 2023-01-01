@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { afterUpdate, onMount } from 'svelte';
 
 	let svgInstance: SVGElement;
 
-	onMount(() => {
+	function setViewbox(): void {
 		const children = svgInstance.querySelectorAll(
 			'text, line, polyline, rect, circle, path, polygon'
 		);
 		let bounds: { xMin?: number; yMin?: number; xMax?: number; yMax?: number } = {};
 		children.forEach((child) => {
 			const { x, y, width, height } = (child as SVGGraphicsElement).getBBox();
+			if (x === 0 && y === 0 && width === 0 && height === 0) return;
 			if (!bounds.xMin || x < bounds.xMin) bounds.xMin = x;
 			if (!bounds.xMax || x + width > bounds.xMax) bounds.xMax = x + width;
 			if (!bounds.yMin || y < bounds.yMin) bounds.yMin = y;
@@ -24,7 +25,10 @@
 		const viewbox = `${xMin} ${yMin} ${xMax - xMin} ${yMax - yMin}`;
 
 		svgInstance.setAttribute('viewBox', viewbox);
-	});
+	}
+
+	afterUpdate(() => setViewbox());
+	onMount(() => setViewbox());
 </script>
 
 <svg class="w-full h-full" bind:this={svgInstance}>

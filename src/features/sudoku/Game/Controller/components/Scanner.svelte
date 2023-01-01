@@ -53,6 +53,8 @@
 	let negativeBlack = flags.indexOf('NegativeBlack') !== -1;
 	let negativeWhite = flags.indexOf('NegativeWhite') !== -1;
 
+	$: scannerSpeed, highlightMode, mode, updateSettings();
+
 	function updateSettings(): void {
 		scannerSettings = {
 			highlightMode: highlightMode as ScannerHighlightMode,
@@ -109,26 +111,26 @@
 		<div>
 			<Label id="highlight">Highlighting</Label>
 			<RadioGroup
-				options={{
-					None: 'None',
-					Seen: 'Seen',
-					Tuples: 'Tuples'
-				}}
+				options={['None', 'Seen', 'Tuples']}
 				bind:value={highlightMode}
-				onChange={() => updateSettings()}
-			/>
+				idFromOption={(o) => o}
+				let:option
+				name="highlights"
+			>
+				{option}
+			</RadioGroup>
 		</div>
 		<div>
 			<Label id="mode">Options</Label>
 			<RadioGroup
-				options={{
-					Basic: 'Basic',
-					Advanced: 'Advanced',
-					Extreme: 'Extreme'
-				}}
+				options={['Basic', 'Advanced', 'Extreme']}
 				bind:value={mode}
-				onChange={() => updateSettings()}
-			/>
+				idFromOption={(o) => o}
+				let:option
+				name="Options"
+			>
+				{option}
+			</RadioGroup>
 		</div>
 
 		<div
@@ -284,14 +286,14 @@
 		<div>
 			<Label id="mode">Speed</Label>
 			<RadioGroup
-				options={{
-					Slow: 'Slow',
-					Fast: 'Fast',
-					Instant: 'Instant'
-				}}
+				options={['Slow', 'Fast', 'Instant']}
 				bind:value={scannerSpeed}
-				onChange={() => updateSettings()}
-			/>
+				idFromOption={(o) => o}
+				let:option
+				name="Speed"
+			>
+				{option}
+			</RadioGroup>
 		</div>
 
 		<div class="grid grid-cols-4 grid-rows-1 h-max w-max m-auto p-1 gap-4">

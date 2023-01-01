@@ -17,34 +17,14 @@
 	 */
 	$: sudokuSize = Math.max(Math.min(windowHeight - 88, windowWidth), 300);
 
-	export let givens: EditorHistoryStep['givens'];
-	export let borderClues: EditorHistoryStep['borderclues'];
-	export let cellClues: EditorHistoryStep['cellclues'];
-	export let regions: EditorHistoryStep['regions'];
-	export let cells: EditorHistoryStep['cells'];
-	export let editorColors: EditorHistoryStep['colors'];
-	export let cages: EditorHistoryStep['extendedcages'];
-	export let paths: EditorHistoryStep['paths'];
-	export let dimensions: EditorHistoryStep['dimensions'];
-	export let logic: EditorHistoryStep['logic'];
+	export let clues: EditorHistoryStep;
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
 <div class="flex flex-wrap w-full justify-around">
 	<div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
-		<SudokuDisplay
-			{borderClues}
-			{cages}
-			{cellClues}
-			{cells}
-			{dimensions}
-			{editorColors}
-			{givens}
-			{logic}
-			{paths}
-			{regions}
-		>
+		<SudokuDisplay {clues}>
 			<g slot="highlights" id="highlights">
 				{#if $selectedCells}
 					{#each $selectedCells as cell}
@@ -68,7 +48,7 @@
 				{/if}
 			</g>
 
-			<Interface {cells} {dimensions} slot="interface" />
+			<Interface cells={clues.cells} dimensions={clues.dimensions} slot="interface" />
 		</SudokuDisplay>
 	</div>
 	<div class="my-auto">

@@ -8,7 +8,6 @@
 
 	const { selectedItemIndex } = highlights;
 	export let cellClues: Cellclues;
-	export let interactive = false;
 
 	const horizontalOffset = (l?: CellClueLocation | null) => {
 		switch (l) {
@@ -45,21 +44,21 @@
 				return 0.2;
 		}
 	};
+
+	function onClick(index: number) {
+		$selectedItemIndex = index;
+		$inputMode = 'cellclues';
+	}
 </script>
 
 {#if cellClues.length > 0}
 	<g id="cellclues">
 		{#each cellClues as editorClue}
 			{#each getCellCluesToDraw(editorClue) as cellClue, index}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<g
-					class={interactive ? 'cursor-pointer' : 'pointer-events-none'}
-					on:click={() => {
-						if (interactive) {
-							$selectedItemIndex = index;
-							$inputMode = 'cellclues';
-						}
-					}}
+					class="cursor-pointer"
+					on:click={() => onClick(index)}
+					on:keypress={() => onClick(index)}
 				>
 					{#if cellClue.text && cellClue.text.length > 0}
 						<text

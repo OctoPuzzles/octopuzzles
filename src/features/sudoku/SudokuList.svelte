@@ -1,25 +1,15 @@
 <script lang="ts">
-	import SudokuDisplay from './Game/Display/index.svelte';
+	import SudokuDisplay from './Editor/Display/index.svelte';
 	import { formatDistanceToNowStrict } from 'date-fns';
 	import Button from '$ui/Button.svelte';
 	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
 	import NotePencil from 'phosphor-svelte/lib/NotePencil/NotePencil.svelte';
 	import LoadingIndicator from '$ui/LoadingIndicator.svelte';
-	import {
-		defaultBorderclues,
-		defaultCages,
-		defaultCellclues,
-		defaultCells,
-		defaultEditorColors,
-		defaultGivens,
-		defaultLogic,
-		defaultPaths,
-		defaultRegions
-	} from '$utils/defaults';
 	import type { Sudoku } from '$models/Sudoku';
 	import type { User } from '$models/User';
 	import type { Label } from '$models/Label';
 	import PuzzleLabel from '$ui/PuzzleLabel.svelte';
+	import { fillSudokuWithDefaults } from '$utils/fillSudokuWithDefaults';
 
 	export let sudokus:
 		| (Sudoku & { user?: Pick<User, 'id' | 'username' | 'role'>; labels: Label[] })[]
@@ -47,18 +37,7 @@
 					data-sveltekit-preload-data
 				>
 					<div class="h-96 w-full p-4 justify-center">
-						<SudokuDisplay
-							cells={sudoku.cells ?? defaultCells(sudoku.dimensions)}
-							regions={sudoku.regions ?? defaultRegions(sudoku.dimensions)}
-							dimensions={sudoku.dimensions}
-							logic={sudoku.logic ?? defaultLogic()}
-							givens={sudoku.givens ?? defaultGivens(sudoku.dimensions)}
-							paths={sudoku.paths ?? defaultPaths()}
-							cages={sudoku.extendedcages ?? defaultCages()}
-							editorColors={sudoku.colors ?? defaultEditorColors(sudoku.dimensions)}
-							borderClues={sudoku.borderclues ?? defaultBorderclues()}
-							cellClues={sudoku.cellclues ?? defaultCellclues()}
-						/>
+						<SudokuDisplay clues={fillSudokuWithDefaults(sudoku)} />
 					</div>
 					<div class="h-32 bg-gray-100 w-full border-t p-2">
 						<div class="flex justify-between h-20">
