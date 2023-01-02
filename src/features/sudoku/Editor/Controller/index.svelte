@@ -14,7 +14,7 @@
 	import PathsIcon from '$icons/Paths.svelte';
 	import RegionsIcon from '$icons/Regions.svelte';
 	import { openModal } from '$stores/modalStore';
-	import { editorHistory, inputMode } from '$stores/sudokuStore';
+	import { editorHistory, highlights } from '$stores/sudokuStore';
 	import type { InputMode } from '$types';
 	import SquareButton from '$ui/SquareButton.svelte';
 	import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
@@ -51,15 +51,21 @@
 		colors: { icon: ColorPicker, controller: EditorColors, label: 'Colors' }
 	};
 
-	$: controller = $inputMode && controls[$inputMode] ? controls[$inputMode]?.controller : Givens;
-	$: openControl = $inputMode && controls[$inputMode] ? controls[$inputMode]?.label : 'Givens';
+	$: controller =
+		$highlights.inputMode && controls[$highlights.inputMode]
+			? controls[$highlights.inputMode]?.controller
+			: Givens;
+	$: openControl =
+		$highlights.inputMode && controls[$highlights.inputMode]
+			? controls[$highlights.inputMode]?.label
+			: 'Givens';
 
 	function setInputMode(newInputMode: string): void {
-		$inputMode = newInputMode as InputMode;
+		highlights.set({ inputMode: newInputMode as InputMode });
 	}
 
 	onMount(() => {
-		$inputMode = 'givens';
+		highlights.set({ inputMode: 'givens' });
 	});
 
 	function showHelp(): void {

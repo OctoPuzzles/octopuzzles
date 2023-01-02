@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
 	import type { Notes } from '$models/Walkthrough';
-	import { inputMode, highlights } from '$stores/sudokuStore';
-
-	const { selectedCells } = highlights;
+	import { highlights } from '$stores/sudokuStore';
 
 	export let notes: Notes;
 
@@ -16,8 +14,7 @@
 	}
 
 	function onClick(row: number, column: number) {
-		$inputMode = 'notes';
-		$selectedCells = [{ row, column }];
+		highlights.set({ inputMode: 'notes', selectedCells: [{ row, column }] });
 	}
 </script>
 

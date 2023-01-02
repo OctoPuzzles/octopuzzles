@@ -9,8 +9,6 @@
 	import type { Color } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
 
-	const { selectedCells } = highlights;
-
 	function handleKeyDown(k: KeyboardEvent): void {
 		//do not accept keyboard input when any modal controls are open
 		if (hasOpenModals()) return;
@@ -24,7 +22,7 @@
 	}
 
 	const inputColor = (newColor?: Color): void => {
-		const positions = get(selectedCells);
+		const positions = $highlights.selectedCells;
 		if (positions.length === 0) return;
 
 		const currentColors = get(gameHistory.getValue('colors'));

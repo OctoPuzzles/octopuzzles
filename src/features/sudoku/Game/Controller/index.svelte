@@ -12,7 +12,7 @@
 	import NumbersIcon from '$icons/Numbers.svelte';
 	import ScannerIcon from '$icons/Scanner.svelte';
 	import { openModal } from '$stores/modalStore';
-	import { gameHistory, inputMode, highlights, editorHistory } from '$stores/sudokuStore';
+	import { gameHistory, highlights, editorHistory } from '$stores/sudokuStore';
 	import { scanner } from '$stores/sudokuStore/scanner';
 	import { walkthroughStore } from '$stores/walkthroughStore';
 	import type { InputMode } from '$types';
@@ -32,8 +32,6 @@
 	import Notes from './components/Notes.svelte';
 	import Numbers from './components/Numbers.svelte';
 	import Scanner from './components/Scanner.svelte';
-
-	const { selectedCells, highlightedCells } = highlights;
 
 	const controls: Record<
 		string,
@@ -57,18 +55,24 @@
 		scanner: { icon: ScannerIcon, controller: Scanner, label: 'Scanner' }
 	};
 
-	$: controller = $inputMode && controls[$inputMode] ? controls[$inputMode]?.controller : Numbers;
-	$: openControl = $inputMode && controls[$inputMode] ? controls[$inputMode]?.label : 'Numbers';
+	$: controller =
+		$highlights.inputMode && controls[$highlights.inputMode]
+			? controls[$highlights.inputMode]?.controller
+			: Numbers;
+	$: openControl =
+		$highlights.inputMode && controls[$highlights.inputMode]
+			? controls[$highlights.inputMode]?.label
+			: 'Numbers';
 
 	function setInputMode(newInputMode: string): void {
-		$inputMode = newInputMode as InputMode;
+		highlights.set({ inputMode: newInputMode as InputMode });
 	}
 
 	onMount(() => {
-		$inputMode = 'values';
+		highlights.set({ inputMode: 'values' });
 	});
 
-	let gameInputModePreShortcut = get(inputMode);
+	let gameInputModePreShortcut = get(highlights).inputMode;
 
 	function handleKeyboardShortcuts(k: KeyboardEvent): void {
 		// Check whether any targets have explicitly stated that shortcuts should be ignored
@@ -78,40 +82,40 @@
 		)
 			return;
 		// In notes mode, you should use command keys
-		if ($inputMode === 'notes' && !isCommandKey(k)) return;
+		if ($highlights.inputMode === 'notes' && !isCommandKey(k)) return;
 		switch (k.key) {
 			case 'z':
 				k.preventDefault();
-				$inputMode = 'values';
-				gameInputModePreShortcut = $inputMode;
+				$highlights.inputMode = 'values';
+				gameInputModePreShortcut = $highlights.inputMode;
 				break;
 			case 'x':
 				k.preventDefault();
-				$inputMode = 'cornermarks';
-				gameInputModePreShortcut = $inputMode;
+				$highlights.inputMode = 'cornermarks';
+				gameInputModePreShortcut = $highlights.inputMode;
 				break;
 			case 'c':
 				k.preventDefault();
-				$inputMode = 'centermarks';
-				gameInputModePreShortcut = $inputMode;
+				$highlights.inputMode = 'centermarks';
+				gameInputModePreShortcut = $highlights.inputMode;
 				break;
 			case 'v':
 				k.preventDefault();
-				$inputMode = 'colors';
-				gameInputModePreShortcut = $inputMode;
+				$highlights.inputMode = 'colors';
+				gameInputModePreShortcut = $highlights.inputMode;
 				break;
 			case 'b':
 				k.preventDefault();
-				$inputMode = 'notes';
-				gameInputModePreShortcut = $inputMode;
+				$highlights.inputMode = 'notes';
+				gameInputModePreShortcut = $highlights.inputMode;
 				break;
 			case 'Shift':
 				k.preventDefault();
-				$inputMode = 'cornermarks';
+				$highlights.inputMode = 'cornermarks';
 				break;
 			case 'Control':
 				k.preventDefault();
-				$inputMode = 'centermarks';
+				$highlights.inputMode = 'centermarks';
 				break;
 			case 's':
 				k.preventDefault();
@@ -132,14 +136,18 @@
 				k.preventDefault();
 				scanner.toggleSeen();
 
-				highlightedCells.set(scanner.getHighlightedCells(get(selectedCells)));
+				highlights.set({
+					highlightedCells: scanner.getHighlightedCells($highlights.selectedCells)
+				});
 				break;
 			}
 			case 't': {
 				k.preventDefault();
 				scanner.toggleTuples();
 
-				highlightedCells.set(scanner.getHighlightedCells(get(selectedCells)));
+				highlights.set({
+					highlightedCells: scanner.getHighlightedCells($highlights.selectedCells)
+				});
 				break;
 			}
 		}
@@ -151,7 +159,7 @@
 				case 'Shift':
 				case 'Control':
 					k.preventDefault();
-					$inputMode = gameInputModePreShortcut;
+					$highlights.inputMode = gameInputModePreShortcut;
 					break;
 			}
 		}

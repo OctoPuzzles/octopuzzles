@@ -14,8 +14,6 @@
 
 	export let data: PageData;
 
-	const { wrongCells } = highlights;
-
 	const sudokuTitle = editorHistory.title;
 	const description = editorHistory.description;
 
@@ -89,7 +87,7 @@
 	let notes = gameHistory.getValue('notes');
 
 	function checkSolution(numbers: string[][]): boolean {
-		$wrongCells = [];
+		highlights.set({ wrongCells: [] });
 		let solution = data.sudoku?.solution;
 		if (solution?.numbers == null) return false;
 
@@ -111,7 +109,9 @@
 			row.forEach((cell, columnIndex) => {
 				if (solution && solution.numbers[rowIndex][columnIndex] !== cell) {
 					if (cell.length > 0) {
-						$wrongCells = [...$wrongCells, { row: rowIndex, column: columnIndex }];
+						highlights.set({
+							wrongCells: [...$highlights.wrongCells, { row: rowIndex, column: columnIndex }]
+						});
 					}
 					isDone = false;
 				}
@@ -172,16 +172,7 @@
 </div>
 
 <SudokuGame
-	givens={$sudokuClues.givens}
-	borderClues={$sudokuClues.borderclues}
-	cellClues={$sudokuClues.cellclues}
-	regions={$sudokuClues.regions}
-	cells={$sudokuClues.cells}
-	editorColors={$sudokuClues.colors}
-	cages={$sudokuClues.extendedcages}
-	paths={$sudokuClues.paths}
-	dimensions={$sudokuClues.dimensions}
-	logic={$sudokuClues.logic}
+	clues={$sudokuClues}
 	values={$values}
 	gameColors={$gameColors}
 	cornermarks={$cornermarks}

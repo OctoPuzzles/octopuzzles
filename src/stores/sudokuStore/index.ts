@@ -29,7 +29,6 @@ import type {
 	EditorHistoryStep,
 	EditorHistoryStepWithNumbers,
 	GameHistoryStep,
-	InputMode,
 	Mode
 } from '$types';
 import { scanner } from './scanner';
@@ -276,11 +275,7 @@ function createGameHistoryStore() {
 
 	/** Reset the game */
 	function reset(): void {
-		const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
-		selectedItemIndex.set(-1);
-		highlightedItemIndex.set(-1);
-		selectedCells.set([]);
-		highlightedCells.set([]);
+		highlights.set(defaultHighlightValues);
 		step.set(0);
 		const dim = editorHistory.getClue('dimensions');
 		history.set([
@@ -343,88 +338,92 @@ function createGameHistoryStore() {
 
 export const gameHistory = createGameHistoryStore();
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function createInputModeStore() {
-	const { subscribe, set } = writable<InputMode | null>(null);
+export const mode = writable<Mode>('game');
 
-	return {
-		subscribe,
-		set: (value: InputMode | null) => {
-			const { selectedItemIndex, highlightedItemIndex } = highlights;
-			selectedItemIndex.set(-1);
-			highlightedItemIndex.set(-1);
+type HighlightValues<T extends keyof GameHistoryStep | keyof EditorHistoryStep> = {
+	selectedItemIndex: number;
+	highlightedItemIndex: number;
+	wrongCells: Position[];
+	selectedCells: Position[];
+	highlightedCells: Position[];
+	inputMode: T | null;
+};
+
+const defaultHighlightValues = {
+	selectedItemIndex: -1,
+	highlightedItemIndex: -1,
+	wrongCells: [],
+	selectedCells: [],
+	highlightedCells: [],
+	inputMode: null
+};
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createHighlightsStore<T extends keyof GameHistoryStep | keyof EditorHistoryStep>() {
+	const state = writable<HighlightValues<T>>(defaultHighlightValues);
+
+	function set(newValues: Partial<HighlightValues<T>>): void {
+		const newV = { ...get(state), ...newValues };
+		if (newValues.selectedCells != null) {
+			if (newValues.highlightedItemIndex == null) {
+				newV.highlightedItemIndex = defaultHighlightValues.highlightedItemIndex;
+			}
+			if (newValues.selectedItemIndex == null) {
+				newV.selectedItemIndex = defaultHighlightValues.selectedItemIndex;
+			}
+			if (get(mode) === 'game') {
+				newV.highlightedCells = scanner.getHighlightedCells(newValues.selectedCells);
+			} else {
+				newV.highlightedCells = [];
+			}
+		}
+
+		if (newValues.inputMode != null) {
+			if (newValues.highlightedItemIndex == null) {
+				newV.highlightedItemIndex = defaultHighlightValues.highlightedItemIndex;
+			}
+			if (newValues.selectedItemIndex == null) {
+				newV.selectedItemIndex = defaultHighlightValues.selectedItemIndex;
+			}
 			handleArrows.set(defaultHandleArrows);
 			handleMouseDown.set(defaultHandleMouseDown);
 			handleMouseEnter.set(defaultHandleMouseEnter);
-			set(value);
 		}
-	};
-}
+		state.set(newV);
+	}
 
-export const mode = writable<Mode>('game');
-export const inputMode = createInputModeStore();
-
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function createHighlightsStore() {
-	const selectedItemIndex = writable(-1);
-	const highlightedItemIndex = writable(-1);
-	/** Cells with wrong solutions */
-	const wrongCells = writable<Position[]>([]);
-	/**
-	 * A list of selected cells.
-	 * A selected cell is one that is pressed on with e.g. the mouse
-	 */
-	const selectedCells = writable<Position[]>([]);
-
-	function setSelectedCells(newSelectedCells: Position[]): void {
-		selectedItemIndex.set(-1);
-		highlightedItemIndex.set(-1);
-		if (get(mode) === 'game') {
-			highlightedCells.set(scanner.getHighlightedCells(newSelectedCells));
-		} else {
-			highlightedCells.set([]);
-		}
-		selectedCells.set(newSelectedCells);
+	function reset() {
+		state.set({ ...defaultHighlightValues, inputMode: get(state).inputMode });
 	}
 
 	function addSelectedCell(cell: Position, keepIfAlreadySelected = true): void {
 		let found = false;
-		selectedCells.update((oldSelectedCells) => {
-			let newSelectedCells = oldSelectedCells.filter((c) => {
-				if (c.row === cell.row && c.column === cell.column) {
-					found = true;
-					return keepIfAlreadySelected;
-				} else {
-					return true;
-				}
-			});
-			if (!found) {
-				newSelectedCells = [...newSelectedCells, cell];
+		const currentState = get(state);
+		const oldSelectedCells = currentState.selectedCells;
+		let newSelectedCells = oldSelectedCells.filter((c) => {
+			if (c.row === cell.row && c.column === cell.column) {
+				found = true;
+				return keepIfAlreadySelected;
+			} else {
+				return true;
 			}
-
-			if (get(mode) === 'game') {
-				highlightedCells.set(scanner.getHighlightedCells(newSelectedCells));
-			}
-
-			return newSelectedCells;
 		});
+		if (!found) {
+			newSelectedCells = [...newSelectedCells, cell];
+		}
+
+		if (get(mode) === 'game') {
+			currentState.highlightedCells = scanner.getHighlightedCells(newSelectedCells);
+		}
+
+		set({ ...currentState, selectedCells: newSelectedCells });
 	}
-	/**
-	 * A list of highlighted cells.
-	 * A highlighted cell is e.g. a hovered cell.
-	 */
-	const highlightedCells = writable<Position[]>([]);
 
 	return {
-		selectedItemIndex,
-		highlightedItemIndex,
-		wrongCells,
-		selectedCells: {
-			set: setSelectedCells,
-			addCell: addSelectedCell,
-			subscribe: selectedCells.subscribe
-		},
-		highlightedCells
+		subscribe: state.subscribe,
+		set,
+		addSelectedCell,
+		reset
 	};
 }
 
@@ -533,10 +532,12 @@ export function setMargins(margins?: Margins | null): void {
 			notes: offsetMatrix(notes, offsets, '')
 		});
 
-		const { selectedCells, highlightedCells, wrongCells } = highlights;
-		selectedCells.set(offsetPositions(get(selectedCells), offsets).filter(isValidPosition));
-		highlightedCells.set(offsetPositions(get(highlightedCells), offsets).filter(isValidPosition));
-		wrongCells.set(offsetPositions(get(wrongCells), offsets).filter(isValidPosition));
+		const h = get(highlights);
+		highlights.set({
+			selectedCells: offsetPositions(h.selectedCells, offsets).filter(isValidPosition),
+			highlightedCells: offsetPositions(h.highlightedCells, offsets).filter(isValidPosition),
+			wrongCells: offsetPositions(h.wrongCells, offsets).filter(isValidPosition)
+		});
 	}
 }
 

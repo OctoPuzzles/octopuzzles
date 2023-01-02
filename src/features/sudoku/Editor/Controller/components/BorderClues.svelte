@@ -1,29 +1,25 @@
 <script lang="ts">
-	import Button from '$ui/Button.svelte';
-	import Input from '$ui/Input.svelte';
-	import Label from '$ui/Label.svelte';
-	import ColorSelect from '$ui/ColorSelect.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
-	import RadioGroup from '$ui/RadioGroup.svelte';
 	import { borderClueTypeNames, borderClueTypesToLabel } from '$constants';
-	import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
-	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
-	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
-	import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
-	import deepCopy from '$utils/deepCopy';
-	import isArrowKey from '$utils/keyboard/isArrowKey';
-	import moveArrayElement from '$utils/moveArrayElement';
-	import classNames from 'classnames';
-	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-	import { isDeleteKey } from '$utils/isDeleteKey';
-	import { borderClueDefaults } from '$utils/prefabs';
+	import { default as BorderclueComponent } from '$features/sudoku/components/display/borderclues/Borderclue.svelte';
+	import ScaledSvg from '$features/sudoku/components/display/ScaledSvg.svelte';
 	import type { Borderclue, BorderClueType, Position } from '$models/Sudoku';
 	import { shapes } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
-	import ScaledSvg from '$features/sudoku/components/display/ScaledSvg.svelte';
-	import { default as BorderclueComponent } from '$features/sudoku/components/display/borderclues/Borderclue.svelte';
+	import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
+	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
+	import Button from '$ui/Button.svelte';
+	import ColorSelect from '$ui/ColorSelect.svelte';
+	import ControllerButton from '$ui/ControllerButton.svelte';
+	import Input from '$ui/Input.svelte';
+	import Label from '$ui/Label.svelte';
+	import OldSelect from '$ui/OldSelect.svelte';
+	import RadioGroup from '$ui/RadioGroup.svelte';
+	import deepCopy from '$utils/deepCopy';
+	import { isDeleteKey } from '$utils/isDeleteKey';
+	import isArrowKey from '$utils/keyboard/isArrowKey';
+	import moveArrayElement from '$utils/moveArrayElement';
+	import { borderClueDefaults } from '$utils/prefabs';
 
-	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
 	const labels = editorHistory.labels;
 
@@ -45,8 +41,8 @@
 		'Border'
 	];
 
-	$: if ($selectedItemIndex >= 0) {
-		borderClueSelected($selectedItemIndex);
+	$: if ($highlights.selectedItemIndex >= 0 && $highlights.inputMode === 'borderclues') {
+		borderClueSelected($highlights.selectedItemIndex);
 	}
 
 	function borderClueSelected(selectedItemIndex: number): void {
@@ -69,28 +65,28 @@
 	}
 
 	$: verticalOffset =
-		$selectedCells.length <= 1
+		$highlights.selectedCells.length <= 1
 			? 0
-			: $selectedCells.reduce((prev, curr) => {
+			: $highlights.selectedCells.reduce((prev, curr) => {
 					return prev.row >= curr.row ? prev : curr;
 			  }).row -
-			  $selectedCells.reduce((prev, curr) => {
+			  $highlights.selectedCells.reduce((prev, curr) => {
 					return prev.row <= curr.row ? prev : curr;
 			  }).row;
 
 	$: horizontalOffset =
-		$selectedCells.length <= 1
+		$highlights.selectedCells.length <= 1
 			? 0
-			: $selectedCells.reduce((prev, curr) => {
+			: $highlights.selectedCells.reduce((prev, curr) => {
 					return prev.column >= curr.column ? prev : curr;
 			  }).column -
-			  $selectedCells.reduce((prev, curr) => {
+			  $highlights.selectedCells.reduce((prev, curr) => {
 					return prev.column <= curr.column ? prev : curr;
 			  }).column;
 
 	$: canMakeNewBorderClue =
-		$selectedCells.length >= 2 &&
-		$selectedCells.length <= 4 &&
+		$highlights.selectedCells.length >= 2 &&
+		$highlights.selectedCells.length <= 4 &&
 		verticalOffset <= 1 &&
 		horizontalOffset <= 1;
 
@@ -111,7 +107,7 @@
 	const createNewBorderClue = (): void => {
 		if (!canMakeNewBorderClue) return;
 
-		let positions = $selectedCells;
+		let positions = $highlights.selectedCells;
 		if (positions.length > 2) {
 			let p = positions[0];
 			let q = positions.find((q) => q.row !== p.row && q.column !== p.column);
@@ -130,8 +126,8 @@
 				newBorderClue(positions as [Position, Position])
 			]
 		});
-		$selectedCells = positions;
-		$selectedItemIndex = $sudokuClues.borderclues.length - 1;
+		$highlights.selectedCells = positions;
+		$highlights.selectedItemIndex = $sudokuClues.borderclues.length - 1;
 
 		addLabel();
 	};
@@ -148,11 +144,11 @@
 	}
 
 	const updateSelectedClue = (): void => {
-		if ($selectedItemIndex === -1) return;
+		if ($highlights.selectedItemIndex === -1) return;
 
 		let newBorderClues: Borderclue[] = [];
 		$sudokuClues.borderclues.forEach((borderClue, i) => {
-			if (i !== $selectedItemIndex) {
+			if (i !== $highlights.selectedItemIndex) {
 				newBorderClues = [...newBorderClues, borderClue];
 			} else {
 				newBorderClues = [
@@ -170,9 +166,7 @@
 
 	const deleteBorderClueAtIndex = (index: number): void => {
 		const newBorderClues = $sudokuClues.borderclues.filter((_, i) => index !== i);
-		$selectedCells = [];
-		$highlightedCells = [];
-		$selectedItemIndex = -1;
+		highlights.reset();
 		editorHistory.set({ borderclues: newBorderClues });
 	};
 
@@ -184,9 +178,9 @@
 			input.focus();
 		}
 
-		if (isDeleteKey(k) && $selectedItemIndex >= 0 && text === '') {
+		if (isDeleteKey(k) && $highlights.selectedItemIndex >= 0 && text === '') {
 			// The input needs to handle backspace on empty input-field as well
-			deleteBorderClueAtIndex($selectedItemIndex);
+			deleteBorderClueAtIndex($highlights.selectedItemIndex);
 		}
 
 		if (k.key === 'Enter') {
@@ -199,18 +193,18 @@
 		if (way === 'up') {
 			if (index === 0) return;
 			newBorderClues = moveArrayElement($sudokuClues.borderclues, index, index - 1);
-			if (index === $selectedItemIndex) {
-				$selectedItemIndex--;
-			} else if (index - 1 === $selectedItemIndex) {
-				$selectedItemIndex++;
+			if (index === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex - 1 });
+			} else if (index - 1 === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex + 1 });
 			}
 		} else if (way === 'down') {
 			if (index === $sudokuClues.borderclues.length - 1) return;
 			newBorderClues = moveArrayElement($sudokuClues.borderclues, index, index + 1);
-			if (index === $selectedItemIndex) {
-				$selectedItemIndex++;
-			} else if (index + 1 === $selectedItemIndex) {
-				$selectedItemIndex--;
+			if (index === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex + 1 });
+			} else if (index + 1 === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex - 1 });
 			}
 		}
 		editorHistory.set({ borderclues: newBorderClues });
@@ -226,60 +220,28 @@
 		>
 			<div class="h-full overflow-y-auto w-full">
 				{#each $sudokuClues.borderclues as borderClue, index (index)}
-					<button
-						class={classNames(
-							'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',
-							{ 'border-blue-500': index === $selectedItemIndex }
-						)}
-						on:mouseover={() => {
-							$highlightedCells = borderClue.positions;
-							$highlightedItemIndex = index;
+					<ControllerButton
+						onHover={() => {
+							highlights.set({
+								highlightedCells: borderClue.positions,
+								highlightedItemIndex: index
+							});
 						}}
-						on:focus={() => {
-							$highlightedCells = borderClue.positions;
-							$highlightedItemIndex = index;
+						onHoverOut={() => {
+							highlights.set({ highlightedCells: [], highlightedItemIndex: -1 });
 						}}
-						on:mouseout={() => {
-							$highlightedCells = [];
-							$highlightedItemIndex = -1;
+						isHighlighted={index === $highlights.selectedItemIndex}
+						onClick={() => {
+							highlights.set({ selectedCells: borderClue.positions, selectedItemIndex: index });
 						}}
-						on:blur={() => {
-							$highlightedCells = [];
-							$highlightedItemIndex = -1;
-						}}
+						onDelete={() => deleteBorderClueAtIndex(index)}
+						onMoveUp={() => reorderBorderClue(index, 'up')}
+						onMoveDown={() => reorderBorderClue(index, 'down')}
 					>
-						<div class="h-full w-8 bg-gray-100 border-r border-gray-300">
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1 border-b border-gray-300"
-								on:click={() => reorderBorderClue(index, 'up')}
-							>
-								<CaretUp size={16} />
-							</div>
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1"
-								on:click={() => reorderBorderClue(index, 'down')}
-							>
-								<CaretDown size={16} />
-							</div>
-						</div>
-						<span
-							class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
-							on:click={() => {
-								$selectedCells = borderClue.positions;
-								$selectedItemIndex = index;
-							}}
-						>
-							<ScaledSvg>
-								<BorderclueComponent borderclue={borderClue} />
-							</ScaledSvg>
-						</span>
-						<div
-							class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"
-							on:click={() => deleteBorderClueAtIndex(index)}
-						>
-							<Trash size={16} />
-						</div>
-					</button>
+						<ScaledSvg>
+							<BorderclueComponent borderclue={borderClue} />
+						</ScaledSvg>
+					</ControllerButton>
 				{/each}
 			</div>
 		</div>

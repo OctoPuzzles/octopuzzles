@@ -1,9 +1,4 @@
 <script lang="ts">
-	import Button from '$ui/Button.svelte';
-	import Input from '$ui/Input.svelte';
-	import Label from '$ui/Label.svelte';
-	import ColorSelect from '$ui/ColorSelect.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
 	import {
 		cellClueLocationNames,
 		cellClueSizeNames,
@@ -13,24 +8,6 @@
 		rotationNames,
 		symbolTypeNames
 	} from '$constants';
-	import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
-	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
-	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
-	import {
-		editorHistory,
-		handleArrows,
-		highlights,
-		setMargins,
-		inputMode
-	} from '$stores/sudokuStore';
-	import deepCopy from '$utils/deepCopy';
-	import isArrowKey from '$utils/keyboard/isArrowKey';
-	import moveArrayElement from '$utils/moveArrayElement';
-	import classNames from 'classnames';
-	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-	import { isDeleteKey } from '$utils/isDeleteKey';
-	import { cellClueDefaults } from '$utils/prefabs';
-	import { onDestroy } from 'svelte';
 	import type {
 		Cellclue,
 		CellClueLocation,
@@ -41,8 +18,21 @@
 		SymbolType
 	} from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
+	import { editorHistory, handleArrows, highlights, setMargins } from '$stores/sudokuStore';
+	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
+	import Button from '$ui/Button.svelte';
+	import ColorSelect from '$ui/ColorSelect.svelte';
+	import ControllerButton from '$ui/ControllerButton.svelte';
+	import Input from '$ui/Input.svelte';
+	import Label from '$ui/Label.svelte';
+	import OldSelect from '$ui/OldSelect.svelte';
+	import deepCopy from '$utils/deepCopy';
+	import { isDeleteKey } from '$utils/isDeleteKey';
+	import isArrowKey from '$utils/keyboard/isArrowKey';
+	import moveArrayElement from '$utils/moveArrayElement';
+	import { cellClueDefaults } from '$utils/prefabs';
+	import { onDestroy } from 'svelte';
 
-	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const labels = editorHistory.labels;
 	const sudokuClues = editorHistory.subscribeToClues();
 
@@ -100,8 +90,8 @@
 		'West'
 	];
 
-	$: if ($selectedItemIndex >= 0) {
-		cellClueSelected($selectedItemIndex);
+	$: if ($highlights.selectedItemIndex >= 0) {
+		cellClueSelected($highlights.selectedItemIndex);
 	}
 
 	function cellClueSelected(selectedItemIndex: number): void {
@@ -177,7 +167,7 @@
 		});
 	}
 
-	$: canMakeNewCellClue = $selectedCells.length === 1;
+	$: canMakeNewCellClue = $highlights.selectedCells.length === 1;
 
 	function newCellClue(position: Position): Cellclue {
 		return {
@@ -205,9 +195,9 @@
 
 	const createNewCellClue = (): void => {
 		editorHistory.set({
-			cellclues: [...deepCopy($sudokuClues.cellclues), newCellClue($selectedCells[0])]
+			cellclues: [...deepCopy($sudokuClues.cellclues), newCellClue($highlights.selectedCells[0])]
 		});
-		$selectedItemIndex = $sudokuClues.cellclues.length - 1;
+		$highlights.selectedItemIndex = $sudokuClues.cellclues.length - 1;
 
 		addLabel();
 	};
@@ -224,11 +214,11 @@
 	}
 
 	const updateSelectedClue = (): void => {
-		if ($selectedItemIndex === -1) return;
+		if ($highlights.selectedItemIndex === -1) return;
 
 		let newCellClues: Cellclue[] = [];
 		$sudokuClues.cellclues.forEach((cellClue, i) => {
-			if (i !== $selectedItemIndex) {
+			if (i !== $highlights.selectedItemIndex) {
 				newCellClues = [...newCellClues, cellClue];
 			} else {
 				newCellClues = [...newCellClues, newCellClue(cellClue.position)];
@@ -243,9 +233,7 @@
 
 	const deleteCellClueAtIndex = (index: number): void => {
 		const newCellClues = $sudokuClues.cellclues.filter((_, i) => index !== i);
-		$selectedCells = [];
-		$highlightedCells = [];
-		$selectedItemIndex = -1;
+		highlights.reset();
 		editorHistory.set({ cellclues: newCellClues });
 	};
 
@@ -257,9 +245,9 @@
 			input.focus();
 		}
 
-		if (isDeleteKey(k) && $selectedItemIndex >= 0 && text === '') {
+		if (isDeleteKey(k) && $highlights.selectedItemIndex >= 0 && text === '') {
 			// The input needs to handle backspace on empty input-field as well
-			deleteCellClueAtIndex($selectedItemIndex);
+			deleteCellClueAtIndex($highlights.selectedItemIndex);
 		}
 
 		if (k.key === 'Enter') {
@@ -272,18 +260,18 @@
 		if (way === 'up') {
 			if (index === 0) return;
 			newCellClues = moveArrayElement($sudokuClues.cellclues, index, index - 1);
-			if (index === $selectedItemIndex) {
-				$selectedItemIndex--;
-			} else if (index - 1 === $selectedItemIndex) {
-				$selectedItemIndex++;
+			if (index === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex - 1 });
+			} else if (index - 1 === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex + 1 });
 			}
 		} else if (way === 'down') {
 			if (index === $sudokuClues.cellclues.length - 1) return;
 			newCellClues = moveArrayElement($sudokuClues.cellclues, index, index + 1);
-			if (index === $selectedItemIndex) {
-				$selectedItemIndex++;
-			} else if (index + 1 === $selectedItemIndex) {
-				$selectedItemIndex--;
+			if (index === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex + 1 });
+			} else if (index + 1 === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex - 1 });
 			}
 		}
 		editorHistory.set({ cellclues: newCellClues });
@@ -303,58 +291,26 @@
 		>
 			<div class="h-full overflow-y-auto w-full">
 				{#each $sudokuClues.cellclues as cellClue, index (index)}
-					<button
-						class={classNames(
-							'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',
-							{ 'border-blue-500': index === $selectedItemIndex }
-						)}
-						on:mouseover={() => {
-							$highlightedCells = [cellClue.position];
-							$highlightedItemIndex = index;
+					<ControllerButton
+						onHover={() => {
+							highlights.set({
+								highlightedCells: [cellClue.position],
+								highlightedItemIndex: index
+							});
 						}}
-						on:focus={() => {
-							$highlightedCells = [cellClue.position];
-							$highlightedItemIndex = index;
+						onHoverOut={() => {
+							highlights.set({ highlightedCells: [], highlightedItemIndex: -1 });
 						}}
-						on:mouseout={() => {
-							$highlightedCells = [];
-							$highlightedItemIndex = -1;
+						isHighlighted={index === $highlights.selectedItemIndex}
+						onClick={() => {
+							highlights.set({ selectedCells: [cellClue.position], selectedItemIndex: index });
 						}}
-						on:blur={() => {
-							$highlightedCells = [];
-							$highlightedItemIndex = -1;
-						}}
+						onDelete={() => deleteCellClueAtIndex(index)}
+						onMoveUp={() => reorderCellClue(index, 'up')}
+						onMoveDown={() => reorderCellClue(index, 'down')}
 					>
-						<div class="h-full w-8 bg-gray-100 border-r border-gray-300">
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1 border-b border-gray-300"
-								on:click={() => reorderCellClue(index, 'up')}
-							>
-								<CaretUp size={16} />
-							</div>
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1"
-								on:click={() => reorderCellClue(index, 'down')}
-							>
-								<CaretDown size={16} />
-							</div>
-						</div>
-						<span
-							class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
-							on:click={() => {
-								$selectedCells = [cellClue.position];
-								$selectedItemIndex = index;
-							}}
-						>
-							{cellClue.type ? cellClueTypeNames[cellClue.type] : 'Custom'}
-						</span>
-						<div
-							class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"
-							on:click={() => deleteCellClueAtIndex(index)}
-						>
-							<Trash size={20} />
-						</div>
-					</button>
+						{cellClue.type ? cellClueTypeNames[cellClue.type] : 'Custom'}
+					</ControllerButton>
 				{/each}
 			</div>
 		</div>

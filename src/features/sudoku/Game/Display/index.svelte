@@ -15,16 +15,7 @@
 	import Regions from './Clues/Regions.svelte';
 
 	// EDITOR STATE
-	export let regions: EditorHistoryStep['regions'];
-	export let editorColors: EditorHistoryStep['colors'];
-	export let cells: EditorHistoryStep['cells'];
-	export let cages: EditorHistoryStep['extendedcages'];
-	export let givens: EditorHistoryStep['givens'];
-	export let paths: EditorHistoryStep['paths'];
-	export let borderClues: EditorHistoryStep['borderclues'];
-	export let cellClues: EditorHistoryStep['cellclues'];
-	export let dimensions: EditorHistoryStep['dimensions'];
-	export let logic: EditorHistoryStep['logic'];
+	export let clues: EditorHistoryStep;
 
 	// GAME STATE
 	export let values: GameHistoryStep['values'];
@@ -35,21 +26,21 @@
 </script>
 
 <svg
-	viewBox="-2 -2 {dimensions.columns * cellSize + 4} {dimensions.rows * cellSize + 4}"
+	viewBox="-2 -2 {clues.dimensions.columns * cellSize + 4} {clues.dimensions.rows * cellSize + 4}"
 	class="max-h-full max-w-full"
 >
-	<Colors {editorColors} {gameColors} {dimensions} />
+	<Colors editorColors={clues.colors} {gameColors} dimensions={clues.dimensions} />
 	<slot name="highlights" />
 	<slot name="interface" />
-	<Paths {paths} />
-	<KillerCages {cages} {dimensions} />
-	<Cells {cells} />
+	<Paths paths={clues.paths} />
+	<KillerCages cages={clues.extendedcages} dimensions={clues.dimensions} />
+	<Cells cells={clues.cells} />
 	<Notes {notes} />
-	<Regions {regions} {dimensions} />
-	<BorderClues {borderClues} />
-	<CellClues {cellClues} />
-	<CornerMarks {values} {givens} {dimensions} {cornermarks} />
-	<CenterMarks {values} {givens} {dimensions} {centermarks} />
-	<Numbers {values} {givens} {dimensions} />
-	<Logic {logic} {dimensions} />
+	<Regions regions={clues.regions} dimensions={clues.dimensions} />
+	<BorderClues borderClues={clues.borderclues} />
+	<CellClues cellClues={clues.cellclues} />
+	<CornerMarks {values} givens={clues.givens} dimensions={clues.dimensions} {cornermarks} />
+	<CenterMarks {values} givens={clues.givens} dimensions={clues.dimensions} {centermarks} />
+	<Numbers {values} givens={clues.givens} dimensions={clues.dimensions} />
+	<Logic logic={clues.logic} dimensions={clues.dimensions} />
 </svg>

@@ -36,7 +36,7 @@
 					href="/sudoku/{sudoku.id}"
 					data-sveltekit-preload-data
 				>
-					<div class="h-96 w-full p-4 justify-center">
+					<div class="h-96 w-full p-4 justify-center select-none pointer-events-none">
 						<SudokuDisplay clues={fillSudokuWithDefaults(sudoku)} />
 					</div>
 					<div class="h-32 bg-gray-100 w-full border-t p-2">

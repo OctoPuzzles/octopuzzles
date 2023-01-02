@@ -6,8 +6,6 @@
 	import { highlights } from '$stores/sudokuStore';
 	import type { EditorHistoryStep } from '$types';
 
-	const { selectedCells, highlightedCells } = highlights;
-
 	// SIZING
 	let windowHeight: number;
 	let windowWidth: number;
@@ -26,8 +24,8 @@
 	<div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
 		<SudokuDisplay {clues}>
 			<g slot="highlights" id="highlights">
-				{#if $selectedCells}
-					{#each $selectedCells as cell}
+				{#if $highlights.selectedCells}
+					{#each $highlights.selectedCells as cell}
 						<rect
 							class="fill-current w-cell h-cell text-orange-300 text-opacity-40"
 							x={cellSize * cell.column}
@@ -36,8 +34,8 @@
 						/>
 					{/each}
 				{/if}
-				{#if $highlightedCells}
-					{#each $highlightedCells as cell}
+				{#if $highlights.highlightedCells}
+					{#each $highlights.highlightedCells as cell}
 						<rect
 							class="fill-current w-cell h-cell text-blue-100"
 							x={cellSize * cell.column}

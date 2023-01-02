@@ -3,14 +3,11 @@
 	import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
 	import { editorHistory, highlights } from '$stores/sudokuStore';
 	import deepCopy from '$utils/deepCopy';
-	import { get } from 'svelte/store';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import { hasOpenModals } from '$stores/modalStore';
 
-	const { selectedCells } = highlights;
-
 	function handleClick(newGiven: string): void {
-		const positions = get(selectedCells);
+		const positions = $highlights.selectedCells;
 		if (positions.length === 0) return;
 
 		const currentGivens = editorHistory.getClue('givens');

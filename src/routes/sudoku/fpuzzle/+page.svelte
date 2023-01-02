@@ -96,16 +96,7 @@
 	</div>
 
 	<SudokuGame
-		givens={$sudokuClues.givens}
-		borderClues={$sudokuClues.borderclues}
-		cellClues={$sudokuClues.cellclues}
-		regions={$sudokuClues.regions}
-		cells={$sudokuClues.cells}
-		editorColors={$sudokuClues.colors}
-		cages={$sudokuClues.extendedcages}
-		paths={$sudokuClues.paths}
-		dimensions={$sudokuClues.dimensions}
-		logic={$sudokuClues.logic}
+		clues={$sudokuClues}
 		values={$values}
 		gameColors={$gameColors}
 		cornermarks={$cornermarks}

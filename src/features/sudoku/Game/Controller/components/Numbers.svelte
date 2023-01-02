@@ -9,10 +9,8 @@
 	import { me } from '$stores/meStore';
 	import { scanner } from '$stores/sudokuStore/scanner';
 
-	const { selectedCells } = highlights;
-
 	function handleClick(newValue: string): void {
-		const positions = get(selectedCells);
+		const positions = $highlights.selectedCells;
 		if (positions.length === 0) return;
 
 		const currentValues = get(gameHistory.getValue('values'));

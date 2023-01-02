@@ -31,21 +31,20 @@ export type ArrowHandler = ({
  * Default action to do when user clicks on a cell
  */
 export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
-	const { selectedCells } = highlights;
 	if (!metaButtonClicked) {
-		const currentSelectedCells = get(selectedCells);
+		const currentSelectedCells = get(highlights).selectedCells;
 		const firstSelectedCell = currentSelectedCells[0];
 		if (
 			firstSelectedCell &&
 			firstSelectedCell.row === cell.row &&
 			firstSelectedCell.column === cell.column
 		) {
-			selectedCells.set([]);
+			highlights.set({ selectedCells: [] });
 		} else {
-			selectedCells.set([cell]);
+			highlights.set({ selectedCells: [cell] });
 		}
 	} else {
-		selectedCells.addCell(cell, false);
+		highlights.addSelectedCell(cell, false);
 	}
 };
 
@@ -54,9 +53,8 @@ export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClick
  */
 export const defaultHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
 	if (mouseDown) {
-		const { selectedCells } = highlights;
-		if (get(selectedCells).length > 0) {
-			selectedCells.addCell(cell);
+		if (get(highlights).selectedCells.length > 0) {
+			highlights.addSelectedCell(cell);
 		}
 	}
 };
@@ -66,9 +64,7 @@ export const defaultHandleArrows: ArrowHandler = ({ k }) => {
 	//do not accept keyboard input when any modal controls are open
 	if (hasOpenModals()) return;
 
-	const { selectedCells } = highlights;
-
-	const cells = get(selectedCells);
+	const cells = get(highlights).selectedCells;
 	const dim = editorHistory.getClue('dimensions');
 	const lastCell = cells[cells.length - 1];
 	if (lastCell == null) return;
@@ -109,9 +105,9 @@ export const defaultHandleArrows: ArrowHandler = ({ k }) => {
 	if (newCell) {
 		k.preventDefault();
 		if (isCommandKey(k)) {
-			selectedCells.addCell(newCell);
+			highlights.addSelectedCell(newCell);
 		} else {
-			selectedCells.set([newCell]);
+			highlights.set({ selectedCells: [newCell] });
 		}
 	}
 };

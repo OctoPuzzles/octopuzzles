@@ -13,8 +13,6 @@
 	export let data: PageData;
 	let sudokus = data.sudokuData;
 
-	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
-
 	let currentCursor: Date | null = null;
 	let nextCursor: Date | null = null;
 	$: nextCursor = sudokus.nextCursor;
@@ -47,10 +45,7 @@
 	}
 
 	onMount(() => {
-		$highlightedItemIndex = -1;
-		$selectedItemIndex = -1;
-		$selectedCells = [];
-		$highlightedCells = [];
+		highlights.reset();
 	});
 
 	let showFilters = false;

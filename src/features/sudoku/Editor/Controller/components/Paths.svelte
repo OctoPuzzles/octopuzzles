@@ -1,7 +1,9 @@
 <script lang="ts">
-	import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
-	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
-	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
+	import { pathTypeNames, pathTypesToLabel } from '$constants';
+	import { default as PathComponent } from '$features/sudoku/components/display/paths/Path.svelte';
+	import ScaledSvg from '$features/sudoku/components/display/ScaledSvg.svelte';
+	import { forms, type Path, type PathType, type Position } from '$models/Sudoku';
+	import { hasOpenModals } from '$stores/modalStore';
 	import {
 		editorHistory,
 		handleArrows,
@@ -10,33 +12,27 @@
 		highlights
 	} from '$stores/sudokuStore';
 	import type {
+		ArrowHandler,
 		MouseDownHandler,
-		MouseEnterHandler,
-		ArrowHandler
+		MouseEnterHandler
 	} from '$stores/sudokuStore/interactionHandlers';
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
+	import Button from '$ui/Button.svelte';
+	import Checkbox from '$ui/Checkbox.svelte';
+	import ColorSelect from '$ui/ColorSelect.svelte';
+	import ControllerButton from '$ui/ControllerButton.svelte';
+	import Label from '$ui/Label.svelte';
+	import OldSelect from '$ui/OldSelect.svelte';
+	import RadioGroup from '$ui/RadioGroup.svelte';
+	import Range from '$ui/Range.svelte';
+	import deepCopy from '$utils/deepCopy';
+	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 	import moveArrayElement from '$utils/moveArrayElement';
-	import classNames from 'classnames';
+	import { pathDefaults } from '$utils/prefabs';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import deepCopy from '$utils/deepCopy';
-	import Button from '$ui/Button.svelte';
-	import ColorSelect from '$ui/ColorSelect.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
-	import Label from '$ui/Label.svelte';
-	import RadioGroup from '$ui/RadioGroup.svelte';
-	import Checkbox from '$ui/Checkbox.svelte';
-	import Range from '$ui/Range.svelte';
-	import { pathTypeNames, pathTypesToLabel } from '$constants';
-	import { isCommandKey } from '$utils/keyboard/isCommandKey';
-	import { isDeleteKey } from '$utils/isDeleteKey';
-	import { pathDefaults } from '$utils/prefabs';
-	import { forms, type Path, type PathType, type Position } from '$models/Sudoku';
-	import { hasOpenModals } from '$stores/modalStore';
-	import ScaledSvg from '$features/sudoku/components/display/ScaledSvg.svelte';
-	import { default as PathComponent } from '$features/sudoku/components/display/paths/Path.svelte';
 
-	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
 	const labels = editorHistory.labels;
 
@@ -64,8 +60,8 @@
 		'Pill'
 	];
 
-	$: if ($selectedItemIndex >= 0) {
-		pathSelected($selectedItemIndex);
+	$: if ($highlights.selectedItemIndex >= 0) {
+		pathSelected($highlights.selectedItemIndex);
 	}
 
 	function pathSelected(selectedItemIndex: number): void {
@@ -115,11 +111,11 @@
 	}
 
 	function updateSelectedPath(): void {
-		if ($selectedItemIndex === -1) return;
+		if ($highlights.selectedItemIndex === -1) return;
 
 		let newPaths: Path[] = [];
 		$sudokuClues.paths.forEach((path, i) => {
-			if (i !== $selectedItemIndex) {
+			if (i !== $highlights.selectedItemIndex) {
 				newPaths = [...newPaths, path];
 			} else {
 				newPaths = [...newPaths, newPath(path.positions)];
@@ -134,9 +130,7 @@
 
 	function deletePathAtIndex(index: number): void {
 		const newPaths = $sudokuClues.paths.filter((_, i) => index !== i);
-		$selectedCells = [];
-		$highlightedCells = [];
-		$selectedItemIndex = -1;
+		highlights.reset();
 		editorHistory.set({ paths: newPaths });
 	}
 
@@ -145,18 +139,18 @@
 		if (way === 'up') {
 			if (index === 0) return;
 			newPaths = moveArrayElement($sudokuClues.paths, index, index - 1);
-			if (index === $selectedItemIndex) {
-				$selectedItemIndex--;
-			} else if (index - 1 === $selectedItemIndex) {
-				$selectedItemIndex++;
+			if (index === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex - 1 });
+			} else if (index - 1 === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex + 1 });
 			}
 		} else if (way === 'down') {
 			if (index === $sudokuClues.paths.length - 1) return;
 			newPaths = moveArrayElement($sudokuClues.paths, index, index + 1);
-			if (index === $selectedItemIndex) {
-				$selectedItemIndex++;
-			} else if (index + 1 === $selectedItemIndex) {
-				$selectedItemIndex--;
+			if (index === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex + 1 });
+			} else if (index + 1 === $highlights.selectedItemIndex) {
+				highlights.set({ selectedItemIndex: $highlights.selectedItemIndex - 1 });
 			}
 		}
 		editorHistory.set({ paths: newPaths });
@@ -177,11 +171,11 @@
 	}
 
 	function newPathFromSelection(): void {
-		if ($selectedCells.length > 0) {
+		if ($highlights.selectedCells.length > 0) {
 			editorHistory.set({
-				paths: [...deepCopy($sudokuClues.paths), newPath(deepCopy($selectedCells))]
+				paths: [...deepCopy($sudokuClues.paths), newPath(deepCopy($highlights.selectedCells))]
 			});
-			$selectedItemIndex = $sudokuClues.paths.length - 1;
+			highlights.set({ selectedItemIndex: $sudokuClues.paths.length - 1 });
 
 			addLabel();
 		}
@@ -198,7 +192,7 @@
 
 	function addCellToSelectedPath(cell: Position, keep = true): void {
 		const newPaths: Path[] = [];
-		const selectedPathIndex = $selectedItemIndex;
+		const selectedPathIndex = $highlights.selectedItemIndex;
 		let removed = false;
 
 		$sudokuClues.paths.map((path, i) => {
@@ -225,21 +219,23 @@
 		});
 		editorHistory.set({ paths: newPaths });
 		if (!removed) {
-			$selectedCells = newPaths[selectedPathIndex]?.positions ?? [];
-			$selectedItemIndex = selectedPathIndex;
+			highlights.set({
+				selectedCells: newPaths[selectedPathIndex]?.positions ?? [],
+				selectedItemIndex: selectedPathIndex
+			});
 		} else {
-			$selectedCells = [];
+			highlights.set({ selectedCells: [] });
 		}
 	}
 
 	const customHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
 		if (!metaButtonClicked) {
-			selectedCells.set([cell]);
+			highlights.set({ selectedCells: [cell] });
 		} else {
-			if ($selectedItemIndex > -1) {
+			if ($highlights.selectedItemIndex > -1) {
 				addCellToSelectedPath(cell, false);
 			} else {
-				selectedCells.addCell(cell);
+				highlights.addSelectedCell(cell);
 			}
 		}
 	};
@@ -247,10 +243,10 @@
 	const customHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
 		if (!mouseDown) return;
 
-		if ($selectedItemIndex === -1) {
-			selectedCells.addCell(cell);
+		if ($highlights.selectedItemIndex === -1) {
+			highlights.addSelectedCell(cell);
 		} else {
-			if ($selectedCells.length > 0) {
+			if ($highlights.selectedCells.length > 0) {
 				addCellToSelectedPath(cell);
 			}
 		}
@@ -264,7 +260,7 @@
 			defaultHandleArrows({ k, metaButtonClicked });
 			return;
 		}
-		const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
+		const lastSelectedCell = $highlights.selectedCells[$highlights.selectedCells.length - 1];
 		if (lastSelectedCell) {
 			const { row, column } = lastSelectedCell;
 			let dim = editorHistory.getClue('dimensions');
@@ -304,14 +300,13 @@
 			if (newCell) {
 				k.preventDefault();
 				if (isCommandKey(k)) {
-					if ($selectedItemIndex > -1) {
+					if ($highlights.selectedItemIndex > -1) {
 						addCellToSelectedPath(newCell);
 					} else {
-						selectedCells.addCell(newCell);
+						highlights.addSelectedCell(newCell);
 					}
 				} else {
-					$selectedCells = [newCell];
-					$selectedItemIndex = -1;
+					highlights.set({ selectedCells: [newCell], selectedItemIndex: -1 });
 				}
 			}
 		}
@@ -330,10 +325,10 @@
 		if (hasOpenModals()) return;
 
 		if (isDeleteKey(k)) {
-			if ($selectedItemIndex !== undefined) {
-				deletePathAtIndex($selectedItemIndex);
+			if ($highlights.selectedItemIndex !== undefined) {
+				deletePathAtIndex($highlights.selectedItemIndex);
 			} else {
-				editorHistory.clearCells(get(selectedCells));
+				editorHistory.clearCells($highlights.selectedCells);
 			}
 		} else if (k.key === 'Enter') {
 			newPathFromSelection();
@@ -344,64 +339,31 @@
 <svelte:window on:keydown={handleKeyDown} />
 
 <div class="grid grid-cols-2 w-full h-full p-2">
-	<div class="px-2 flex flex-col overflow-hidden justify-between">
+	<div class="px-2 flex flex-col gap-1 overflow-hidden justify-between">
 		<div
 			class="bg-gray-200 rounded-md shadow-inner flex flex-col items-center p-2 overflow-hidden h-full"
 		>
 			<div class="h-full overflow-y-auto w-full">
 				{#each $sudokuClues.paths as path, index (index)}
-					<button
-						class={classNames(
-							'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',
-							{ 'border-blue-500': index === $selectedItemIndex }
-						)}
-						on:mouseover={() => {
-							highlightedCells.set(path.positions);
-							$highlightedItemIndex = index;
+					<ControllerButton
+						onHover={() => {
+							highlights.set({ highlightedCells: path.positions, highlightedItemIndex: index });
 						}}
-						on:focus={() => {
-							highlightedCells.set(path.positions);
-							$highlightedItemIndex = index;
+						onHoverOut={() => {
+							highlights.set({ highlightedCells: [], highlightedItemIndex: -1 });
 						}}
-						on:mouseout={() => {
-							highlightedCells.set([]);
-							$highlightedItemIndex = -1;
+						isHighlighted={index === $highlights.selectedItemIndex}
+						onClick={() => {
+							highlights.set({ selectedCells: path.positions, selectedItemIndex: index });
 						}}
-						on:blur={() => {
-							highlightedCells.set([]);
-							$highlightedItemIndex = -1;
-						}}
+						onDelete={() => deletePathAtIndex(index)}
+						onMoveUp={() => reorderPath(index, 'up')}
+						onMoveDown={() => reorderPath(index, 'down')}
 					>
-						<div class="h-full w-8 bg-gray-100 border-r border-gray-300">
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1 border-b border-gray-300"
-								on:click={() => reorderPath(index, 'up')}
-							>
-								<CaretUp size={16} />
-							</div>
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1"
-								on:click={() => reorderPath(index, 'down')}
-							>
-								<CaretDown size={16} />
-							</div>
-						</div>
-						<span
-							class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
-							on:click={() => {
-								selectedCells.set(path.positions);
-								$selectedItemIndex = index;
-							}}
-						>
-							{path.type ? pathTypeNames[path.type] : 'Custom'}
-						</span>
-						<div
-							class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"
-							on:click={() => deletePathAtIndex(index)}
-						>
-							<Trash size={20} />
-						</div>
-					</button>
+						<ScaledSvg>
+							<PathComponent {path} />
+						</ScaledSvg>
+					</ControllerButton>
 				{/each}
 			</div>
 		</div>
@@ -409,7 +371,7 @@
 		<Button
 			variant="secondary"
 			class="w-full"
-			disabled={$selectedCells.length === 0}
+			disabled={$highlights.selectedCells.length === 0}
 			on:click={newPathFromSelection}
 		>
 			New path from selection

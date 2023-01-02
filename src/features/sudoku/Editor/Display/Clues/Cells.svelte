@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cellSize } from '$constants';
+	import Cell from '$features/sudoku/components/display/cells/Cell.svelte';
 	import type { Cells } from '$models/Sudoku';
 
 	export let cells: Cells;
@@ -10,12 +10,7 @@
 		{#each cells as row, rowIndex}
 			{#each row as cell, columnIndex}
 				{#if cell}
-					<rect
-						class="w-cell h-cell stroke-black fill-none stroke-0.5"
-						x={cellSize * columnIndex}
-						y={cellSize * rowIndex}
-						vector-effect="non-scaling-size"
-					/>
+					<Cell row={rowIndex} column={columnIndex} />
 				{/if}
 			{/each}
 		{/each}

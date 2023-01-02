@@ -7,13 +7,11 @@
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import { hasOpenModals } from '$stores/modalStore';
 
-	const { selectedCells } = highlights;
-
 	const handleClick = (newCentermark: string): void => {
 		let currentCentermarks = get(gameHistory.getValue('centermarks'));
 		let newCentermarks = deepCopy(currentCentermarks);
 		const givens = editorHistory.getClue('givens');
-		let positions = deepCopy(get(selectedCells));
+		let positions = deepCopy($highlights.selectedCells);
 
 		positions = positions.filter((p) => givens[p.row][p.column] === '');
 		if (positions.length === 0) return;

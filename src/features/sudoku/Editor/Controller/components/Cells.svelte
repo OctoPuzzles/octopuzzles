@@ -5,12 +5,10 @@
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import { hasOpenModals } from '$stores/modalStore';
 
-	const { selectedCells } = highlights;
-
 	function handleClick(b: boolean): void {
 		const newCells = deepCopy(editorHistory.getClue('cells'));
-		if ($selectedCells.length > 0) {
-			$selectedCells.forEach((cell) => {
+		if ($highlights.selectedCells.length > 0) {
+			$highlights.selectedCells.forEach((cell) => {
 				newCells[cell.row][cell.column] = b;
 			});
 			editorHistory.set({

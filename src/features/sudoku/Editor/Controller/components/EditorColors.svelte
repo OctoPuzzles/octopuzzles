@@ -3,13 +3,10 @@
 	import { editorHistory, highlights } from '$stores/sudokuStore';
 	import deepCopy from '$utils/deepCopy';
 	import SquareButton from '$ui/SquareButton.svelte';
-	import { get } from 'svelte/store';
 	import { numberColorMap } from '$constants';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import type { Color } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
-
-	const { selectedCells } = highlights;
 
 	function handleKeyDown(k: KeyboardEvent): void {
 		//do not accept keyboard input when any modal controls are open
@@ -24,7 +21,7 @@
 	}
 
 	const inputColor = (newColor?: Color): void => {
-		const positions = get(selectedCells);
+		const positions = $highlights.selectedCells;
 		if (positions.length === 0) return;
 
 		const currentColors = editorHistory.getClue('colors');

@@ -6,8 +6,6 @@
 	import { highlights } from '$stores/sudokuStore';
 	import type { EditorHistoryStep, GameHistoryStep } from '$types';
 
-	const { selectedCells, highlightedCells, wrongCells } = highlights;
-
 	// SIZING
 	let windowHeight: number;
 	let windowWidth: number;
@@ -17,16 +15,7 @@
 	 */
 	$: sudokuSize = Math.max(Math.min(windowHeight - 88, windowWidth), 300);
 
-	export let givens: EditorHistoryStep['givens'];
-	export let borderClues: EditorHistoryStep['borderclues'];
-	export let cellClues: EditorHistoryStep['cellclues'];
-	export let regions: EditorHistoryStep['regions'];
-	export let cells: EditorHistoryStep['cells'];
-	export let editorColors: EditorHistoryStep['colors'];
-	export let cages: EditorHistoryStep['extendedcages'];
-	export let paths: EditorHistoryStep['paths'];
-	export let dimensions: EditorHistoryStep['dimensions'];
-	export let logic: EditorHistoryStep['logic'];
+	export let clues: EditorHistoryStep;
 
 	export let values: GameHistoryStep['values'];
 	export let gameColors: GameHistoryStep['colors'];
@@ -39,25 +28,9 @@
 
 <div class="flex flex-wrap w-full justify-around">
 	<div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
-		<SudokuDisplay
-			{borderClues}
-			{cages}
-			{cellClues}
-			{cells}
-			{dimensions}
-			{editorColors}
-			{givens}
-			{logic}
-			{notes}
-			{paths}
-			{regions}
-			{cornermarks}
-			{centermarks}
-			{values}
-			{gameColors}
-		>
+		<SudokuDisplay {clues} {notes} {cornermarks} {centermarks} {values} {gameColors}>
 			<g slot="highlights" id="highlights">
-				{#each $wrongCells as cell}
+				{#each $highlights.wrongCells as cell}
 					<rect
 						class="fill-current w-cell h-cell text-red-200"
 						x={cellSize * cell.column}
@@ -65,8 +38,8 @@
 						vector-effect="non-scaling-size"
 					/>
 				{/each}
-				{#if $selectedCells}
-					{#each $selectedCells as cell}
+				{#if $highlights.selectedCells}
+					{#each $highlights.selectedCells as cell}
 						<rect
 							class="fill-current w-cell h-cell text-orange-300 text-opacity-40"
 							x={cellSize * cell.column}
@@ -75,8 +48,8 @@
 						/>
 					{/each}
 				{/if}
-				{#if $highlightedCells}
-					{#each $highlightedCells as cell}
+				{#if $highlights.highlightedCells}
+					{#each $highlights.highlightedCells as cell}
 						<rect
 							class="fill-current w-cell h-cell text-blue-100"
 							x={cellSize * cell.column}
@@ -87,7 +60,7 @@
 				{/if}
 			</g>
 
-			<Interface {cells} {dimensions} slot="interface" />
+			<Interface cells={clues.cells} dimensions={clues.dimensions} slot="interface" />
 		</SudokuDisplay>
 	</div>
 	<div class="my-auto">

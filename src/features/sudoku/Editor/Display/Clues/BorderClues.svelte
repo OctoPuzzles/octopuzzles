@@ -1,14 +1,12 @@
 <script lang="ts">
 	import Borderclue from '$features/sudoku/components/display/borderclues/Borderclue.svelte';
 	import type { Borderclues } from '$models/Sudoku';
-	import { highlights, inputMode } from '$stores/sudokuStore';
+	import { highlights } from '$stores/sudokuStore';
 
-	const { selectedItemIndex } = highlights;
 	export let borderClues: Borderclues;
 
 	function onClick(index: number) {
-		$inputMode = 'borderclues';
-		$selectedItemIndex = index;
+		highlights.set({ selectedItemIndex: index, inputMode: 'borderclues' });
 	}
 </script>
 

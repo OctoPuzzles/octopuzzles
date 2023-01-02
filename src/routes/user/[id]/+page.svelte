@@ -9,8 +9,6 @@
 
 	export let data: PageData;
 
-	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
-
 	let nextCursor: Date | null = null;
 	$: nextCursor = data.sudokus.nextCursor;
 
@@ -38,10 +36,7 @@
 	}
 
 	onMount(() => {
-		$highlightedItemIndex = -1;
-		$selectedItemIndex = -1;
-		$selectedCells = [];
-		$highlightedCells = [];
+		highlights.reset();
 	});
 </script>
 

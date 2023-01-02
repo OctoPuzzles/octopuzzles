@@ -62,16 +62,7 @@
 				<div class="grid gap-2 grid-cols-2">
 					<div>
 						<SudokuDisplay
-							borderClues={clues.borderclues}
-							cages={clues.extendedcages}
-							cellClues={clues.cellclues}
-							cells={clues.cells}
-							dimensions={clues.dimensions}
-							editorColors={clues.colors}
-							givens={clues.givens}
-							logic={clues.logic}
-							paths={clues.paths}
-							regions={clues.regions}
+							{clues}
 							cornermarks={step.cornermarks}
 							centermarks={step.centermarks}
 							values={step.values}

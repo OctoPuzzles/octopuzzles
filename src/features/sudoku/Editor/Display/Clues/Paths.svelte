@@ -1,9 +1,8 @@
 <script lang="ts">
 	import Path from '$features/sudoku/components/display/paths/Path.svelte';
 	import type { Paths } from '$models/Sudoku';
-	import { inputMode, highlights } from '$stores/sudokuStore';
+	import { highlights } from '$stores/sudokuStore';
 
-	const { selectedItemIndex, selectedCells } = highlights;
 	export let paths: Paths;
 </script>
 
@@ -13,9 +12,11 @@
 			<Path
 				{path}
 				onClick={() => {
-					$inputMode = 'paths';
-					$selectedCells = path.positions;
-					$selectedItemIndex = i;
+					highlights.set({
+						inputMode: 'paths',
+						selectedCells: path.positions,
+						selectedItemIndex: i
+					});
 				}}
 			/>
 		{/each}

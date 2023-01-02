@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
 	import type { Borderclue } from '$models/Sudoku';
-	import { borderCluesFontSize } from '$utils/borderCluesFontSize';
 	import { getBorderCluesToDraw } from '$utils/prefabs';
 	import classNames from 'classnames';
 
@@ -54,8 +53,30 @@
 				y: y - innerRadius * Math.cos(i * angle + halfAngle)
 			});
 		}
-		console.log({ points });
 		return points.map((p) => `${p.x},${p.y}`).join(' ');
+	}
+
+	function borderCluesFontSize(s: string, radius: number): string {
+		let size = 0;
+		switch (s.length) {
+			case 1:
+				size = 2;
+				break;
+			case 2:
+				size = 1.2;
+				break;
+			case 3:
+				size = 0.8;
+				break;
+			case 4:
+				size = 0.5;
+				break;
+			case 0:
+			default:
+				break;
+		}
+
+		return (size * radius) / 32 + 'rem';
 	}
 </script>
 
@@ -78,7 +99,7 @@
 				x2={(x + 0.5) * cellSize + (firstPosition.row - secondPosition.row) * radius}
 				y2={(y + 0.5) * cellSize - (firstPosition.column - secondPosition.column) * radius}
 				class={classNames(
-					`stroke-current stroke-3 text-${borderclue.color?.toLowerCase() ?? 'white'}`,
+					`stroke-current stroke-3 cursor text-${borderclue.color?.toLowerCase() ?? 'white'}`,
 					interactable && 'cursor-pointer'
 				)}
 				stroke-linecap="square"
@@ -99,7 +120,8 @@
 					`fill-current`,
 					borderclue.color != null
 						? `stroke-black text-${borderclue.color.toLowerCase()}`
-						: 'stroke-current text-white-500'
+						: 'stroke-current text-white-500',
+					interactable && 'cursor-pointer'
 				)}
 			/>
 		{:else if borderclue.shape === 'Square'}
@@ -118,7 +140,8 @@
 					`fill-current`,
 					borderclue.color != null
 						? `stroke-black text-${borderclue.color.toLowerCase()}`
-						: 'stroke-current text-white-500'
+						: 'stroke-current text-white-500',
+					interactable && 'cursor-pointer'
 				)}
 			/>
 		{:else if borderclue.shape === 'Diamond'}
@@ -138,7 +161,8 @@
 						`fill-current`,
 						borderclue.color != null
 							? `stroke-black text-${borderclue.color.toLowerCase()}`
-							: 'stroke-current text-white-500'
+							: 'stroke-current text-white-500',
+						interactable && 'cursor-pointer'
 					)}
 				/>
 			</g>
@@ -154,7 +178,8 @@
 					`fill-current`,
 					borderclue.color != null
 						? `stroke-black text-${borderclue.color.toLowerCase()}`
-						: 'stroke-current text-white-500'
+						: 'stroke-current text-white-500',
+					interactable && 'cursor-pointer'
 				)}
 			/>
 		{/if}
@@ -167,7 +192,8 @@
 				<text
 					class={classNames(
 						'fill-current',
-						['Black', 'Gray'].includes(borderclue.color ?? 'None') ? 'text-black' : 'text-white'
+						['Black', 'Gray'].includes(borderclue.color ?? 'None') ? 'text-white' : 'text-black',
+						interactable && 'cursor-pointer'
 					)}
 					x={(x + 0.5) * cellSize + xOffset}
 					y={(y + 0.52) * cellSize + yOffset}

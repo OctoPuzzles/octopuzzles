@@ -59,8 +59,9 @@ function createScannerStore() {
 			scanNonConsecutive: settings?.scanNonConsecutive ?? true
 		});
 
-		const { highlightedCells, selectedCells } = highlights;
-		if (get(mode) === 'game') highlightedCells.set(getHighlightedCells(get(selectedCells)));
+		if (get(mode) === 'game') {
+			highlights.set({ highlightedCells: getHighlightedCells(get(highlights).selectedCells) });
+		}
 	}
 
 	const scanning = writable(false);
@@ -784,11 +785,8 @@ function createScannerStore() {
 					cornermarks: newCornermarks
 				});
 
-				const { highlightedCells, selectedCells } = highlights;
-
 				if (settings.scannerSpeed !== 'Instant') {
-					selectedCells.set([cell]);
-					highlightedCells.set(context.highlightedCells);
+					highlights.set({ selectedCells: [cell], highlightedCells: context.highlightedCells });
 				}
 
 				sortQueue(cell);
