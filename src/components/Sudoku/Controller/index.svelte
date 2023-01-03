@@ -34,7 +34,9 @@
     gameHistory,
     highlightedCells,
     inputMode,
-    selectedCells
+    selectedCells,
+    wrongCells,
+    solution
   } from '$stores/sudokuStore';
   import { onMount } from 'svelte';
   import Cells from './components/Cells.svelte';
@@ -227,7 +229,9 @@
     });
   }
 
-  function checkSolution(): void {}
+  function checkSolution(): void {
+    $wrongCells = scanner.getErrorCells($solution);
+  }
 
   async function saveProgress(): Promise<void> {
     const values = get(gameHistory.getValue('values'));
@@ -323,14 +327,14 @@
     </button>
 
     {#if $mode === 'game'}
+      <button
+        title="Check digits"
+        class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+        on:click={checkSolution}
+      >
+        <Check size={32} />
+      </button>
       {#if !$page.url.pathname.includes('/sudoku/editor')}
-        <button
-          title="Check digits"
-          class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
-          on:click={checkSolution}
-        >
-          <Check size={32} />
-        </button>
         <button
           title="Save for later"
           class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"

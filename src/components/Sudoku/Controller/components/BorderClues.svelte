@@ -24,7 +24,7 @@
   import classNames from 'classnames';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
   import { isDeleteKey } from '$utils/isDeleteKey';
-  import { borderClueDefaults } from '$utils/prefabs/borderclues';
+  import { borderClueDefaults } from '$utils/constraints/borderclues';
   import Circle from '$icons/shapes/Circle.svelte';
   import Square from '$icons/shapes/Square.svelte';
   import Diamond from '$icons/shapes/Diamond.svelte';

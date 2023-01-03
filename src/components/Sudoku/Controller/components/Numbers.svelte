@@ -8,6 +8,7 @@
   import { hasOpenModals } from '$stores/modalStore';
   import { me } from '$stores/meStore';
   import { scanner } from '$stores/sudokuStore/scanner';
+  import { settings } from '$stores/settingsStore';
 
   function handleClick(newValue: string): void {
     const positions = get(selectedCells);
@@ -55,7 +56,7 @@
             newCentermarks[position.row][position.column] = '';
             newCornermarks[position.row][position.column] = '';
             anyChanges = true;
-            runScan = me.getSettings().scanner?.autoScan ?? false;
+            runScan = get(settings.getGroup('scanner'))?.autoScan ?? false;
           }
         }
       }

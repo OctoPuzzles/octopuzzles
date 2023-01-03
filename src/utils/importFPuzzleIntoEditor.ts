@@ -20,11 +20,11 @@ import {
   defaultRegionSize,
   defaultValues
 } from './defaults';
-import { emptyBorderClue } from '$utils/prefabs/borderclues';
-import { emptyCage } from '$utils/prefabs/cages';
-import { emptyCellClue } from '$utils/prefabs/cellclues';
-import { emptyPath } from '$utils/prefabs/paths';
-import { emptyRegion } from '$utils/prefabs/regions';
+import { emptyBorderClue } from '$utils/constraints/borderclues';
+import { emptyCage } from '$utils/constraints/cages';
+import { emptyCellClue } from '$utils/constraints/cellclues';
+import { emptyPath } from '$utils/constraints/paths';
+import { emptyRegion } from '$utils/constraints/regions';
 import type {
   BorderClueType,
   CellClueSize,

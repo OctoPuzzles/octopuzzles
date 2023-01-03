@@ -2,12 +2,17 @@ import { get, writable } from 'svelte/store';
 import deepCopy from '$utils/deepCopy';
 import { defaultRegionSize } from '$utils/defaults';
 import type { Position } from '$models/Sudoku';
-import type { ScannerSettings } from '$models/UserSettings';
+import type { ScannerHighlightMode, ScannerSettings } from '$models/UserSettings';
 import { editorHistory, gameHistory, highlightedCells, mode, selectedCells } from '.';
-import { cageDefaults } from '$utils/prefabs/cages';
-import { pathDefaults } from '$utils/prefabs/paths';
-import { regionDefaults } from '$utils/prefabs/regions';
+import { cageDefaults, verifyCage } from '$utils/constraints/cages';
+import { pathDefaults, verifyPath } from '$utils/constraints/paths';
+import { regionDefaults, verifyRegion } from '$utils/constraints/regions';
 import { getValuesFromRange } from '$utils/getValuesFromRange';
+import { getUserSolution } from '$utils/getSolution';
+import { verifyBorderClue } from '$utils/constraints/borderclues';
+import { verifyCellClue } from '$utils/constraints/cellclues';
+import { verifyLogic } from '$utils/constraints/logic';
+import { settings } from '$stores/settingsStore';
 
 // WRITABLES
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -41,7 +46,7 @@ function createScannerStore() {
     highlightedCells: []
   });
 
-  function configure(settings?: ScannerSettings): void {
+  function configure(settings?: ScannerSettings | null): void {
     scannerSettings.set({
       highlightMode: settings?.highlightMode ?? 'None',
       mode: settings?.mode ?? 'Basic',
@@ -144,7 +149,10 @@ function createScannerStore() {
     });
   }
 
-  function getSeenCells(cell: Position): { row: number; column: number; context: string }[] {
+  function getSeenCells(
+    cell: Position,
+    all = false
+  ): { row: number; column: number; context: string }[] {
     const dimensions = get(editorHistory.getClue('dimensions'));
     const rowOffset = dimensions.margins?.top ?? 0;
     const columnOffset = dimensions.margins?.left ?? 0;
@@ -200,8 +208,8 @@ function createScannerStore() {
     });
 
     const settings = get(scannerSettings);
-    if (settings.mode !== 'Basic') {
-      if (diagonalNeg && settings.scanDiagonals) {
+    if (all || settings.mode !== 'Basic') {
+      if (diagonalNeg && (all || settings.scanDiagonals)) {
         if (i === j) {
           for (let k = 0; k < rows; ++k) {
             if (k !== i)
@@ -213,7 +221,7 @@ function createScannerStore() {
           }
         }
       }
-      if (diagonalPos && settings.scanDiagonals) {
+      if (diagonalPos && (all || settings.scanDiagonals)) {
         if (i === rows - 1 - j) {
           for (let k = 0; k < rows; ++k) {
             if (k !== i)
@@ -225,7 +233,7 @@ function createScannerStore() {
           }
         }
       }
-      if (antiking && settings.scanAntiKing) {
+      if (antiking && (all || settings.scanAntiKing)) {
         [-1, 1].forEach((y) => {
           [-1, 1].forEach((x) => {
             if (i + y < 0 || i + y >= rows) return;
@@ -239,7 +247,7 @@ function createScannerStore() {
           });
         });
       }
-      if (antiknight && settings.scanAntiKnight) {
+      if (antiknight && (all || settings.scanAntiKnight)) {
         [-2, -1, 1, 2].forEach((y) => {
           [-2, -1, 1, -2].forEach((x) => {
             if (Math.abs(y) === Math.abs(x)) return;
@@ -254,7 +262,7 @@ function createScannerStore() {
           });
         });
       }
-      if (disjointsets && settings.scanDisjointSets) {
+      if (disjointsets && (all || settings.scanDisjointSets)) {
         for (let m = 0; m < rows / height; ++m) {
           for (let n = 0; m < columns / width; ++n) {
             if (Math.floor(i / height) !== m || Math.floor(j / width) !== n) {
@@ -267,7 +275,7 @@ function createScannerStore() {
           }
         }
       }
-      if (settings.scanCages) {
+      if (all || settings.scanCages) {
         const cages = get(editorHistory.getClue('cages'));
         cages.forEach((c, n) => {
           if (c.uniqueDigits ?? cageDefaults(c.type ?? 'CUSTOM').uniqueDigits) {
@@ -285,7 +293,7 @@ function createScannerStore() {
           }
         });
       }
-      if (settings.scanPaths) {
+      if (all || settings.scanPaths) {
         const paths = get(editorHistory.getClue('paths'));
         paths.forEach((l, n) => {
           if (l.uniqueDigits ?? pathDefaults(l.type ?? 'CUSTOM').uniqueDigits) {
@@ -303,7 +311,7 @@ function createScannerStore() {
           }
         });
       }
-      if (settings.scanExtraRegions) {
+      if (all || settings.scanExtraRegions) {
         regions.forEach((r, n) => {
           if (
             (r.type ?? 'CUSTOM') !== 'Normal' &&
@@ -724,7 +732,7 @@ function createScannerStore() {
       const candidateValues = context.candidates[cell.row][cell.column];
       if (candidateValues.length <= 1) {
         //update the grid and remove the cell from the scanning queue
-        value = candidateValues[0];
+        value = candidateValues.length ? candidateValues[0] : '';
         center = '';
         corner = '';
 
@@ -842,7 +850,7 @@ function createScannerStore() {
 
   function getHighlightedCells(selectedCells: Position[]): Position[] {
     const highlightMode = get(scannerSettings).highlightMode;
-    if (highlightMode == 'None') return [];
+    if (highlightMode == 'None' || selectedCells.length === 0) return [];
 
     let cellsToHighlight: Position[] = [];
 
@@ -888,22 +896,119 @@ function createScannerStore() {
     return cellsToHighlight;
   }
 
-  function toggleSeen() {
-    const settings = get(scannerSettings);
-    if (settings.highlightMode !== 'Seen') {
-      settings.highlightMode = 'Seen';
+  function getErrorCells(solution?: string[][] | null): Position[] {
+    const userSolution = getUserSolution({
+      givens: get(editorHistory.getClue('givens')),
+      values: get(gameHistory.getValue('values'))
+    });
+
+    const wrongCells: Position[] = [];
+
+    if (solution != null) {
+      userSolution.forEach((r, i) => {
+        r.forEach((v, j) => {
+          if (solution[i][j] !== v) {
+            if (v !== '') {
+              wrongCells.push({ row: i, column: j });
+            }
+          }
+        });
+      });
     } else {
-      settings.highlightMode = 'None';
+      userSolution.forEach((r, i) => {
+        r.forEach((v, j) => {
+          if (v !== '') {
+            getSeenCells({ row: i, column: j }, true).forEach((c) => {
+              if (
+                v === userSolution[c.row][c.column] &&
+                !wrongCells.some((w) => w.row === c.row && w.column === c.column)
+              ) {
+                wrongCells.push(c);
+              }
+            });
+          }
+        });
+      });
+
+      const regions = get(editorHistory.getClue('regions'));
+      regions.forEach((r) => {
+        wrongCells.push(
+          ...verifyRegion(r, userSolution, regions).filter(
+            (c) => !wrongCells.some((w) => w.row === c.row && w.column === c.column)
+          )
+        );
+      });
+
+      const paths = get(editorHistory.getClue('paths'));
+      paths.forEach((l) => {
+        wrongCells.push(
+          ...verifyPath(l, userSolution, paths, regions).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      const borderclues = get(editorHistory.getClue('borderclues'));
+      borderclues.forEach((b) => {
+        wrongCells.push(
+          ...verifyBorderClue(b, userSolution).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      const cellclues = get(editorHistory.getClue('cellclues'));
+      const dimensions = get(editorHistory.getClue('dimensions'));
+      cellclues.forEach((c) => {
+        wrongCells.push(
+          ...verifyCellClue(c, userSolution, dimensions).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      const cages = get(editorHistory.getClue('cages'));
+      cages.forEach((k) => {
+        wrongCells.push(
+          ...verifyCage(k, userSolution).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      const logic = get(editorHistory.getClue('logic'));
+      if (logic.flags) {
+        wrongCells.push(
+          ...verifyLogic(logic.flags, userSolution, borderclues, dimensions).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      }
     }
+
+    return wrongCells;
+  }
+
+  function toggleSeen() {
+    const oldSettings = get(scannerSettings);
+    let highlightMode: ScannerHighlightMode;
+    if (oldSettings.highlightMode !== 'Seen') {
+      highlightMode = 'Seen';
+    } else {
+      highlightMode = 'None';
+    }
+    settings.save({ scanner: { ...oldSettings, highlightMode } });
   }
 
   function toggleTuples() {
-    const settings = get(scannerSettings);
-    if (settings.highlightMode !== 'Tuples') {
-      settings.highlightMode = 'Tuples';
+    const oldSettings = get(scannerSettings);
+    let highlightMode: ScannerHighlightMode;
+    if (oldSettings.highlightMode !== 'Tuples') {
+      highlightMode = 'Tuples';
     } else {
-      settings.highlightMode = 'None';
+      highlightMode = 'None';
     }
+    settings.save({ scanner: { ...oldSettings, highlightMode } });
   }
 
   return {
@@ -912,9 +1017,11 @@ function createScannerStore() {
     startScan,
     stopScan,
     isScanning,
+    getSeenCells,
     getHighlightedCells,
     toggleSeen,
-    toggleTuples
+    toggleTuples,
+    getErrorCells
   };
 }
 /**

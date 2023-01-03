@@ -18,6 +18,7 @@
   $: nonconsecutive = flags.indexOf('Nonconsecutive') !== -1;
   $: disjointsets = flags.indexOf('DisjointSets') !== -1;
   $: sCells = flags.indexOf('SCells') !== -1;
+  $: doublers = flags.indexOf('Doublers') !== -1;
   $: entropy = flags.indexOf('Entropy') !== -1;
   $: indexed159 = flags.indexOf('Indexed159') !== -1;
   $: negativeX = flags.indexOf('NegativeX') !== -1;
@@ -56,7 +57,7 @@
 
 <div class="grid grid-cols-1 w-full h-full p-2">
   <div class="px-2 flex flex-col overflow-hidden justify-between">
-    <Input label="Digits" bind:value={digits} placeholder="1-9" />
+    <Input label="Digits" bind:value={digits} placeholder="1-9" on:input={() => update()} />
     <Label>Flags</Label>
     <div
       class="bg-gray-200 rounded-md shadow-inner flex flex-col items-center p-2 overflow-hidden h-full"
@@ -151,6 +152,13 @@
             bind:checked={sCells}
             label={logicFlagNames.SCells}
             on:change={() => toggleFlag('SCells')}
+          />
+        </div>
+        <div>
+          <Checkbox
+            bind:checked={doublers}
+            label={logicFlagNames.Doublers}
+            on:change={() => toggleFlag('Doublers')}
           />
         </div>
         <div>

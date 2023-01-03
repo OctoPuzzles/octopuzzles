@@ -31,7 +31,7 @@
   import isArrowKey from '$utils/isArrowKey';
   import { isCommandKey } from '$utils/isCommandKey';
   import { isDeleteKey } from '$utils/isDeleteKey';
-  import { cageDefaults } from '$utils/prefabs/cages';
+  import { cageDefaults } from '$utils/constraints/cages';
   import moveArrayElement from '$utils/moveArrayElement';
   import type { CageType, Extendedcage, Position } from '$models/Sudoku';
   import { hasOpenModals } from '$stores/modalStore';

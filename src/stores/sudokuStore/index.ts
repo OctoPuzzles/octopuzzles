@@ -300,6 +300,7 @@ function createGameHistoryStore() {
 export const sudokuTitle = writable('');
 export const description = writable('');
 export const labels = writable<{ label: Label; selected: boolean }[]>([]);
+export const solution = writable<string[][] | null>(null);
 
 export const gameHistory = createGameHistoryStore();
 

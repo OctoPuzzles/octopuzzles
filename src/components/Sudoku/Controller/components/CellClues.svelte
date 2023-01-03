@@ -32,7 +32,7 @@
   import classNames from 'classnames';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
   import { isDeleteKey } from '$utils/isDeleteKey';
-  import { cellClueDefaults } from '$utils/prefabs/cellclues';
+  import { cellClueDefaults } from '$utils/constraints/cellclues';
   import { onDestroy } from 'svelte';
   import type {
     Cellclue,

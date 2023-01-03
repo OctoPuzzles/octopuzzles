@@ -8,37 +8,33 @@
   import Label from '$ui/Label.svelte';
   import RadioGroup from '$ui/RadioGroup.svelte';
   import Checkbox from '$ui/Checkbox.svelte';
-  import { cageDefaults } from '$utils/prefabs/cages';
-  import { pathDefaults } from '$utils/prefabs/paths';
-  import { regionDefaults } from '$utils/prefabs/regions';
-  import type {
-    ScannerHighlightMode,
-    ScannerMode,
-    ScannerSettings,
-    ScannerSpeed
-  } from '$models/UserSettings';
+  import { cageDefaults } from '$utils/constraints/cages';
+  import { pathDefaults } from '$utils/constraints/paths';
+  import { regionDefaults } from '$utils/constraints/regions';
+  import type { ScannerHighlightMode, ScannerMode, ScannerSpeed } from '$models/UserSettings';
 
   import { me } from '$stores/meStore';
   import { scanner } from '$stores/sudokuStore/scanner';
   import { hasOpenModals } from '$stores/modalStore';
+  import { settings } from '$stores/settingsStore';
 
-  let scannerSettings: ScannerSettings = me.getSettings().scanner ?? {};
-  let highlightMode = scannerSettings.highlightMode ?? 'None';
-  let mode = scannerSettings.mode ?? 'Basic';
-  let autoScan = scannerSettings.autoScan ?? false;
-  let scannerSpeed = scannerSettings.scannerSpeed ?? 'Slow';
-  let useCentreMarks = scannerSettings.useCentreMarks ?? true;
-  let useCornerMarks = scannerSettings.useCornerMarks ?? true;
-  let scanDiagonals = scannerSettings.scanDiagonals ?? true;
-  let scanAntiKnight = scannerSettings.scanAntiKnight ?? true;
-  let scanAntiKing = scannerSettings.scanAntiKing ?? true;
-  let scanDisjointSets = scannerSettings.scanDisjointSets ?? true;
-  let scanCages = scannerSettings.scanCages ?? true;
-  let scanPaths = scannerSettings.scanPaths ?? true;
-  let scanExtraRegions = scannerSettings.scanExtraRegions ?? true;
-  let scanNegativeXV = scannerSettings.scanNegativeXV ?? true;
-  let scanNegativeKropki = scannerSettings.scanNegativeKropki ?? true;
-  let scanNonConsecutive = scannerSettings.scanNonConsecutive ?? true;
+  let scannerSettings = settings.getGroup('scanner');
+  let highlightMode = $scannerSettings?.highlightMode ?? 'None';
+  let mode = $scannerSettings?.mode ?? 'Basic';
+  let autoScan = $scannerSettings?.autoScan ?? false;
+  let scannerSpeed = $scannerSettings?.scannerSpeed ?? 'Slow';
+  let useCentreMarks = $scannerSettings?.useCentreMarks ?? true;
+  let useCornerMarks = $scannerSettings?.useCornerMarks ?? true;
+  let scanDiagonals = $scannerSettings?.scanDiagonals ?? true;
+  let scanAntiKnight = $scannerSettings?.scanAntiKnight ?? true;
+  let scanAntiKing = $scannerSettings?.scanAntiKing ?? true;
+  let scanDisjointSets = $scannerSettings?.scanDisjointSets ?? true;
+  let scanCages = $scannerSettings?.scanCages ?? true;
+  let scanPaths = $scannerSettings?.scanPaths ?? true;
+  let scanExtraRegions = $scannerSettings?.scanExtraRegions ?? true;
+  let scanNegativeXV = $scannerSettings?.scanNegativeXV ?? true;
+  let scanNegativeKropki = $scannerSettings?.scanNegativeKropki ?? true;
+  let scanNonConsecutive = $scannerSettings?.scanNonConsecutive ?? true;
 
   let regions = editorHistory.getClue('regions');
   let cages = editorHistory.getClue('cages');
@@ -59,7 +55,7 @@
   let negativeWhite = flags.indexOf('NegativeWhite') !== -1;
 
   function updateSettings(): void {
-    scannerSettings = {
+    const scannerSettings = {
       highlightMode: highlightMode as ScannerHighlightMode,
       mode: mode as ScannerMode,
       scannerSpeed: scannerSpeed as ScannerSpeed,
@@ -77,9 +73,7 @@
       scanNegativeKropki,
       scanNonConsecutive
     };
-    me.saveSettings({ scanner: scannerSettings });
-
-    scanner.configure(scannerSettings);
+    settings.save({ scanner: scannerSettings });
   }
 
   function handleKeyboardShortcuts(k: KeyboardEvent): void {

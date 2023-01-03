@@ -22,7 +22,8 @@
     gameHistory,
     sudokuTitle,
     labels,
-    mode
+    mode,
+    solution
   } from '$stores/sudokuStore';
   import Label from '$ui/Label.svelte';
   import classNames from 'classnames';
@@ -97,6 +98,7 @@
     if (sud != null) {
       $sudokuTitle = sud.title;
       $description = sud.description;
+      $solution = null;
       id = sud.id;
       provideSolution = sud.solution != null;
       isPublic = sud.publicSince != null;
@@ -126,6 +128,7 @@
     } else {
       $sudokuTitle = '';
       $description = '';
+      $solution = null;
 
       editorHistory.reset();
     }

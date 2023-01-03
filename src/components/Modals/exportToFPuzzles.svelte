@@ -13,7 +13,9 @@
 
 {#if isOpen}
   <div role="dialog" class="bg-white shadow rounded-md p-4 flex flex-col">
-    <FPuzzlesLink class="w-6 h-6 block" {puzzleData}><FPuzzles /></FPuzzlesLink>
-    <CtCLink class="w-6 h-6 block" {puzzleData}><CtC /></CtCLink>
+    <div class="flex space-x-2 mx-auto my-4">
+      <FPuzzlesLink class="w-6 h-6 block" {puzzleData}><FPuzzles /></FPuzzlesLink>
+      <CtCLink class="w-6 h-6 block" {puzzleData}><CtC /></CtCLink>
+    </div>
   </div>
 {/if}

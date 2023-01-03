@@ -29,7 +29,7 @@
   import Checkbox from '$ui/Checkbox.svelte';
   import OldSelect from '$ui/OldSelect.svelte';
   import ColorSelect from '$ui/ColorSelect.svelte';
-  import { regionDefaults } from '$utils/prefabs/regions';
+  import { regionDefaults } from '$utils/constraints/regions';
   import { regionTypeNames, regionTypesToLabel } from '$constants';
   import moveArrayElement from '$utils/moveArrayElement';
   import type { Position, Region, RegionType } from '$models/Sudoku';

@@ -98,7 +98,9 @@ export const PathTypeValidator = z.enum([
   'Entropic',
   'Odd',
   'Even',
-  'Pill'
+  'Pill',
+  'Parity',
+  'DutchWhisper'
 ]);
 export type PathType = z.infer<typeof PathTypeValidator>;
 
@@ -216,6 +218,7 @@ export const LogicFlagValidator = z.enum([
   'Nonconsecutive',
   'DisjointSets',
   'SCells',
+  'Doublers',
   'Entropy',
   'Indexed159',
   'NegativeX',

@@ -4,8 +4,8 @@ export const UserStatsValidator = z.object({
   sudokuId: z.number().int(),
   userId: z.number().int(),
   lastViewedOn: z.date(),
-  bookmarked: z.boolean().optional(),
-  solvedOn: z.date().optional(),
-  solveTime: z.number().int().optional(),
+  bookmarked: z.boolean().nullable(),
+  solvedOn: z.date().nullable(),
+  solveTime: z.number().int().nullable()
 });
 export type UserStats = z.infer<typeof UserStatsValidator>;

@@ -8,11 +8,16 @@
   import trpc from '$lib/client/trpc';
   import { me } from '$stores/meStore';
   import { onMount } from 'svelte';
+  import { openModal } from '$stores/modalStore';
+  import UserSettingsModal from '$components/Modals/UserSettingsModal.svelte';
+  import { settings } from '$stores/settingsStore';
 
   async function getMe() {
-    const res = await trpc().query('users:me');
-    const settings = await trpc().query('userSettings:get');
-    me.set(res, settings);
+    const user = await trpc().query('users:me');
+    me.set(user);
+
+    const userSettings = await trpc().query('userSettings:get');
+    settings.set(userSettings);
   }
 
   onMount(() => {
@@ -28,6 +33,10 @@
   let details: HTMLDetailsElement;
 
   $: if ($navigating && details) details.open = false;
+
+  function showSettingsModal(): void {
+    openModal(UserSettingsModal);
+  }
 </script>
 
 {#if $me}
@@ -64,13 +73,9 @@
             class="block py-1 px-2 hover:bg-gray-200 w-full">Profile</a
           >
         </li>
-        <li class="w-full">
-          <a
-            data-sveltekit-preload-data
-            href="/settings"
-            class="block py-1 px-2 hover:bg-gray-200 w-full">Settings</a
-          >
-        </li>
+        <button class="px-2 py-1 w-full text-left hover:bg-gray-200" on:click={showSettingsModal}>
+          Settings
+        </button>
       </ul>
 
       <hr />

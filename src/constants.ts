@@ -74,12 +74,14 @@ export const pathTypeNames: Record<PathType, string> = {
   AntiFactor: 'Anti-Factor Line',
   Arrow: 'Arrow',
   Between: 'Between Line',
+  DutchWhisper: 'Dutch Whispers',
   Entropic: 'Entropic Line',
   EqualSum: 'Region-Sum Line',
   Even: 'Even',
   Lockout: 'Lockout Line',
   Odd: 'Odd',
   Palindrome: 'Palindrome',
+  Parity: 'Parity Line',
   Pill: 'Pill',
   ProductSum: 'Product-Sum Line',
   Renban: 'Renban Line',
@@ -173,7 +175,8 @@ export const logicFlagNames: Record<LogicFlag, string> = {
   NegativeX: 'Negative Constraint: Xs',
   Nonconsecutive: 'Non-Consecutive',
   NonStandard: 'Non-Standard',
-  SCells: 'S-Cells'
+  SCells: 'S-Cells',
+  Doublers: 'Doublers'
 };
 
 export const isFrameCellClue: Record<CellClueType, boolean> = {
@@ -201,11 +204,13 @@ export const pathTypesToLabel: Record<PathType, string> = {
   AntiFactor: 'Anti-Factor Lines',
   Arrow: 'Arrow',
   Between: 'Between Lines',
+  DutchWhisper: 'Dutch Whispers',
   Entropic: 'Entropic Lines',
   EqualSum: 'Region-Sum Lines',
   Even: 'Odd/Even',
   Lockout: 'Lockout Lines',
   Odd: 'Odd/Even',
+  Parity: 'Parity Lines',
   Palindrome: 'Palindrome',
   ProductSum: 'Product-Sum Lines',
   Pill: 'Arrow',
@@ -262,5 +267,6 @@ export const logicFlagsToLabel: Record<LogicFlag, string> = {
   NegativeX: 'XV',
   Nonconsecutive: 'Non-Consecutive',
   NonStandard: '',
-  SCells: 'S-Cells'
+  SCells: 'S-Cells',
+  Doublers: 'Doublers'
 };

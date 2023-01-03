@@ -4,7 +4,6 @@
   export { className as class };
 </script>
 
-Cracking the Cryptic
 <a
   class={className}
   title="Cracking The Cryptic"

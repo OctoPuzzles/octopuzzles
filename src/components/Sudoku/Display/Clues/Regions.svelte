@@ -2,7 +2,7 @@
   import { cellSize } from '$constants';
   import type { Dimensions, Regions } from '$models/Sudoku';
   import { createEdges } from '$utils/createEdges';
-  import { getRegionsToDraw } from '$utils/prefabs/regions';
+  import { getRegionsToDraw } from '$utils/constraints/regions';
 
   export let regions: Regions;
 

@@ -4,7 +4,6 @@
   export { className as class };
 </script>
 
-F-Puzzles
 <a
   class={className}
   title="Export to f-Puzzles.com"

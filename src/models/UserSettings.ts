@@ -39,8 +39,8 @@ export type GeneralSettings = z.infer<typeof GeneralSettingsValidator>;
 
 export const UserSettingsValidator = z.object({
   userId: z.number().int(),
-  scanner: ScannerSettingsValidator.optional(),
-  general: GeneralSettingsValidator.optional()
+  scanner: ScannerSettingsValidator.nullable(),
+  general: GeneralSettingsValidator.nullable()
 });
 export type UserSettings = z.infer<typeof UserSettingsValidator>;
 

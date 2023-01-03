@@ -7,18 +7,19 @@
     editorHistory,
     gameHistory,
     sudokuTitle,
-    wrongCells
+    wrongCells,
+    solution
   } from '$stores/sudokuStore';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { openModal } from '$stores/modalStore';
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
-  import { getUserSolution } from '$utils/getSolution';
-  import { get } from 'svelte/store';
   import type { PageData } from './$types';
   import { walkthroughStore } from '$stores/walkthroughStore';
   import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
   import trpc from '$lib/client/trpc';
+  import { scanner } from '$stores/sudokuStore/scanner';
+  import { settings } from '$stores/settingsStore';
 
   export let data: PageData;
 
@@ -67,6 +68,7 @@
 
     $sudokuTitle = sud.title;
     $description = sud.description;
+    $solution = sud.solution?.numbers ?? null;
 
     editorHistory.reset({
       borderclues: sud.borderclues ?? undefined,
@@ -85,6 +87,8 @@
     } else {
       gameHistory.reset();
     }
+
+    trpc().mutation('userStats:viewed', { sudokuId: sud.id });
   });
 
   let givens = editorHistory.getClue('givens');
@@ -104,36 +108,30 @@
   let centermarks = gameHistory.getValue('centermarks');
   let notes = gameHistory.getValue('notes');
 
+  let generalSettings = settings.getGroup('general');
+
   function checkSolution(numbers: string[][]): boolean {
     $wrongCells = [];
-    let solution = data.sudoku?.solution;
-    if (solution?.numbers == null) return false;
 
-    if (
-      solution.numbers.length !== numbers.length ||
-      solution.numbers[0].length !== numbers[0].length
-    ) {
-      return false;
+    const complete = !$values.some((r, i) =>
+      r.some((v, j) => v === '' && $givens[i][j] === '' && $cells[i][j] === true)
+    );
+
+    const verificationMode = $generalSettings?.verificationMode ?? 'OnDemand';
+    if (verificationMode === 'OnComplete' && !complete) return false;
+
+    if ($solution != null) {
+      if ($solution.length !== numbers.length || $solution[0].length !== numbers[0].length) {
+        return false;
+      }
     }
 
-    let userSolution = getUserSolution({
-      givens: get(editorHistory.getClue('givens')),
-      values: numbers
-    });
+    const errorCells = scanner.getErrorCells($solution);
+    if (verificationMode === 'OnInput' || (complete && verificationMode === 'OnComplete')) {
+      $wrongCells = errorCells;
+    }
 
-    let isDone = true;
-
-    userSolution.forEach((row, rowIndex) => {
-      row.forEach((cell, columnIndex) => {
-        if (solution && solution.numbers[rowIndex][columnIndex] !== cell) {
-          if (cell.length > 0) {
-            $wrongCells = [...$wrongCells, { row: rowIndex, column: columnIndex }];
-          }
-          isDone = false;
-        }
-      });
-    });
-    return isDone;
+    return complete && errorCells.length === 0;
   }
 
   function showDoneModal(): void {

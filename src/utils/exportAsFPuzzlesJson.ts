@@ -4,18 +4,10 @@ import { get } from 'svelte/store';
 import deepCopy from './deepCopy';
 import { defaultRegions } from './defaults';
 import { topLeftOfPositions } from './topLeftOfPositions';
-import {
-  getBorderCluesToDraw
-} from './prefabs/borderclues';
-import {
-  getCellCluesToDraw
-} from './prefabs/cellclues';
-import {
-  getPathsToDraw
-} from './prefabs/paths';
-import {
-  getRegionsToDraw
-} from './prefabs/regions';
+import { getBorderCluesToDraw } from './constraints/borderclues';
+import { getCellCluesToDraw } from './constraints/cellclues';
+import { getPathsToDraw } from './constraints/paths';
+import { getRegionsToDraw } from './constraints/regions';
 import type { Color, Position } from '$models/Sudoku';
 
 export function exportAsFPuzzlesJson(): FPuzzlesJson {

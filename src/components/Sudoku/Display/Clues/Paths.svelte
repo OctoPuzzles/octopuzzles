@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cellSize } from '$constants';
   import type { Paths, Position } from '$models/Sudoku';
-  import { getPathsToDraw } from '$utils/prefabs/paths';
+  import { getPathsToDraw } from '$utils/constraints/paths';
   import classNames from 'classnames';
 
   export let paths: Paths;
