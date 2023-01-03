@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pathTypeNames, pathTypesToLabel } from '$constants';
+	import { pathTypesToLabel } from '$constants';
 	import { default as PathComponent } from '$features/sudoku/components/display/paths/Path.svelte';
 	import ScaledSvg from '$features/sudoku/components/display/ScaledSvg.svelte';
 	import { forms, type Path, type PathType, type Position } from '$models/Sudoku';
@@ -22,16 +22,16 @@
 	import ColorSelect from '$ui/ColorSelect.svelte';
 	import ControllerButton from '$ui/ControllerButton.svelte';
 	import Label from '$ui/Label.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
 	import RadioGroup from '$ui/RadioGroup.svelte';
 	import Range from '$ui/Range.svelte';
+	import Select from '$ui/Select.svelte';
 	import deepCopy from '$utils/deepCopy';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 	import moveArrayElement from '$utils/moveArrayElement';
 	import { pathDefaults } from '$utils/prefabs';
+	import { isEmpty } from 'lodash';
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 
 	const sudokuClues = editorHistory.subscribeToClues();
 	const labels = editorHistory.labels;
@@ -59,14 +59,35 @@
 		'Even',
 		'Pill'
 	];
+	const pathTypesWithCustom: (PathType | 'CUSTOM')[] = [...pathTypes, 'CUSTOM'];
 
-	$: if ($highlights.selectedItemIndex >= 0) {
-		pathSelected($highlights.selectedItemIndex);
-	}
+	const pathTypeNames: Record<PathType | 'CUSTOM', string> = {
+		AntiFactor: 'Anti-Factor Line',
+		Arrow: 'Arrow',
+		Between: 'Between Line',
+		Entropic: 'Entropic Line',
+		EqualSum: 'Region-Sum Line',
+		Even: 'Even',
+		Lockout: 'Lockout Line',
+		Odd: 'Odd',
+		Palindrome: 'Palindrome',
+		Pill: 'Pill',
+		ProductSum: 'Product-Sum Line',
+		Renban: 'Renban Line',
+		Thermo: 'Thermometer',
+		Whisper: 'German Whispers',
+		CUSTOM: 'Custom'
+	};
+
+	onMount(() => {
+		if ($highlights.selectedItemIndex >= 0 && $highlights.inputMode === 'paths') {
+			pathSelected($highlights.selectedItemIndex);
+		}
+	});
 
 	function pathSelected(selectedItemIndex: number): void {
 		const path = $sudokuClues.paths[selectedItemIndex];
-		if (path == null) return;
+		if (path == null || isEmpty(path)) return;
 		updateSettings(path);
 	}
 
@@ -379,18 +400,12 @@
 	</div>
 	<div class="px-2 flex flex-col">
 		<div>
-			<OldSelect
-				label="Type"
-				on:change={() => onChangeType()}
-				id="type"
-				bind:value={type}
-				class="mr-0.5 w-full capitalize"
-			>
-				{#each pathTypes as pathType}
-					<option value={pathType} class="capitalize">{pathTypeNames[pathType]}</option>
-				{/each}
-				<option value={'CUSTOM'} class="capitalize">Custom</option>
-			</OldSelect>
+			<Select options={pathTypesWithCustom} bind:option={type} onChange={() => onChangeType()}>
+				<svelte:fragment slot="label">Type</svelte:fragment>
+				<div slot="option" let:option class="capitalize">
+					{pathTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 
 		<div>

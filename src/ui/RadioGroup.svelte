@@ -6,8 +6,9 @@
 	export let name: string;
 	export let value: T;
 	export let options: T[];
-
 	export let idFromOption: (option: T) => string;
+
+	export let onChange: ((option: T) => void) | undefined = undefined;
 </script>
 
 <fieldset class="flex rounded-md w-full h-8 space-x-px bg-gray-200 p-px">
@@ -21,6 +22,7 @@
 				type="radio"
 				bind:group={value}
 				{name}
+				on:click={() => onChange?.(option)}
 				value={option}
 			/>
 			<label
@@ -30,6 +32,8 @@
 					isFirst && 'rounded-l-md',
 					isLast && 'rounded-r-md'
 				)}
+				on:click={() => onChange?.(option)}
+				on:keypress={() => onChange?.(option)}
 			>
 				<slot {option} />
 			</label>

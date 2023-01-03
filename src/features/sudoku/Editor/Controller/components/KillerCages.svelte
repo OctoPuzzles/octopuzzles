@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cageTypeNames, cageTypesToLabel } from '$constants';
+	import { cageTypesToLabel } from '$constants';
 	import Killercage from '$features/sudoku/components/display/killercages/Killercage.svelte';
 	import ScaledSvg from '$features/sudoku/components/display/ScaledSvg.svelte';
 	import type { CageType, Extendedcage, Position } from '$models/Sudoku';
@@ -23,7 +23,7 @@
 	import ControllerButton from '$ui/ControllerButton.svelte';
 	import Input from '$ui/Input.svelte';
 	import Label from '$ui/Label.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
+	import Select from '$ui/Select.svelte';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import isArrowKey from '$utils/keyboard/isArrowKey';
 	import { isCommandKey } from '$utils/keyboard/isCommandKey';
@@ -41,10 +41,16 @@
 	$: color, updateSelectedCage();
 
 	const cageTypes: CageType[] = ['Killer'];
+	const cageTypesWithCustom: (CageType | 'CUSTOM')[] = [...cageTypes, 'CUSTOM'];
+
+	const cageTypeNames: Record<CageType | 'CUSTOM', string> = {
+		Killer: 'Killer',
+		CUSTOM: 'Custom'
+	};
 
 	let input: Input;
 
-	$: if ($highlights.selectedItemIndex >= 0) {
+	$: if ($highlights.selectedItemIndex >= 0 && $highlights.inputMode === 'extendedcages') {
 		cageSelected($highlights.selectedItemIndex);
 	}
 
@@ -60,6 +66,7 @@
 		uniqueDigits = cage.uniqueDigits ?? defaultSettings.uniqueDigits;
 	}
 
+	$: type, changeType(type);
 	function changeType(type: CageType | 'CUSTOM') {
 		updateSettings(type !== 'CUSTOM' ? { type } : {});
 		updateSelectedCage();
@@ -342,18 +349,12 @@
 
 	<div class="px-2 flex flex-col">
 		<div>
-			<OldSelect
-				label="Type"
-				on:change={() => changeType(type)}
-				id="type"
-				bind:value={type}
-				class="mr-0.5 w-full capitalize"
-			>
-				{#each cageTypes as cageType}
-					<option value={cageType} class="capitalize">{cageTypeNames[cageType]}</option>
-				{/each}
-				<option value={'CUSTOM'} class="capitalize">Custom</option>
-			</OldSelect>
+			<Select options={cageTypesWithCustom} bind:option={type}>
+				<svelte:fragment slot="label">Type</svelte:fragment>
+				<div slot="option" let:option class="capitalize">
+					{cageTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 		<div>
 			<ColorSelect bind:color class="w-full" />

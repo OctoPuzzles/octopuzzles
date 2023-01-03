@@ -150,7 +150,7 @@
 			{#if hasArrow}
 				<path
 					d={createArrow(lastPosition)}
-					class={classNames('stroke-current text-${color}', interactable && 'cursor-pointer')}
+					class={classNames(`stroke-current text-${color}`, interactable && 'cursor-pointer')}
 					stroke-width={size + 1}
 					stroke-linecap={p.form === 'Diamond' ? 'butt' : p.form === 'Square' ? 'square' : 'round'}
 					stroke-linejoin={p.form !== 'Round' ? 'miter' : 'round'}

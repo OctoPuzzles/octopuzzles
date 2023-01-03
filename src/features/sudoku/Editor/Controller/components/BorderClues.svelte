@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { borderClueTypeNames, borderClueTypesToLabel } from '$constants';
+	import { borderClueTypesToLabel } from '$constants';
 	import { default as BorderclueComponent } from '$features/sudoku/components/display/borderclues/Borderclue.svelte';
 	import ScaledSvg from '$features/sudoku/components/display/ScaledSvg.svelte';
 	import type { Borderclue, BorderClueType, Position } from '$models/Sudoku';
@@ -12,8 +12,8 @@
 	import ControllerButton from '$ui/ControllerButton.svelte';
 	import Input from '$ui/Input.svelte';
 	import Label from '$ui/Label.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
 	import RadioGroup from '$ui/RadioGroup.svelte';
+	import Select from '$ui/Select.svelte';
 	import deepCopy from '$utils/deepCopy';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import isArrowKey from '$utils/keyboard/isArrowKey';
@@ -41,6 +41,19 @@
 		'Border'
 	];
 
+	const borderClueTypeNames: Record<BorderClueType | 'CUSTOM', string> = {
+		Inequality: 'Inequality',
+		KropkiBlack: 'Kropki (Black)',
+		KropkiWhite: 'Kropki (White)',
+		Quadruple: 'Quadruple',
+		XvV: 'XV (V)',
+		XvX: 'XV (X)',
+		Border: 'Border',
+		CUSTOM: 'Custom'
+	};
+
+	const borderClueTypesWithCustom: (BorderClueType | 'CUSTOM')[] = [...borderClueTypes, 'CUSTOM'];
+
 	$: if ($highlights.selectedItemIndex >= 0 && $highlights.inputMode === 'borderclues') {
 		borderClueSelected($highlights.selectedItemIndex);
 	}
@@ -58,7 +71,8 @@
 		text = clue.text ?? defaultSettings.text;
 	}
 
-	function changeType(type: BorderClueType | 'CUSTOM') {
+	$: type, changeType(type);
+	function changeType(type: BorderClueType | 'CUSTOM'): void {
 		updateSettings(type !== 'CUSTOM' ? { type } : {});
 
 		updateSelectedClue();
@@ -258,20 +272,12 @@
 
 	<div class="px-2 flex flex-col">
 		<div>
-			<OldSelect
-				label="Type"
-				on:change={() => changeType(type)}
-				id="type"
-				bind:value={type}
-				class="mr-0.5 w-full capitalize"
-			>
-				{#each borderClueTypes as borderClueType}
-					<option value={borderClueType} class="capitalize"
-						>{borderClueTypeNames[borderClueType]}</option
-					>
-				{/each}
-				<option value={'CUSTOM'} class="capitalize">Custom</option>
-			</OldSelect>
+			<Select options={borderClueTypesWithCustom} bind:option={type}>
+				<svelte:fragment slot="label">Type</svelte:fragment>
+				<div slot="option" let:option class="capitalize">
+					{borderClueTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 
 		<div>

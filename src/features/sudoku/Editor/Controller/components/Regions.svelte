@@ -14,19 +14,18 @@
 	} from '$stores/sudokuStore/interactionHandlers';
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import deepCopy from '$utils/deepCopy';
 	import Checkbox from '$ui/Checkbox.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
 	import ColorSelect from '$ui/ColorSelect.svelte';
 	import { regionDefaults } from '$utils/prefabs';
-	import { regionTypeNames, regionTypesToLabel } from '$constants';
+	import { regionTypesToLabel } from '$constants';
 	import moveArrayElement from '$utils/moveArrayElement';
 	import type { Position, Region, RegionType } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
 	import ControllerButton from '$ui/ControllerButton.svelte';
+	import Select from '$ui/Select.svelte';
 
 	const sudokuClues = editorHistory.subscribeToClues();
 	const labels = editorHistory.labels;
@@ -38,6 +37,15 @@
 	$: color, updateSelectedRegion();
 
 	const regionTypes: RegionType[] = ['Normal', 'Extra', 'Clone', 'MagicSquare'];
+	const regionTypesWithCustom: (RegionType | 'CUSTOM')[] = [...regionTypes, 'CUSTOM'];
+
+	const regionTypeNames: Record<RegionType | 'CUSTOM', string> = {
+		Clone: 'Clone',
+		Extra: 'Extra',
+		MagicSquare: 'Magic Square',
+		Normal: 'Normal',
+		CUSTOM: 'Custom'
+	};
 
 	$: if ($highlights.selectedItemIndex >= 0) {
 		regionSelected($highlights.selectedItemIndex);
@@ -57,7 +65,9 @@
 		uniqueDigits = region.uniqueDigits ?? defaultSettings.uniqueDigits;
 	}
 
-	function changeType(type: RegionType | 'CUSTOM') {
+	$: type, changeType(type);
+
+	function changeType(type: RegionType | 'CUSTOM'): void {
 		updateSettings(type !== 'CUSTOM' ? { type } : {});
 		updateSelectedRegion();
 	}
@@ -386,18 +396,12 @@
 
 	<div class="px-2 flex flex-col">
 		<div>
-			<OldSelect
-				label="Type"
-				on:change={() => changeType(type)}
-				id="type"
-				bind:value={type}
-				class="mr-0.5 w-full capitalize"
-			>
-				{#each regionTypes as regionType}
-					<option value={regionType} class="capitalize">{regionTypeNames[regionType]}</option>
-				{/each}
-				<option value={'CUSTOM'} class="capitalize">Custom</option>
-			</OldSelect>
+			<Select options={regionTypesWithCustom} bind:option={type}>
+				<svelte:fragment slot="label">Type</svelte:fragment>
+				<div slot="option" let:option class="capitalize">
+					{regionTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 		<div>
 			<ColorSelect bind:color class="w-full" />

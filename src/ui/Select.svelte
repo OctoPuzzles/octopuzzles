@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { useId } from '$utils/useId';
-
 	import classNames from 'classnames';
+	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
 	import { tick } from 'svelte';
 	import Label from './Label.svelte';
 
@@ -17,6 +17,7 @@
 	export let option: T | undefined = undefined;
 	let className = '';
 	export { className as class };
+	export let onChange: ((option: T) => void) | undefined = undefined;
 
 	let id = useId();
 	let focused = false;
@@ -138,11 +139,10 @@
 		<button
 			aria-haspopup="listbox"
 			class={classNames(
-				'relative rounded-lg bg-white text-black border border-gray-300 py-1 px-4 cursor-pointer w-full text-left',
+				'relative rounded-lg bg-white text-black border border-gray-300 h-9 flex items-center cursor-pointer w-full text-left pl-2',
 				className
 			)}
 			id="listbox-{id}"
-			autocomplete="off"
 			aria-autocomplete="list"
 			aria-controls="listbox-{id}"
 			aria-activedescendant={selected !== -1 ? `listbox-${id}-option-${selected}` : null}
@@ -153,6 +153,9 @@
 			on:blur={() => (focused = false)}
 		>
 			<slot name="option" {option} />
+			<div class="absolute h-full right-2 inset-y-0 flex items-center">
+				<CaretDown />
+			</div>
 		</button>
 
 		{#if focused}
@@ -175,9 +178,10 @@
 							aria-setsize={options.length}
 							aria-posinset={i + 1}
 							data-selected={selected === i}
-							class="cursor-pointer w-full hover:bg-gray-100"
+							class="cursor-pointer w-full hover:bg-gray-100 pl-2 h-9 flex items-center"
 							on:mousedown={() => {
 								option = d;
+								onChange?.(d);
 							}}
 						>
 							<slot name="option" option={d} />
