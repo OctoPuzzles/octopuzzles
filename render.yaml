@@ -1,7 +1,6 @@
 previewsEnabled: true
 previewsExpireAfterDays: 3
 services:
-  # A Docker web service
   - type: web
     name: website
     env: node
