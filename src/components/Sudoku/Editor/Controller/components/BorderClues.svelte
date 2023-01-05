@@ -3,7 +3,6 @@
 	import Input from '$ui/Input.svelte';
 	import Label from '$ui/Label.svelte';
 	import ColorSelect from '$ui/ColorSelect.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
 	import RadioGroup from '$ui/RadioGroup.svelte';
 	import { borderClueTypeNames, borderClueTypesToLabel } from '$constants';
 	import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
@@ -21,6 +20,7 @@
 	import type { Borderclue, BorderClueType, Position } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
 	import ControllerButton from '$ui/ControllerButton.svelte';
+	import Select from '$ui/Select.svelte';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
@@ -34,14 +34,15 @@
 
 	let input: Input;
 
-	const borderClueTypes: BorderClueType[] = [
+	const borderClueTypes: (BorderClueType | 'CUSTOM')[] = [
 		'KropkiWhite',
 		'KropkiBlack',
 		'XvX',
 		'XvV',
 		'Inequality',
 		'Quadruple',
-		'Border'
+		'Border',
+		'CUSTOM'
 	];
 
 	$: if ($selectedItemIndex >= 0) {
@@ -261,20 +262,12 @@
 
 	<div class="px-2 flex flex-col">
 		<div>
-			<OldSelect
-				label="Type"
-				on:change={() => changeType(type)}
-				id="type"
-				bind:value={type}
-				class="mr-0.5 w-full capitalize"
-			>
-				{#each borderClueTypes as borderClueType}
-					<option value={borderClueType} class="capitalize"
-						>{borderClueTypeNames[borderClueType]}</option
-					>
-				{/each}
-				<option value={'CUSTOM'} class="capitalize">Custom</option>
-			</OldSelect>
+			<Select onChange={() => changeType(type)} options={borderClueTypes} bind:option={type}>
+				<svelte:fragment slot="label">Type</svelte:fragment>
+				<div slot="option" let:option>
+					{borderClueTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 
 		<div>
@@ -284,36 +277,15 @@
 		<div>
 			<Label id="shape">Shape</Label>
 			<RadioGroup
-				options={{
-					Circle: {
-						icon: Circle,
-						color: color !== 'NONE' ? color : 'Black',
-						border: color !== 'NONE',
-						size: 16
-					},
-					Square: {
-						icon: Square,
-						color: color !== 'NONE' ? color : 'Black',
-						border: color !== 'NONE',
-						size: 16
-					},
-					Diamond: {
-						icon: Diamond,
-						color: color !== 'NONE' ? color : 'Black',
-						border: color !== 'NONE',
-						size: 16
-					},
-					Star: {
-						icon: Star,
-						color: color !== 'NONE' ? color : 'Black',
-						border: color !== 'NONE',
-						size: 16
-					},
-					Line: { icon: Line, color: color !== 'NONE' ? color : 'Black', border: false, size: 16 }
-				}}
+				options={['Circle', 'Square', 'Diamond', 'Star', 'Line']}
+				name="Shape"
+				idFromOption={(o) => o}
 				bind:value={shape}
+				let:option
 				onChange={() => updateSelectedClue()}
-			/>
+			>
+				{option}
+			</RadioGroup>
 		</div>
 
 		<div>

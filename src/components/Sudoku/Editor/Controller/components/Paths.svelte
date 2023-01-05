@@ -1,7 +1,7 @@
 <script lang="ts">
-	import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
-	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
-	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
+	import { pathTypeNames, pathTypesToLabel } from '$constants';
+	import type { Path, PathType, Position } from '$models/Sudoku';
+	import { hasOpenModals } from '$stores/modalStore';
 	import {
 		editorHistory,
 		handleArrows,
@@ -10,32 +10,25 @@
 		highlights
 	} from '$stores/sudokuStore';
 	import type {
-		MouseDownHandler,
-		MouseEnterHandler,
-		ArrowHandler
+		ArrowHandler, MouseDownHandler,
+		MouseEnterHandler
 	} from '$stores/sudokuStore/interactionHandlers';
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-	import moveArrayElement from '$utils/moveArrayElement';
-	import classNames from 'classnames';
-	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
-	import deepCopy from '$utils/deepCopy';
 	import Button from '$ui/Button.svelte';
+	import Checkbox from '$ui/Checkbox.svelte';
 	import ColorSelect from '$ui/ColorSelect.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
+	import ControllerButton from '$ui/ControllerButton.svelte';
 	import Label from '$ui/Label.svelte';
 	import RadioGroup from '$ui/RadioGroup.svelte';
-	import Checkbox from '$ui/Checkbox.svelte';
 	import Range from '$ui/Range.svelte';
-	import { pathTypeNames, pathTypesToLabel } from '$constants';
-	import { isCommandKey } from '$utils/keyboard/isCommandKey';
+	import Select from '$ui/Select.svelte';
+	import deepCopy from '$utils/deepCopy';
 	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isCommandKey } from '$utils/keyboard/isCommandKey';
+	import moveArrayElement from '$utils/moveArrayElement';
 	import { pathDefaults } from '$utils/prefabs';
-	import Circle from '$icons/shapes/Circle.svelte';
-	import Square from '$icons/shapes/Square.svelte';
-	import Diamond from '$icons/shapes/Diamond.svelte';
-	import type { Path, PathType, Position } from '$models/Sudoku';
-	import { hasOpenModals } from '$stores/modalStore';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
@@ -48,7 +41,7 @@
 
 	$: color, updateSelectedPath();
 
-	const pathTypes: PathType[] = [
+	const pathTypes: (PathType | 'CUSTOM')[] = [
 		'Arrow',
 		'Thermo',
 		'Between',
@@ -62,7 +55,8 @@
 		'Entropic',
 		'Odd',
 		'Even',
-		'Pill'
+		'Pill',
+		'CUSTOM'
 	];
 
 	$: if ($selectedItemIndex >= 0) {
@@ -351,58 +345,26 @@
 		>
 			<div class="h-full overflow-y-auto w-full">
 				{#each $sudokuClues.paths as path, index (index)}
-					<button
-						class={classNames(
-							'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',
-							{ 'border-blue-500': index === $selectedItemIndex }
-						)}
-						on:mouseover={() => {
-							highlightedCells.set(path.positions);
+					<ControllerButton
+						isHighlighted={index === $selectedItemIndex}
+						onClick={() => {
+							selectedCells.set(path.positions);
+							$selectedItemIndex = index;
+						}}
+						onDelete={() => deletePathAtIndex(index)}
+						onHover={() => {
+							$highlightedCells = path.positions;
 							$highlightedItemIndex = index;
 						}}
-						on:focus={() => {
-							highlightedCells.set(path.positions);
-							$highlightedItemIndex = index;
-						}}
-						on:mouseout={() => {
-							highlightedCells.set([]);
+						onHoverOut={() => {
+							$highlightedCells = [];
 							$highlightedItemIndex = -1;
 						}}
-						on:blur={() => {
-							highlightedCells.set([]);
-							$highlightedItemIndex = -1;
-						}}
+						onMoveUp={() => reorderPath(index, 'up')}
+						onMoveDown={() => reorderPath(index, 'down')}
 					>
-						<div class="h-full w-8 bg-gray-100 border-r border-gray-300">
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1 border-b border-gray-300"
-								on:click={() => reorderPath(index, 'up')}
-							>
-								<CaretUp size={16} />
-							</div>
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1"
-								on:click={() => reorderPath(index, 'down')}
-							>
-								<CaretDown size={16} />
-							</div>
-						</div>
-						<span
-							class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
-							on:click={() => {
-								selectedCells.set(path.positions);
-								$selectedItemIndex = index;
-							}}
-						>
-							{path.type ? pathTypeNames[path.type] : 'Custom'}
-						</span>
-						<div
-							class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"
-							on:click={() => deletePathAtIndex(index)}
-						>
-							<Trash size={20} />
-						</div>
-					</button>
+						{path.type ? pathTypeNames[path.type] : 'Custom'}
+					</ControllerButton>
 				{/each}
 			</div>
 		</div>
@@ -418,18 +380,12 @@
 	</div>
 	<div class="px-2 flex flex-col">
 		<div>
-			<OldSelect
-				label="Type"
-				on:change={() => onChangeType()}
-				id="type"
-				bind:value={type}
-				class="mr-0.5 w-full capitalize"
-			>
-				{#each pathTypes as pathType}
-					<option value={pathType} class="capitalize">{pathTypeNames[pathType]}</option>
-				{/each}
-				<option value={'CUSTOM'} class="capitalize">Custom</option>
-			</OldSelect>
+			<Select onChange={() => onChangeType()} options={pathTypes} bind:option={type}>
+				<svelte:fragment slot="label">Type</svelte:fragment>
+				<div slot="option" let:option>
+					{pathTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 
 		<div>
@@ -439,14 +395,15 @@
 		<div>
 			<Label id="pen">Pen</Label>
 			<RadioGroup
-				options={{
-					Round: { icon: Circle, color, size: 16 },
-					Square: { icon: Square, color, size: 16 },
-					Diamond: { icon: Diamond, color, size: 16 }
-				}}
+				options={['Round', 'Square', 'Diamond']}
+				idFromOption={(o) => o}
+				let:option
+				name="Form"
 				bind:value={form}
 				onChange={() => updateSelectedPath()}
-			/>
+			>
+				{option}
+			</RadioGroup>
 		</div>
 
 		<div>

@@ -22,7 +22,7 @@
 				type="radio"
 				bind:group={value}
 				{name}
-				on:click={() => onChange?.(option)}
+				on:mouseup={() => onChange?.(option)}
 				value={option}
 			/>
 			<label
@@ -32,8 +32,7 @@
 					isFirst && 'rounded-l-md',
 					isLast && 'rounded-r-md'
 				)}
-				on:click={() => onChange?.(option)}
-				on:keypress={() => onChange?.(option)}
+				on:mouseup={() => onChange?.(option)}
 			>
 				<slot {option} />
 			</label>

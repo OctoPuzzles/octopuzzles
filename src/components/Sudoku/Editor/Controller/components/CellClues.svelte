@@ -25,7 +25,7 @@
 	import ControllerButton from '$ui/ControllerButton.svelte';
 	import Input from '$ui/Input.svelte';
 	import Label from '$ui/Label.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
+	import Select from '$ui/Select.svelte';
 	import deepCopy from '$utils/deepCopy';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import isArrowKey from '$utils/keyboard/isArrowKey';
@@ -45,7 +45,7 @@
 
 	let input: Input;
 
-	const cellClueTypes: CellClueType[] = [
+	const cellClueTypes: (CellClueType | 'CUSTOM')[] = [
 		'Maximum',
 		'Minimum',
 		'LittleKillerNE',
@@ -55,15 +55,17 @@
 		'Sandwich',
 		'Skyscraper',
 		'XSum',
-		'NumberedRoom'
+		'NumberedRoom',
+		'CUSTOM'
 	];
 
-	const symbolTypes: SymbolType[] = [
+	const symbolTypes: (SymbolType | 'NONE')[] = [
 		'Diagonal',
 		'Arrow',
 		'SmallArrow',
 		'Arrowhead',
-		'InvertedArrowhead'
+		'InvertedArrowhead',
+		'NONE'
 	];
 
 	const cellClueLocations: CellClueLocation[] = [
@@ -330,35 +332,23 @@
 
 	<div class="px-2 flex flex-col">
 		<div>
-			<OldSelect
-				label="Type"
-				on:change={() => changeType(type)}
-				id="type"
-				bind:value={type}
-				class="mr-0.5 w-full capitalize"
-			>
-				{#each cellClueTypes as cellClueType}
-					<option value={cellClueType} class="capitalize">{cellClueTypeNames[cellClueType]}</option>
-				{/each}
-				<option value={'CUSTOM'} class="capitalize">Custom</option>
-			</OldSelect>
+			<Select onChange={() => changeType(type)} options={cellClueTypes} bind:option={type}>
+				<svelte:fragment slot="label">Type</svelte:fragment>
+				<div slot="option" let:option>
+					{cellClueTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 		<div>
 			<ColorSelect bind:color class="w-full" />
 		</div>
 		<div>
-			<OldSelect
-				label="Symbol"
-				on:change={updateSelectedClue}
-				id="symbol"
-				bind:value={symbol}
-				class="mr-0.5 w-full capitalize"
-			>
-				<option value={'NONE'} class="capitalize">Text</option>
-				{#each symbolTypes as symbolType}
-					<option value={symbolType} class="capitalize">{symbolTypeNames[symbolType]}</option>
-				{/each}
-			</OldSelect>
+			<Select onChange={() => updateSelectedClue()} options={symbolTypes} bind:option={symbol}>
+				<svelte:fragment slot="label">Symbol</svelte:fragment>
+				<div slot="option" let:option>
+					{symbolTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 		{#if symbol.toString() == 'NONE'}
 			<div>
@@ -382,51 +372,38 @@
 				/>
 			</div>
 			<div>
-				<OldSelect
-					label="Location"
-					on:change={() => updateSelectedClue()}
-					id="location"
-					bind:value={location}
-					class="mr-0.5 w-full capitalize"
+				<Select
+					onChange={() => updateSelectedClue()}
+					options={cellClueLocations}
+					bind:option={location}
 				>
-					{#each cellClueLocations as cellClueLocation}
-						<option value={cellClueLocation} class="capitalize"
-							>{cellClueLocationNames[cellClueLocation]}</option
-						>
-					{/each}
-				</OldSelect>
+					<svelte:fragment slot="label">Location</svelte:fragment>
+					<div slot="option" let:option>
+						{cellClueLocationNames[option]}
+					</div>
+				</Select>
 			</div>
 			<div>
-				<OldSelect
-					label="Size"
-					on:change={() => updateSelectedClue()}
-					id="size"
-					bind:value={size}
-					class="mr-0.5 w-full capitalize"
-				>
-					{#each cellClueSizes as cellClueSize}
-						<option value={cellClueSize} class="capitalize"
-							>{cellClueSizeNames[cellClueSize]}</option
-						>
-					{/each}
-				</OldSelect>
+				<Select onChange={() => updateSelectedClue()} options={cellClueSizes} bind:option={size}>
+					<svelte:fragment slot="label">Size</svelte:fragment>
+					<div slot="option" let:option>
+						{cellClueSizeNames[option]}
+					</div>
+				</Select>
 			</div>
 		{/if}
 		{#if symbol.toString() != 'NONE'}
 			<div>
-				<OldSelect
-					label="Orientation"
-					on:change={() => updateSelectedClue()}
-					id="rotation"
-					bind:value={rotation}
-					class="mr-0.5 w-full capitalize"
+				<Select
+					onChange={() => updateSelectedClue()}
+					options={symbolRotations}
+					bind:option={rotation}
 				>
-					{#each symbolRotations as symbolRotation}
-						<option value={symbolRotation} class="capitalize"
-							>{rotationNames[symbolRotation]}</option
-						>
-					{/each}
-				</OldSelect>
+					<svelte:fragment slot="label">Orientation</svelte:fragment>
+					<div slot="option" let:option>
+						{rotationNames[option]}
+					</div>
+				</Select>
 			</div>
 		{/if}
 	</div>
