@@ -15,6 +15,7 @@
 	{#each options as option, i}
 		{@const isFirst = i === 0}
 		{@const isLast = i === options.length - 1}
+		{@const isSelected = idFromOption(option) === idFromOption(value)}
 		<div class="h-full grow basis-full">
 			<input
 				id={idFromOption(option)}
@@ -30,7 +31,8 @@
 			<label
 				for={idFromOption(option)}
 				class={classNames(
-					'h-full w-full peer-focus:ring-2 relative bg-white flex cursor-pointer focus:outline-none peer-checked:text-blue-500 peer-checked:ring peer-checked:ring-blue-500 peer-checked:z-10',
+					'h-full w-full peer-focus:ring-2 relative bg-white flex justify-center items-center cursor-pointer focus:outline-none peer-checked:text-blue-500 peer-checked:ring peer-checked:ring-blue-500 peer-checked:z-10',
+					isSelected && 'text-blue-500 ring ring-blue-500 z-10',
 					isFirst && 'rounded-l-md',
 					isLast && 'rounded-r-md'
 				)}

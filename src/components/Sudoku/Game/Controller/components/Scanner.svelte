@@ -302,10 +302,10 @@
 				<Step />
 			</SquareButton>
 			<SquareButton text="Scan" on:click={() => scanner.startScan()}>
-				<Play size={64} />
+				<Play size={64} weight="thin" />
 			</SquareButton>
 			<SquareButton text="Stop" on:click={() => scanner.stopScan()}>
-				<Pause size={64} />
+				<Pause size={64} weight="thin" />
 			</SquareButton>
 			<SquareButton
 				text="Auto"
@@ -316,7 +316,7 @@
 					updateSettings();
 				}}
 			>
-				<Atom size={64} />
+				<Atom size={64} weight="thin" />
 			</SquareButton>
 		</div>
 	</div>
