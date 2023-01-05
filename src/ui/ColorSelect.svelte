@@ -1,10 +1,21 @@
 <script lang="ts">
-	import { colors } from '$constants';
 	import type { Color } from '$models/Sudoku';
 	import capitalize from '$utils/capitalize';
-
 	import classNames from 'classnames';
 	import Select from './Select.svelte';
+
+	const colors: Color[] = [
+		'Black',
+		'White',
+		'LightGray',
+		'Gray',
+		'Red',
+		'Yellow',
+		'Green',
+		'Blue',
+		'Orange',
+		'Purple'
+	];
 
 	let className = '';
 	export let color: Color | 'NONE';

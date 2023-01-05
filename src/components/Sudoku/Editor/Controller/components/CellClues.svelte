@@ -1,9 +1,4 @@
 <script lang="ts">
-	import Button from '$ui/Button.svelte';
-	import Input from '$ui/Input.svelte';
-	import Label from '$ui/Label.svelte';
-	import ColorSelect from '$ui/ColorSelect.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
 	import {
 		cellClueLocationNames,
 		cellClueSizeNames,
@@ -13,18 +8,6 @@
 		rotationNames,
 		symbolTypeNames
 	} from '$constants';
-	import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
-	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
-	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
-	import { editorHistory, handleArrows, highlights, setMargins } from '$stores/sudokuStore';
-	import deepCopy from '$utils/deepCopy';
-	import isArrowKey from '$utils/keyboard/isArrowKey';
-	import moveArrayElement from '$utils/moveArrayElement';
-	import classNames from 'classnames';
-	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-	import { isDeleteKey } from '$utils/isDeleteKey';
-	import { cellClueDefaults } from '$utils/prefabs';
-	import { onDestroy } from 'svelte';
 	import type {
 		Cellclue,
 		CellClueLocation,
@@ -35,6 +18,20 @@
 		SymbolType
 	} from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
+	import { editorHistory, handleArrows, highlights, setMargins } from '$stores/sudokuStore';
+	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
+	import Button from '$ui/Button.svelte';
+	import ColorSelect from '$ui/ColorSelect.svelte';
+	import ControllerButton from '$ui/ControllerButton.svelte';
+	import Input from '$ui/Input.svelte';
+	import Label from '$ui/Label.svelte';
+	import OldSelect from '$ui/OldSelect.svelte';
+	import deepCopy from '$utils/deepCopy';
+	import { isDeleteKey } from '$utils/isDeleteKey';
+	import isArrowKey from '$utils/keyboard/isArrowKey';
+	import moveArrayElement from '$utils/moveArrayElement';
+	import { cellClueDefaults } from '$utils/prefabs';
+	import { onDestroy } from 'svelte';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const labels = editorHistory.labels;
@@ -297,58 +294,26 @@
 		>
 			<div class="h-full overflow-y-auto w-full">
 				{#each $sudokuClues.cellclues as cellClue, index (index)}
-					<button
-						class={classNames(
-							'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',
-							{ 'border-blue-500': index === $selectedItemIndex }
-						)}
-						on:mouseover={() => {
+					<ControllerButton
+						isHighlighted={index === $selectedItemIndex}
+						onClick={() => {
+							$selectedCells = [cellClue.position];
+							$selectedItemIndex = index;
+						}}
+						onDelete={() => deleteCellClueAtIndex(index)}
+						onHover={() => {
 							$highlightedCells = [cellClue.position];
 							$highlightedItemIndex = index;
 						}}
-						on:focus={() => {
-							$highlightedCells = [cellClue.position];
-							$highlightedItemIndex = index;
-						}}
-						on:mouseout={() => {
+						onHoverOut={() => {
 							$highlightedCells = [];
 							$highlightedItemIndex = -1;
 						}}
-						on:blur={() => {
-							$highlightedCells = [];
-							$highlightedItemIndex = -1;
-						}}
+						onMoveDown={() => reorderCellClue(index, 'down')}
+						onMoveUp={() => reorderCellClue(index, 'up')}
 					>
-						<div class="h-full w-8 bg-gray-100 border-r border-gray-300">
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1 border-b border-gray-300"
-								on:click={() => reorderCellClue(index, 'up')}
-							>
-								<CaretUp size={16} />
-							</div>
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1"
-								on:click={() => reorderCellClue(index, 'down')}
-							>
-								<CaretDown size={16} />
-							</div>
-						</div>
-						<span
-							class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
-							on:click={() => {
-								$selectedCells = [cellClue.position];
-								$selectedItemIndex = index;
-							}}
-						>
-							{cellClue.type ? cellClueTypeNames[cellClue.type] : 'Custom'}
-						</span>
-						<div
-							class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"
-							on:click={() => deleteCellClueAtIndex(index)}
-						>
-							<Trash size={20} />
-						</div>
-					</button>
+						{cellClue.type ? cellClueTypeNames[cellClue.type] : 'Custom'}
+					</ControllerButton>
 				{/each}
 			</div>
 		</div>

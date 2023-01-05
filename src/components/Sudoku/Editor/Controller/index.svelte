@@ -2,6 +2,7 @@
 	import ControllerHelpModal from '$components/Modals/ControllerHelpModal.svelte';
 	import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
 	import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
+	import ControllerSkeleton from '$components/Sudoku/ControllerSkeleton.svelte';
 	import BorderCluesIcon from '$icons/BorderClues.svelte';
 	import CellCluesIcon from '$icons/CellClues.svelte';
 	import CellsIcon from '$icons/Cells.svelte';

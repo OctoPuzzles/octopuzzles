@@ -6,14 +6,10 @@
 	import OldSelect from '$ui/OldSelect.svelte';
 	import RadioGroup from '$ui/RadioGroup.svelte';
 	import { borderClueTypeNames, borderClueTypesToLabel } from '$constants';
-	import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
-	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
-	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
 	import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
 	import deepCopy from '$utils/deepCopy';
 	import isArrowKey from '$utils/keyboard/isArrowKey';
 	import moveArrayElement from '$utils/moveArrayElement';
-	import classNames from 'classnames';
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import { borderClueDefaults } from '$utils/prefabs';
@@ -24,6 +20,7 @@
 	import Line from '$icons/shapes/Line.svelte';
 	import type { Borderclue, BorderClueType, Position } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
+	import ControllerButton from '$ui/ControllerButton.svelte';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
@@ -228,58 +225,26 @@
 		>
 			<div class="h-full overflow-y-auto w-full">
 				{#each $sudokuClues.borderclues as borderClue, index (index)}
-					<button
-						class={classNames(
-							'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',
-							{ 'border-blue-500': index === $selectedItemIndex }
-						)}
-						on:mouseover={() => {
+					<ControllerButton
+						isHighlighted={index === $selectedItemIndex}
+						onClick={() => {
+							$selectedCells = borderClue.positions;
+							$selectedItemIndex = index;
+						}}
+						onDelete={() => deleteBorderClueAtIndex(index)}
+						onHover={() => {
 							$highlightedCells = borderClue.positions;
 							$highlightedItemIndex = index;
 						}}
-						on:focus={() => {
-							$highlightedCells = borderClue.positions;
-							$highlightedItemIndex = index;
-						}}
-						on:mouseout={() => {
+						onHoverOut={() => {
 							$highlightedCells = [];
 							$highlightedItemIndex = -1;
 						}}
-						on:blur={() => {
-							$highlightedCells = [];
-							$highlightedItemIndex = -1;
-						}}
+						onMoveDown={() => reorderBorderClue(index, 'down')}
+						onMoveUp={() => reorderBorderClue(index, 'up')}
 					>
-						<div class="h-full w-8 bg-gray-100 border-r border-gray-300">
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1 border-b border-gray-300"
-								on:click={() => reorderBorderClue(index, 'up')}
-							>
-								<CaretUp size={16} />
-							</div>
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1"
-								on:click={() => reorderBorderClue(index, 'down')}
-							>
-								<CaretDown size={16} />
-							</div>
-						</div>
-						<span
-							class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
-							on:click={() => {
-								$selectedCells = borderClue.positions;
-								$selectedItemIndex = index;
-							}}
-						>
-							{borderClue.type ? borderClueTypeNames[borderClue.type] : 'Custom'}
-						</span>
-						<div
-							class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"
-							on:click={() => deleteBorderClueAtIndex(index)}
-						>
-							<Trash size={16} />
-						</div>
-					</button>
+						{borderClue.type ? borderClueTypeNames[borderClue.type] : 'Custom'}
+					</ControllerButton>
 				{/each}
 			</div>
 		</div>

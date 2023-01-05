@@ -1,85 +1,42 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import Button from './Button.svelte';
-	import type Circle from '$icons/shapes/Circle.svelte';
-	import type { Color, Rotation } from '$models/Sudoku';
 
-	type IconData = {
-		label?: string;
-		icon?: typeof Circle;
-		size?: number;
-		color?: Color | 'NONE';
-		border?: boolean;
-		rotation?: Rotation;
-	};
-	function isIconData(labelOrIcon: string | IconData): labelOrIcon is IconData {
-		if ((labelOrIcon as IconData).label || (labelOrIcon as IconData).icon) {
-			return true;
-		}
-		return false;
-	}
+	type T = $$Generic;
 
-	/**
-	 * Options (name, value pairs) in RadioGroup
-	 */
-	export let options: {
-		[key: string]: string | IconData;
-	};
-	/**
-	 * Current value of RadioGroup
-	 */
-	export let value: string | undefined;
-	/**
-	 * Function that fires onChange and takes new value as parameter
-	 */
-	export let onChange: ((value: string) => void) | undefined;
+	export let name: string;
+	export let value: T;
+	export let options: T[];
+	export let idFromOption: (option: T) => string;
 
-	$: entries = Object.entries(options);
+	export let onChange: ((option: T) => void) | undefined = undefined;
 </script>
 
-<div
-	tabIndex={0}
-	class="flex rounded-sm w-full"
-	on:focus={(e) => {
-		// If a child element has been focused, ignore
-		if (e.target !== e.currentTarget) {
-			return;
-		}
-	}}
->
-	{#each entries as [key, labelOrIcon], i (i)}
-		<Button
-			type="button"
-			style="width: {(1 / entries.length) * 100}%"
-			class={classNames({
-				'rounded-l-none -ml-px border-l': i > 0,
-				'rounded-r-none -mr-px': i < entries.length - 1
-			})}
-			variant={value === key ? 'secondary' : 'default'}
-			on:click={() => {
-				value = key;
-				onChange?.(key);
-			}}
-		>
-			{#if isIconData(labelOrIcon)}
-				{#if labelOrIcon.icon}
-					<svelte:component
-						this={labelOrIcon.icon}
-						size={labelOrIcon.size}
-						color={labelOrIcon.color}
-						border={(value === key && labelOrIcon.color === 'Blue') ||
-						(value !== key && labelOrIcon.color === 'White')
-							? true
-							: labelOrIcon.border}
-						rotation={labelOrIcon.rotation}
-					/>
-				{/if}
-				{#if labelOrIcon.label}
-					{labelOrIcon.label}
-				{/if}
-			{:else}
-				{labelOrIcon}
-			{/if}
-		</Button>
+<fieldset class="flex rounded-md w-full h-8 space-x-px bg-gray-200 p-px">
+	{#each options as option, i}
+		{@const isFirst = i === 0}
+		{@const isLast = i === options.length - 1}
+		<div class="h-full grow basis-full">
+			<input
+				id={idFromOption(option)}
+				class="absolute opacity-0 w-0 h-0 peer"
+				type="radio"
+				bind:group={value}
+				{name}
+				on:click={() => onChange?.(option)}
+				value={option}
+			/>
+			<label
+				for={idFromOption(option)}
+				class={classNames(
+					'h-full w-full peer-focus:ring-2 relative bg-white flex cursor-pointer focus:outline-none peer-checked:text-blue-500 peer-checked:ring peer-checked:ring-blue-500 peer-checked:z-10',
+					isFirst && 'rounded-l-md',
+					isLast && 'rounded-r-md'
+				)}
+				on:click={() => onChange?.(option)}
+				on:keypress={() => onChange?.(option)}
+			>
+				<slot {option} />
+			</label>
+		</div>
 	{/each}
-</div>
+</fieldset>
