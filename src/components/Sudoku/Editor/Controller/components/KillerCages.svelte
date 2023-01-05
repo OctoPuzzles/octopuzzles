@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Killercage from '$components/Sudoku/Display/Clues/killercages/Killercage.svelte';
+	import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
 	import { cageTypeNames, cageTypesToLabel } from '$constants';
 	import type { CageType, Extendedcage, Position } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
@@ -326,8 +328,9 @@
 						onMoveUp={() => reorderKillerCage(index, 'up')}
 						onMoveDown={() => reorderKillerCage(index, 'down')}
 					>
-						{cage.type ? cageTypeNames[cage.type] : 'Custom'}: <br /> ({cage.positions
-							.length}-cell{cage.positions.length > 1 ? 's' : ''})
+						<ScaledSvg>
+							<Killercage {cage} dimensions={$sudokuClues.dimensions} />
+						</ScaledSvg>
 					</ControllerButton>
 				{/each}
 			</div>

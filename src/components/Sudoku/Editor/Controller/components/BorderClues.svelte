@@ -12,15 +12,12 @@
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
 	import { isDeleteKey } from '$utils/isDeleteKey';
 	import { borderClueDefaults } from '$utils/prefabs';
-	import Circle from '$icons/shapes/Circle.svelte';
-	import Square from '$icons/shapes/Square.svelte';
-	import Diamond from '$icons/shapes/Diamond.svelte';
-	import Star from '$icons/shapes/Star.svelte';
-	import Line from '$icons/shapes/Line.svelte';
-	import type { Borderclue, BorderClueType, Position } from '$models/Sudoku';
+	import type { Borderclue, BorderClueType, Position, Shape } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
 	import ControllerButton from '$ui/ControllerButton.svelte';
 	import Select from '$ui/Select.svelte';
+	import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
+	import { default as BorderclueComponent } from '$components/Sudoku/Display/Clues/borderclues/Borderclue.svelte';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
@@ -33,6 +30,8 @@
 	$: color, updateSelectedClue();
 
 	let input: Input;
+
+	const shapes: Shape[] = ['Circle', 'Square', 'Diamond', 'Star', 'Line'];
 
 	const borderClueTypes: (BorderClueType | 'CUSTOM')[] = [
 		'KropkiWhite',
@@ -244,7 +243,9 @@
 						onMoveDown={() => reorderBorderClue(index, 'down')}
 						onMoveUp={() => reorderBorderClue(index, 'up')}
 					>
-						{borderClue.type ? borderClueTypeNames[borderClue.type] : 'Custom'}
+						<ScaledSvg>
+							<BorderclueComponent borderclue={borderClue} />
+						</ScaledSvg>
 					</ControllerButton>
 				{/each}
 			</div>
@@ -277,14 +278,27 @@
 		<div>
 			<Label id="shape">Shape</Label>
 			<RadioGroup
-				options={['Circle', 'Square', 'Diamond', 'Star', 'Line']}
+				options={shapes}
 				name="Shape"
 				idFromOption={(o) => o}
 				bind:value={shape}
 				let:option
 				onChange={() => updateSelectedClue()}
 			>
-				{option}
+				<ScaledSvg>
+					<BorderclueComponent
+						borderclue={{
+							positions: [
+								{ row: 0, column: 0 },
+								{ row: 0, column: 1 }
+							],
+							color: color === 'NONE' ? 'Black' : color,
+							radius: 10,
+							shape: option,
+							text
+						}}
+					/>
+				</ScaledSvg>
 			</RadioGroup>
 		</div>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { pathTypeNames, pathTypesToLabel } from '$constants';
-	import type { Path, PathType, Position } from '$models/Sudoku';
+	import type { Form, Path, PathType, Position } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
 	import {
 		editorHistory,
@@ -10,7 +10,8 @@
 		highlights
 	} from '$stores/sudokuStore';
 	import type {
-		ArrowHandler, MouseDownHandler,
+		ArrowHandler,
+		MouseDownHandler,
 		MouseEnterHandler
 	} from '$stores/sudokuStore/interactionHandlers';
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
@@ -29,6 +30,8 @@
 	import { pathDefaults } from '$utils/prefabs';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
+	import { default as PathComponent } from '$components/Sudoku/Display/Clues/paths/Path.svelte';
+	import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
@@ -41,6 +44,7 @@
 
 	$: color, updateSelectedPath();
 
+	const forms: Form[] = ['Round', 'Square', 'Diamond'];
 	const pathTypes: (PathType | 'CUSTOM')[] = [
 		'Arrow',
 		'Thermo',
@@ -363,7 +367,9 @@
 						onMoveUp={() => reorderPath(index, 'up')}
 						onMoveDown={() => reorderPath(index, 'down')}
 					>
-						{path.type ? pathTypeNames[path.type] : 'Custom'}
+						<ScaledSvg>
+							<PathComponent {path} />
+						</ScaledSvg>
 					</ControllerButton>
 				{/each}
 			</div>
@@ -395,14 +401,16 @@
 		<div>
 			<Label id="pen">Pen</Label>
 			<RadioGroup
-				options={['Round', 'Square', 'Diamond']}
+				options={forms}
 				idFromOption={(o) => o}
 				let:option
 				name="Form"
 				bind:value={form}
 				onChange={() => updateSelectedPath()}
 			>
-				{option}
+				<ScaledSvg>
+					<PathComponent path={{ positions: [{ row: 0, column: 0 }], color, form: option }} />
+				</ScaledSvg>
 			</RadioGroup>
 		</div>
 

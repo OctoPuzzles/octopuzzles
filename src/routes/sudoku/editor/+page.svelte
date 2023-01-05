@@ -405,7 +405,7 @@
 			<div class="flex flex-wrap gap-2 h-96 overflow-y-auto p-4 bg-gray-100">
 				{#each $labels.sort((a, b) => (a.label.name > b.label.name ? 1 : -1)) as label}
 					<Label
-						class={classNames('cursor-pointer p-2 rounded-md shadow w-w-56 bg-white', {
+						class={classNames('cursor-pointer p-2 rounded-md shadow w-56 bg-white', {
 							'ring-blue-500 ring-2': label.selected,
 							'ring-gray-300 ring-1': !label.selected
 						})}
