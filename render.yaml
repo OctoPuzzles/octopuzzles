@@ -18,6 +18,7 @@ services:
         - src/**/*.html
       ignoredPaths:
         - src/**/*.test.js
+        - tests/**/*.ts
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -41,5 +42,6 @@ databases:
   - name: database
     databaseName: octopuzzles
     user: octopuzzles
+    plan: starter
     previewPlan: starter
     ipAllowList: []
