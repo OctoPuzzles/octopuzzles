@@ -7,6 +7,7 @@ services:
     env: node
     region: oregon
     plan: standard
+    previewPlan: free
     buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
     startCommand: node build/index.js
     pullRequestPreviewsEnabled: true
@@ -41,4 +42,5 @@ databases:
   - name: database
     databaseName: octopuzzles
     user: octopuzzles
+    previewPlan: free
     ipAllowList: []
