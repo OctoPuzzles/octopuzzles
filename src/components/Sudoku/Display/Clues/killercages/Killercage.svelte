@@ -8,7 +8,7 @@
 	export let cage: Extendedcage;
 	export let dimensions: Dimensions;
 
-	const topLeft = topLeftOfPositions(cage.positions);
+	$: topLeft = topLeftOfPositions(cage.positions);
 </script>
 
 {#each createEdges(cage.positions, dimensions, 0.1) as edge}
