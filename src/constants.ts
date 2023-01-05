@@ -70,7 +70,7 @@ export const rotationsToDegree: Record<Rotation, number> = {
 	NorthWest: 315
 };
 
-export const pathTypeNames: Record<PathType, string> = {
+export const pathTypeNames: Record<PathType | 'CUSTOM', string> = {
 	AntiFactor: 'Anti-Factor Line',
 	Arrow: 'Arrow',
 	Between: 'Between Line',
@@ -84,20 +84,22 @@ export const pathTypeNames: Record<PathType, string> = {
 	ProductSum: 'Product-Sum Line',
 	Renban: 'Renban Line',
 	Thermo: 'Thermometer',
-	Whisper: 'German Whispers'
+	Whisper: 'German Whispers',
+	CUSTOM: 'Custom'
 };
 
-export const borderClueTypeNames: Record<BorderClueType, string> = {
+export const borderClueTypeNames: Record<BorderClueType | 'CUSTOM', string> = {
 	Inequality: 'Inequality',
 	KropkiBlack: 'Kropki (Black)',
 	KropkiWhite: 'Kropki (White)',
 	Quadruple: 'Quadruple',
 	XvV: 'XV (V)',
 	XvX: 'XV (X)',
-	Border: 'Border'
+	Border: 'Border',
+	CUSTOM: 'Custom'
 };
 
-export const cellClueTypeNames: Record<CellClueType, string> = {
+export const cellClueTypeNames: Record<CellClueType | 'CUSTOM', string> = {
 	LittleKillerNE: 'Little Killer (NE)',
 	LittleKillerNW: 'Little Killer (NW)',
 	LittleKillerSE: 'Little Killer (SE)',
@@ -107,15 +109,17 @@ export const cellClueTypeNames: Record<CellClueType, string> = {
 	NumberedRoom: 'Numbered Room',
 	Sandwich: 'Sandwich',
 	Skyscraper: 'Skyscraper',
-	XSum: 'X-Sum'
+	XSum: 'X-Sum',
+	CUSTOM: 'Custom'
 };
 
-export const symbolTypeNames: Record<SymbolType, string> = {
+export const symbolTypeNames: Record<SymbolType | 'NONE', string> = {
 	Arrow: 'Arrow',
 	SmallArrow: 'Arrow (Small)',
 	Diagonal: 'Line',
 	Arrowhead: 'Chevron',
-	InvertedArrowhead: 'Chevron (Inverted)'
+	InvertedArrowhead: 'Chevron (Inverted)',
+	NONE: 'None'
 };
 
 export const rotationNames: Record<Rotation, string> = {
@@ -148,15 +152,17 @@ export const cellClueSizeNames: Record<CellClueSize, string> = {
 	XSmall: 'XS'
 };
 
-export const cageTypeNames: Record<CageType, string> = {
-	Killer: 'Killer'
+export const cageTypeNames: Record<CageType | 'CUSTOM', string> = {
+	Killer: 'Killer',
+	CUSTOM: 'Custom'
 };
 
-export const regionTypeNames: Record<RegionType, string> = {
+export const regionTypeNames: Record<RegionType | 'CUSTOM', string> = {
 	Clone: 'Clone',
 	Extra: 'Extra',
 	MagicSquare: 'Magic Square',
-	Normal: 'Normal'
+	Normal: 'Normal',
+	CUSTOM: 'Custom'
 };
 
 export const logicFlagNames: Record<LogicFlag, string> = {

@@ -6,16 +6,16 @@
 		width="112"
 		fill="none"
 		class="stroke-current"
-		stroke-width="16"
+		stroke-width="8"
 		stroke-linecap="square"
 	/>
 	<path
 		d="M 29.333333,40 H 216 V 216"
 		fill="none"
 		class="stroke-current"
-		stroke-width="16"
+		stroke-width="8"
 		stroke-linecap="round"
 		stroke-linejoin="miter"
 	/>
-	<path fill="none" class="stroke-current" stroke-width="16" d="M176, 166 L216, 216 L256, 166" />
+	<path fill="none" class="stroke-current" stroke-width="8" d="M176, 166 L216, 216 L256, 166" />
 </svg>

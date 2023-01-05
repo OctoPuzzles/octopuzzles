@@ -5,13 +5,13 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><polyline
 		points="215.3 160 160 160 160 215.3"
 		fill="none"
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/>
 </svg>

@@ -206,7 +206,7 @@ const main = async (): Promise<void> => {
 			},
 			{
 				id: 30,
-				name: ' Lockout Lines',
+				name: 'Lockout Lines',
 				description:
 					'Digits along a line must not lie between the numbers in the two connected diamonds'
 			},

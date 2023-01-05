@@ -1,8 +1,7 @@
 <script lang="ts">
-	import Button from '$ui/Button.svelte';
-	import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
-	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
-	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
+	import { regionTypeNames, regionTypesToLabel } from '$constants';
+	import type { Position, Region, RegionType } from '$models/Sudoku';
+	import { hasOpenModals } from '$stores/modalStore';
 	import {
 		editorHistory,
 		handleArrows,
@@ -16,20 +15,18 @@
 		MouseEnterHandler
 	} from '$stores/sudokuStore/interactionHandlers';
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-	import classNames from 'classnames';
+	import Button from '$ui/Button.svelte';
+	import Checkbox from '$ui/Checkbox.svelte';
+	import ColorSelect from '$ui/ColorSelect.svelte';
+	import ControllerButton from '$ui/ControllerButton.svelte';
+	import Select from '$ui/Select.svelte';
+	import deepCopy from '$utils/deepCopy';
+	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isCommandKey } from '$utils/keyboard/isCommandKey';
+	import moveArrayElement from '$utils/moveArrayElement';
+	import { regionDefaults } from '$utils/prefabs';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import { isCommandKey } from '$utils/keyboard/isCommandKey';
-	import { isDeleteKey } from '$utils/isDeleteKey';
-	import deepCopy from '$utils/deepCopy';
-	import Checkbox from '$ui/Checkbox.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
-	import ColorSelect from '$ui/ColorSelect.svelte';
-	import { regionDefaults } from '$utils/prefabs';
-	import { regionTypeNames, regionTypesToLabel } from '$constants';
-	import moveArrayElement from '$utils/moveArrayElement';
-	import type { Position, Region, RegionType } from '$models/Sudoku';
-	import { hasOpenModals } from '$stores/modalStore';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
@@ -41,7 +38,13 @@
 
 	$: color, updateSelectedRegion();
 
-	const regionTypes: RegionType[] = ['Normal', 'Extra', 'Clone', 'MagicSquare'];
+	const regionTypes: (RegionType | 'CUSTOM')[] = [
+		'Normal',
+		'Extra',
+		'Clone',
+		'MagicSquare',
+		'CUSTOM'
+	];
 
 	$: if ($selectedItemIndex >= 0) {
 		regionSelected($selectedItemIndex);
@@ -350,65 +353,33 @@
 		>
 			<div class="h-full overflow-y-auto w-full">
 				{#each $sudokuClues.regions as region, index}
-					<button
-						class={classNames(
-							'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',
-							{ 'border-blue-500': index === $selectedItemIndex }
-						)}
-						on:mouseover={() => {
+					<ControllerButton
+						isHighlighted={index === $selectedItemIndex}
+						onClick={() => {
+							$selectedCells = region.positions;
+							$selectedItemIndex = index;
+						}}
+						onDelete={() => deleteRegionAtIndex(index)}
+						onHover={() => {
 							$highlightedCells = region.positions;
 							$highlightedItemIndex = index;
 						}}
-						on:focus={() => {
-							$highlightedCells = region.positions;
-							$highlightedItemIndex = index;
-						}}
-						on:mouseout={() => {
+						onHoverOut={() => {
 							$highlightedCells = [];
 							$highlightedItemIndex = -1;
 						}}
-						on:blur={() => {
-							$highlightedCells = [];
-							$highlightedItemIndex = -1;
-						}}
+						onMoveUp={() => reorderRegion(index, 'up')}
+						onMoveDown={() => reorderRegion(index, 'down')}
 					>
-						<div class="h-full w-8 bg-gray-100 border-r border-gray-300">
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1 border-b border-gray-300"
-								on:click={() => reorderRegion(index, 'up')}
-							>
-								<CaretUp size={16} />
-							</div>
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1"
-								on:click={() => reorderRegion(index, 'down')}
-							>
-								<CaretDown size={16} />
-							</div>
-						</div>
-						<span
-							class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
-							on:click={() => {
-								$selectedCells = region.positions;
-								$selectedItemIndex = index;
-							}}
-						>
-							{region.type !== 'Normal'
-								? region.type
-									? regionTypeNames[region.type]
-									: 'Custom'
-								: `Region ${index + 1}`}: <br /> ({region.positions.length}-cell{region.positions
-								.length > 1
-								? 's'
-								: ''})
-						</span>
-						<div
-							class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"
-							on:click={() => deleteRegionAtIndex(index)}
-						>
-							<Trash size={20} />
-						</div>
-					</button>
+						{region.type !== 'Normal'
+							? region.type
+								? regionTypeNames[region.type]
+								: 'Custom'
+							: `Region ${index + 1}`}: <br /> ({region.positions.length}-cell{region.positions
+							.length > 1
+							? 's'
+							: ''})
+					</ControllerButton>
 				{/each}
 			</div>
 		</div>
@@ -425,18 +396,12 @@
 
 	<div class="px-2 flex flex-col">
 		<div>
-			<OldSelect
-				label="Type"
-				on:change={() => changeType(type)}
-				id="type"
-				bind:value={type}
-				class="mr-0.5 w-full capitalize"
-			>
-				{#each regionTypes as regionType}
-					<option value={regionType} class="capitalize">{regionTypeNames[regionType]}</option>
-				{/each}
-				<option value={'CUSTOM'} class="capitalize">Custom</option>
-			</OldSelect>
+			<Select onChange={() => changeType(type)} options={regionTypes} bind:option={type}>
+				<svelte:fragment slot="label">Type</svelte:fragment>
+				<div slot="option" let:option>
+					{regionTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 		<div>
 			<ColorSelect bind:color class="w-full" />

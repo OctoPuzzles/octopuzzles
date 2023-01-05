@@ -131,8 +131,8 @@
 	<div bind:this={element} class="flex-1" data-ignoreshortcuts />
 </div>
 
-<style global>
-	.ProseMirror p.is-editor-empty:first-child::before {
+<style>
+	:global(.ProseMirror p.is-editor-empty:first-child::before) {
 		color: #adb5bd;
 		content: attr(data-placeholder);
 		float: left;
@@ -140,25 +140,26 @@
 		pointer-events: none;
 	}
 
-	.ProseMirror {
+	:global(.ProseMirror) {
 		padding: 0.5rem;
 		height: 100%;
+		min-height: 10rem;
 	}
 
-	.ProseMirror ul,
-	.ProseMirror ol {
+	:global(.ProseMirror ul),
+	:global(.ProseMirror ol) {
 		padding-left: 1.5rem;
 	}
 
-	.rich-text-editor button.active {
+	:global(.rich-text-editor button.active) {
 		@apply bg-black text-white;
 	}
 
-	.rich-text-editor ul {
+	:global(.rich-text-editor ul) {
 		@apply list-disc list-outside;
 	}
 
-	.rich-text-editor ol {
+	:global(.rich-text-editor ol) {
 		@apply list-decimal list-outside;
 	}
 </style>

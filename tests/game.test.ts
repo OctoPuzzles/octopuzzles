@@ -12,31 +12,31 @@ test.describe('6x6 sudoku', () => {
 		// Shortcut for corner marks work
 		await page.keyboard.press('KeyX');
 		expect(await page.getByRole('button', { name: 'Corner marks' }).getAttribute('class')).toMatch(
-			/ring-blue-500/
+			/bg-gray-700\/10/
 		);
 
 		// Shortcut for numbers work
 		await page.keyboard.press('KeyZ');
 		expect(await page.getByRole('button', { name: 'Numbers' }).getAttribute('class')).toMatch(
-			/ring-blue-500/
+			/bg-gray-700\/10/
 		);
 
 		// Shortcut for center marks work
 		await page.keyboard.press('KeyC');
 		expect(await page.getByRole('button', { name: 'Center marks' }).getAttribute('class')).toMatch(
-			/ring-blue-500/
+			/bg-gray-700\/10/
 		);
 
 		// Shortcut for colors work
 		await page.keyboard.press('KeyV');
 		expect(await page.getByRole('button', { name: 'Colors' }).getAttribute('class')).toMatch(
-			/ring-blue-500/
+			/bg-gray-700\/10/
 		);
 
 		// Shortcut for notes work
 		await page.keyboard.press('KeyB');
 		expect(await page.getByRole('button', { name: 'Notes' }).getAttribute('class')).toMatch(
-			/ring-blue-500/
+			/bg-gray-700\/10/
 		);
 	});
 

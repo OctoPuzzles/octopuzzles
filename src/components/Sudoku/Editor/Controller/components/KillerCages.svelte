@@ -1,13 +1,9 @@
 <script lang="ts">
-	import Button from '$ui/Button.svelte';
-	import Input from '$ui/Input.svelte';
-	import Label from '$ui/Label.svelte';
-	import ColorSelect from '$ui/ColorSelect.svelte';
-	import OldSelect from '$ui/OldSelect.svelte';
+	import Killercage from '$components/Sudoku/Display/Clues/killercages/Killercage.svelte';
+	import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
 	import { cageTypeNames, cageTypesToLabel } from '$constants';
-	import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
-	import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
-	import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
+	import type { CageType, Extendedcage, Position } from '$models/Sudoku';
+	import { hasOpenModals } from '$stores/modalStore';
 	import {
 		editorHistory,
 		handleArrows,
@@ -21,17 +17,20 @@
 		MouseEnterHandler
 	} from '$stores/sudokuStore/interactionHandlers';
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-	import classNames from 'classnames';
-	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
+	import Button from '$ui/Button.svelte';
+	import Checkbox from '$ui/Checkbox.svelte';
+	import ColorSelect from '$ui/ColorSelect.svelte';
+	import ControllerButton from '$ui/ControllerButton.svelte';
+	import Input from '$ui/Input.svelte';
+	import Label from '$ui/Label.svelte';
+	import Select from '$ui/Select.svelte';
+	import { isDeleteKey } from '$utils/isDeleteKey';
 	import isArrowKey from '$utils/keyboard/isArrowKey';
 	import { isCommandKey } from '$utils/keyboard/isCommandKey';
-	import { isDeleteKey } from '$utils/isDeleteKey';
-	import { cageDefaults } from '$utils/prefabs';
 	import moveArrayElement from '$utils/moveArrayElement';
-	import type { CageType, Extendedcage, Position } from '$models/Sudoku';
-	import { hasOpenModals } from '$stores/modalStore';
-	import Checkbox from '$ui/Checkbox.svelte';
+	import { cageDefaults } from '$utils/prefabs';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const sudokuClues = editorHistory.subscribeToClues();
@@ -43,7 +42,7 @@
 
 	$: color, updateSelectedCage();
 
-	const cageTypes: CageType[] = ['Killer'];
+	const cageTypes: (CageType | 'CUSTOM')[] = ['Killer', 'CUSTOM'];
 
 	let input: Input;
 
@@ -311,59 +310,28 @@
 		>
 			<div class="h-full overflow-y-auto w-full">
 				{#each $sudokuClues.extendedcages as cage, index}
-					<button
-						class={classNames(
-							'h-12 w-full flex rounded-md bg-white border border-gray-300 font-medium text-gray-700 overflow-hidden mb-2',
-							{ 'border-blue-500': index === $selectedItemIndex }
-						)}
-						on:mouseover={() => {
+					<ControllerButton
+						isHighlighted={index === $selectedItemIndex}
+						onClick={() => {
+							$selectedCells = cage.positions;
+							$selectedItemIndex = index;
+						}}
+						onDelete={() => deleteKillerCageAtIndex(index)}
+						onHover={() => {
 							$highlightedCells = cage.positions;
 							$highlightedItemIndex = index;
 						}}
-						on:focus={() => {
-							$highlightedCells = cage.positions;
-							$highlightedItemIndex = index;
-						}}
-						on:mouseout={() => {
+						onHoverOut={() => {
 							$highlightedCells = [];
 							$highlightedItemIndex = -1;
 						}}
-						on:blur={() => {
-							$highlightedCells = [];
-							$highlightedItemIndex = -1;
-						}}
+						onMoveUp={() => reorderKillerCage(index, 'up')}
+						onMoveDown={() => reorderKillerCage(index, 'down')}
 					>
-						<div class="h-full w-8 bg-gray-100 border-r border-gray-300">
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1 border-b border-gray-300"
-								on:click={() => reorderKillerCage(index, 'up')}
-							>
-								<CaretUp size={32} />
-							</div>
-							<div
-								class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1"
-								on:click={() => reorderKillerCage(index, 'down')}
-							>
-								<CaretDown size={32} />
-							</div>
-						</div>
-						<span
-							class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
-							on:click={() => {
-								$selectedCells = cage.positions;
-								$selectedItemIndex = index;
-							}}
-						>
-							{cage.type ? cageTypeNames[cage.type] : 'Custom'}: <br /> ({cage.positions
-								.length}-cell{cage.positions.length > 1 ? 's' : ''})
-						</span>
-						<div
-							class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"
-							on:click={() => deleteKillerCageAtIndex(index)}
-						>
-							<Trash size={20} />
-						</div>
-					</button>
+						<ScaledSvg>
+							<Killercage {cage} dimensions={$sudokuClues.dimensions} />
+						</ScaledSvg>
+					</ControllerButton>
 				{/each}
 			</div>
 		</div>
@@ -380,18 +348,12 @@
 
 	<div class="px-2 flex flex-col">
 		<div>
-			<OldSelect
-				label="Type"
-				on:change={() => changeType(type)}
-				id="type"
-				bind:value={type}
-				class="mr-0.5 w-full capitalize"
-			>
-				{#each cageTypes as cageType}
-					<option value={cageType} class="capitalize">{cageTypeNames[cageType]}</option>
-				{/each}
-				<option value={'CUSTOM'} class="capitalize">Custom</option>
-			</OldSelect>
+			<Select onChange={() => changeType(type)} options={cageTypes} bind:option={type}>
+				<svelte:fragment slot="label">Type</svelte:fragment>
+				<div slot="option" let:option>
+					{cageTypeNames[option]}
+				</div>
+			</Select>
 		</div>
 		<div>
 			<ColorSelect bind:color class="w-full" />

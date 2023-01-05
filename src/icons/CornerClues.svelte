@@ -4,7 +4,7 @@
 		stroke-linejoin="round"
 		stroke-linecap="round"
 		class="stroke-current"
-		stroke-width="16"
+		stroke-width="8"
 		height="176"
 		width="176"
 		y="40"

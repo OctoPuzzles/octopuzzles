@@ -1,6 +1,6 @@
 <svg viewBox="0 0 256 256" fill="#000000">
 	<circle
-		stroke-width="16"
+		stroke-width="8"
 		stroke-linejoin="round"
 		stroke-linecap="round"
 		class="stroke-current"
@@ -10,7 +10,7 @@
 		cx="128.00244"
 	/>
 	<line
-		stroke-width="16"
+		stroke-width="8"
 		stroke-linejoin="round"
 		stroke-linecap="round"
 		class="stroke-current"
@@ -21,7 +21,7 @@
 		x1="8.00244"
 	/>
 	<line
-		stroke-width="16"
+		stroke-width="8"
 		stroke-linejoin="round"
 		stroke-linecap="round"
 		class="stroke-current"

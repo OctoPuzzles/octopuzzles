@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
 	import type { EditorHistoryStep, GameHistoryStep } from '$types';
-	import BorderClues from './Clues/BorderClues.svelte';
+	import BorderClues from './Clues/borderclues/BorderClues.svelte';
 	import CellClues from './Clues/CellClues.svelte';
 	import Cells from './Clues/Cells.svelte';
 	import Colors from './Clues/Colors.svelte';
 	import CornerMarks from './Clues/CornerMarks.svelte';
 	import CenterMarks from './Clues/CenterMarks.svelte';
-	import KillerCages from './Clues/KillerCages.svelte';
+	import KillerCages from './Clues/killercages/KillerCages.svelte';
 	import Numbers from './Clues/Numbers.svelte';
-	import Paths from './Clues/Paths.svelte';
+	import Paths from './Clues/paths/Paths.svelte';
 	import Notes from './Clues/Notes.svelte';
 	import Logic from './Clues/Logic.svelte';
 	import Regions from './Clues/Regions.svelte';
@@ -48,7 +48,7 @@
 	<Cells {cells} />
 	<Notes {notes} />
 	<Regions {regions} {dimensions} />
-	<BorderClues {borderClues} {interactive} />
+	<BorderClues {borderClues} />
 	<CellClues {cellClues} {interactive} />
 	<CornerMarks {values} {givens} {dimensions} {cornermarks} />
 	<CenterMarks {values} {givens} {dimensions} {centermarks} />

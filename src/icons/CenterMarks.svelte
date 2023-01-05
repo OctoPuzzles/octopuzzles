@@ -4,7 +4,7 @@
 		stroke-linejoin="round"
 		stroke-linecap="round"
 		class="stroke-current"
-		stroke-width="16"
+		stroke-width="8"
 		rx="8"
 		height="176"
 		width="176"
@@ -19,10 +19,10 @@
 		<path
 			d="m 80,32 h 95.98733 l -55.97994,80.0091 a 55.99545,55.99545 0 1 1 -39.59275,95.59021"
 			fill="none"
-			class="stroke-current"
+			class="stroke-current text-blue-700"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			stroke-width="61.44"
+			stroke-width="16"
 		/>
 	</g>
 	<g
@@ -33,10 +33,10 @@
 		<path
 			d="M 176,32 H 95.66955 L 80,128.40465 a 55.99871,55.99871 0 1 1 0,79.19378"
 			fill="none"
-			class="stroke-current"
+			class="stroke-current text-blue-700"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			stroke-width="61.44"
+			stroke-width="16"
 		/>
 	</g>
 </svg>
