@@ -11,7 +11,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><rect
 		x="108"
 		y="100"
@@ -23,6 +23,6 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/></svg
 >

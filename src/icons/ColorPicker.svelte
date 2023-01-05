@@ -5,7 +5,7 @@
 		width="176"
 		height="176"
 		rx="8"
-		stroke-width="16"
+		stroke-width="8"
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"

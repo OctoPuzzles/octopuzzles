@@ -7,7 +7,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/>
 	<line
 		x1="128"
@@ -18,7 +18,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/>
 	<line
 		x1="44.9"
@@ -29,7 +29,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/>
 	<line
 		x1="44.9"
@@ -40,7 +40,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/>
 	<line
 		x1="128"
@@ -51,7 +51,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/>
 	<line
 		x1="211.1"
@@ -62,7 +62,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/>
 	<line
 		x1="211.1"
@@ -73,6 +73,6 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/>
 </svg>

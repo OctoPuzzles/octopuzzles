@@ -5,7 +5,7 @@
 		width="168"
 		height="168"
 		rx="8"
-		stroke-width="16"
+		stroke-width="8"
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
@@ -19,7 +19,7 @@
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><line
 		x1="212"
 		y1="128"
@@ -29,6 +29,6 @@
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/></svg
 >

@@ -5,7 +5,7 @@
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><line
 		x1="128"
 		y1="160"
@@ -15,14 +15,14 @@
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><polyline
 		points="99.716 52.284 128 24 156.284 52.284"
 		fill="none"
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><line
 		x1="128"
 		y1="96"
@@ -32,14 +32,14 @@
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><polyline
 		points="52.284 156.284 24 128 52.284 99.716"
 		fill="none"
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><line
 		x1="96"
 		y1="128"
@@ -49,14 +49,14 @@
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><polyline
 		points="203.716 99.716 232 128 203.716 156.284"
 		fill="none"
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><line
 		x1="160"
 		y1="128"
@@ -66,6 +66,6 @@
 		class="stroke-current"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/>
 </svg>

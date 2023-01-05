@@ -8,7 +8,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><line
 		x1="216"
 		y1="172"
@@ -18,7 +18,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><circle
 		cx="168"
 		cy="172"
@@ -27,7 +27,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><line
 		x1="84"
 		y1="84"
@@ -37,7 +37,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><line
 		x1="216"
 		y1="84"
@@ -47,7 +47,7 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/><circle
 		cx="104"
 		cy="84"
@@ -56,6 +56,6 @@
 		stroke="#000000"
 		stroke-linecap="round"
 		stroke-linejoin="round"
-		stroke-width="16"
+		stroke-width="8"
 	/></svg
 >

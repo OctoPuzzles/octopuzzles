@@ -61,7 +61,7 @@ const theme = {
 		800: '#27272a',
 		900: '#18181b'
 	},
-	light_gray: { DEFAULT: '#d4d4d8', 500: '#d4d4d8' }
+	lightgray: { DEFAULT: '#d4d4d8', 500: '#d4d4d8' }
 };
 
 const config = {
@@ -78,7 +78,7 @@ const config = {
 		'text-black',
 		'text-white',
 		'text-gray',
-		'text-light_gray',
+		'text-lightgray',
 		'bg-orange-500',
 		'bg-red-500',
 		'bg-yellow-500',
@@ -88,7 +88,7 @@ const config = {
 		'bg-black-500',
 		'bg-white-500',
 		'bg-gray-500',
-		'bg-light_gray-500'
+		'bg-lightgray-500'
 	],
 	theme: {
 		colors: {
@@ -96,7 +96,7 @@ const config = {
 			current: 'currentColor',
 			black: theme.black,
 			white: theme.white,
-			light_gray: theme.light_gray,
+			lightgray: theme.lightgray,
 			gray: theme.gray,
 			orange: theme.orange,
 			blue: theme.blue,

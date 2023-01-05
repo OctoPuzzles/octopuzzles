@@ -4,7 +4,7 @@
 		stroke-linejoin="round"
 		stroke-linecap="round"
 		class="stroke-current"
-		stroke-width="16"
+		stroke-width="8"
 		rx="8"
 		height="176"
 		width="176"
@@ -19,10 +19,10 @@
 		<polyline
 			points="123.997 24 76 160 172 160"
 			fill="none"
-			class="stroke-current"
+			class="stroke-current text-blue-700"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			stroke-width="61.44"
+			stroke-width="16"
 		/>
 		<line
 			x1="172"
@@ -30,10 +30,10 @@
 			x2="172"
 			y2="224"
 			fill="none"
-			class="stroke-current"
+			class="stroke-current text-blue-700"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			stroke-width="61.44"
+			stroke-width="16"
 		/>
 	</g>
 	<g
@@ -44,18 +44,18 @@
 		<path
 			d="m 178.76923,71.66667 a 46.108,46.108 0 0 1 -14.87,33.70542 53.13546,53.13546 0 0 1 -71.79854,0 45.63467,45.63467 0 0 1 0,-67.41085 53.13546,53.13546 0 0 1 71.79854,0 46.108,46.108 0 0 1 14.87,33.70543 z"
 			fill="none"
-			class="stroke-current"
+			class="stroke-current text-blue-700"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			stroke-width="61.44"
+			stroke-width="16"
 		/>
 		<path
 			d="m 188,175.66667 a 54.49122,54.49122 0 0 1 -17.57359,39.83368 62.79644,62.79644 0 0 1 -84.85282,0 53.93188,53.93188 0 0 1 0,-79.66737 62.79644,62.79644 0 0 1 84.85282,0 A 54.49124,54.49124 0 0 1 188,175.66667 Z"
 			fill="none"
-			class="stroke-current"
+			class="stroke-current text-blue-700"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			stroke-width="61.44"
+			stroke-width="16"
 		/>
 	</g>
 	<g
@@ -69,20 +69,20 @@
 			x2="111.75"
 			y2="224"
 			fill="none"
-			class="stroke-current"
+			class="stroke-current text-blue-700"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			stroke-width="61.44"
+			stroke-width="16"
 		/>
 		<circle
 			cx="128"
 			cy="88"
 			r="56"
 			fill="none"
-			class="stroke-current"
+			class="stroke-current text-blue-700"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			stroke-width="61.44"
+			stroke-width="16"
 		/>
 	</g>
 </svg>

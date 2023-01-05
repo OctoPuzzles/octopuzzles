@@ -15,6 +15,6 @@
 			y="40"
 			x="40"
 		/>
-		<line x1="38" y1="40" x2="218" y2="40" stroke-width="16" class="stroke-current" />
+		<line x1="38" y1="40" x2="218" y2="40" stroke-width="8" class="stroke-current" />
 	</g>
 </svg>

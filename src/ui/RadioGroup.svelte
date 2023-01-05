@@ -20,9 +20,11 @@
 				id={idFromOption(option)}
 				class="absolute opacity-0 w-0 h-0 peer"
 				type="radio"
-				bind:group={value}
 				{name}
-				on:mouseup={() => onChange?.(option)}
+				on:mouseup={() => {
+					value = option;
+					onChange?.(option);
+				}}
 				value={option}
 			/>
 			<label
@@ -32,7 +34,10 @@
 					isFirst && 'rounded-l-md',
 					isLast && 'rounded-r-md'
 				)}
-				on:mouseup={() => onChange?.(option)}
+				on:mouseup={() => {
+					value = option;
+					onChange?.(option);
+				}}
 			>
 				<slot {option} />
 			</label>

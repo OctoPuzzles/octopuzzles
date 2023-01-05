@@ -4,6 +4,7 @@
 	import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
 	import WalkthroughEditorModal from '$components/Modals/WalkthroughEditorModal.svelte';
 	import WalkthroughViewerModal from '$components/Modals/WalkthroughViewerModal.svelte';
+	import ControllerSkeleton from '$components/Sudoku/ControllerSkeleton.svelte';
 	import CenterMarksIcon from '$icons/CenterMarks.svelte';
 	import ColorPicker from '$icons/ColorPicker.svelte';
 	import CornerMarksIcon from '$icons/CornerMarks.svelte';
@@ -17,7 +18,6 @@
 	import type { InputMode } from '$types';
 	import SquareButton from '$ui/SquareButton.svelte';
 	import { isCommandKey } from '$utils/keyboard/isCommandKey';
-	import classNames from 'classnames';
 	import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
 	import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
 	import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';
@@ -37,14 +37,24 @@
 
 	const controls: Record<
 		string,
-		{ icon: typeof NumbersIcon; controller: typeof Numbers; label: string }
+		{ icon: typeof NumbersIcon; controller: typeof Numbers; label: string; shortcut?: string }
 	> = {
-		values: { icon: NumbersIcon, controller: Numbers, label: 'Numbers' },
-		cornermarks: { icon: CornerMarksIcon, controller: CornerMarks, label: 'Corner marks' },
-		centermarks: { icon: CenterMarksIcon, controller: CenterMarks, label: 'Center marks' },
-		colors: { icon: ColorPicker, controller: GameColors, label: 'Colors' },
+		values: { icon: NumbersIcon, controller: Numbers, label: 'Numbers', shortcut: 'Z' },
+		cornermarks: {
+			icon: CornerMarksIcon,
+			controller: CornerMarks,
+			label: 'Corner marks',
+			shortcut: 'X'
+		},
+		centermarks: {
+			icon: CenterMarksIcon,
+			controller: CenterMarks,
+			label: 'Center marks',
+			shortcut: 'C'
+		},
+		colors: { icon: ColorPicker, controller: GameColors, label: 'Colors', shortcut: 'V' },
 		notes: { icon: NotesIcon, controller: Notes, label: 'Notes' },
-		scanner: { icon: ScannerIcon, controller: Scanner, label: 'Scanner' }
+		scanner: { icon: ScannerIcon, controller: Scanner, label: 'Scanner', shortcut: 'B' }
 	};
 
 	$: controller = $inputMode && controls[$inputMode] ? controls[$inputMode]?.controller : Numbers;
@@ -171,35 +181,18 @@
 
 <svelte:window on:keydown={handleKeyboardShortcuts} on:keyup={handleKeyUp} />
 
-<div
-	class="grid grid-rows-7 sm:grid-rows-6 grid-cols-4 sm:grid-cols-5 gap-2 max-w-96 sm:w-120 h-160 sm:h-140 relative"
+<ControllerSkeleton
+	menuItems={Object.entries(controls).map(([im, info]) => ({
+		icon: info.icon,
+		isSelected: info.label === openControl,
+		onClick: () => setInputMode(im),
+		title: info.label,
+		shortcut: info.shortcut
+	}))}
 >
-	<!-- Main control container -->
-	<div class="row-span-4 col-span-5 sm:col-span-4 bg-gray-100 rounded-md shadow">
-		<svelte:component this={controller} />
-	</div>
+	<svelte:component this={controller} slot="main" />
 
-	<!-- Rightmost controls -->
-	<div
-		class="row-span-1 col-span-4 sm:row-span-5 sm:col-span-1 bg-gray-100 rounded-md shadow flex flex-row sm:flex-col items-center gap-2 px-2 sm:py-2 overflow-x-scroll sm:overflow-y-scroll"
-	>
-		{#each Object.entries(controls) as [im, info]}
-			<SquareButton
-				text={info.label}
-				class={classNames({ 'ring-2 border-white ring-blue-500': info.label === openControl })}
-				on:click={() => {
-					setInputMode(im);
-				}}
-			>
-				<svelte:component this={info.icon} />
-			</SquareButton>
-		{/each}
-	</div>
-
-	<!-- Bottom Controls -->
-	<div
-		class="row-span-1 col-span-5 sm:col-span-4 bg-gray-100 rounded-md shadow flex justify-evenly items-center"
-	>
+	<svelte:fragment slot="bottom">
 		<SquareButton
 			text="Undo"
 			disabled={!gameHistory.canUndo}
@@ -226,10 +219,9 @@
 		>
 			<ArrowCounterClockwise size={32} />
 		</SquareButton>
-	</div>
+	</svelte:fragment>
 
-	<!-- Aux Controls -->
-	<div class="row-span-1 col-span-6 sm:col-span-5 flex justify-evenly items-center">
+	<svelte:fragment slot="aux">
 		<button
 			on:click={showHelp}
 			class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
@@ -255,5 +247,5 @@
 		>
 			<FileArrowUp size={32} />
 		</button>
-	</div>
-</div>
+	</svelte:fragment>
+</ControllerSkeleton>
