@@ -1,13 +1,10 @@
 <script lang="ts">
 	import { cellSize, symbolsMap } from '$constants';
 	import classNames from 'classnames';
-	import { inputMode, highlights } from '$stores/sudokuStore';
 	import { getCellCluesToDraw } from '$utils/prefabs';
 	import type { CellClueLocation, Cellclues, CellClueSize } from '$models/Sudoku';
 
-	const { selectedItemIndex } = highlights;
 	export let cellClues: Cellclues;
-	export let interactive = false;
 
 	const horizontalOffset = (l?: CellClueLocation | null) => {
 		switch (l) {
@@ -83,16 +80,7 @@
 	<g id="cellclues">
 		{#each cellClues as editorClue}
 			{#each getCellCluesToDraw(editorClue) as cellClue, index}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<g
-					class={interactive ? 'cursor-pointer' : 'pointer-events-none'}
-					on:click={() => {
-						if (interactive) {
-							$selectedItemIndex = index;
-							$inputMode = 'cellclues';
-						}
-					}}
-				>
+				<g class="pointer-events-none">
 					{#if cellClue.text && cellClue.text.length > 0}
 						<text
 							x={cellSize * (cellClue.position.column + horizontalOffset(cellClue.location))}

@@ -65,12 +65,7 @@
 	});
 
 	const sudokuClues = editorHistory.subscribeToClues();
-
-	let values = gameHistory.getValue('values');
-	let gameColors = gameHistory.getValue('colors');
-	let cornermarks = gameHistory.getValue('cornermarks');
-	let centermarks = gameHistory.getValue('centermarks');
-	let notes = gameHistory.getValue('notes');
+	const userInputs = gameHistory.subscribeToInputs();
 </script>
 
 <svelte:head>
@@ -95,23 +90,7 @@
 		</div>
 	</div>
 
-	<SudokuGame
-		givens={$sudokuClues.givens}
-		borderClues={$sudokuClues.borderclues}
-		cellClues={$sudokuClues.cellclues}
-		regions={$sudokuClues.regions}
-		cells={$sudokuClues.cells}
-		editorColors={$sudokuClues.colors}
-		cages={$sudokuClues.extendedcages}
-		paths={$sudokuClues.paths}
-		dimensions={$sudokuClues.dimensions}
-		logic={$sudokuClues.logic}
-		values={$values}
-		gameColors={$gameColors}
-		cornermarks={$cornermarks}
-		centermarks={$centermarks}
-		notes={$notes}
-	/>
+	<SudokuGame clues={$sudokuClues} userInputs={$userInputs} />
 
 	<div class="p-4 whitespace-pre-line">
 		{$description}

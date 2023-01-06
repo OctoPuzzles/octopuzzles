@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { gameHistory } from '$stores/sudokuStore';
-	import SudokuDisplay from '$components/Sudoku/Display/index.svelte';
+	import SudokuDisplay from '$components/Sudoku/Display/SudokuDisplay.svelte';
 	import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
 	import AppWindow from 'phosphor-svelte/lib/AppWindow/AppWindow.svelte';
 	import { page } from '$app/stores';
@@ -54,23 +54,7 @@
 			</div>
 			<div class="grid gap-2 grid-cols-2">
 				<div>
-					<SudokuDisplay
-						borderClues={clues.borderclues}
-						cages={clues.extendedcages}
-						cellClues={clues.cellclues}
-						cells={clues.cells}
-						dimensions={clues.dimensions}
-						editorColors={clues.colors}
-						givens={clues.givens}
-						logic={clues.logic}
-						paths={clues.paths}
-						regions={clues.regions}
-						cornermarks={step.cornermarks}
-						centermarks={step.centermarks}
-						values={step.values}
-						gameColors={step.colors}
-						notes={step.notes}
-					/>
+					<SudokuDisplay {clues} userInputs={step} />
 				</div>
 				<div>
 					<HtmlContent content={description} />

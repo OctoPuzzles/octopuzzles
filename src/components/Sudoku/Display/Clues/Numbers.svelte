@@ -6,7 +6,7 @@
 	import classNames from 'classnames';
 
 	export let givens: Givens;
-	export let values: GameValues | null;
+	export let values: GameValues | undefined;
 
 	export let dimensions: Dimensions;
 
