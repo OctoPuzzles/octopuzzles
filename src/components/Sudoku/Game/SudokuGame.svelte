@@ -1,9 +1,13 @@
 <script lang="ts">
-	import { cellSize } from '$constants';
-	import SudokuDisplay from '$components/Sudoku/Display/index.svelte';
+	import SudokuDisplay from '$components/Sudoku/Display/SudokuDisplay.svelte';
 	import Controller from './Controller/index.svelte';
-	import Interface from '$components/Sudoku/Interface.svelte';
-	import { highlights } from '$stores/sudokuStore';
+	import {
+		highlights,
+		inputMode,
+		handleArrows,
+		handleMouseDown,
+		handleMouseEnter
+	} from '$stores/sudokuStore';
 	import type { EditorHistoryStep, GameHistoryStep } from '$types';
 
 	const { selectedCells, highlightedCells, wrongCells } = highlights;
@@ -17,22 +21,9 @@
 	 */
 	$: sudokuSize = Math.max(Math.min(windowHeight - 88, windowWidth), 300);
 
-	export let givens: EditorHistoryStep['givens'];
-	export let borderClues: EditorHistoryStep['borderclues'];
-	export let cellClues: EditorHistoryStep['cellclues'];
-	export let regions: EditorHistoryStep['regions'];
-	export let cells: EditorHistoryStep['cells'];
-	export let editorColors: EditorHistoryStep['colors'];
-	export let cages: EditorHistoryStep['extendedcages'];
-	export let paths: EditorHistoryStep['paths'];
-	export let dimensions: EditorHistoryStep['dimensions'];
-	export let logic: EditorHistoryStep['logic'];
+	export let clues: EditorHistoryStep;
 
-	export let values: GameHistoryStep['values'];
-	export let gameColors: GameHistoryStep['colors'];
-	export let cornermarks: GameHistoryStep['cornermarks'];
-	export let centermarks: GameHistoryStep['centermarks'];
-	export let notes: GameHistoryStep['notes'];
+	export let userInputs: GameHistoryStep;
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
@@ -40,55 +31,19 @@
 <div class="flex flex-wrap w-full justify-around">
 	<div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
 		<SudokuDisplay
-			{borderClues}
-			{cages}
-			{cellClues}
-			{cells}
-			{dimensions}
-			{editorColors}
-			{givens}
-			{logic}
-			{notes}
-			{paths}
-			{regions}
-			{cornermarks}
-			{centermarks}
-			{values}
-			{gameColors}
-		>
-			<g slot="highlights" id="highlights">
-				{#each $wrongCells as cell}
-					<rect
-						class="fill-current w-cell h-cell text-red-200"
-						x={cellSize * cell.column}
-						y={cellSize * cell.row}
-						vector-effect="non-scaling-size"
-					/>
-				{/each}
-				{#if $selectedCells}
-					{#each $selectedCells as cell}
-						<rect
-							class="fill-current w-cell h-cell text-orange-300 text-opacity-40"
-							x={cellSize * cell.column}
-							y={cellSize * cell.row}
-							vector-effect="non-scaling-size"
-						/>
-					{/each}
-				{/if}
-				{#if $highlightedCells}
-					{#each $highlightedCells as cell}
-						<rect
-							class="fill-current w-cell h-cell text-blue-100"
-							x={cellSize * cell.column}
-							y={cellSize * cell.row}
-							vector-effect="non-scaling-size"
-						/>
-					{/each}
-				{/if}
-			</g>
-
-			<Interface {cells} {dimensions} slot="interface" />
-		</SudokuDisplay>
+			{clues}
+			{userInputs}
+			highlightedCells={$highlightedCells}
+			selectedCells={$selectedCells}
+			wrongCells={$wrongCells}
+			onClickNote={(note, position) => {
+				$inputMode = 'notes';
+				$selectedCells = [position];
+			}}
+			handleArrows={$handleArrows}
+			handleMouseDown={$handleMouseDown}
+			handleMouseEnter={$handleMouseEnter}
+		/>
 	</div>
 	<div class="my-auto">
 		<Controller />

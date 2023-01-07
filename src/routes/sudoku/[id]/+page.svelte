@@ -81,12 +81,7 @@
 	});
 
 	const sudokuClues = editorHistory.subscribeToClues();
-
-	let values = gameHistory.getValue('values');
-	let gameColors = gameHistory.getValue('colors');
-	let cornermarks = gameHistory.getValue('cornermarks');
-	let centermarks = gameHistory.getValue('centermarks');
-	let notes = gameHistory.getValue('notes');
+	const userInputs = gameHistory.subscribeToInputs();
 
 	function checkSolution(numbers: string[][]): boolean {
 		$wrongCells = [];
@@ -130,7 +125,7 @@
 		}
 	}
 
-	$: if (checkSolution($values)) {
+	$: if (checkSolution($userInputs.values)) {
 		clearInterval(timer);
 		showDoneModal();
 	}
@@ -171,22 +166,6 @@
 	</div>
 </div>
 
-<SudokuGame
-	givens={$sudokuClues.givens}
-	borderClues={$sudokuClues.borderclues}
-	cellClues={$sudokuClues.cellclues}
-	regions={$sudokuClues.regions}
-	cells={$sudokuClues.cells}
-	editorColors={$sudokuClues.colors}
-	cages={$sudokuClues.extendedcages}
-	paths={$sudokuClues.paths}
-	dimensions={$sudokuClues.dimensions}
-	logic={$sudokuClues.logic}
-	values={$values}
-	gameColors={$gameColors}
-	cornermarks={$cornermarks}
-	centermarks={$centermarks}
-	notes={$notes}
-/>
+<SudokuGame clues={$sudokuClues} userInputs={$userInputs} />
 
 <SudokuInfo sudoku={data.sudoku} {takeScreenshot} />

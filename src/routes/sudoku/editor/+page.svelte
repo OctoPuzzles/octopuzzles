@@ -61,7 +61,9 @@
 		let solution: InferMutationInput<'sudokus:provideSolutionToPuzzle'>['solution'] = undefined;
 		// create solution
 		if (provideSolution) {
-			solution = { numbers: getUserSolution({ givens: $sudokuClues.givens, values: $values }) };
+			solution = {
+				numbers: getUserSolution({ givens: $sudokuClues.givens, values: $userInputs.values })
+			};
 		}
 		await trpc().mutation('sudokus:provideSolutionToPuzzle', {
 			sudokuId: id,
@@ -135,12 +137,7 @@
 	let provideSolution = false;
 
 	const sudokuClues = editorHistory.subscribeToClues();
-
-	let values = gameHistory.getValue('values');
-	let gameColors = gameHistory.getValue('colors');
-	let cornermarks = gameHistory.getValue('cornermarks');
-	let centermarks = gameHistory.getValue('centermarks');
-	let notes = gameHistory.getValue('notes');
+	const userInputs = gameHistory.subscribeToInputs();
 
 	async function save(): Promise<void> {
 		loading = true;
@@ -267,9 +264,9 @@
 	}
 
 	function doesSolutionHaveHoles(): boolean {
-		if (!$sudokuClues.givens || !$values) return false;
+		if (!$sudokuClues.givens || !$userInputs.values) return false;
 
-		let userSolution = getUserSolution({ givens: $sudokuClues.givens, values: $values });
+		let userSolution = getUserSolution({ givens: $sudokuClues.givens, values: $userInputs.values });
 
 		for (const row of userSolution) {
 			for (const cell of row) {
@@ -283,7 +280,7 @@
 	}
 
 	let solutionHasHoles = false;
-	$: if ($values && $sudokuClues.givens) {
+	$: if ($userInputs.values && $sudokuClues.givens) {
 		solutionHasHoles = doesSolutionHaveHoles();
 	}
 </script>
@@ -318,36 +315,9 @@
 </div>
 
 {#if tab === 'editor'}
-	<SudokuEditor
-		givens={$sudokuClues.givens}
-		borderClues={$sudokuClues.borderclues}
-		cellClues={$sudokuClues.cellclues}
-		regions={$sudokuClues.regions}
-		cells={$sudokuClues.cells}
-		editorColors={$sudokuClues.colors}
-		cages={$sudokuClues.extendedcages}
-		paths={$sudokuClues.paths}
-		dimensions={$sudokuClues.dimensions}
-		logic={$sudokuClues.logic}
-	/>
+	<SudokuEditor clues={$sudokuClues} />
 {:else if tab === 'game'}
-	<SudokuGame
-		givens={$sudokuClues.givens}
-		borderClues={$sudokuClues.borderclues}
-		cellClues={$sudokuClues.cellclues}
-		regions={$sudokuClues.regions}
-		cells={$sudokuClues.cells}
-		editorColors={$sudokuClues.colors}
-		cages={$sudokuClues.extendedcages}
-		paths={$sudokuClues.paths}
-		dimensions={$sudokuClues.dimensions}
-		logic={$sudokuClues.logic}
-		values={$values}
-		gameColors={$gameColors}
-		cornermarks={$cornermarks}
-		centermarks={$centermarks}
-		notes={$notes}
-	/>
+	<SudokuGame clues={$sudokuClues} userInputs={$userInputs} />
 {:else}
 	<div class="m-auto container p-4">
 		<form>

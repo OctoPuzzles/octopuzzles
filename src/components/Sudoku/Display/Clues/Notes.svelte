@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
+	import type { Position } from '$models/Sudoku';
 	import type { Notes } from '$models/Walkthrough';
-	import { inputMode, highlights } from '$stores/sudokuStore';
 
-	const { selectedCells } = highlights;
-
-	export let notes: Notes | null;
+	export let notes: Notes | undefined;
+	export let onClickNote: ((note: string, position: Position) => void) | undefined = undefined;
 
 	function createPolygonPoints(row: number, column: number): string {
 		let firstPoint = `${cellSize * column + 0.8 * cellSize},${cellSize * row}`;
@@ -25,10 +24,8 @@
 						points={createPolygonPoints(rowIndex, columnIndex)}
 						class="fill-current stroke-black-500 text-orange-300 cursor-pointer hover:text-orange-400 transition-colors"
 						style="stroke-width:0.5;"
-						on:click={() => {
-							$inputMode = 'notes';
-							$selectedCells = [{ row: rowIndex, column: columnIndex }];
-						}}
+						on:click={() => onClickNote?.(note, { row: rowIndex, column: columnIndex })}
+						on:keypress={() => onClickNote?.(note, { row: rowIndex, column: columnIndex })}
 					>
 						<title>{note}</title>
 					</polygon>

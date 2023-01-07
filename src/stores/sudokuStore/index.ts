@@ -260,6 +260,15 @@ function createGameHistoryStore() {
 	}
 
 	/**
+	 * Get the state of the game at the current step.
+	 */
+	function subscribeToInputs(): Readable<GameHistoryStep> {
+		return derived([history, step], ([$gameHistory, $gameStep]) => {
+			return $gameHistory[$gameStep];
+		});
+	}
+
+	/**
 	 * Undo a step in the editor
 	 */
 	function undo(): void {
@@ -337,7 +346,8 @@ function createGameHistoryStore() {
 		reset,
 		clearCells,
 		set,
-		getValue
+		getValue,
+		subscribeToInputs
 	};
 }
 

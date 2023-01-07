@@ -5,7 +5,7 @@
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
 	export let editorColors: EditorColors;
-	export let gameColors: GameColors | null;
+	export let gameColors: GameColors | undefined;
 	export let dimensions: Dimensions;
 
 	function polarToCartesian(

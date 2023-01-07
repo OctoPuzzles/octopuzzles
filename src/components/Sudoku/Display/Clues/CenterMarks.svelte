@@ -5,9 +5,9 @@
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
 	export let dimensions: Dimensions;
-	export let centermarks: Centermarks | null;
+	export let centermarks: Centermarks | undefined;
 	export let givens: Givens;
-	export let values: GameValues | null;
+	export let values: GameValues | undefined;
 </script>
 
 <g id="centermarks" class="pointer-events-none">

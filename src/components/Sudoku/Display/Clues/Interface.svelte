@@ -1,38 +1,45 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
 	import type { Cells, Dimensions, Position } from '$models/Sudoku';
-	import { handleArrows, handleMouseDown, handleMouseEnter, mode } from '$stores/sudokuStore';
+	import type {
+		ArrowHandler,
+		MouseDownHandler,
+		MouseEnterHandler
+	} from '$stores/sudokuStore/interactionHandlers';
 	import { defaultCells } from '$utils/defaults';
 	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 
 	export let cells: Cells;
 	export let dimensions: Dimensions;
+	export let isEditor = false;
+	export let handleArrows: ArrowHandler | undefined = undefined;
+	export let handleMouseDown: MouseDownHandler | undefined = undefined;
+	export let handleMouseEnter: MouseEnterHandler | undefined = undefined;
 
-	$: cells =
-		cells && $mode === 'game'
-			? cells
-			: defaultCells(
-					dimensions.margins
-						? {
-								rows: dimensions.rows + dimensions.margins.top + dimensions.margins.bottom,
-								columns: dimensions.columns + dimensions.margins.left + dimensions.margins.right,
-								margins: { left: 0, right: 0, top: 0, bottom: 0 }
-						  }
-						: dimensions
-			  );
+	$: cells = !isEditor
+		? cells
+		: defaultCells(
+				dimensions.margins
+					? {
+							rows: dimensions.rows + dimensions.margins.top + dimensions.margins.bottom,
+							columns: dimensions.columns + dimensions.margins.left + dimensions.margins.right,
+							margins: { left: 0, right: 0, top: 0, bottom: 0 }
+					  }
+					: dimensions
+		  );
 
 	let mouseDown = false;
 
 	const realHandleMouseEnter = (position: Position, e: MouseEvent): void => {
-		$handleMouseEnter({ cell: position, metaButtonClicked: isCommandKey(e), mouseDown });
+		handleMouseEnter?.({ cell: position, metaButtonClicked: isCommandKey(e), mouseDown });
 	};
 
 	const realHandleMouseDown = (position: Position, e: MouseEvent): void => {
-		$handleMouseDown({ cell: position, metaButtonClicked: isCommandKey(e) });
+		handleMouseDown?.({ cell: position, metaButtonClicked: isCommandKey(e) });
 	};
 
 	const realHandleArrows = (k: KeyboardEvent): void => {
-		$handleArrows({ k, metaButtonClicked: isCommandKey(k) });
+		handleArrows?.({ k, metaButtonClicked: isCommandKey(k) });
 	};
 </script>
 
