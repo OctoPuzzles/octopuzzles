@@ -6,8 +6,7 @@
 	import { decompressFromBase64 } from '$features/fpuzzles/compressor';
 	import { defaultValues } from '$utils/defaults';
 	import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
-	import { onMount } from 'svelte';
-	import { onDestroy } from 'svelte/types/runtime/internal/lifecycle';
+	import { onDestroy, onMount } from 'svelte';
 	import { resetAllSudokuStores } from '$utils/resetAllStores';
 
 	// TIMER: one that does not run when the tab is inactive, but runs as if it had.
