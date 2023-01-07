@@ -3,7 +3,7 @@
 	import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
 	import SudokuInfo from '$components/Sudoku/SudokuInfo.svelte';
 	import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { openModal } from '$stores/modalStore';
 	import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
@@ -11,6 +11,7 @@
 	import type { PageData } from './$types';
 	import { walkthroughStore } from '$stores/walkthroughStore';
 	import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
+	import { resetAllSudokuStores } from '$utils/resetAllStores';
 
 	export let data: PageData;
 
@@ -53,6 +54,10 @@
 			now = Date.now();
 		}, 1000);
 		document.addEventListener('visibilitychange', handleVisibilityChange);
+	});
+
+	onDestroy(() => {
+		resetAllSudokuStores();
 	});
 
 	onMount(async () => {

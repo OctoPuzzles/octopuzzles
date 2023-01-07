@@ -46,13 +46,6 @@
 		loading = false;
 	}
 
-	onMount(() => {
-		$highlightedItemIndex = -1;
-		$selectedItemIndex = -1;
-		$selectedCells = [];
-		$highlightedCells = [];
-	});
-
 	let showFilters = false;
 
 	let activeLabels = $page.url.searchParams.getAll('label').map((l) => parseInt(l));

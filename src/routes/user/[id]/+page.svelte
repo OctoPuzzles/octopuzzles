@@ -36,13 +36,6 @@
 			}
 		});
 	}
-
-	onMount(() => {
-		$highlightedItemIndex = -1;
-		$selectedItemIndex = -1;
-		$selectedCells = [];
-		$highlightedCells = [];
-	});
 </script>
 
 <svelte:head>
