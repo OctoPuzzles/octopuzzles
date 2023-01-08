@@ -27,7 +27,7 @@
 		{#if $walkthroughStore.length === 0}
 			<p class="text-gray-700">No steps added yet</p>
 		{/if}
-		{#each $walkthroughStore as { step, description }, i}
+		{#each $walkthroughStore as { step, description }, i (`${description}-step-${i}`)}
 			<div>
 				<div>
 					<div class="flex space-x-4 items-center mb-2 mt-2">
@@ -43,20 +43,23 @@
 							on:click={() => walkthroughStore.addStep(i)}
 							title="Insert a new step"
 							class="w-6 h-6 rounded-full p-1 hover:bg-red-100 hover:text-red-600"
-							><ArrowsOutLineVertical size={16} /></button
 						>
+							<ArrowsOutLineVertical size={16} />
+						</button>
 						<button
 							on:click={() => walkthroughStore.addStep(i, true)}
 							title="Replace this step"
 							class="w-6 h-6 rounded-full p-1 hover:bg-red-100 hover:text-red-600"
-							><Swap size={16} /></button
 						>
+							<Swap size={16} />
+						</button>
 						<button
 							on:click={() => walkthroughStore.removeStep(i)}
 							title="Delete this step"
 							class="w-6 h-6 rounded-full p-1 hover:bg-red-100 hover:text-red-600"
-							><Trash size={16} /></button
 						>
+							<Trash size={16} />
+						</button>
 					</div>
 				</div>
 				<div class="grid gap-2 grid-cols-2">

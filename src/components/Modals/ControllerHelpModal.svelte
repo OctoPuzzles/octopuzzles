@@ -136,6 +136,22 @@
 					</li>
 				</ul>
 			</section>
+
+			<section class="mb-2">
+				<h2 class="text-lg font-semibold">Walkthrough</h2>
+				<p>
+					The walkthrough is accessed by clicking the icon with the walking person below the
+					controller. When playing a game, you can follow along in the modal, or you can press the
+					button in the top right corner to open the walkthrough in a new tab. If you are creating
+					your own puzzle the same modal can be used to create a walkthrough.
+				</p>
+
+				<p>
+					If you don't want to open the modal everytime you want to add a step, you can use the "w"
+					shortcut, which will add the step for you. To add a description you still have to open the
+					modal, though.
+				</p>
+			</section>
 		{/if}
 
 		{#if mode === 'editor'}

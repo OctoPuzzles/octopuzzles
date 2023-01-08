@@ -142,6 +142,10 @@
 				highlightedCells.set(scanner.getHighlightedCells(get(selectedCells)));
 				break;
 			}
+			case 'w': {
+				k.preventDefault();
+				walkthroughStore.addStep();
+			}
 		}
 	}
 
