@@ -36,3 +36,5 @@ declare module 'phosphor-svelte/lib/Atom/Atom.svelte';
 declare module 'phosphor-svelte/lib/Crosshair/Crosshair.svelte';
 declare module 'phosphor-svelte/lib/FloppyDisk/FloppyDisk.svelte';
 declare module 'phosphor-svelte/lib/Check/Check.svelte';
+declare module 'phosphor-svelte/lib/Brain/Brain.svelte';
+declare module 'phosphor-svelte/lib/Gear/Gear.svelte';

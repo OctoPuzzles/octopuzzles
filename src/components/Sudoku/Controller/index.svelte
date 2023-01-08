@@ -21,6 +21,7 @@
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
+  import Gear from 'phosphor-svelte/lib/Gear/Gear.svelte';
   import Check from 'phosphor-svelte/lib/Check/Check.svelte';
   import FloppyDisk from 'phosphor-svelte/lib/FloppyDisk/FloppyDisk.svelte';
   import PersonSimpleWalk from 'phosphor-svelte/lib/PersonSimpleWalk/PersonSimpleWalk.svelte';
@@ -64,6 +65,13 @@
   import Scanner from './components/Scanner.svelte';
   import { scanner } from '$stores/sudokuStore/scanner';
   import trpc from '$lib/client/trpc';
+  import UserSettingsModal from '$components/Modals/UserSettingsModal.svelte';
+  import { navigating } from '$app/stores';
+  import { compressToBase64 } from '$utils/compressor';
+  import { exportAsFPuzzlesJson } from '$utils/exportAsFPuzzlesJson';
+  import FPuzzlesLink from '$components/shareButtons/FPuzzlesLink.svelte';
+  import FPuzzles from '$icons/FPuzzles.svelte';
+  import CtC from '$icons/CtC.svelte';
 
   $: canUndo = $mode === 'editor' ? editorHistory.canUndo : gameHistory.canUndo;
   $: canRedo = $mode === 'editor' ? editorHistory.canRedo : gameHistory.canRedo;
@@ -229,6 +237,10 @@
     });
   }
 
+  function showSettingsModal(): void {
+    openModal(UserSettingsModal);
+  }
+
   function checkSolution(): void {
     $wrongCells = scanner.getErrorCells($solution);
   }
@@ -250,6 +262,28 @@
         colors
       }
     });
+  }
+
+  let exportDetails: HTMLDetailsElement;
+
+  $: if ($navigating && exportDetails) exportDetails.open = false;
+
+  function exportPuzzle(to: 'FPuzzles' | 'CTC') {
+    let href: string;
+    switch (to) {
+      case 'FPuzzles':
+        href = 'https://www.f-puzzles.com/?load=';
+        break;
+      case 'CTC':
+        href = 'https://app.crackingthecryptic.com/sudoku/?puzzleid=fpuzzles';
+        break;
+      default:
+        return;
+    }
+
+    href += compressToBase64(exportAsFPuzzlesJson());
+
+    window.open(href, '_blank', 'noreferrer');
   }
 </script>
 
@@ -355,13 +389,31 @@
       {/if}
     {/if}
 
-    <button
-      on:click={showExportToFPuzzlesModal}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-      title="Export"
-    >
-      <FileArrowUp size={32} />
-    </button>
+    <details bind:this={exportDetails}>
+      <summary
+        class="cursor-pointer flex justify-center items-center mr-2 w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+        aria-label="Export to f-puzzles/CtC"
+        aria-haspopup="menu"
+        title="Export to f-puzzles/CtC"
+      >
+        <FileArrowUp size={32} />
+      </summary>
+      <div
+        class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
+        role="menu"
+      >
+        <button
+          on:click={() => exportPuzzle('FPuzzles')}
+          class="w-8 h-8"
+          title="Export to f-puzzles"
+        >
+          <FPuzzles />
+        </button>
+        <button on:click={() => exportPuzzle('CTC')} class="w-8 h-8" title="Export to CtC">
+          <CtC />
+        </button>
+      </div>
+    </details>
     {#if $mode === 'editor'}
       <button
         on:click={showImportFromFPuzzlesModal}
@@ -371,5 +423,28 @@
         <FileArrowDown size={32} />
       </button>
     {/if}
+    <button
+      on:click={showSettingsModal}
+      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+      title="Settings"
+    >
+      <Gear size={32} />
+    </button>
   </div>
 </div>
+
+<style>
+  /* Allow the export dropdown to close when pressing outside the dropdown */
+  details[open] > summary::before {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    display: block;
+    cursor: default;
+    content: ' ';
+    background: transparent;
+  }
+</style>

@@ -35,6 +35,9 @@
   $: if ($navigating && details) details.open = false;
 
   function showSettingsModal(): void {
+    if (details) {
+      details.open = false;
+    }
     openModal(UserSettingsModal);
   }
 </script>
