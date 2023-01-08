@@ -14,7 +14,7 @@ function getBaseValue(character: string): number {
   return baseReverseDic[ALPHABET][character];
 }
 
-export function decompressFromBase64(input: string): any | null {
+export function decompressFromBase64(input: string): unknown | null {
   if (input == null || input == '') return null;
   const jsonString = _decompress(input.length, 32, function (index: number) {
     return getBaseValue(input.charAt(index));
@@ -186,7 +186,7 @@ function _decompress(
   }
 }
 
-export function compressToBase64(input: any): string {
+export function compressToBase64(input: unknown): string {
   if (input == null) return '';
   const jsonString = JSON.stringify(input);
   const res = _compress(jsonString, 6, function (a: number) {

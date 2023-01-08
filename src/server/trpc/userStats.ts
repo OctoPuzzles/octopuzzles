@@ -5,12 +5,12 @@ import { z } from 'zod';
 import { UserStatsValidator, type UserStats } from '$models/UserStats';
 
 export default trpc
-  .router<TRPCContext>()  
+  .router<TRPCContext>()
   .mutation('viewed', {
     input: UserStatsValidator.pick({ sudokuId: true }),
     resolve: async ({ input, ctx }) => {
       if (ctx.token == null) return;
-      
+
       const sudoku = await ctx.prisma.sudoku.findUnique({ where: { id: input.sudokuId } });
 
       if (sudoku == null) {
@@ -51,7 +51,7 @@ export default trpc
 
       return ctx.prisma.userStats.update({
         where: { uniqueKey: { sudokuId: input.sudokuId, userId: ctx.token.id } },
-        data: { solvedOn: new Date(), solveTime: input.solveTime}
+        data: { solvedOn: new Date(), solveTime: input.solveTime }
       });
     }
   })
@@ -73,7 +73,7 @@ export default trpc
 
       return ctx.prisma.userStats.update({
         where: { uniqueKey: { sudokuId: input.sudokuId, userId: ctx.token.id } },
-        data: { bookmarked:  (UserStatsValidator.parse(userStatsRaw).bookmarked ?? false)}
+        data: { bookmarked: UserStatsValidator.parse(userStatsRaw).bookmarked ?? false }
       });
     }
   })
@@ -87,7 +87,7 @@ export default trpc
           where: { userId: ctx.token.id, sudokuId: input.sudokuId }
         });
         const userStats: UserStats | null =
-        userStatsRaw !== null ? UserStatsValidator.parse(userStatsRaw) : null;
+          userStatsRaw !== null ? UserStatsValidator.parse(userStatsRaw) : null;
         return userStats;
       }
       return null;

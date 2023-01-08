@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { SavedGameValidator, type SavedGame } from '$models/SavedGame';
 
 export default trpc
-  .router<TRPCContext>()  
+  .router<TRPCContext>()
   .mutation('createOrUpdate', {
     input: SavedGameValidator.pick({ gameData: true, sudokuId: true }),
     resolve: async ({ input, ctx }) => {

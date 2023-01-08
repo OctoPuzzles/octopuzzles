@@ -14,8 +14,16 @@ export function verifyLogic(
   const negativeX = flags.indexOf('NegativeX') !== -1;
   const negativeV = flags.indexOf('NegativeV') !== -1;
   if (nonConsecutive || negativeBlack || negativeWhite || negativeX || negativeV) {
-    for (let i = dimensions.margins?.top ?? 0; i < dimensions.rows - (dimensions.margins?.bottom ?? 0); ++i) {
-      for (let j = dimensions.margins?.left ?? 0; j < dimensions.columns - (dimensions.margins?.right ?? 0); ++j) {
+    for (
+      let i = dimensions.margins?.top ?? 0;
+      i < dimensions.rows - (dimensions.margins?.bottom ?? 0);
+      ++i
+    ) {
+      for (
+        let j = dimensions.margins?.left ?? 0;
+        j < dimensions.columns - (dimensions.margins?.right ?? 0);
+        ++j
+      ) {
         const v = solution[i][j];
         if (v !== '') {
           const a = parseInt(v);
@@ -26,7 +34,10 @@ export function verifyLogic(
           ]) {
             const row = i + step.x;
             const column = j + step.y;
-            if (row < dimensions.rows - (dimensions.margins?.bottom ?? 0) && column < dimensions.columns - (dimensions.margins?.right ?? 0)) {
+            if (
+              row < dimensions.rows - (dimensions.margins?.bottom ?? 0) &&
+              column < dimensions.columns - (dimensions.margins?.right ?? 0)
+            ) {
               if (solution[row][column] !== '') {
                 nbrCells.push({ row, column });
               }
@@ -34,103 +45,129 @@ export function verifyLogic(
           }
 
           if (nonConsecutive) {
-            invalidCells.push(
-              ...nbrCells.filter((c) => {
-                const b = parseInt(solution[c.row][c.column]);
-                return (
-                  Math.abs(a - b) === 1 &&
-                  !invalidCells.some((d) => d.row === c.row && d.column === c.column)
-                );
-              })
-            );
+            const invalidNbrs = nbrCells.filter((c) => {
+              const b = parseInt(solution[c.row][c.column]);
+              return Math.abs(a - b) === 1;
+            });
+            if (invalidNbrs.length > 0) {
+              invalidCells.push(
+                ...[{ row: i, column: j }, ...invalidNbrs].filter(
+                  (c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+                )
+              );
+            }
           }
           if (negativeBlack) {
-            invalidCells.push(
-              ...nbrCells.filter((c) => {
-                const b = parseInt(solution[c.row][c.column]);
-                return (
-                  (a === 2 * b || b === 2 * a) &&
-                  !invalidCells.some((d) => d.row === c.row && d.column === c.column) &&
-                  !borderclues.some(
-                    (b) =>
-                      b.type === 'KropkiBlack' &&
-                      b.positions.every(
-                        (p) =>
-                          (p.row === i && p.column === j) ||
-                          (p.row === c.row && p.column === c.column)
-                      )
-                  )
-                );
-              })
-            );
+            const invalidNbrs = nbrCells.filter((c) => {
+              const b = parseInt(solution[c.row][c.column]);
+              return (
+                (a === 2 * b || b === 2 * a) &&
+                !borderclues.some(
+                  (b) =>
+                    b.type === 'KropkiBlack' &&
+                    b.positions.every(
+                      (p) =>
+                        (p.row === i && p.column === j) ||
+                        (p.row === c.row && p.column === c.column)
+                    )
+                )
+              );
+            });
+            if (invalidNbrs.length > 0) {
+              invalidCells.push(
+                ...[{ row: i, column: j }, ...invalidNbrs].filter(
+                  (c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+                )
+              );
+            }
           }
           if (negativeWhite) {
-            invalidCells.push(
-              ...nbrCells.filter((c) => {
-                const b = parseInt(solution[c.row][c.column]);
-                return (
-                  Math.abs(a - b) === 1 &&
-                  !invalidCells.some((d) => d.row === c.row && d.column === c.column) &&
-                  !borderclues.some(
-                    (b) =>
-                      b.type === 'KropkiWhite' &&
-                      b.positions.every(
-                        (p) =>
-                          (p.row === i && p.column === j) ||
-                          (p.row === c.row && p.column === c.column)
-                      )
-                  )
-                );
-              })
-            );
+            const invalidNbrs = nbrCells.filter((c) => {
+              const b = parseInt(solution[c.row][c.column]);
+              return (
+                Math.abs(a - b) === 1 &&
+                !borderclues.some(
+                  (b) =>
+                    b.type === 'KropkiWhite' &&
+                    b.positions.every(
+                      (p) =>
+                        (p.row === i && p.column === j) ||
+                        (p.row === c.row && p.column === c.column)
+                    )
+                )
+              );
+            });
+            if (invalidNbrs.length > 0) {
+              invalidCells.push(
+                ...[{ row: i, column: j }, ...invalidNbrs].filter(
+                  (c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+                )
+              );
+            }
           }
           if (negativeX) {
-            invalidCells.push(
-              ...nbrCells.filter((c) => {
-                const b = parseInt(solution[c.row][c.column]);
-                return (
-                  a + b === 10 &&
-                  !invalidCells.some((d) => d.row === c.row && d.column === c.column) &&
-                  !borderclues.some(
-                    (b) =>
-                      b.type === 'XvX' &&
-                      b.positions.every(
-                        (p) =>
-                          (p.row === i && p.column === j) ||
-                          (p.row === c.row && p.column === c.column)
-                      )
-                  )
-                );
-              })
-            );
+            const invalidNbrs = nbrCells.filter((c) => {
+              const b = parseInt(solution[c.row][c.column]);
+              return (
+                a + b === 10 &&
+                !borderclues.some(
+                  (b) =>
+                    b.type === 'XvX' &&
+                    b.positions.every(
+                      (p) =>
+                        (p.row === i && p.column === j) ||
+                        (p.row === c.row && p.column === c.column)
+                    )
+                )
+              );
+            });
+            if (invalidNbrs.length > 0) {
+              invalidCells.push(
+                ...[{ row: i, column: j }, ...invalidNbrs].filter(
+                  (c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+                )
+              );
+            }
           }
           if (negativeV) {
-            invalidCells.push(
-              ...nbrCells.filter((c) => {
-                const b = parseInt(solution[c.row][c.column]);
-                return (
-                  a + b === 5 &&
-                  !invalidCells.some((d) => d.row === c.row && d.column === c.column) &&
-                  !borderclues.some(
-                    (b) =>
-                      b.type === 'XvV' &&
-                      b.positions.every(
-                        (p) =>
-                          (p.row === i && p.column === j) ||
-                          (p.row === c.row && p.column === c.column)
-                      )
-                  )
-                );
-              })
-            );
+            const invalidNbrs = nbrCells.filter((c) => {
+              const b = parseInt(solution[c.row][c.column]);
+              return (
+                a + b === 5 &&
+                !borderclues.some(
+                  (b) =>
+                    b.type === 'XvV' &&
+                    b.positions.every(
+                      (p) =>
+                        (p.row === i && p.column === j) ||
+                        (p.row === c.row && p.column === c.column)
+                    )
+                )
+              );
+            });
+            if (invalidNbrs.length > 0) {
+              invalidCells.push(
+                ...[{ row: i, column: j }, ...invalidNbrs].filter(
+                  (c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+                )
+              );
+            }
           }
         }
-      };
-    };
+      }
+    }
   }
   if (flags.indexOf('Entropy') !== -1) {
-    for (let i = dimensions.margins?.top ?? 0; i < dimensions.rows - (dimensions.margins?.bottom ?? 0) - 1; ++i) {
-      for (let j = dimensions.margins?.left ?? 0; j < dimensions.columns - (dimensions.margins?.right ?? 0) - 1; ++j) {
+    for (
+      let i = dimensions.margins?.top ?? 0;
+      i < dimensions.rows - (dimensions.margins?.bottom ?? 0) - 1;
+      ++i
+    ) {
+      for (
+        let j = dimensions.margins?.left ?? 0;
+        j < dimensions.columns - (dimensions.margins?.right ?? 0) - 1;
+        ++j
+      ) {
         const v = solution[i][j];
         if (v !== '') {
           const a = parseInt(v);
@@ -144,8 +181,7 @@ export function verifyLogic(
             const column = j + step.y;
             if (solution[row][column] !== '') {
               nbrCells.push({ row, column });
-            }
-            else {
+            } else {
               break;
             }
           }
@@ -156,21 +192,24 @@ export function verifyLogic(
 
             let invalid = false;
             if (Math.ceil(a / 3) === Math.ceil(b / 3)) {
-              invalid = Math.ceil(a / 3) === Math.ceil(c / 3) || Math.ceil(a / 3) === Math.ceil(d / 3) || Math.ceil(c / 3) === Math.ceil(d / 3);
-            }
-            else if (Math.ceil(a / 3) === Math.ceil(c / 3)) {
-              invalid = Math.ceil(a / 3) === Math.ceil(d / 3) || Math.ceil(b / 3) === Math.ceil(d / 3);
-            }
-            else if (Math.ceil(a / 3) === Math.ceil(d / 3)) {
+              invalid =
+                Math.ceil(a / 3) === Math.ceil(c / 3) ||
+                Math.ceil(a / 3) === Math.ceil(d / 3) ||
+                Math.ceil(c / 3) === Math.ceil(d / 3);
+            } else if (Math.ceil(a / 3) === Math.ceil(c / 3)) {
+              invalid =
+                Math.ceil(a / 3) === Math.ceil(d / 3) || Math.ceil(b / 3) === Math.ceil(d / 3);
+            } else if (Math.ceil(a / 3) === Math.ceil(d / 3)) {
               invalid = Math.ceil(b / 3) === Math.ceil(c / 3);
-            }
-            else if (Math.ceil(b / 3) === Math.ceil(c / 3)) {
+            } else if (Math.ceil(b / 3) === Math.ceil(c / 3)) {
               invalid = Math.ceil(b / 3) === Math.ceil(d / 3);
             }
 
             if (invalid) {
               invalidCells.push(
-                ...nbrCells.filter((c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column))
+                ...[{ row: i, column: j }, ...nbrCells].filter(
+                  (c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+                )
               );
             }
           }
