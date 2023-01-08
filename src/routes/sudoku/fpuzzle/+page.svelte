@@ -6,7 +6,8 @@
 	import { decompressFromBase64 } from '$features/fpuzzles/compressor';
 	import { defaultValues } from '$utils/defaults';
 	import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
+	import { resetAllSudokuStores } from '$utils/resetAllStores';
 
 	// TIMER: one that does not run when the tab is inactive, but runs as if it had.
 	let now = Date.now();
@@ -62,6 +63,10 @@
 		let dim = editorHistory.getClue('dimensions');
 		gameHistory.set({ values: defaultValues(dim) });
 		loading = false;
+	});
+
+	onDestroy(() => {
+		resetAllSudokuStores();
 	});
 
 	const sudokuClues = editorHistory.subscribeToClues();

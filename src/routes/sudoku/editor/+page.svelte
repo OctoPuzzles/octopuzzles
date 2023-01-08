@@ -3,7 +3,7 @@
 	import SudokuEditor from '$components/Sudoku/Editor/SudokuEditor.svelte';
 	import Button from '$ui/Button.svelte';
 	import Input from '$ui/Input.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import {
 		defaultCentermarks,
@@ -25,6 +25,7 @@
 	import trpc, { type InferMutationInput } from '$lib/client/trpc';
 	import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
 	import RichTextEditor from '$components/RichTextEditor.svelte';
+	import { resetAllSudokuStores } from '$utils/resetAllStores';
 
 	export let data: PageData;
 
@@ -120,6 +121,10 @@
 		if ($page.url.searchParams.get('import')) {
 			openModal(ImportFromFPuzzles);
 		}
+	});
+
+	onDestroy(() => {
+		resetAllSudokuStores();
 	});
 
 	type Tabs = 'editor' | 'game' | 'form';
