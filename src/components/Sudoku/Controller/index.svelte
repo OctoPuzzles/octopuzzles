@@ -56,7 +56,6 @@
   import Notes from './components/Notes.svelte';
   import { isCommandKey } from '$utils/isCommandKey';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
-  import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
   import WalkthroughModal from '$components/Modals/WalkthroughModal.svelte';
   import { page } from '$app/stores';
   import { mode } from '$stores/sudokuStore';
@@ -69,7 +68,6 @@
   import { navigating } from '$app/stores';
   import { compressToBase64 } from '$utils/compressor';
   import { exportAsFPuzzlesJson } from '$utils/exportAsFPuzzlesJson';
-  import FPuzzlesLink from '$components/shareButtons/FPuzzlesLink.svelte';
   import FPuzzles from '$icons/FPuzzles.svelte';
   import CtC from '$icons/CtC.svelte';
 
@@ -225,10 +223,6 @@
 
   function showImportFromFPuzzlesModal(): void {
     openModal(ImportFromFPuzzles);
-  }
-
-  function showExportToFPuzzlesModal(): void {
-    openModal(ExportToFPuzzles);
   }
 
   function showWalkthroughEditorModal(): void {
