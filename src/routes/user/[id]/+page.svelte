@@ -1,15 +1,11 @@
 <script lang="ts">
 	import { openModal } from '$stores/modalStore';
 	import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
-	import { onMount } from 'svelte';
-	import { highlights } from '$stores/sudokuStore';
 	import SudokuList from '$components/Sudoku/SudokuList.svelte';
 	import trpc from '$lib/client/trpc';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-
-	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 
 	let nextCursor: Date | null = null;
 	$: nextCursor = data.sudokus.nextCursor;

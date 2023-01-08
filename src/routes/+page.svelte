@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { highlights } from '$stores/sudokuStore';
 	import SudokuList from '$components/Sudoku/SudokuList.svelte';
 	import PuzzleLabel from '$ui/PuzzleLabel.svelte';
 	import Filters from '$icons/Filters.svelte';
@@ -12,8 +10,6 @@
 
 	export let data: PageData;
 	let sudokus = data.sudokuData;
-
-	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 
 	let currentCursor: Date | null = null;
 	let nextCursor: Date | null = null;
