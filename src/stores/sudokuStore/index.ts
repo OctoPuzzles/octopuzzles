@@ -33,6 +33,7 @@ import type {
   Mode
 } from '$types';
 import { scanner } from './scanner';
+import { settings } from '$stores/settingsStore';
 
 // WRITABLES
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -197,6 +198,19 @@ function createGameHistoryStore() {
     Object.assign(newStep, newValues);
     history.set([...newHistory, newStep]);
     step.update((s) => s + 1);
+
+    verify();
+  }
+
+  function verify() : void {    
+    const verificationMode = get(settings.getGroup('general'))?.verificationMode ?? 'OnDemand';
+    if (verificationMode === 'OnInput') {
+      wrongCells.set(scanner.getErrorCells(get(solution)));
+    }
+    else {
+      wrongCells.set([]);
+    }
+
   }
 
   /**
@@ -221,12 +235,16 @@ function createGameHistoryStore() {
    */
   function undo(): void {
     step.update((oldStep) => Math.max(0, oldStep - 1));
+
+    verify();
   }
 
   const canUndo = derived(step, ($step) => $step > 0);
 
   function redo(): void {
     step.update((step) => Math.min(get(history).length, step + 1));
+
+    verify();
   }
 
   const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
@@ -237,6 +255,7 @@ function createGameHistoryStore() {
     highlightedItemIndex.set(-1);
     selectedCells.set([]);
     highlightedCells.set([]);
+    wrongCells.set([]);
     step.set(0);
     const dim = get(editorHistory.getClue('dimensions'));
     history.set([
@@ -282,6 +301,8 @@ function createGameHistoryStore() {
         centermarks: newCenterMarks,
         colors: newColors
       });
+
+      verify();
     }
   }
 

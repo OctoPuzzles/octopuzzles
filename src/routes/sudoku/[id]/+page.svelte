@@ -111,14 +111,13 @@
   let generalSettings = settings.getGroup('general');
 
   function checkSolution(numbers: string[][]): boolean {
-    $wrongCells = [];
-
-    const complete = !$values.some((r, i) =>
-      r.some((v, j) => v === '' && $givens[i][j] === '' && $cells[i][j] === true)
-    );
-
-    const verificationMode = $generalSettings?.verificationMode ?? 'OnDemand';
-    if (verificationMode === 'OnComplete' && !complete) return false;
+    if (
+      $values.some((r, i) =>
+        r.some((v, j) => v === '' && $givens[i][j] === '' && $cells[i][j] === true)
+      )
+    ) {
+      return false;
+    }
 
     if ($solution != null) {
       if ($solution.length !== numbers.length || $solution[0].length !== numbers[0].length) {
@@ -127,11 +126,11 @@
     }
 
     const errorCells = scanner.getErrorCells($solution);
-    if (verificationMode === 'OnInput' || (complete && verificationMode === 'OnComplete')) {
+    if (($generalSettings?.verificationMode ?? 'OnDemand') === 'OnComplete') {
       $wrongCells = errorCells;
     }
 
-    return complete && errorCells.length === 0;
+    return errorCells.length === 0;
   }
 
   function showDoneModal(): void {
