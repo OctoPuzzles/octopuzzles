@@ -47,6 +47,9 @@ Finally, in your __layout.svelte file, you need to write
 {#if $modals.length > 0}
 	<div
 		on:click={closeModal}
+		on:keypress={() => {
+			/*Do nothing*/
+		}}
 		transition:fade={{ duration: 200 }}
 		class="fixed inset-0 z-40 overflow-y-auto"
 		aria-labelledby="modal-title"

@@ -7,6 +7,7 @@ const config: PlaywrightTestConfig = {
 	},
 	testDir: 'tests',
 	globalSetup: './tests/setup/authedSetup',
+	forbidOnly: !!process.env.CI,
 	use: {
 		// Tell all tests to load signed-in state from 'storageState.json'.
 		storageState: './tests/setup/storageState.json'

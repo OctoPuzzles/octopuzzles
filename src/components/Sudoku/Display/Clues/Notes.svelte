@@ -25,7 +25,9 @@
 						class="fill-current stroke-black-500 text-orange-300 cursor-pointer hover:text-orange-400 transition-colors"
 						style="stroke-width:0.5;"
 						on:click={() => onClickNote?.(note, { row: rowIndex, column: columnIndex })}
-						on:keypress={() => onClickNote?.(note, { row: rowIndex, column: columnIndex })}
+						on:keypress={() => {
+							/*Do nothing*/
+						}}
 					>
 						<title>{note}</title>
 					</polygon>

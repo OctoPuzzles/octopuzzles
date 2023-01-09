@@ -5,7 +5,7 @@
 	import SquareButton from '$ui/SquareButton.svelte';
 	import { get } from 'svelte/store';
 	import { numberColorMap } from '$constants';
-	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
 	import type { Color } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';
 

@@ -4,7 +4,7 @@
 	import { get } from 'svelte/store';
 	import deepCopy from '$utils/deepCopy';
 	import SquareButton from '$ui/SquareButton.svelte';
-	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
 	import { hasOpenModals } from '$stores/modalStore';
 
 	const { selectedCells } = highlights;
