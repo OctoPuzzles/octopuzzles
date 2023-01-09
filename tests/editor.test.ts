@@ -41,7 +41,7 @@ test.describe('Givens', () => {
 		// Input digit 9
 		await page.getByRole('button', { name: '9' }).click();
 		expect(
-			await page.locator('numbers').locator('text').first().textContent(),
+			await page.locator('id=numbers').locator('text').first().textContent(),
 			'R0C0 Should have a 9 in it'
 		).toBe('9');
 
