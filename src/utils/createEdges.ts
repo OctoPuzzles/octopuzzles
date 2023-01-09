@@ -217,3 +217,46 @@ export const createEdges = (box: Position[], dimensions: Dimensions, offset = 0)
 
 	return paths;
 };
+
+if (import.meta.vitest) {
+	const { it, expect } = import.meta.vitest;
+	it('Creates the correct edges', () => {
+		expect(
+			createEdges(
+				[
+					{ row: 0, column: 0 },
+					{ row: 0, column: 1 },
+					{ row: 1, column: 1 },
+					{ row: 2, column: 0 },
+					{ row: 4, column: 4 }
+				],
+				{ rows: 9, columns: 9 }
+			)
+		).toEqual([
+			{ x1: 0, y1: 0, x2: 1, y2: 0 },
+			{ x1: 0, y1: 0, x2: 0, y2: 1 },
+			{ x1: 0, y1: 1, x2: 1, y2: 1 },
+			{ x1: 1, y1: 0, x2: 1, y2: 0 },
+			{ x1: 1, y1: 1, x2: 1, y2: 1 },
+			{ x1: 1, y1: 0, x2: 2, y2: 0 },
+			{ x1: 2, y1: 0, x2: 2, y2: 1 },
+			{ x1: 2, y1: 1, x2: 2, y2: 1 },
+			{ x1: 1, y1: 1, x2: 1, y2: 1 },
+			{ x1: 1, y1: 1, x2: 1, y2: 1 },
+			{ x1: 1, y1: 0, x2: 1, y2: 0 },
+			{ x1: 1, y1: 1, x2: 1, y2: 2 },
+			{ x1: 1, y1: 2, x2: 2, y2: 2 },
+			{ x1: 2, y1: 1, x2: 2, y2: 2 },
+			{ x1: 1, y1: 1, x2: 1, y2: 1 },
+			{ x1: 2, y1: 1, x2: 2, y2: 1 },
+			{ x1: 0, y1: 2, x2: 1, y2: 2 },
+			{ x1: 0, y1: 2, x2: 0, y2: 3 },
+			{ x1: 0, y1: 3, x2: 1, y2: 3 },
+			{ x1: 1, y1: 2, x2: 1, y2: 3 },
+			{ x1: 4, y1: 4, x2: 5, y2: 4 },
+			{ x1: 4, y1: 4, x2: 4, y2: 5 },
+			{ x1: 4, y1: 5, x2: 5, y2: 5 },
+			{ x1: 5, y1: 4, x2: 5, y2: 5 }
+		]);
+	});
+}
