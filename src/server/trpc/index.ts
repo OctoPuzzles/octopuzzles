@@ -8,24 +8,24 @@ import users from './users';
 import walkthroughs from './walkthroughs';
 import votes from './votes';
 import comments from './comments';
-import prisma from '$utils/prisma';
+import prisma from '$lib/prisma';
 import { getJwt } from '$utils/jwt/getJwt';
 
 export const createContext = async (event: RequestEvent) => {
-  const jwtToken = getJwt(event);
-  return { event, prisma, token: jwtToken };
+	const jwtToken = getJwt(event);
+	return { event, prisma, token: jwtToken };
 };
 
 export type TRPCContext = inferAsyncReturnType<typeof createContext>;
 
 export const router = trpc
-  .router<TRPCContext>()
-  .transformer(trpcTransformer)
-  .merge('labels:', labels)
-  .merge('users:', users)
-  .merge('votes:', votes)
-  .merge('walkthroughs:', walkthroughs)
-  .merge('sudokus:', sudokus)
-  .merge('comments:', comments);
+	.router<TRPCContext>()
+	.transformer(trpcTransformer)
+	.merge('labels:', labels)
+	.merge('users:', users)
+	.merge('votes:', votes)
+	.merge('walkthroughs:', walkthroughs)
+	.merge('sudokus:', sudokus)
+	.merge('comments:', comments);
 
 export type Router = typeof router;
