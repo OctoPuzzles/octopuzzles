@@ -1,11 +1,12 @@
 previewsEnabled: true
+previewsExpireAfterDays: 3
 services:
-  # A Docker web service
   - type: web
     name: website
     env: node
     region: oregon
     plan: standard
+    previewPlan: starter
     buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
     startCommand: node build/index.js
     pullRequestPreviewsEnabled: true
@@ -17,6 +18,7 @@ services:
         - src/**/*.html
       ignoredPaths:
         - src/**/*.test.js
+        - tests/**/*.ts
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -40,4 +42,6 @@ databases:
   - name: database
     databaseName: octopuzzles
     user: octopuzzles
+    plan: starter
+    previewPlan: starter
     ipAllowList: []

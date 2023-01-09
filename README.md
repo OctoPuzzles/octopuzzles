@@ -1,46 +1,25 @@
-# OctoPuzzles.com
+<p align="center">
+    <img width="300" src="./static/favicon.svg" alt="OctoPuzzles Icon">
+</p>
 
-Welcome to the open source octopuzzles repo.
+<h1 align="center"><a style="color: white" target="_blank" rel="noreferrer noopener" href="https://octopuzzles.com">OctoPuzzles.com</a></h1>
 
-## Getting started
+<div align="center">
+  <a href="https://github.com/OctoPuzzles/octopuzzles/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/OctoPuzzles/octopuzzles"></a>
+  <a href="https://github.com/OctoPuzzles/octopuzzles/pulls"><img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/octopuzzles/octopuzzles"></a>
+  <a href="https://github.com/OctoPuzzles/octopuzzles/blob/main/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/octopuzzles/octopuzzles"></a>
+</div>
 
-First of all, you should copy the `.env.example` file to a `.env` file. The default values should be fine for getting up and running.
+## Contributing
 
-Next install dependencies with
+We would be very happy if you wanted to get involved and help make octopuzzles.com a better place. There a lots of ways of contributing including
 
-```
-npm i
-```
+- Creating puzzles on the website
+- Fixing spelling mistakes
+- Creating bugs and feature requests
+- Fixing bugs
+- Or even making new features
 
-We use postgres as database. To start a local database, you can use the docker compose. Just run
+If you want to contribute by coding, please have a look at our [contributing guide](CONTRIBUTING.md).
 
-```
-docker compose up -d
-```
-
-This might take a while to start.
-
-Next to setup the database client run
-
-```
-npx prisma migrate dev
-# and then
-npx prisma generate
-```
-
-After that is done, you can now start the website locally by running
-
-```
-npm run dev
-```
-
-This should get everything up and running.
-
-## Architecture
-
-Below is a list of our stack, and why we have chosen them
-
-- Sveltekit
-  - We use svelte since we have a lot of dom updates, and react would be quite cumbersome to make work for this. Other frameworks could be used as well, but we also make heavy use of svelte stores.
-- trpc
-  - We use trpc for end to end type safety. It is primarily designed for next, but we use the sveltekit wrapper for this site. It does not have build-in query hooks with something like tanstack query, but might in the future.
+If you want to raise an issue, you should go to the issue tab above. Please ensure that the issue you are creating has not already been created, so search a bit around first to see if you can find it.
