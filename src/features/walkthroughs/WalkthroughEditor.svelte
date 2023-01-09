@@ -11,10 +11,6 @@
 	import type { EditorHistoryStep } from '$types';
 
 	export let clues: EditorHistoryStep;
-
-	function updateStepDescription(step: number, html: string): void {
-		walkthroughStore.changeDescriptionOfStep(step, html);
-	}
 </script>
 
 <div class="h-full flex-1 overflow-y-hidden flex flex-col">
@@ -27,7 +23,7 @@
 		{#if $walkthroughStore.length === 0}
 			<p class="text-gray-700">No steps added yet</p>
 		{/if}
-		{#each $walkthroughStore as { step, description }, i (`${description}-step-${i}`)}
+		{#each $walkthroughStore as { step, description, timestamp }, i (timestamp)}
 			<div>
 				<div>
 					<div class="flex space-x-4 items-center mb-2 mt-2">
@@ -70,11 +66,7 @@
 						<div
 							class="border border-gray-300 py-2 px-4 leading-5 rounded-md w-full focus:ring focus:ring-blue-300 focus:border-blue-500 disabled:bg-gray-200 h-full min-h-full"
 						>
-							<RichTextEditor
-								content={description}
-								onChange={(html) => updateStepDescription(i, html)}
-								placeholder="Add a description"
-							/>
+							<RichTextEditor bind:content={description} placeholder="Add a description" />
 						</div>
 					</div>
 				</div>
