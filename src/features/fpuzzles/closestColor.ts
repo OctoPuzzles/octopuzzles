@@ -1,5 +1,5 @@
 import type { Color } from '$models/Sudoku';
-import type { HexColor } from './compressor';
+import type { HexColor } from './model';
 
 function deltaE(rgbA: Rgb, rgbB: Rgb): number {
 	const labA = rgb2lab(rgbA);

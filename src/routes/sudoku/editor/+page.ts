@@ -10,7 +10,7 @@ export const load: PageLoad = async ({ fetch, url }) => {
 			? await Promise.all([
 					trpcClient.query('sudokus:get', { id: sudokuId }),
 					trpcClient.query('walkthroughs:get', { sudokuId })
-				])
+			  ])
 			: [null, null];
 	const labels = await trpcClient.query('labels:getAll');
 	return { sudoku, labels, walkthrough };

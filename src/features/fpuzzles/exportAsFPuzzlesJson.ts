@@ -74,7 +74,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 					...(flags.some((f) => f === 'NegativeX') && flags.some((f) => f === 'NegativeV')
 						? ['xv']
 						: [])
-				]
+			  ]
 			: undefined,
 		nonconsecutive: flags.some((f) => f === 'Nonconsecutive' || f === 'NegativeWhite')
 			? true
@@ -327,7 +327,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 						{ row: minRow, column: maxColumn },
 						{ row: maxRow, column: minColumn },
 						{ row: maxRow, column: maxColumn }
-					])
+				  ])
 				: getPositionStrings(c.positions);
 
 		switch (c.type) {

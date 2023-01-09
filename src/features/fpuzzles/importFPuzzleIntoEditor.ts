@@ -108,7 +108,7 @@ function regionsForFPuzzle(dimensions: Dimensions, grid: FPuzzlesJson['grid']): 
 				cell.region !== undefined
 					? cell.region + 1
 					: Math.ceil((columnIndex + 1) / width) +
-						(gridSize / width) * Math.floor(rowIndex / height)
+					  (gridSize / width) * Math.floor(rowIndex / height)
 			)
 		);
 	});
@@ -209,7 +209,7 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): void {
 			editorHistory.title.set(title);
 		},
 		ruleset: (newRuleset) => {
-	editorHistory.description.set(newRuleset);
+			editorHistory.description.set(newRuleset);
 		},
 		killercage: (fpuzzlesKillerCages) => {
 			const newCages = deepCopy(newEditorHistory.extendedcages);
