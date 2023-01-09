@@ -3,12 +3,11 @@
 	import { page } from '$app/stores';
 	import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
 	import { editorHistory, gameHistory } from '$stores/sudokuStore';
-	import { decompressFromBase64 } from '$features/fpuzzles/compressor';
+	import { decompressFromBase64 } from '$features/compressor';
 	import { defaultValues } from '$utils/defaults';
-	import type { FPuzzlesJson } from '$utils/fPuzzles';
+	import type { FPuzzlesJson } from '$features/fpuzzles/model';
 	import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
 	import { onDestroy, onMount } from 'svelte';
-	import { get } from 'svelte/store';
 	import { resetAllSudokuStores } from '$utils/resetAllStores';
 
 	// TIMER: one that does not run when the tab is inactive, but runs as if it had.
