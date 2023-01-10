@@ -60,16 +60,12 @@ function createWalkthroughStore() {
 		currentStepIndex.set(stepIndex > -1 ? stepIndex : currentSteps.length);
 	}
 
-	function getCurrentStepNo() {
-		return get(currentStepIndex);
-	}
-
 	return {
 		subscribe: steps.subscribe,
 		set,
 		removeStep,
 		addStep,
-		getCurrentStepNo
+		currentStepIndex
 	};
 }
 

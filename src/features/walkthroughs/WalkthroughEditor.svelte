@@ -13,6 +13,8 @@
 
 	export let clues: EditorHistoryStep;
 
+	const currentStepIndex = walkthroughStore.currentStepIndex;
+
 	function scrollToStep(stepNo: number): void {
 		const element = document.querySelector('#step' + stepNo);
 		if (element) {
@@ -21,7 +23,7 @@
 	}
 
 	afterUpdate(() => {
-		scrollToStep(walkthroughStore.getCurrentStepNo());
+		scrollToStep($currentStepIndex);
 	});
 </script>
 
@@ -78,7 +80,11 @@
 						<div
 							class="border border-gray-300 py-2 px-4 leading-5 rounded-md w-full focus:ring focus:ring-blue-300 focus:border-blue-500 disabled:bg-gray-200 h-full min-h-full"
 						>
-							<RichTextEditor bind:content={description} placeholder="Add a description" />
+							<RichTextEditor
+								bind:content={description}
+								placeholder="Add a description"
+								onChange={() => ($currentStepIndex = i)}
+							/>
 						</div>
 					</div>
 				</div>
