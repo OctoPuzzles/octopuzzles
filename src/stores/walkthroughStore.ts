@@ -10,28 +10,14 @@ import { gameHistory } from './sudokuStore';
  */
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createWalkthroughStore() {
-	const steps = writable<WalkthroughStep[]>([]);
+	// The timestamp is used for keyed lists in svelte
+	const steps = writable<(WalkthroughStep & { timestamp: Date })[]>([]);
 	const currentStepIndex = writable<number>(0);
 
 	function set(newSteps: WalkthroughStep[]) {
-		steps.set(newSteps);
+		steps.set(newSteps.map((s) => ({ timestamp: new Date(), ...s })));
 
 		currentStepIndex.set(0);
-	}
-
-	function changeDescriptionOfStep(stepIndex: number, newDescription: string): void {
-		const currentSteps = deepCopy(get(steps));
-
-		const newSteps = currentSteps.map((step, i) => {
-			if (i === stepIndex) {
-				step.description = newDescription;
-			}
-			return step;
-		});
-
-		steps.set(newSteps);
-
-		currentStepIndex.set(stepIndex);
 	}
 
 	function removeStep(stepIndex: number): void {
@@ -60,7 +46,8 @@ function createWalkthroughStore() {
 				centermarks,
 				notes,
 				colors
-			}
+			},
+			timestamp: new Date()
 		};
 
 		if (stepIndex > -1) {
@@ -80,7 +67,6 @@ function createWalkthroughStore() {
 	return {
 		subscribe: steps.subscribe,
 		set,
-		changeDescriptionOfStep,
 		removeStep,
 		addStep,
 		getCurrentStepNo
