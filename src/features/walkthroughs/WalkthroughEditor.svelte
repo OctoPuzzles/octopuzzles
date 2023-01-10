@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { walkthroughStore } from '$stores/walkthroughStore';
-	import { editorHistory, gameHistory } from '$stores/sudokuStore';
+	import { gameHistory } from '$stores/sudokuStore';
 	import SudokuDisplay from '$components/Sudoku/Display/SudokuDisplay.svelte';
 	import Button from '$ui/Button.svelte';
 	import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
