@@ -10,22 +10,22 @@ export const ScannerSpeedValidator = z.enum(['Slow', 'Fast', 'Instant']);
 export type ScannerSpeed = z.infer<typeof ScannerSpeedValidator>;
 
 export const ScannerSettingsValidator = z.object({
-  highlightMode: ScannerHighlightModeValidator.nullish(),
-  mode: ScannerModeValidator.nullish(),
-  scannerSpeed: ScannerSpeedValidator.nullish(),
-  autoScan: z.boolean().nullish(),
-  useCentreMarks: z.boolean().nullish(),
-  useCornerMarks: z.boolean().nullish(),
-  scanDiagonals: z.boolean().nullish(),
-  scanAntiKnight: z.boolean().nullish(),
-  scanAntiKing: z.boolean().nullish(),
-  scanDisjointSets: z.boolean().nullish(),
-  scanCages: z.boolean().nullish(),
-  scanPaths: z.boolean().nullish(),
-  scanExtraRegions: z.boolean().nullish(),
-  scanNegativeXV: z.boolean().nullish(),
-  scanNegativeKropki: z.boolean().nullish(),
-  scanNonConsecutive: z.boolean().nullish()
+	highlightMode: ScannerHighlightModeValidator.nullish(),
+	mode: ScannerModeValidator.nullish(),
+	scannerSpeed: ScannerSpeedValidator.nullish(),
+	autoScan: z.boolean().nullish(),
+	useCentreMarks: z.boolean().nullish(),
+	useCornerMarks: z.boolean().nullish(),
+	scanDiagonals: z.boolean().nullish(),
+	scanAntiKnight: z.boolean().nullish(),
+	scanAntiKing: z.boolean().nullish(),
+	scanDisjointSets: z.boolean().nullish(),
+	scanCages: z.boolean().nullish(),
+	scanPaths: z.boolean().nullish(),
+	scanExtraRegions: z.boolean().nullish(),
+	scanNegativeXV: z.boolean().nullish(),
+	scanNegativeKropki: z.boolean().nullish(),
+	scanNonConsecutive: z.boolean().nullish()
 });
 export type ScannerSettings = z.infer<typeof ScannerSettingsValidator>;
 
@@ -33,14 +33,14 @@ export const VerificationModeValidator = z.enum(['OnDemand', 'OnComplete', 'OnIn
 export type VerificationMode = z.infer<typeof VerificationModeValidator>;
 
 export const GeneralSettingsValidator = z.object({
-  verificationMode: VerificationModeValidator.nullish()
+	verificationMode: VerificationModeValidator.nullish()
 });
 export type GeneralSettings = z.infer<typeof GeneralSettingsValidator>;
 
 export const UserSettingsValidator = z.object({
-  userId: z.number().int(),
-  scanner: ScannerSettingsValidator.nullable(),
-  general: GeneralSettingsValidator.nullable()
+	userId: z.number().int(),
+	scanner: ScannerSettingsValidator.nullable(),
+	general: GeneralSettingsValidator.nullable()
 });
 export type UserSettings = z.infer<typeof UserSettingsValidator>;
 

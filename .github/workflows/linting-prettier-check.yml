@@ -1,0 +1,27 @@
+name: Linting, Prettier and Check
+on:
+  pull_request:
+jobs:
+  linting_prettier_check:
+    env:
+      DATABASE_URL: test
+      SMTP_SERVER: test
+      SMTP_PORT: 1
+      SMTP_LOGIN: test
+      SMTP_PASSWORD: test
+      BASE_URL: test
+      JWT_SECRET: test
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: npm ci
+      - name: Run prisma generate
+        run: npx prisma generate
+      - name: Run Prettier
+        run: npm run format:check
+      - name: Run ESLint
+        run: npm run lint
+      - name: Run check
+        run: npm run check
