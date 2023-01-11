@@ -20,6 +20,6 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
 		walkthrough,
 		gameData: dataParam
 			? (decompressFromBase64(dataParam.replace(/ /g, '+')) as SolutionStep)
-			: null
+			: undefined
 	};
 };
