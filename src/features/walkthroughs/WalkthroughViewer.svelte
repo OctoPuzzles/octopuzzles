@@ -6,6 +6,8 @@
 	import { page } from '$app/stores';
 	import classNames from 'classnames';
 	import HtmlContent from '$components/HTMLContent.svelte';
+	import { compressToBase64 } from '$features/compressor';
+	import Play from 'phosphor-svelte/lib/Play/Play.svelte';
 	import type { EditorHistoryStep } from '$types';
 	import type { WalkthroughStep } from '$models/Walkthrough';
 
@@ -48,6 +50,17 @@
 								gameHistory.set(step);
 							}}
 							title="Reset to this step"><ArrowsCounterClockwise size={16} /></button
+						>
+					{:else}
+						<a
+							class="w-6 h-6 rounded-full p-1 hover:bg-gray-100 hover:text-gray-600"
+							href={`${$page.url.pathname.replace(
+								'/walkthrough',
+								'?data=' + compressToBase64(step)
+							)}`}
+							target="_blank"
+							rel="noopener noreferrer"
+							title="Open puzzle at this step in new tab"><Play size={16} /></a
 						>
 					{/if}
 				</div>

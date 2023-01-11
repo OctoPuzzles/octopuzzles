@@ -1,6 +1,6 @@
 import { editorHistory, gameHistory } from '$stores/sudokuStore';
 import { closestColor } from './closestColor';
-import type { FPuzzlesJson, PositionString } from '$features/fpuzzles/compressor';
+import type { FPuzzlesJson, PositionString } from './types';
 import deepCopy from '$utils/deepCopy';
 import { positionStringToPosition as _positionStringToPosition } from '$utils/positionStringToPositions';
 import {
@@ -19,7 +19,7 @@ import {
 	defaultRegions,
 	defaultRegionSize,
 	defaultValues
-} from '../../utils/defaults';
+} from '$utils/defaults';
 import { emptyBorderClue, emptyCage, emptyCellClue, emptyPath, emptyRegion } from '$utils/prefabs';
 import type {
 	BorderClueType,

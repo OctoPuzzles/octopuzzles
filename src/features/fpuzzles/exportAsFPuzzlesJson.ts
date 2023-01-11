@@ -1,9 +1,6 @@
 import { editorHistory, gameHistory } from '$stores/sudokuStore';
-
+import type { FPuzzlesJson, HexColor, PositionString } from './types';
 import { get } from 'svelte/store';
-
-import type { Color, Position } from '$models/Sudoku';
-import type { FPuzzlesJson, HexColor, PositionString } from '$features/fpuzzles/compressor';
 import deepCopy from '$utils/deepCopy';
 import { defaultRegions } from '$utils/defaults';
 import { topLeftOfPositions } from '$utils/topLeftOfPositions';
@@ -13,6 +10,7 @@ import {
 	getPathsToDraw,
 	getRegionsToDraw
 } from '$utils/prefabs';
+import type { Color, Position } from '$models/Sudoku';
 
 export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	const givens = editorHistory.getClue('givens');
@@ -31,7 +29,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	const gameColors = get(gameHistory.getValue('colors'));
 	const cornermarks = get(gameHistory.getValue('cornermarks'));
 	const centermarks = get(gameHistory.getValue('centermarks'));
-	//const notes = get(gameHistory.getValue('notes'));
+	//const notes = get(gameHistory.getValue('notes');
 
 	const getPositionString = (position: Position): PositionString => {
 		return `R${position.row + 1 - (dimensions.margins?.top ?? 0)}C${

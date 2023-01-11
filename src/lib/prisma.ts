@@ -16,7 +16,7 @@ const prisma = prismaRaw.$extends({
 					marginLeft: true
 				},
 				compute(sudoku) {
-					let dimensions: Dimensions = { rows: sudoku.columns, columns: sudoku.columns };
+					let dimensions: Dimensions = { rows: sudoku.rows, columns: sudoku.columns };
 					if (
 						sudoku.marginTop != null ||
 						sudoku.marginRight != null ||
