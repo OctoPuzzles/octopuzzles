@@ -1,6 +1,6 @@
 import { editorHistory, gameHistory } from '$stores/sudokuStore';
 import { closestColor } from './closestColor';
-import type { FPuzzlesJson, PositionString } from './model';
+import type { FPuzzlesJson, PositionString } from './types';
 import deepCopy from '$utils/deepCopy';
 import { positionStringToPosition as _positionStringToPosition } from '$utils/positionStringToPositions';
 import {
