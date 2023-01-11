@@ -1,4 +1,3 @@
-// @ts-nocheck
 export type HexColor = `#${string}`;
 export type PositionString = `R${number}C${number}`;
 
