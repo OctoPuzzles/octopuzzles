@@ -3,7 +3,7 @@
 	import Button from '$ui/Button.svelte';
 	import Input from '$ui/Input.svelte';
 	import { decompressFromBase64 } from '$features/compressor';
-	import type { FPuzzlesJson } from '$features/fpuzzles/model';
+	import type { FPuzzlesJson } from '$features/fpuzzles/types';
 	import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
 
 	export let isOpen: boolean;
