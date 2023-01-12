@@ -4,7 +4,7 @@
 	import { exportAsFPuzzlesJson } from '$features/fpuzzles/exportAsFPuzzlesJson';
 	import CtC from '$icons/CtC.svelte';
 	import FPuzzles from '$icons/FPuzzles.svelte';
-	import { compressToBase64 } from '$features/fpuzzles/compressor';
+	import { compressToBase64 } from '$features/compressor';
 
 	export let isOpen: boolean;
 

@@ -62,6 +62,18 @@
 		let solution: InferMutationInput<'sudokus:provideSolutionToPuzzle'>['solution'] = undefined;
 		// create solution
 		if (provideSolution) {
+			if ($walkthroughStore.length) {
+				const finalStep = $walkthroughStore[$walkthroughStore.length - 1].step;
+				if (
+					$userInputs.values.some((row, i) => {
+						return row.some((value, j) => {
+							return value === '' && finalStep.values[i][j] !== '';
+						});
+					})
+				) {
+					gameHistory.set(finalStep);
+				}
+			}
 			solution = {
 				numbers: getUserSolution({ givens: $sudokuClues.givens, values: $userInputs.values })
 			};

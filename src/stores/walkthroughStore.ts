@@ -26,6 +26,8 @@ function createWalkthroughStore() {
 		const newSteps = currentSteps.filter((_, i) => i !== stepIndex);
 
 		steps.set(newSteps);
+
+		currentStepIndex.set(Math.max(stepIndex - 1, 0));
 	}
 
 	function addStep(stepIndex = -1, replace = false): void {
@@ -55,11 +57,7 @@ function createWalkthroughStore() {
 			steps.set([...currentSteps, newStep]);
 		}
 
-		currentStepIndex.set(stepIndex > -1 ? stepIndex : currentSteps.length - 1);
-	}
-
-	function getCurrentStepNo() {
-		return get(currentStepIndex);
+		currentStepIndex.set(stepIndex > -1 ? stepIndex : currentSteps.length);
 	}
 
 	return {
@@ -67,7 +65,7 @@ function createWalkthroughStore() {
 		set,
 		removeStep,
 		addStep,
-		getCurrentStepNo
+		currentStepIndex
 	};
 }
 

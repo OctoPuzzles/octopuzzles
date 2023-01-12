@@ -3,8 +3,9 @@
 	import { page } from '$app/stores';
 	import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
 	import { editorHistory, gameHistory } from '$stores/sudokuStore';
-	import { decompressFromBase64 } from '$features/fpuzzles/compressor';
+	import { decompressFromBase64 } from '$features/compressor';
 	import { defaultValues } from '$utils/defaults';
+	import type { FPuzzlesJson } from '$features/fpuzzles/types';
 	import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
 	import { onDestroy, onMount } from 'svelte';
 	import { resetAllSudokuStores } from '$utils/resetAllStores';
@@ -51,7 +52,7 @@
 		}
 		const withPlusses = encodedString.replace(/ /g, '+');
 
-		const jsonString = decompressFromBase64(withPlusses);
+		const jsonString = decompressFromBase64(withPlusses) as FPuzzlesJson;
 
 		if (jsonString == null) {
 			await goto('/');

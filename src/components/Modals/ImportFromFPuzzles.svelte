@@ -2,7 +2,8 @@
 	import { closeModal } from '$stores/modalStore';
 	import Button from '$ui/Button.svelte';
 	import Input from '$ui/Input.svelte';
-	import { decompressFromBase64 } from '$features/fpuzzles/compressor';
+	import { decompressFromBase64 } from '$features/compressor';
+	import type { FPuzzlesJson } from '$features/fpuzzles/types';
 	import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
 
 	export let isOpen: boolean;
@@ -20,7 +21,7 @@
 
 		const importantPart = url.replace(/^.*f-puzzles\.com\/\?load=/, '');
 
-		const jsonString = decompressFromBase64(importantPart);
+		const jsonString = decompressFromBase64(importantPart) as FPuzzlesJson;
 
 		if (jsonString == null) {
 			error = 'Something went wrong when getting the data from f-puzzles. Please try again.';
