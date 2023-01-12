@@ -30,6 +30,7 @@
 						'w-14 h-14 p-1 rounded',
 						isSelected ? 'bg-gray-700/10 shadow-inner' : 'bg-transparent hover:bg-gray-200'
 					)}
+					data-testid={title}
 					on:click={() => onClick()}
 					title={`${title}${shortcut ? ` (${shortcut})` : ''}`}
 				>

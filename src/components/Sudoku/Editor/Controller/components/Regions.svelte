@@ -21,7 +21,7 @@
 	import ControllerButton from '$ui/ControllerButton.svelte';
 	import Select from '$ui/Select.svelte';
 	import deepCopy from '$utils/deepCopy';
-	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
 	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 	import moveArrayElement from '$utils/moveArrayElement';
 	import { regionDefaults } from '$utils/prefabs';

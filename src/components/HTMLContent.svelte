@@ -6,17 +6,17 @@
 	<p class="whitespace-pre-line max-w-7xl">{@html content}</p>
 </div>
 
-<style global>
-	.html-description ul,
-	.html-description ol {
+<style>
+	:global(.html-description ul),
+	:global(.html-description ol) {
 		padding-left: 1.5rem;
 	}
 
-	.html-description ul {
+	:global(.html-description ul) {
 		@apply list-disc list-outside;
 	}
 
-	.html-description ol {
+	:global(.html-description ol) {
 		@apply list-decimal list-outside;
 	}
 </style>

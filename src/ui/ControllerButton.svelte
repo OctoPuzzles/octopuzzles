@@ -27,14 +27,18 @@
 		<div
 			class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1 border-b border-gray-300"
 			on:click={() => onMoveUp()}
-			on:keypress={() => onMoveUp()}
+			on:keypress={() => {
+				/*Do nothing*/
+			}}
 		>
 			<CaretUp size={16} />
 		</div>
 		<div
 			class="h-1/2 flex justify-center items-center hover:bg-gray-200 p-1"
 			on:click={() => onMoveDown()}
-			on:keypress={() => onMoveDown()}
+			on:keypress={() => {
+				/*Do nothing*/
+			}}
 		>
 			<CaretDown size={16} />
 		</div>
@@ -42,14 +46,18 @@
 	<span
 		class="hover:bg-gray-100 w-full h-full flex items-center justify-center"
 		on:click={() => onClick()}
-		on:keypress={() => onClick()}
+		on:keypress={() => {
+			/*Do nothing*/
+		}}
 	>
 		<slot />
 	</span>
 	<div
 		class="h-full w-8 p-1 flex justify-center items-center hover:bg-red-100 hover:text-red-500 border-l border-gray-300"
 		on:click={() => onDelete()}
-		on:keypress={() => onDelete()}
+		on:keypress={() => {
+			/*Do nothing*/
+		}}
 	>
 		<Trash size={20} />
 	</div>
