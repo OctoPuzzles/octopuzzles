@@ -36,6 +36,7 @@
 </script>
 
 <svg
+	data-testid="display"
 	viewBox="-2 -2 {clues.dimensions.columns * cellSize + 4} {clues.dimensions.rows * cellSize + 4}"
 	class="max-h-full max-w-full"
 >
