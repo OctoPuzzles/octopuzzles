@@ -4,7 +4,7 @@
 	import { editorHistory, highlights } from '$stores/sudokuStore';
 	import deepCopy from '$utils/deepCopy';
 	import { get } from 'svelte/store';
-	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
 	import { hasOpenModals } from '$stores/modalStore';
 
 	const { selectedCells } = highlights;
@@ -79,7 +79,7 @@
 		{/each}
 		<div class="col-span-2">
 			<SquareButton class="w-36 p-3" on:click={() => handleClick('')}>
-				<Backspace size={32} />
+				<Backspace size={32} data-testid="givens-delete-button" />
 			</SquareButton>
 		</div>
 	</div>

@@ -27,7 +27,7 @@
 	import Label from '$ui/Label.svelte';
 	import Select from '$ui/Select.svelte';
 	import deepCopy from '$utils/deepCopy';
-	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
 	import isArrowKey from '$utils/keyboard/isArrowKey';
 	import moveArrayElement from '$utils/moveArrayElement';
 	import { cellClueDefaults } from '$utils/constraints/cellclues';
@@ -197,6 +197,7 @@
 	}
 
 	const createNewCellClue = (): void => {
+		if ($selectedCells.length > 1) return;
 		editorHistory.set({
 			cellclues: [...deepCopy($sudokuClues.cellclues), newCellClue($selectedCells[0])]
 		});

@@ -10,7 +10,7 @@
 	import isArrowKey from '$utils/keyboard/isArrowKey';
 	import moveArrayElement from '$utils/moveArrayElement';
 	import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
 	import { borderClueDefaults } from '$utils/constraints/borderclues';
 	import type { Borderclue, BorderClueType, Position, Shape } from '$models/Sudoku';
 	import { hasOpenModals } from '$stores/modalStore';

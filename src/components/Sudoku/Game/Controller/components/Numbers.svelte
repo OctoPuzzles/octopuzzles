@@ -4,7 +4,7 @@
 	import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
 	import deepCopy from '$utils/deepCopy';
 	import { get } from 'svelte/store';
-	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
 	import { hasOpenModals } from '$stores/modalStore';
 	import { me } from '$stores/meStore';
 	import { scanner } from '$stores/sudokuStore/scanner';

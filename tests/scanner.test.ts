@@ -20,7 +20,7 @@ test.describe('Scanner', () => {
 		expect(amountOfNumbersNow).toBeGreaterThan(initialNumberOfClues);
 	});
 
-	test.only('Fills out the sudoku when specifying to scan instantly', async ({ page }) => {
+	test('Fills out the sudoku when specifying to scan instantly', async ({ page }) => {
 		await page.getByRole('button', { name: 'Scanner' }).click();
 
 		await page.getByText('Instant').click();

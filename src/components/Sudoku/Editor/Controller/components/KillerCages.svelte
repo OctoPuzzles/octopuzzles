@@ -24,7 +24,7 @@
 	import Input from '$ui/Input.svelte';
 	import Label from '$ui/Label.svelte';
 	import Select from '$ui/Select.svelte';
-	import { isDeleteKey } from '$utils/isDeleteKey';
+	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
 	import isArrowKey from '$utils/keyboard/isArrowKey';
 	import { isCommandKey } from '$utils/keyboard/isCommandKey';
 	import moveArrayElement from '$utils/moveArrayElement';

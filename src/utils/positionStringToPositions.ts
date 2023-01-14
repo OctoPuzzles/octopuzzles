@@ -1,5 +1,5 @@
 import type { Position } from '$models/Sudoku';
-import type { PositionString } from '../features/fpuzzles/model';
+import type { PositionString } from '../features/fpuzzles/types';
 
 function positionFromPositionString(positionString: PositionString): Position {
 	const regex = /r(\d+)c(\d+)/i;
