@@ -33,6 +33,12 @@
 	export let handleMouseEnter: MouseEnterHandler | undefined = undefined;
 
 	export let isEditor = false;
+
+	$: interactive =
+		onClickNote != null ||
+		handleArrows != null ||
+		handleMouseDown != null ||
+		handleMouseEnter != null;
 </script>
 
 <svg
@@ -44,47 +50,49 @@
 		gameColors={userInputs?.colors}
 		dimensions={clues.dimensions}
 	/>
-	<g id="highlights">
-		{#if wrongCells}
-			{#each wrongCells as cell}
-				<rect
-					class="fill-current w-cell h-cell text-red-200"
-					x={cellSize * cell.column}
-					y={cellSize * cell.row}
-					vector-effect="non-scaling-size"
-				/>
-			{/each}
-		{/if}
-		{#if selectedCells}
-			{#each selectedCells as cell}
-				<rect
-					class="fill-current w-cell h-cell text-orange-300 text-opacity-40"
-					x={cellSize * cell.column}
-					y={cellSize * cell.row}
-					vector-effect="non-scaling-size"
-				/>
-			{/each}
-		{/if}
-		{#if highlightedCells}
-			{#each highlightedCells as cell}
-				<rect
-					class="fill-current w-cell h-cell text-blue-100"
-					x={cellSize * cell.column}
-					y={cellSize * cell.row}
-					vector-effect="non-scaling-size"
-				/>
-			{/each}
-		{/if}
-	</g>
+	{#if interactive}
+		<g id="highlights">
+			{#if wrongCells}
+				{#each wrongCells as cell}
+					<rect
+						class="fill-current w-cell h-cell text-red-200"
+						x={cellSize * cell.column}
+						y={cellSize * cell.row}
+						vector-effect="non-scaling-size"
+					/>
+				{/each}
+			{/if}
+			{#if selectedCells}
+				{#each selectedCells as cell}
+					<rect
+						class="fill-current w-cell h-cell text-orange-300 text-opacity-40"
+						x={cellSize * cell.column}
+						y={cellSize * cell.row}
+						vector-effect="non-scaling-size"
+					/>
+				{/each}
+			{/if}
+			{#if highlightedCells}
+				{#each highlightedCells as cell}
+					<rect
+						class="fill-current w-cell h-cell text-blue-100"
+						x={cellSize * cell.column}
+						y={cellSize * cell.row}
+						vector-effect="non-scaling-size"
+					/>
+				{/each}
+			{/if}
+		</g>
 
-	<Interface
-		cells={clues.cells}
-		dimensions={clues.dimensions}
-		{isEditor}
-		{handleArrows}
-		{handleMouseDown}
-		{handleMouseEnter}
-	/>
+		<Interface
+			cells={clues.cells}
+			dimensions={clues.dimensions}
+			{isEditor}
+			{handleArrows}
+			{handleMouseDown}
+			{handleMouseEnter}
+		/>
+	{/if}
 	<Paths paths={clues.paths} />
 	<KillerCages cages={clues.extendedcages} dimensions={clues.dimensions} />
 	<Cells cells={clues.cells} />
