@@ -7,7 +7,7 @@
 
 	const { selectedCells } = highlights;
 
-	let notes = gameHistory.getValue('notes');
+	let annotations = gameHistory.getValue('annotations');
 	let input: Input;
 	$: firstSelectedCell = $selectedCells.length === 1 ? $selectedCells[0] : undefined;
 
@@ -18,7 +18,10 @@
 	$: $selectedCells, input != null && setTimeout(() => input != null && input.focus(), 100);
 
 	function populateFromSelectedCell(selectedCell: Position): void {
-		value = $notes[selectedCell.row][selectedCell.column];
+		value =
+			$annotations.find((n) =>
+				n.positions.some((p) => p.row === selectedCell.row && p.column === selectedCell.column)
+			)?.details ?? '';
 	}
 
 	let value = '';
@@ -28,10 +31,23 @@
 	function handleInput(newValue: string): void {
 		if (firstSelectedCell == null) return;
 
-		let newNotes = deepCopy($notes);
-		newNotes[firstSelectedCell.row][firstSelectedCell.column] = newValue;
+		let newAnnotations = deepCopy($annotations);
+		let noteIndex = newAnnotations.findIndex((n) =>
+			n.positions.some(
+				(p) => p.row === firstSelectedCell?.row && p.column === firstSelectedCell?.column
+			)
+		);
+		if (noteIndex !== -1) {
+			if (newValue !== '') {
+				newAnnotations.splice(noteIndex, 1, { ...newAnnotations[noteIndex], details: newValue });
+			} else {
+				newAnnotations.splice(noteIndex, 1);
+			}
+		} else if (newValue !== '') {
+			newAnnotations.push({ positions: [firstSelectedCell], type: 'Note', details: newValue });
+		}
 
-		gameHistory.set({ notes: newNotes });
+		gameHistory.set({ annotations: newAnnotations });
 	}
 </script>
 
@@ -43,7 +59,7 @@
 		placeholder="note"
 		disabled={$selectedCells.length !== 1}
 		title={$selectedCells.length !== 1
-			? 'Please selct only one cell to make a note on'
+			? 'Please select only one cell to make a note on'
 			: 'Write a note'}
 	/>
 

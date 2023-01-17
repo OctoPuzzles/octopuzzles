@@ -6,9 +6,11 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import {
+		defaultAnnotations,
 		defaultCentermarks,
 		defaultCornermarks,
 		defaultGameColors,
+		defaultModifiers,
 		defaultValues
 	} from '$utils/defaults';
 	import { page } from '$app/stores';
@@ -104,7 +106,9 @@
 				values: defaultValues(sud.dimensions),
 				centermarks: defaultCentermarks(sud.dimensions),
 				cornermarks: defaultCornermarks(sud.dimensions),
-				colors: defaultGameColors(sud.dimensions)
+				colors: defaultGameColors(sud.dimensions),
+				annotations: defaultAnnotations(),
+				modifiers: defaultModifiers()
 			});
 			editorHistory.reset({
 				borderclues: sud.borderclues ?? undefined,

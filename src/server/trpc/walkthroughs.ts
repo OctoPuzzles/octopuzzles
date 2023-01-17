@@ -20,6 +20,14 @@ export default trpc
 			});
 			const walkthrough: Walkthrough | null =
 				walkthroughRaw !== null ? WalkthroughValidator.parse(walkthroughRaw) : null;
+			walkthrough?.steps?.forEach(s => {
+				s.step.notes?.forEach((row, i) => {
+					row.forEach((note, j) => {
+						s.step.annotations.push({positions:[{row:i, column:j}], type:'Note', details:note})
+					});
+				});
+				s.step.notes = undefined;
+			});
 			return walkthrough;
 		}
 	})

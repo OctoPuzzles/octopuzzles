@@ -168,12 +168,12 @@ function createScannerStore() {
 
 		const logic = editorHistory.getClue('logic');
 		const flags = logic.flags ?? [];
-		const nonstandard = flags.indexOf('NonStandard') !== -1;
-		const diagonalPos = flags.indexOf('DiagonalPos') !== -1;
-		const diagonalNeg = flags.indexOf('DiagonalNeg') !== -1;
-		const antiknight = flags.indexOf('Antiknight') !== -1;
-		const antiking = flags.indexOf('Antiking') !== -1;
-		const disjointsets = flags.indexOf('DisjointSets') !== -1;
+		const nonstandard = flags.includes('NonStandard');
+		const diagonalPos = flags.includes('DiagonalPos');
+		const diagonalNeg = flags.includes('DiagonalNeg');
+		const antiknight = flags.includes('Antiknight');
+		const antiking = flags.includes('Antiking');
+		const disjointsets = flags.includes('DisjointSets');
 
 		if (!nonstandard) {
 			for (let x = 0; x < rows; ++x) {
@@ -375,10 +375,10 @@ function createScannerStore() {
 						const cells = [c];
 						const indexes = [];
 						for (let j = seen ? i + 1 : 0; j < contextCells.length; ++j) {
-							if (j == i || (seen && skipIndexes.indexOf(j) != -1)) continue;
+							if (j == i || (seen && skipIndexes.includes(j))) continue;
 
 							const d = contextCells[j];
-							if (centermarks[d.row][d.column].split('').every((v) => tuple.indexOf(v) != -1)) {
+							if (centermarks[d.row][d.column].split('').every((v) => tuple.includes(v))) {
 								cells.push(d);
 								indexes.push(j);
 							}
@@ -425,7 +425,7 @@ function createScannerStore() {
 
 					cornermarks[c.row][c.column].split('').forEach((v) => {
 						const valueCells = regionCells.filter(
-							(p) => cornermarks[p.row][p.column].indexOf(v) != -1
+							(p) => cornermarks[p.row][p.column].includes(v)
 						);
 						if (
 							valueCells.every((q) =>
@@ -450,7 +450,7 @@ function createScannerStore() {
 			cornermarks[cell.row][cell.column].split('').forEach((v) => {
 				sets.push({
 					digit: v,
-					cells: regionCells.filter((p) => cornermarks[p.row][p.column].indexOf(v) != -1)
+					cells: regionCells.filter((p) => cornermarks[p.row][p.column].includes(v))
 				});
 			});
 		}
@@ -529,7 +529,7 @@ function createScannerStore() {
 			//eliminate all values of any tuple seen by this cell
 			const tuples = getTuples(cell);
 			newCandidateValues = newCandidateValues.filter((v) => {
-				const found = tuples.find((t) => t.tuple.indexOf(v) !== -1);
+				const found = tuples.find((t) => t.tuple.includes(v));
 				if (found) {
 					highlightedCells.push(...found.cells);
 					return false;
@@ -541,7 +541,7 @@ function createScannerStore() {
 
 		if (
 			newCandidateValues.length > 1 &&
-			!(flags.indexOf('NonStandard') !== -1) &&
+			!(flags.includes('NonStandard')) &&
 			settings.useCornerMarks
 		) {
 			//if all cells that contain a cornermark within a region for a value are seen by this cell we can eliminate that value
@@ -563,14 +563,14 @@ function createScannerStore() {
 			const nbrCells = getNbrCells(cell);
 
 			if (
-				(flags.indexOf('Nonconsecutive') !== -1 && settings.scanNonConsecutive) ||
-				(flags.indexOf('NegativeWhite') !== -1 && settings.scanNegativeKropki)
+				(flags.includes('Nonconsecutive') && settings.scanNonConsecutive) ||
+				(flags.includes('NegativeWhite') && settings.scanNegativeKropki)
 			) {
 				newCandidateValues = newCandidateValues.filter(
 					(v) =>
 						!nbrCells.some((n) => {
 							if (
-								flags.indexOf('NegativeWhite') !== -1 &&
+								flags.includes('NegativeWhite') &&
 								settings.scanNegativeKropki &&
 								borderclues.some(
 									(c) =>
@@ -600,7 +600,7 @@ function createScannerStore() {
 						})
 				);
 			}
-			if (flags.indexOf('NegativeBlack') !== -1 && settings.scanNegativeKropki) {
+			if (flags.includes('NegativeBlack') && settings.scanNegativeKropki) {
 				newCandidateValues = newCandidateValues.filter(
 					(v) =>
 						!nbrCells.some((n) => {
@@ -633,7 +633,7 @@ function createScannerStore() {
 						})
 				);
 			}
-			if (flags.indexOf('NegativeX') !== -1 && settings.scanNegativeXV) {
+			if (flags.includes('NegativeX') && settings.scanNegativeXV) {
 				newCandidateValues = newCandidateValues.filter(
 					(v) =>
 						!nbrCells.some((n) => {
@@ -666,7 +666,7 @@ function createScannerStore() {
 						})
 				);
 			}
-			if (flags.indexOf('NegativeV') !== -1 && settings.scanNegativeXV) {
+			if (flags.includes('NegativeV') && settings.scanNegativeXV) {
 				newCandidateValues = newCandidateValues.filter(
 					(v) =>
 						!nbrCells.some((n) => {
@@ -773,7 +773,7 @@ function createScannerStore() {
 							s.cells.forEach((c) => {
 								newCornermarks[c.row][c.column] = '';
 							});
-						} else if (s.cells.length === 2 && corner.indexOf(s.digit) === -1) {
+						} else if (s.cells.length === 2 && !corner.includes(s.digit)) {
 							//if there is only one possible cornermark for this digit left, set it as the sole candidate value
 							s.cells.some((c) => {
 								if (c.row !== cell.row || c.column !== cell.column) {

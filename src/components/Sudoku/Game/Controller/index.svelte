@@ -200,8 +200,9 @@
 		const values = get(gameHistory.getValue('values'));
 		const cornermarks = get(gameHistory.getValue('cornermarks'));
 		const centermarks = get(gameHistory.getValue('centermarks'));
-		const notes = get(gameHistory.getValue('notes'));
 		const colors = get(gameHistory.getValue('colors'));
+		const annotations = get(gameHistory.getValue('annotations'));
+		const modifiers = get(gameHistory.getValue('modifiers'));
 
 		await trpc().mutation('savedGames:createOrUpdate', {
 			sudokuId: parseInt($page.params.id),
@@ -209,8 +210,9 @@
 				values,
 				cornermarks,
 				centermarks,
-				notes,
-				colors
+				colors,
+				annotations,
+				modifiers
 			}
 		});
 	}

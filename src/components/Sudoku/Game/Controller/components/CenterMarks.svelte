@@ -51,7 +51,6 @@
 					newCentermarks[p.row][p.column] = currentCentermarks[p.row][p.column]
 						.split('')
 						.filter((s) => s !== newCentermark)
-						.sort()
 						.join('');
 				});
 			}

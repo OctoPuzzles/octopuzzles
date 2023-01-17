@@ -8,6 +8,7 @@
 	import CornerMarks from './Clues/CornerMarks.svelte';
 	import CenterMarks from './Clues/CenterMarks.svelte';
 	import KillerCages from './Clues/killercages/KillerCages.svelte';
+	import Modifiers from './Clues/Modifiers.svelte';
 	import Numbers from './Clues/Numbers.svelte';
 	import Paths from './Clues/paths/Paths.svelte';
 	import Notes from './Clues/Notes.svelte';
@@ -88,22 +89,30 @@
 	<Paths paths={clues.paths} />
 	<KillerCages cages={clues.extendedcages} dimensions={clues.dimensions} />
 	<Cells cells={clues.cells} />
-	<Notes notes={userInputs?.notes} {onClickNote} />
+	<Notes annotations={userInputs?.annotations} {onClickNote} />
 	<Regions regions={clues.regions} dimensions={clues.dimensions} />
 	<BorderClues borderClues={clues.borderclues} />
 	<CellClues cellClues={clues.cellclues} />
+	<Modifiers modifiers={userInputs?.modifiers} />
 	<CornerMarks
 		values={userInputs?.values}
 		givens={clues.givens}
 		dimensions={clues.dimensions}
 		cornermarks={userInputs?.cornermarks}
+		modifiers={userInputs?.modifiers}
 	/>
 	<CenterMarks
 		values={userInputs?.values}
 		givens={clues.givens}
 		dimensions={clues.dimensions}
 		centermarks={userInputs?.centermarks}
+		modifiers={userInputs?.modifiers}
 	/>
-	<Numbers values={userInputs?.values} givens={clues.givens} dimensions={clues.dimensions} />
+	<Numbers
+		values={userInputs?.values}
+		givens={clues.givens}
+		dimensions={clues.dimensions}
+		modifiers={userInputs?.modifiers}
+	/>
 	<Logic logic={clues.logic} dimensions={clues.dimensions} />
 </svg>

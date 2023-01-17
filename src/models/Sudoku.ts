@@ -235,6 +235,32 @@ export const LogicValidator = z.object({
 });
 export type Logic = z.infer<typeof LogicValidator>;
 
+export const AnnotationTypeValidator = z.enum([
+	'Note'
+]);
+export type AnnotationType = z.infer<typeof AnnotationTypeValidator>;
+
+export const AnnotationValidator = z.object({
+	positions: z.array(PositionValidator),
+	type: AnnotationTypeValidator,
+	details: z.string().nullish(),
+	color: ColorValidator.nullish()
+});
+export type Annotation = z.infer<typeof AnnotationValidator>;
+
+export const CellModifierTypeValidator = z.enum([
+	'SCell',
+	'Doubler'
+]);
+export type CellModifierType = z.infer<typeof CellModifierTypeValidator>;
+
+export const CellModifierValidator = z.object({
+	position: PositionValidator,
+	type: CellModifierTypeValidator,
+	value: z.string().nullish()
+});
+export type CellModifier = z.infer<typeof CellModifierValidator>;
+
 export const CellsValidator = z.array(z.array(z.boolean()));
 export type Cells = z.infer<typeof CellsValidator>;
 
@@ -261,6 +287,12 @@ export type Cellclues = z.infer<typeof CellcluesValidator>;
 
 export const SolutionValidator = z.object({ numbers: z.array(z.array(z.string().max(3))) });
 export type Solution = z.infer<typeof SolutionValidator>;
+
+export const AnnotationsValidator = z.array(AnnotationValidator);
+export type Annotations = z.infer<typeof AnnotationsValidator>;
+
+export const CellModifiersValidator = z.array(CellModifierValidator);
+export type CellModifiers = z.infer<typeof CellModifiersValidator>;
 
 export const SudokuCluesValidator = z.object({
 	/** The dimensions of the sudoku, i.e. the number of rows and columns */

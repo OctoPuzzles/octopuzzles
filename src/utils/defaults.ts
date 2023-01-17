@@ -1,6 +1,8 @@
 import type {
+	Annotations,
 	Borderclues,
 	Cellclues,
+	CellModifiers,
 	Dimensions,
 	Extendedcages,
 	Logic,
@@ -153,9 +155,8 @@ export const defaultCentermarks = (
 export const defaultValues = (
 	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
 ) => defaultItem('', dimensions);
-export const defaultNotes = (
-	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem('', dimensions);
+export const defaultAnnotations = (): Annotations => [];
+export const defaultModifiers = (): CellModifiers => [];
 export const defaultCages = (): Extendedcages => [];
 export const defaultBorderclues = (): Borderclues => [];
 export const defaultCellclues = (): Cellclues => [];

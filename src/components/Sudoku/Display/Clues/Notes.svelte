@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import type { Position } from '$models/Sudoku';
-	import type { Notes } from '$models/Walkthrough';
+	import type { Position, Annotations } from '$models/Sudoku';
 
-	export let notes: Notes | undefined;
+	export let annotations: Annotations | undefined;
 	export let onClickNote: ((note: string, position: Position) => void) | undefined = undefined;
 
 	function createPolygonPoints(row: number, column: number): string {
@@ -15,24 +14,25 @@
 	}
 </script>
 
-{#if notes}
+{#if annotations}
+	{@const notes = annotations.filter((n) => n.type === 'Note')}
 	<g id="notes">
-		{#each notes as row, rowIndex}
-			{#each row as note, columnIndex}
-				{#if note.length > 0}
+		{#each notes as note}
+			{#if note.details}
+				{#each note.positions as position}
 					<polygon
-						points={createPolygonPoints(rowIndex, columnIndex)}
+						points={createPolygonPoints(position.row, position.column)}
 						class="fill-current stroke-black-500 text-orange-300 cursor-pointer hover:text-orange-400 transition-colors"
 						style="stroke-width:0.5;"
-						on:click={() => onClickNote?.(note, { row: rowIndex, column: columnIndex })}
+						on:click={() => onClickNote?.(note.details ?? '', position)}
 						on:keypress={() => {
 							/*Do nothing*/
 						}}
 					>
-						<title>{note}</title>
+						<title>{note.details}</title>
 					</polygon>
-				{/if}
-			{/each}
+				{/each}
+			{/if}
 		{/each}
 	</g>
 {/if}

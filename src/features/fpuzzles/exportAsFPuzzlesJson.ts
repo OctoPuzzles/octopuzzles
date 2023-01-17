@@ -27,7 +27,8 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	const gameColors = get(gameHistory.getValue('colors'));
 	const cornermarks = get(gameHistory.getValue('cornermarks'));
 	const centermarks = get(gameHistory.getValue('centermarks'));
-	//const notes = get(gameHistory.getValue('notes');
+	//const annotations = get(gameHistory.getValue('annotations');
+	//const modifiers = get(gameHistory.getValue('modifiers');
 
 	const getPositionString = (position: Position): PositionString => {
 		return `R${position.row + 1 - (dimensions.margins?.top ?? 0)}C${
@@ -59,12 +60,12 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 
 	const fPuzzle: FPuzzlesJson = {
 		author: '',
-		antiking: flags.indexOf('Antiking') !== -1 ? true : undefined,
-		antiknight: flags.indexOf('Antiknight') !== -1 ? true : undefined,
+		antiking: flags.includes('Antiking') ? true : undefined,
+		antiknight: flags.includes('Antiknight') ? true : undefined,
 		//author: string,
-		'diagonal+': flags.indexOf('DiagonalPos') !== -1 ? true : undefined,
-		'diagonal-': flags.indexOf('DiagonalNeg') !== -1 ? true : undefined,
-		disjointgroups: flags.indexOf('DisjointSets') !== -1 ? true : undefined,
+		'diagonal+': flags.includes('DiagonalPos') ? true : undefined,
+		'diagonal-': flags.includes('DiagonalNeg') ? true : undefined,
+		disjointgroups: flags.includes('DisjointSets') ? true : undefined,
 		grid,
 		negative: flags.some((f) => f === 'NegativeBlack' || f === 'NegativeX' || f === 'NegativeV')
 			? [
@@ -128,7 +129,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	const defaultNormalRegions = defaultRegions(dimensions);
 	let regionNumber = 0;
 	regions.forEach((r, i) => {
-		if (handledRegions.indexOf(i) !== -1) return;
+		if (handledRegions.includes(i)) return;
 
 		switch (r.type) {
 			case 'Normal': {
@@ -156,7 +157,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 
 				const topLeftR = topLeftOfPositions(r.positions);
 				regions.forEach((s, j) => {
-					if (j > i && handledRegions.indexOf(j) === -1) {
+					if (j > i && handledRegions.includes(j)) {
 						if (s.color === r.color && s.positions.length === r.positions.length) {
 							const topLeftS = topLeftOfPositions(s.positions);
 							const rowOffset = topLeftS.row - topLeftR.row;
@@ -195,7 +196,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 
 	const handledPaths: number[] = [];
 	paths.forEach((p, i) => {
-		if (handledPaths.indexOf(i) !== -1) return;
+		if (handledPaths.includes(i)) return;
 
 		switch (p.type) {
 			case 'Arrow': {

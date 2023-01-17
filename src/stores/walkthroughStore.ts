@@ -35,8 +35,9 @@ function createWalkthroughStore() {
 		const values = deepCopy(get(gameHistory.getValue('values')));
 		const cornermarks = deepCopy(get(gameHistory.getValue('cornermarks')));
 		const centermarks = deepCopy(get(gameHistory.getValue('centermarks')));
-		const notes = deepCopy(get(gameHistory.getValue('notes')));
 		const colors = deepCopy(get(gameHistory.getValue('colors')));
+		const annotations = deepCopy(get(gameHistory.getValue('annotations')));
+		const modifiers = deepCopy(get(gameHistory.getValue('modifiers')));
 
 		const newStep = {
 			description: stepIndex >= 0 && replace ? currentSteps[stepIndex].description : '',
@@ -44,8 +45,9 @@ function createWalkthroughStore() {
 				values,
 				cornermarks,
 				centermarks,
-				notes,
-				colors
+				colors,
+				annotations,
+				modifiers
 			},
 			timestamp: new Date()
 		};

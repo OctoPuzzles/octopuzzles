@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ColorValidator } from './Sudoku';
+import { ColorValidator, AnnotationsValidator, CellModifiersValidator } from './Sudoku';
 
 export const GameValuesValidator = z.array(z.array(z.string()));
 export type GameValues = z.infer<typeof GameValuesValidator>;
@@ -24,10 +24,14 @@ export const SolutionStepValidator = z.object({
 	cornermarks: CornermarksValidator,
 	/** Centermarks on the solution step */
 	centermarks: CentermarksValidator,
-	/** Notes on the solution step */
-	notes: NotesValidator,
+	/** Notes on the solution step (Obsolete)*/
+	notes: NotesValidator.optional(),
 	/** A list of colors on each cell */
-	colors: GameColorsValidator
+	colors: GameColorsValidator,
+	/** Notes on the solution step */
+	annotations: AnnotationsValidator.default([]),
+	/** A list of modifiers applied to each cell */
+	modifiers: CellModifiersValidator.default([])
 });
 export type SolutionStep = z.infer<typeof SolutionStepValidator>;
 

@@ -2,12 +2,13 @@ import { derived, get, writable } from 'svelte/store';
 import type { Readable } from 'svelte/store';
 import deepCopy from '$utils/deepCopy';
 import {
+	defaultAnnotations,
 	defaultBorderclues,
 	defaultCellclues,
 	defaultCells,
 	defaultCentermarks,
-	defaultNotes,
 	defaultCornermarks,
+	defaultModifiers,
 	defaultEditorColors,
 	defaultGameColors,
 	defaultGivens,
@@ -227,7 +228,8 @@ function createGameHistoryStore() {
 			colors: defaultGameColors(),
 			cornermarks: defaultCornermarks(),
 			centermarks: defaultCentermarks(),
-			notes: defaultNotes()
+			annotations: defaultAnnotations(),
+			modifiers: defaultModifiers()
 		}
 	]);
 
@@ -316,7 +318,8 @@ function createGameHistoryStore() {
 				colors: defaultGameColors(dim),
 				cornermarks: defaultCornermarks(dim),
 				centermarks: defaultCentermarks(dim),
-				notes: defaultNotes(dim)
+				annotations: defaultAnnotations(),
+				modifiers: defaultModifiers()
 			}
 		]);
 	}
@@ -492,7 +495,8 @@ export function setMargins(margins?: Margins | null): void {
 	const gamecolors = get(gameHistory.getValue('colors'));
 	const cornermarks = get(gameHistory.getValue('cornermarks'));
 	const centermarks = get(gameHistory.getValue('centermarks'));
-	const notes = get(gameHistory.getValue('notes'));
+	const annotations = get(gameHistory.getValue('annotations'));
+	const modifiers = get(gameHistory.getValue('modifiers'));
 
 	const offsets: Margins = {
 		left: (margins?.left ?? 0) - (dimensions.margins?.left ?? 0),
@@ -560,7 +564,22 @@ export function setMargins(margins?: Margins | null): void {
 			colors: offsetMatrix(gamecolors, offsets, []),
 			cornermarks: offsetMatrix(cornermarks, offsets, ''),
 			centermarks: offsetMatrix(centermarks, offsets, ''),
-			notes: offsetMatrix(notes, offsets, '')
+			annotations: annotations
+				.map((annotation) => {
+					return { ...annotation, positions: offsetPositions(annotation.positions, offsets) };
+				})
+				.filter((annotation) => annotation.positions.every(isValidPosition)),
+				modifiers: modifiers
+				.map((modifier) => {
+					return {
+						...modifier,
+						position: {
+							row: modifier.position.row + offsets.top,
+							column: modifier.position.column + offsets.left
+						}
+					};
+				})
+				.filter((modifier) => isValidPosition(modifier.position)),
 		});
 
 		const { selectedCells, highlightedCells, wrongCells } = highlights;

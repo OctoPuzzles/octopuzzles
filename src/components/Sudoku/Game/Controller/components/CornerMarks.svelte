@@ -52,7 +52,6 @@
 					newCornermarks[p.row][p.column] = currentCornermarks[p.row][p.column]
 						.split('')
 						.filter((s) => s !== newCornermark)
-						.sort()
 						.join('');
 				});
 			}

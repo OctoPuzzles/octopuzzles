@@ -11,21 +11,21 @@
 
 	let digits = $sudokuClues.logic.digits ?? '1-9';
 	let flags = $sudokuClues.logic.flags ?? [];
-	$: nonstandard = flags.indexOf('NonStandard') !== -1;
-	$: diagonalPos = flags.indexOf('DiagonalPos') !== -1;
-	$: diagonalNeg = flags.indexOf('DiagonalNeg') !== -1;
-	$: antiknight = flags.indexOf('Antiknight') !== -1;
-	$: antiking = flags.indexOf('Antiking') !== -1;
-	$: nonconsecutive = flags.indexOf('Nonconsecutive') !== -1;
-	$: disjointsets = flags.indexOf('DisjointSets') !== -1;
-	$: sCells = flags.indexOf('SCells') !== -1;
-	$: doublers = flags.indexOf('Doublers') !== -1;
-	$: entropy = flags.indexOf('Entropy') !== -1;
-	$: indexed159 = flags.indexOf('Indexed159') !== -1;
-	$: negativeX = flags.indexOf('NegativeX') !== -1;
-	$: negativeV = flags.indexOf('NegativeV') !== -1;
-	$: negativeBlack = flags.indexOf('NegativeBlack') !== -1;
-	$: negativeWhite = flags.indexOf('NegativeWhite') !== -1;
+	$: nonstandard = flags.includes('NonStandard');
+	$: diagonalPos = flags.includes('DiagonalPos');
+	$: diagonalNeg = flags.includes('DiagonalNeg');
+	$: antiknight = flags.includes('Antiknight');
+	$: antiking = flags.includes('Antiking');
+	$: nonconsecutive = flags.includes('Nonconsecutive');
+	$: disjointsets = flags.includes('DisjointSets');
+	$: sCells = flags.includes('SCells');
+	$: doublers = flags.includes('Doublers');
+	$: entropy = flags.includes('Entropy');
+	$: indexed159 = flags.includes('Indexed159');
+	$: negativeX = flags.includes('NegativeX');
+	$: negativeV = flags.includes('NegativeV');
+	$: negativeBlack = flags.includes('NegativeBlack');
+	$: negativeWhite = flags.includes('NegativeWhite');
 
 	function update(): void {
 		//TODO: validate number of digits against grid dimensions, prompt for s-cells, or update digits when s-cells are selected

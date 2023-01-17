@@ -8,11 +8,11 @@ export function verifyLogic(
 ): Position[] {
 	const invalidCells: Position[] = [];
 
-	const nonConsecutive = flags.indexOf('Nonconsecutive') !== -1;
-	const negativeBlack = flags.indexOf('NegativeBlack') !== -1;
-	const negativeWhite = flags.indexOf('NegativeWhite') !== -1;
-	const negativeX = flags.indexOf('NegativeX') !== -1;
-	const negativeV = flags.indexOf('NegativeV') !== -1;
+	const nonConsecutive = flags.includes('Nonconsecutive');
+	const negativeBlack = flags.includes('NegativeBlack');
+	const negativeWhite = flags.includes('NegativeWhite');
+	const negativeX = flags.includes('NegativeX');
+	const negativeV = flags.includes('NegativeV');
 	if (nonConsecutive || negativeBlack || negativeWhite || negativeX || negativeV) {
 		for (
 			let i = dimensions.margins?.top ?? 0;
@@ -157,7 +157,7 @@ export function verifyLogic(
 			}
 		}
 	}
-	if (flags.indexOf('Entropy') !== -1) {
+	if (flags.includes('Entropy')) {
 		for (
 			let i = dimensions.margins?.top ?? 0;
 			i < dimensions.rows - (dimensions.margins?.bottom ?? 0) - 1;
@@ -217,7 +217,7 @@ export function verifyLogic(
 			}
 		}
 	}
-	if (flags.indexOf('Indexed159') !== -1) {
+	if (flags.includes('Indexed159')) {
 		for (
 			let i = dimensions.margins?.top ?? 0;
 			i < dimensions.rows + (dimensions.margins?.top ?? 0);

@@ -2,7 +2,9 @@
 	import Button from '$ui/Button.svelte';
 	import Input from '$ui/Input.svelte';
 	import {
+		defaultAnnotations,
 		defaultBorderclues,
+		defaultCages,
 		defaultCellclues,
 		defaultCells,
 		defaultCentermarks,
@@ -10,7 +12,7 @@
 		defaultEditorColors,
 		defaultGameColors,
 		defaultGivens,
-		defaultCages,
+		defaultModifiers,
 		defaultPaths,
 		defaultValues,
 		defaultRegions
@@ -78,7 +80,9 @@
 				values: defaultValues(newDimensions),
 				centermarks: defaultCentermarks(newDimensions),
 				cornermarks: defaultCornermarks(newDimensions),
-				colors: defaultGameColors(newDimensions)
+				colors: defaultGameColors(newDimensions),
+				annotations: defaultAnnotations(),
+				modifiers: defaultModifiers()
 			});
 			editorHistory.set({
 				dimensions: newDimensions,

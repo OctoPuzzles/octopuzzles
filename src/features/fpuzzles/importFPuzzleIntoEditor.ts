@@ -4,9 +4,11 @@ import type { FPuzzlesJson, PositionString } from './types';
 import deepCopy from '$utils/deepCopy';
 import { positionStringToPosition as _positionStringToPosition } from '$utils/positionStringToPositions';
 import {
+	defaultAnnotations,
 	defaultBorderclues,
 	defaultCages,
 	defaultCellclues,
+	defaultModifiers,
 	defaultCells,
 	defaultCentermarks,
 	defaultCornermarks,
@@ -14,7 +16,6 @@ import {
 	defaultGameColors,
 	defaultGivens,
 	defaultLogic,
-	defaultNotes,
 	defaultPaths,
 	defaultRegions,
 	defaultRegionSize,
@@ -173,7 +174,8 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): void {
 		colors: defaultGameColors(dim),
 		cornermarks: defaultCornermarks(dim),
 		centermarks: defaultCentermarks(dim),
-		notes: defaultNotes(dim)
+		annotations: defaultAnnotations(),
+		modifiers: defaultModifiers()
 	};
 
 	/* eslint-disable @typescript-eslint/no-empty-function */
@@ -516,7 +518,7 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): void {
 			if (!hasNonconsecutive) return;
 
 			const newFlags = [...(newEditorHistory.logic.flags ?? [])];
-			if (newFlags.indexOf('NegativeBlack')) {
+			if (newFlags.includes('NegativeBlack')) {
 				newFlags.push('NegativeWhite');
 			} else {
 				newFlags.push('Nonconsecutive');
