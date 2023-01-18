@@ -7,15 +7,23 @@
 
 {#if cells}
 	<g id="cells" class="select-none pointer-events-none">
+		<defs>
+			<rect
+				id="cell"
+				x={0}
+				y={0}
+				width={cellSize}
+				height={cellSize}
+				stroke="black"
+				fill="none"
+				stroke-width="0.5"
+				vector-effect="non-scaling-size"
+			/>
+		</defs>
 		{#each cells as row, rowIndex}
 			{#each row as cell, columnIndex}
 				{#if cell}
-					<rect
-						class="w-cell h-cell stroke-black fill-none stroke-0.5"
-						x={cellSize * columnIndex}
-						y={cellSize * rowIndex}
-						vector-effect="non-scaling-size"
-					/>
+					<use href="#cell" x={cellSize * columnIndex} y={cellSize * rowIndex} />
 				{/if}
 			{/each}
 		{/each}
