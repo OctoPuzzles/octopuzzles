@@ -1,16 +1,18 @@
 <script lang="ts">
-	import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
 	import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
 	import { get } from 'svelte/store';
 	import deepCopy from '$utils/deepCopy';
-	import SquareButton from '$ui/SquareButton.svelte';
 	import classNames from 'classnames';
-	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
-	import { hasOpenModals } from '$stores/modalStore';
+	import Keypad from '../Keypad.svelte';
 
 	const { selectedCells } = highlights;
+</script>
 
-	function handleClick(newCornermark: string): void {
+<Keypad
+	getButtonInfo={(digit) => {
+		return { class: 'p-1', customColor: false };
+	}}
+	handleDigit={(digit) => {
 		let currentCornermarks = get(gameHistory.getValue('cornermarks'));
 		let newCornermarks = deepCopy(currentCornermarks);
 		const givens = editorHistory.getClue('givens');
@@ -19,7 +21,7 @@
 		positions = positions.filter((p) => givens[p.row][p.column] === '');
 		if (positions.length === 0) return;
 
-		if (newCornermark === '') {
+		if (digit === '') {
 			const clearAllGameCells = positions.every((p) => currentCornermarks[p.row][p.column] === '');
 			if (clearAllGameCells) {
 				// completely clear the selected cells
@@ -33,14 +35,14 @@
 			}
 		} else {
 			let allCellsHasCornerMark = positions.every((p) =>
-				currentCornermarks[p.row][p.column].includes(newCornermark)
+				currentCornermarks[p.row][p.column].includes(digit)
 			);
 
 			if (!allCellsHasCornerMark) {
 				// Add it to the cells that does not have it
 				positions.forEach((p) => {
-					if (!currentCornermarks[p.row][p.column].includes(newCornermark)) {
-						newCornermarks[p.row][p.column] = (currentCornermarks[p.row][p.column] + newCornermark)
+					if (!currentCornermarks[p.row][p.column].includes(digit)) {
+						newCornermarks[p.row][p.column] = (currentCornermarks[p.row][p.column] + digit)
 							.split('')
 							.sort()
 							.join('');
@@ -51,59 +53,30 @@
 				positions.forEach((p) => {
 					newCornermarks[p.row][p.column] = currentCornermarks[p.row][p.column]
 						.split('')
-						.filter((s) => s !== newCornermark)
+						.filter((s) => s !== digit)
 						.join('');
 				});
 			}
 		}
 
 		gameHistory.set({ cornermarks: newCornermarks });
-	}
-
-	function handleKeyDown(k: KeyboardEvent): void {
-		//do not accept keyboard input when any modal controls are open
-		if (hasOpenModals()) return;
-
-		if (isDeleteKey(k)) {
-			k.preventDefault();
-			handleClick('');
-		} else if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(k.key)) {
-			handleClick(k.key);
-		} else if (k.code.startsWith('Digit')) {
-			handleClick(k.code.replace('Digit', ''));
-		}
-	}
-</script>
-
-<svelte:window on:keydown={handleKeyDown} />
-
-<div class="w-full h-full flex justify-center items-center">
-	<div class="grid grid-cols-3 grid-rows-4 h-max w-max m-auto p-4 gap-4">
-		{#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] as i}
-			<div>
-				<SquareButton variant="secondary" class="p-1" on:click={() => handleClick(String(i))}>
-					<div class="w-full h-full relative">
-						<p
-							class={classNames('absolute', {
-								'left-0': (i - 1) % 3 === 0,
-								'left-1/2 -translate-x-1/2': (i - 1) % 3 === 1,
-								'right-0': (i - 1) % 3 === 2,
-								'top-0': Math.floor((i - 1) / 3) === 0,
-								'top-1/2 -translate-y-1/2': Math.floor((i - 1) / 3) === 1,
-								'bottom-0': Math.floor((i - 1) / 3) === 2,
-								'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2': i === 0
-							})}
-						>
-							{i}
-						</p>
-					</div>
-				</SquareButton>
-			</div>
-		{/each}
-		<div class="col-span-2">
-			<SquareButton class="w-36 p-3" on:click={() => handleClick('')}>
-				<Backspace size={32} />
-			</SquareButton>
+	}}
+>
+	<div slot="digit" let:digit>
+		<div class="w-full h-full relative">
+			<p
+				class={classNames('absolute', {
+					'left-0': (parseInt(digit) - 1) % 3 === 0,
+					'left-1/2 -translate-x-1/2': (parseInt(digit) - 1) % 3 === 1,
+					'right-0': (parseInt(digit) - 1) % 3 === 2,
+					'top-0': Math.floor((parseInt(digit) - 1) / 3) === 0,
+					'top-1/2 -translate-y-1/2': Math.floor((parseInt(digit) - 1) / 3) === 1,
+					'bottom-0': Math.floor((parseInt(digit) - 1) / 3) === 2,
+					'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2': parseInt(digit) === 0
+				})}
+			>
+				{digit}
+			</p>
 		</div>
 	</div>
-</div>
+</Keypad>

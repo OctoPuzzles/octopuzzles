@@ -26,8 +26,8 @@
 		const x = 64 * (column + 0.5);
 		const y = 64 * (row + 0.5);
 		const radius = 64;
-		const startAngle = (360 / numColors) * i;
-		const endAngle = (360 / numColors) * (i + 1) - (numColors === 1 ? 0.0001 : 0);
+		const startAngle = (360 / numColors) * i + 225;
+		const endAngle = (360 / numColors) * (i + 1) - (numColors === 1 ? 0.0001 : 0) + 225;
 		var start = polarToCartesian(x, y, radius, endAngle);
 		var end = polarToCartesian(x, y, radius, startAngle);
 

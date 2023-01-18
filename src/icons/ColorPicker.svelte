@@ -12,7 +12,7 @@
 		fill="none"
 	/>
 	<rect
-		class="fill-current text-white-500 fill-white"
+		class="fill-current text-lightgray-500 fill-lightgray"
 		stroke-width="5"
 		width="58.66666"
 		height="58.66666"
@@ -20,7 +20,7 @@
 		y="40"
 	/>
 	<rect
-		class="fill-current text-gray-500 fill-grey"
+		class="fill-current text-gray-500 fill-gray"
 		stroke-width="5"
 		y="40"
 		x="98.666672"
@@ -76,7 +76,7 @@
 		y="157.33334"
 	/>
 	<rect
-		class="fill-current text-green-500 fill-purple"
+		class="fill-current text-purple-500 fill-purple"
 		stroke-width="5"
 		width="58.66666"
 		height="58.66666"

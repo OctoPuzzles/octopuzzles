@@ -1,15 +1,17 @@
 <script lang="ts">
-	import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
 	import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
 	import { get } from 'svelte/store';
 	import deepCopy from '$utils/deepCopy';
-	import SquareButton from '$ui/SquareButton.svelte';
-	import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
-	import { hasOpenModals } from '$stores/modalStore';
+	import Keypad from '../Keypad.svelte';
 
 	const { selectedCells } = highlights;
+</script>
 
-	const handleClick = (newCentermark: string): void => {
+<Keypad
+	getButtonInfo={(digit) => {
+		return { class: '', customColor: false };
+	}}
+	handleDigit={(digit) => {
 		let currentCentermarks = get(gameHistory.getValue('centermarks'));
 		let newCentermarks = deepCopy(currentCentermarks);
 		const givens = editorHistory.getClue('givens');
@@ -18,7 +20,7 @@
 		positions = positions.filter((p) => givens[p.row][p.column] === '');
 		if (positions.length === 0) return;
 
-		if (newCentermark === '') {
+		if (digit === '') {
 			const clearAllGameCells = positions.every((p) => currentCentermarks[p.row][p.column] === '');
 			if (clearAllGameCells) {
 				// completely clear the selected cells
@@ -32,14 +34,14 @@
 			}
 		} else {
 			let allCellsHasCenterMark = positions.every((p) =>
-				currentCentermarks[p.row][p.column].includes(newCentermark)
+				currentCentermarks[p.row][p.column].includes(digit)
 			);
 
 			if (!allCellsHasCenterMark) {
 				// Add it to the cells that does not have it
 				positions.forEach((p) => {
-					if (!currentCentermarks[p.row][p.column].includes(newCentermark)) {
-						newCentermarks[p.row][p.column] = (currentCentermarks[p.row][p.column] + newCentermark)
+					if (!currentCentermarks[p.row][p.column].includes(digit)) {
+						newCentermarks[p.row][p.column] = (currentCentermarks[p.row][p.column] + digit)
 							.split('')
 							.sort()
 							.join('');
@@ -50,45 +52,16 @@
 				positions.forEach((p) => {
 					newCentermarks[p.row][p.column] = currentCentermarks[p.row][p.column]
 						.split('')
-						.filter((s) => s !== newCentermark)
+						.filter((s) => s !== digit)
 						.join('');
 				});
 			}
 		}
 
 		gameHistory.set({ centermarks: newCentermarks });
-	};
-
-	function handleKeyDown(k: KeyboardEvent): void {
-		//do not accept keyboard input when any modal controls are open
-		if (hasOpenModals()) return;
-
-		if (isDeleteKey(k)) {
-			k.preventDefault();
-			handleClick('');
-		} else if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(k.key)) {
-			handleClick(k.key);
-		}
-	}
-</script>
-
-<svelte:window on:keydown={handleKeyDown} />
-
-<div class="w-full h-full flex justify-center items-center">
-	<div class="grid grid-cols-3 grid-rows-4 h-max w-max m-auto p-4 gap-4">
-		{#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] as i}
-			<div>
-				<SquareButton
-					variant="secondary"
-					text={String(i)}
-					on:click={() => handleClick(String(i))}
-				/>
-			</div>
-		{/each}
-		<div class="col-span-2">
-			<SquareButton class="w-36 p-3" on:click={() => handleClick('')}>
-				<Backspace size={32} />
-			</SquareButton>
-		</div>
+	}}
+>
+	<div slot="digit" let:digit>
+		{digit}
 	</div>
-</div>
+</Keypad>

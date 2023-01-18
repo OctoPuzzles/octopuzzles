@@ -51,6 +51,19 @@ export const numberColorMap: Record<number, Color> = {
 	0: 'White'
 };
 
+export const colorNumberMap: Record<Color, number> = {
+	'LightGray': 1,
+	'Gray' : 2,
+	'Black': 3,
+	'Red': 4,
+	'Yellow': 5,
+	'Green': 6,
+	'Blue': 7,
+	'Orange': 7,
+	'Purple': 8,
+	'White': 9
+};
+
 export const symbolsMap: Record<SymbolType, typeof DiagonalNorthWestToSouthEast> = {
 	Diagonal: DiagonalNorthWestToSouthEast,
 	Arrow: Arrow,
