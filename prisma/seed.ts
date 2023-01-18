@@ -274,9 +274,9 @@ const main = async (): Promise<void> => {
 		create: {
 			userId: 1,
 			publicSince: date1,
-			title: 'Killercage sudoku',
+			title: 'Basic sudoku',
 			description:
-				'Normal sudoku rules apply: Fill each row, column and marked 3x3 box with the numbers 1 to 9 so that no number appears twice.\n\nKiller cages: Within each box marked with dotted lines, every number has to be unique and sum to the number in the top left corner.',
+				'Normal sudoku rules apply: Fill each row, column and marked 3x3 box with the numbers 1 to 9 so that no number appears twice.',
 			points: 0,
 			rank: 0,
 			rows: 9,
