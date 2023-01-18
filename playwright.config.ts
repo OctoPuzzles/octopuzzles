@@ -11,7 +11,8 @@ const config: PlaywrightTestConfig = {
 	use: {
 		// Tell all tests to load signed-in state from 'storageState.json'.
 		storageState: './tests/setup/storageState.json'
-	}
+	},
+	reporter: process.env.CI ? 'github' : 'list'
 };
 
 export default config;
