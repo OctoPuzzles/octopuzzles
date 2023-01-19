@@ -8,9 +8,8 @@
 	import { get } from 'svelte/store';
 	import classNames from 'classnames';
 
-	export let getButtonInfo:
-		| ((digit: string) => { class: string; customColor: boolean })
-		| undefined = undefined;
+	export let getButtonInfo: ((digit: string) => { class: string; custom: boolean }) | undefined =
+		undefined;
 	export let handleDigit: ((digit: string) => void) | undefined = undefined;
 
 	const { selectedCells } = highlights;
@@ -87,10 +86,10 @@
 		{#each ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] as digit}
 			{@const buttonInfo = getButtonInfo
 				? getButtonInfo(digit)
-				: { class: 'text-3xl', customColor: false }}
+				: { class: 'text-3xl', custom: false }}
 			<div>
 				<SquareButton
-					variant={buttonInfo.customColor ? 'customColor' : 'secondary'}
+					variant={buttonInfo.custom ? 'custom' : 'secondary'}
 					class={buttonInfo.class}
 					title={digit}
 					on:click={() => {

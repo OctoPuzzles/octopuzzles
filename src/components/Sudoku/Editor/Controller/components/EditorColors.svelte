@@ -84,7 +84,7 @@
 			{@const color = numberColorMap[number]}
 			<div>
 				<SquareButton
-					variant="customColor"
+					variant="custom"
 					class="text-{color.toLowerCase()}-500 bg-{color.toLowerCase()}-500"
 					on:click={() => handleClick(color)}
 					title={number}

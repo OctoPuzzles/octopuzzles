@@ -10,7 +10,7 @@
 
 <Keypad
 	getButtonInfo={(digit) => {
-		return { class: 'p-1', customColor: false };
+		return { class: 'p-1', custom: false };
 	}}
 	handleDigit={(digit) => {
 		let currentCornermarks = get(gameHistory.getValue('cornermarks'));

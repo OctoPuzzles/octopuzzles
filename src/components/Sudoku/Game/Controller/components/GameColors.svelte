@@ -11,7 +11,7 @@
 <Keypad
 	getButtonInfo={(digit) => {
 		const color = numberColorMap[parseInt(digit)].toLowerCase();
-		return { class: 'text-' + color + '-500 bg-' + color + '-500', customColor: true };
+		return { class: 'text-' + color + '-500 bg-' + color + '-500', custom: true };
 	}}
 	handleDigit={(digit) => {
 		const color = digit === '' ? undefined : numberColorMap[parseInt(digit)];

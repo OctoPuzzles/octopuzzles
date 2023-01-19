@@ -4,12 +4,12 @@
 	import { editorHistory } from '$stores/sudokuStore';
 	import Label from '$ui/Label.svelte';
 	import { logicFlagNames, logicFlagsToLabel } from '$constants';
-	import type { Logic, LogicFlag } from '$models/Sudoku';
+	import type { DoublerType, Logic, LogicFlag, SCellType } from '$models/Sudoku';
+	import Select from '$ui/Select.svelte';
 
 	const sudokuClues = editorHistory.subscribeToClues();
 	const labels = editorHistory.labels;
 
-	let digits = $sudokuClues.logic.digits ?? '1-9';
 	let flags = $sudokuClues.logic.flags ?? [];
 	$: nonstandard = flags.includes('NonStandard');
 	$: diagonalPos = flags.includes('DiagonalPos');
@@ -27,11 +27,42 @@
 	$: negativeBlack = flags.includes('NegativeBlack');
 	$: negativeWhite = flags.includes('NegativeWhite');
 
+	let digits = $sudokuClues.logic.digits ?? getDefaultDigits();
+
+	function getDefaultDigits(): string {
+		return (
+			(flags.includes('SCells') ? '0' : '1') +
+			'-' +
+			($sudokuClues.dimensions.rows -
+				($sudokuClues.dimensions.margins?.top ?? 0) -
+				($sudokuClues.dimensions.margins?.bottom ?? 0))
+		);
+	}
+
+	$: sCellType = $sudokuClues.logic.sCellType ?? 'Both';
+	$: doublerType = $sudokuClues.logic.doublerType ?? 'Unique';
+
+	const sCellTypes: SCellType[] = ['Both', 'Either', 'Average'];
+
+	const sCellTypeLabels: Record<SCellType, string> = {
+		Both: 'Constraints apply to both digits',
+		Either: 'Constraints apply to one digit only',
+		Average: 'Constraints apply to the average of the digits'
+	};
+
+	const doublerTypes: DoublerType[] = ['Unique', 'NonUnique'];
+
+	const doublerTypeLabels: Record<DoublerType, string> = {
+		Unique: 'Each digit must be doubled exactly once',
+		NonUnique: 'Digits may be doubled more than once'
+	};
+
 	function update(): void {
-		//TODO: validate number of digits against grid dimensions, prompt for s-cells, or update digits when s-cells are selected
 		const newLogic: Logic = {
-			digits: digits !== '' ? digits : undefined,
-			flags: flags.length > 0 ? flags : undefined
+			digits: digits !== getDefaultDigits() ? digits : undefined,
+			flags: flags.length > 0 ? flags : undefined,
+			sCellType: flags.includes('SCells') ? sCellType : undefined,
+			doublerType: flags.includes('Doublers') ? doublerType : undefined
 		};
 
 		editorHistory.set({ logic: newLogic });
@@ -45,6 +76,10 @@
 			flags.push(flag);
 		} else {
 			flags.splice(index, 1);
+		}
+
+		if (flagName === 'SCells') {
+			digits = getDefaultDigits();
 		}
 
 		update();
@@ -171,5 +206,21 @@
 				</div>
 			</div>
 		</div>
+		{#if sCells}
+			<Select onChange={update} options={sCellTypes} bind:option={sCellType}>
+				<svelte:fragment slot="label">S-Cell Type</svelte:fragment>
+				<div slot="option" let:option>
+					{sCellTypeLabels[option]}
+				</div>
+			</Select>
+		{/if}
+		{#if doublers}
+			<Select onChange={update} options={doublerTypes} bind:option={doublerType}>
+				<svelte:fragment slot="label">Doubler Type</svelte:fragment>
+				<div slot="option" let:option>
+					{doublerTypeLabels[option]}
+				</div>
+			</Select>
+		{/if}
 	</div>
 </div>

@@ -9,7 +9,7 @@
 
 <Keypad
 	getButtonInfo={(digit) => {
-		return { class: '', customColor: false };
+		return { class: '', custom: false };
 	}}
 	handleDigit={(digit) => {
 		let currentCentermarks = get(gameHistory.getValue('centermarks'));
