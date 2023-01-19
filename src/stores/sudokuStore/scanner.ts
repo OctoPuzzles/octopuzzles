@@ -905,6 +905,8 @@ function createScannerStore() {
 
 		const wrongCells: Position[] = [];
 
+		const clues = get(editorHistory.subscribeToClues());
+
 		if (solution != null) {
 			userSolution.forEach((r, i) => {
 				r.forEach((v, j) => {
@@ -931,56 +933,49 @@ function createScannerStore() {
 				});
 			});
 
-			const regions = editorHistory.getClue('regions');
-			regions.forEach((r) => {
+			clues.regions.forEach((r) => {
 				wrongCells.push(
-					...verifyRegion(r, userSolution, regions).filter(
+					...verifyRegion(r, userSolution, clues).filter(
 						(c) => !wrongCells.some((w) => w.row === c.row && w.column === c.column)
 					)
 				);
 			});
 
-			const paths = editorHistory.getClue('paths');
-			paths.forEach((l) => {
+			clues.paths.forEach((l) => {
 				wrongCells.push(
-					...verifyPath(l, userSolution, paths, regions).filter(
+					...verifyPath(l, userSolution, clues).filter(
 						(p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
 					)
 				);
 			});
 
-			const borderclues = editorHistory.getClue('borderclues');
-			borderclues.forEach((b) => {
+			clues.borderclues.forEach((b) => {
 				wrongCells.push(
-					...verifyBorderClue(b, userSolution).filter(
+					...verifyBorderClue(b, userSolution, clues).filter(
 						(p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
 					)
 				);
 			});
 
-			const cellclues = editorHistory.getClue('cellclues');
-			const dimensions = editorHistory.getClue('dimensions');
-			cellclues.forEach((c) => {
+			clues.cellclues.forEach((c) => {
 				wrongCells.push(
-					...verifyCellClue(c, userSolution, dimensions).filter(
+					...verifyCellClue(c, userSolution, clues).filter(
 						(p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
 					)
 				);
 			});
 
-			const cages = editorHistory.getClue('extendedcages');
-			cages.forEach((k) => {
+			clues.extendedcages.forEach((k) => {
 				wrongCells.push(
-					...verifyCage(k, userSolution).filter(
+					...verifyCage(k, userSolution, clues).filter(
 						(p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
 					)
 				);
 			});
 
-			const logic = editorHistory.getClue('logic');
-			if (logic.flags) {
+			if (clues.logic.flags) {
 				wrongCells.push(
-					...verifyLogic(logic.flags, userSolution, borderclues, dimensions).filter(
+					...verifyLogic(clues.logic.flags, userSolution, clues).filter(
 						(p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
 					)
 				);

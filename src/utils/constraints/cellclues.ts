@@ -4,11 +4,11 @@ import type {
 	CellClueSize,
 	CellClueType,
 	Color,
-	Dimensions,
 	Position,
 	Rotation,
 	SymbolType
 } from '$models/Sudoku';
+import type { EditorHistoryStep } from '$types';
 
 export function emptyCellClue(position: Position, type?: CellClueType): Cellclue {
 	return {
@@ -164,7 +164,7 @@ export function getCellCluesToDraw(clue: Cellclue): Cellclue[] {
 export function verifyCellClue(
 	cellclue: Cellclue,
 	solution: string[][],
-	dimensions: Dimensions
+	clues:EditorHistoryStep
 ): Position[] {
 	switch (cellclue.type) {
 		case 'LittleKillerNW':
@@ -194,10 +194,10 @@ export function verifyCellClue(
 				const cells: Position[] = [];
 				for (
 					let i = cellclue.position.row + rowStep, j = cellclue.position.column + colStep;
-					i >= (dimensions.margins?.top ?? 0) &&
-					i < dimensions.rows - (dimensions.margins?.bottom ?? 0) &&
-					j >= (dimensions.margins?.left ?? 0) &&
-					j < dimensions.columns - (dimensions.margins?.right ?? 0);
+					i >= (clues.dimensions.margins?.top ?? 0) &&
+					i < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) &&
+					j >= (clues.dimensions.margins?.left ?? 0) &&
+					j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0);
 					i += rowStep, j += colStep
 				) {
 					const v = solution[i][j];
@@ -224,16 +224,16 @@ export function verifyCellClue(
 				const target = parseInt(cellclue.text);
 				let rowStep = 0;
 				let colStep = 0;
-				if (cellclue.position.row === (dimensions.margins?.top ?? 0) - 1) {
+				if (cellclue.position.row === (clues.dimensions.margins?.top ?? 0) - 1) {
 					rowStep = 1;
-				} else if (cellclue.position.row === dimensions.rows - (dimensions.margins?.bottom ?? 0)) {
+				} else if (cellclue.position.row === clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0)) {
 					rowStep = -1;
 				}
-				if (cellclue.position.column === (dimensions.margins?.left ?? 0) - 1) {
+				if (cellclue.position.column === (clues.dimensions.margins?.left ?? 0) - 1) {
 					colStep = 1;
 				} else if (
 					cellclue.position.column ===
-					dimensions.columns - (dimensions.margins?.right ?? 0)
+					clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0)
 				) {
 					colStep = -1;
 				}
@@ -271,10 +271,10 @@ export function verifyCellClue(
 				const cells: Position[] = [];
 				for (
 					;
-					i >= (dimensions.margins?.top ?? 0) &&
-					i < (dimensions.margins?.top ?? 0) + dimensions.rows &&
-					j >= (dimensions.margins?.left ?? 0) &&
-					i < (dimensions.margins?.left ?? 0) + dimensions.columns;
+					i >= (clues.dimensions.margins?.top ?? 0) &&
+					i < (clues.dimensions.margins?.top ?? 0) + clues.dimensions.rows &&
+					j >= (clues.dimensions.margins?.left ?? 0) &&
+					i < (clues.dimensions.margins?.left ?? 0) + clues.dimensions.columns;
 					i += rowStep, j += colStep
 				) {
 					const v = solution[i][j];

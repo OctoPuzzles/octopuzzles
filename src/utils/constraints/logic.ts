@@ -1,10 +1,10 @@
-import type { Borderclue, Dimensions, LogicFlag, Position } from '$models/Sudoku';
+import type { LogicFlag, Position } from '$models/Sudoku';
+import type { EditorHistoryStep } from '$types';
 
 export function verifyLogic(
 	flags: LogicFlag[],
 	solution: string[][],
-	borderclues: Borderclue[],
-	dimensions: Dimensions
+	clues:EditorHistoryStep
 ): Position[] {
 	const invalidCells: Position[] = [];
 
@@ -15,13 +15,13 @@ export function verifyLogic(
 	const negativeV = flags.includes('NegativeV');
 	if (nonConsecutive || negativeBlack || negativeWhite || negativeX || negativeV) {
 		for (
-			let i = dimensions.margins?.top ?? 0;
-			i < dimensions.rows - (dimensions.margins?.bottom ?? 0);
+			let i = clues.dimensions.margins?.top ?? 0;
+			i < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0);
 			++i
 		) {
 			for (
-				let j = dimensions.margins?.left ?? 0;
-				j < dimensions.columns - (dimensions.margins?.right ?? 0);
+				let j = clues.dimensions.margins?.left ?? 0;
+				j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0);
 				++j
 			) {
 				const v = solution[i][j];
@@ -35,8 +35,8 @@ export function verifyLogic(
 						const row = i + step.x;
 						const column = j + step.y;
 						if (
-							row < dimensions.rows - (dimensions.margins?.bottom ?? 0) &&
-							column < dimensions.columns - (dimensions.margins?.right ?? 0)
+							row < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) &&
+							column < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0)
 						) {
 							if (solution[row][column] !== '') {
 								nbrCells.push({ row, column });
@@ -62,7 +62,7 @@ export function verifyLogic(
 							const b = parseInt(solution[c.row][c.column]);
 							return (
 								(a === 2 * b || b === 2 * a) &&
-								!borderclues.some(
+								!clues.borderclues.some(
 									(b) =>
 										b.type === 'KropkiBlack' &&
 										b.positions.every(
@@ -86,7 +86,7 @@ export function verifyLogic(
 							const b = parseInt(solution[c.row][c.column]);
 							return (
 								Math.abs(a - b) === 1 &&
-								!borderclues.some(
+								!clues.borderclues.some(
 									(b) =>
 										b.type === 'KropkiWhite' &&
 										b.positions.every(
@@ -110,7 +110,7 @@ export function verifyLogic(
 							const b = parseInt(solution[c.row][c.column]);
 							return (
 								a + b === 10 &&
-								!borderclues.some(
+								!clues.borderclues.some(
 									(b) =>
 										b.type === 'XvX' &&
 										b.positions.every(
@@ -134,7 +134,7 @@ export function verifyLogic(
 							const b = parseInt(solution[c.row][c.column]);
 							return (
 								a + b === 5 &&
-								!borderclues.some(
+								!clues.borderclues.some(
 									(b) =>
 										b.type === 'XvV' &&
 										b.positions.every(
@@ -159,13 +159,13 @@ export function verifyLogic(
 	}
 	if (flags.includes('Entropy')) {
 		for (
-			let i = dimensions.margins?.top ?? 0;
-			i < dimensions.rows - (dimensions.margins?.bottom ?? 0) - 1;
+			let i = clues.dimensions.margins?.top ?? 0;
+			i < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) - 1;
 			++i
 		) {
 			for (
-				let j = dimensions.margins?.left ?? 0;
-				j < dimensions.columns - (dimensions.margins?.right ?? 0) - 1;
+				let j = clues.dimensions.margins?.left ?? 0;
+				j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0) - 1;
 				++j
 			) {
 				const v = solution[i][j];
@@ -219,18 +219,18 @@ export function verifyLogic(
 	}
 	if (flags.includes('Indexed159')) {
 		for (
-			let i = dimensions.margins?.top ?? 0;
-			i < dimensions.rows + (dimensions.margins?.top ?? 0);
+			let i = clues.dimensions.margins?.top ?? 0;
+			i < clues.dimensions.rows + (clues.dimensions.margins?.top ?? 0);
 			++i
 		) {
 			for (const d of [1, 5, 9]) {
-				let v = solution[i][(dimensions.margins?.left ?? 0) + d - 1];
+				let v = solution[i][(clues.dimensions.margins?.left ?? 0) + d - 1];
 				if (v !== '') {
 					const j = parseInt(v) - 1;
 					v = solution[i][j];
 					if (v !== '' && parseInt(v) !== d) {
 						invalidCells.push(
-							{ row: i, column: (dimensions.margins?.left ?? 0) + d - 1 },
+							{ row: i, column: (clues.dimensions.margins?.left ?? 0) + d - 1 },
 							{ row: i, column: j }
 						);
 					}

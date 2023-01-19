@@ -1,4 +1,5 @@
-import type { Color, Fill, Form, Path, PathType, Position, Region } from '$models/Sudoku';
+import type { Color, Fill, Form, Path, PathType, Position } from '$models/Sudoku';
+import type { EditorHistoryStep } from '$types';
 import deepCopy from '$utils/deepCopy';
 import { comparePositions } from '$utils/topLeftOfPositions';
 
@@ -225,15 +226,14 @@ export function getPathsToDraw(path: Path): Path[] {
 export function verifyPath(
 	path: Path,
 	solution: string[][],
-	paths: Path[],
-	regions: Region[]
+	clues:EditorHistoryStep
 ): Position[] {
 	let isValid = true;
 	switch (path.type) {
 		case 'Arrow': {
 			let target = NaN;
 			const p = path.positions[0];
-			const pill = paths.find(
+			const pill = clues.paths.find(
 				(l) =>
 					l.type === 'Pill' && l.positions.some((q) => q.row === p.row && q.column === p.column)
 			);

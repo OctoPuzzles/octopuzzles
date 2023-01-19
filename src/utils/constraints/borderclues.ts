@@ -1,4 +1,5 @@
 import type { Borderclue, BorderClueType, Color, Position, Shape } from '$models/Sudoku';
+import type { EditorHistoryStep } from '$types';
 
 export function emptyBorderClue(
 	positions: [Position, Position],
@@ -70,7 +71,7 @@ export function getBorderCluesToDraw(clue: Borderclue): Borderclue[] {
 	];
 }
 
-export function verifyBorderClue(borderclue: Borderclue, solution: string[][]): Position[] {
+export function verifyBorderClue(borderclue: Borderclue, solution: string[][], clues:EditorHistoryStep): Position[] {
 	let isValid = true;
 
 	if (borderclue.type === 'Quadruple') {

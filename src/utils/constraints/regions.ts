@@ -1,4 +1,5 @@
 import type { Color, Position, Region, RegionType } from '$models/Sudoku';
+import type { EditorHistoryStep } from '$types';
 import deepCopy from '$utils/deepCopy';
 import { comparePositions, topLeftOfPositions } from '$utils/topLeftOfPositions';
 
@@ -49,7 +50,7 @@ export function getRegionsToDraw(region: Region): Region[] {
 	];
 }
 
-export function verifyRegion(region: Region, solution: string[][], regions: Region[]): Position[] {
+export function verifyRegion(region: Region, solution: string[][], clues:EditorHistoryStep): Position[] {
 	switch (region.type) {
 		case 'MagicSquare': {
 			const n = Math.sqrt(region.positions.length);
