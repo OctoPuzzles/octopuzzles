@@ -95,16 +95,16 @@
 	});
 
 	const sudokuClues = editorHistory.subscribeToClues();
-	const userInputs = gameHistory.subscribeToInputs();
+	const gameData = gameHistory.subscribeToInputs();
 
 	let generalSettings = settings.getGroup('general');
 
-	function checkSolution(numbers: string[][]): boolean {
+	function checkSolution(): boolean {
 		if (
-			$userInputs.values.some((r, i) =>
+			$gameData.cellValues.some((r, i) =>
 				r.some(
-					(v, j) =>
-						v === '' && $sudokuClues.givens[i][j] === '' && $sudokuClues.cells[i][j] === true
+					(cell, j) =>
+						!cell.digits && $sudokuClues.givens[i][j] === '' && $sudokuClues.cells[i][j] === true
 				)
 			)
 		) {
@@ -112,7 +112,10 @@
 		}
 
 		if ($solution != null) {
-			if ($solution.length !== numbers.length || $solution[0].length !== numbers[0].length) {
+			if (
+				$solution.length !== $gameData.cellValues.length ||
+				$solution[0].length !== $gameData.cellValues[0].length
+			) {
 				return false;
 			}
 		}
@@ -135,7 +138,7 @@
 		}
 	}
 
-	$: if (checkSolution($userInputs.values)) {
+	$: if (checkSolution()) {
 		clearInterval(timer);
 		trpc().mutation('userStats:solved', { sudokuId: data.sudoku.id, solveTime: t });
 		if (data?.gameData) {
@@ -180,6 +183,6 @@
 	</div>
 </div>
 
-<SudokuGame clues={$sudokuClues} userInputs={$userInputs} />
+<SudokuGame clues={$sudokuClues} gameData={$gameData} />
 
 <SudokuInfo sudoku={data.sudoku} {takeScreenshot} />

@@ -1,5 +1,6 @@
+import { defaultAnnotations, defaultCellValues } from '$utils/defaults';
 import { z } from 'zod';
-import { ColorValidator, AnnotationsValidator, CellModifiersValidator } from './Sudoku';
+import { ColorValidator, GameDataValidator } from './Sudoku';
 
 export const GameValuesValidator = z.array(z.array(z.string()));
 export type GameValues = z.infer<typeof GameValuesValidator>;
@@ -24,14 +25,10 @@ export const SolutionStepValidator = z.object({
 	cornermarks: CornermarksValidator,
 	/** Centermarks on the solution step */
 	centermarks: CentermarksValidator,
-	/** Notes on the solution step (Obsolete)*/
-	notes: NotesValidator.optional(),
-	/** A list of colors on each cell */
-	colors: GameColorsValidator,
 	/** Notes on the solution step */
-	annotations: AnnotationsValidator.default([]),
-	/** A list of modifiers applied to each cell */
-	modifiers: CellModifiersValidator.default([])
+	notes: NotesValidator,
+	/** A list of colors on each cell */
+	colors: GameColorsValidator
 });
 export type SolutionStep = z.infer<typeof SolutionStepValidator>;
 
@@ -39,8 +36,13 @@ export type SolutionStep = z.infer<typeof SolutionStepValidator>;
 export const WalkthroughStepValidator = z.object({
 	/** A description of the logic used etc. */
 	description: z.string(),
-	/** The actual important step */
-	step: SolutionStepValidator
+	/** (Obsolete) The actual important step */
+	step: SolutionStepValidator.optional(),
+	/** The game state at this step*/
+	gameData: GameDataValidator.default({
+		cellValues: defaultCellValues(),
+		annotations: defaultAnnotations()
+	})
 });
 export type WalkthroughStep = z.infer<typeof WalkthroughStepValidator>;
 

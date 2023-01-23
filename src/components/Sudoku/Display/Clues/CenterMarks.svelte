@@ -1,51 +1,48 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import type { Dimensions, Givens, CellModifiers } from '$models/Sudoku';
-	import type { Centermarks, GameValues } from '$models/Walkthrough';
+	import type { Dimensions, Givens, GameData } from '$models/Sudoku';
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
 	export let dimensions: Dimensions;
-	export let centermarks: Centermarks | undefined;
+	export let gameData: GameData | undefined;
 	export let givens: Givens;
-	export let values: GameValues | undefined;
-	export let modifiers: CellModifiers | undefined;
 </script>
 
-<g id="centermarks" class="pointer-events-none">
-	{#each arrayfrom0ToN(dimensions.rows) as row}
-		{#each arrayfrom0ToN(dimensions.columns) as column}
-			{@const centermark = centermarks?.[row]?.[column]}
-			{#if centermark && centermark.length > 0 && !givens[row][column]}
-				{@const value = values?.[row]?.[column] ?? ''}
-				{@const sCell = modifiers?.some(
-					(m) => m.type === 'SCell' && m.position.row === row && m.position.column === column
-				)}
-				{#if value.length === 0}
-					<text
-						x={cellSize * (column + 0.5)}
-						y={cellSize * (row + 0.55)}
-						dominant-baseline="middle"
-						class:small={centermark.length > 6}
-						class="fill-current text-blue-700 select-none"
-					>
-						{centermark}
-					</text>
-				{:else if sCell && !value.includes('/')}
-					<text
-						x={cellSize * (column + 0.75)}
-						y={cellSize * (row + 0.85)}
-						dominant-baseline="middle"
-						class:small={centermark.length <= 6}
-						class:x-small={centermark.length > 6}
-						class="fill-current text-blue-700 select-none"
-					>
-						{centermark}
-					</text>
+{#if gameData}
+	<g id="centermarks" class="pointer-events-none">
+		{#each arrayfrom0ToN(dimensions.rows) as row}
+			{#each arrayfrom0ToN(dimensions.columns) as column}
+				{@const centermarks = gameData?.cellValues[row][column].centermarks}
+				{#if centermarks && !givens[row][column]}
+					{@const digits = gameData?.cellValues[row][column].digits}
+					{@const sCell = gameData?.cellValues[row][column].modifiers?.some((m) => m === 'SCell')}
+					{#if !digits}
+						<text
+							x={cellSize * (column + 0.5)}
+							y={cellSize * (row + 0.55)}
+							dominant-baseline="middle"
+							class:small={centermarks.length > 6}
+							class="fill-current text-blue-700 select-none"
+						>
+							{centermarks.join('')}
+						</text>
+					{:else if sCell && digits.length === 1}
+						<text
+							x={cellSize * (column + 0.75)}
+							y={cellSize * (row + 0.85)}
+							dominant-baseline="middle"
+							class:small={centermarks.length <= 6}
+							class:x-small={centermarks.length > 6}
+							class="fill-current text-blue-700 select-none"
+						>
+							{centermarks.join('')}
+						</text>
+					{/if}
 				{/if}
-			{/if}
+			{/each}
 		{/each}
-	{/each}
-</g>
+	</g>
+{/if}
 
 <style>
 	text {

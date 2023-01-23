@@ -1,4 +1,4 @@
-import type { Color, Fill, Form, Path, PathType, Position } from '$models/Sudoku';
+import type { CellValues, Color, Fill, Form, Path, PathType, Position } from '$models/Sudoku';
 import type { EditorHistoryStep } from '$types';
 import deepCopy from '$utils/deepCopy';
 import { comparePositions } from '$utils/topLeftOfPositions';
@@ -223,11 +223,7 @@ export function getPathsToDraw(path: Path): Path[] {
 	return drawPaths;
 }
 
-export function verifyPath(
-	path: Path,
-	solution: string[][],
-	clues:EditorHistoryStep
-): Position[] {
+export function verifyPath(path: Path, solution: CellValues, clues: EditorHistoryStep): Position[] {
 	let isValid = true;
 	switch (path.type) {
 		case 'Arrow': {
@@ -244,11 +240,11 @@ export function verifyPath(
 					deepCopy(pill.positions)
 						.sort(comparePositions)
 						.some((p) => {
-							if (solution[p.row][p.column] === '') {
+							if (!solution[p.row][p.column].digits) {
 								return true;
 							}
 
-							t += solution[p.row][p.column];
+							t += solution[p.row][p.column].digits?.[0] ?? '';
 
 							return false;
 						})
@@ -258,8 +254,8 @@ export function verifyPath(
 
 				target = parseInt(t);
 			} else {
-				const t = solution[p.row][p.column];
-				if (t === '') {
+				const t = solution[p.row][p.column].digits?.[0];
+				if (!t) {
 					break;
 				}
 
@@ -272,8 +268,8 @@ export function verifyPath(
 			path.positions.forEach((p, i) => {
 				if (i === 0) return;
 
-				const v = solution[p.row][p.column];
-				if (v !== '') {
+				const v = solution[p.row][p.column].digits?.[0];
+				if (v) {
 					total += parseInt(v);
 					++count;
 				}
@@ -294,8 +290,8 @@ export function verifyPath(
 
 			for (let n = 0; n < path.positions.length; ++n) {
 				const p = path.positions[n];
-				const value = solution[p.row][p.column];
-				if (value !== '') {
+				const value = solution[p.row][p.column].digits?.[0];
+				if (value) {
 					if (prev !== '' && value <= prev) {
 						isValid = false;
 						break;
@@ -310,10 +306,10 @@ export function verifyPath(
 		case 'Lockout': {
 			const p = path.positions[0];
 			const q = path.positions[path.positions.length - 1];
-			const a = solution[p.row][p.column];
-			const b = solution[q.row][q.column];
+			const a = solution[p.row][p.column].digits?.[0];
+			const b = solution[q.row][q.column].digits?.[0];
 
-			if (a !== '' && b !== '') {
+			if (a && b) {
 				const x = parseInt(a);
 				const y = parseInt(b);
 				const min = Math.min(x, y);
@@ -325,8 +321,8 @@ export function verifyPath(
 					isValid = !path.positions.some((p, i) => {
 						if (i === 0 || i === path.positions.length - 1) return false;
 
-						const v = solution[p.row][p.column];
-						if (v === '') return false;
+						const v = solution[p.row][p.column].digits?.[0];
+						if (!v) return false;
 
 						const n = parseInt(v);
 						if (path.type === 'Lockout') {
@@ -344,8 +340,8 @@ export function verifyPath(
 			let max = NaN;
 			if (
 				!path.positions.some((p) => {
-					const v = solution[p.row][p.column];
-					if (v === '') return true;
+					const v = solution[p.row][p.column].digits?.[0];
+					if (!v) return true;
 
 					const n = parseInt(v);
 					if (isNaN(min)) {
@@ -369,8 +365,8 @@ export function verifyPath(
 
 			for (let n = 0; n < path.positions.length; ++n) {
 				const p = path.positions[n];
-				const v = solution[p.row][p.column];
-				if (v !== '') {
+				const v = solution[p.row][p.column].digits?.[0];
+				if (v) {
 					const n = parseInt(v);
 					if (!isNaN(prev) && Math.abs(n - prev) < diff) {
 						isValid = false;
@@ -389,9 +385,9 @@ export function verifyPath(
 			for (let n = 0; n < Math.floor(path.positions.length / 2); ++n) {
 				const p = path.positions[n];
 				const q = path.positions[path.positions.length - n - 1];
-				const a = solution[p.row][p.column];
-				const b = solution[q.row][q.column];
-				if (a !== '' && b !== '' && a !== b) {
+				const a = solution[p.row][p.column].digits?.[0];
+				const b = solution[q.row][q.column].digits?.[0];
+				if (a && b && a !== b) {
 					unmirrored.push(p, q);
 				}
 			}
@@ -402,8 +398,8 @@ export function verifyPath(
 			let total = 0;
 			let count = 0;
 			const invalidCells = path.positions.filter((p) => {
-				const v = solution[p.row][p.column];
-				if (v !== '') {
+				const v = solution[p.row][p.column].digits?.[0];
+				if (v) {
 					const n = parseInt(v);
 					total += n;
 					++count;
@@ -428,10 +424,10 @@ export function verifyPath(
 		case 'ProductSum': {
 			const p = path.positions[0];
 			const q = path.positions[path.positions.length - 1];
-			const a = solution[p.row][p.column];
-			const b = solution[q.row][q.column];
+			const a = solution[p.row][p.column].digits?.[0];
+			const b = solution[q.row][q.column].digits?.[0];
 
-			if (a !== '' && b !== '') {
+			if (a && b) {
 				const product = parseInt(a) * parseInt(b);
 				let total = 0;
 				let count = 0;
@@ -439,8 +435,8 @@ export function verifyPath(
 				path.positions.forEach((p, i) => {
 					if (i === 0 || i === path.positions.length - 1) return;
 
-					const v = solution[p.row][p.column];
-					if (v !== '') {
+					const v = solution[p.row][p.column].digits?.[0];
+					if (v) {
 						total += parseInt(v);
 						++count;
 					}
@@ -459,10 +455,10 @@ export function verifyPath(
 				const p = path.positions[i - 2];
 				const q = path.positions[i - 1];
 				const r = path.positions[i];
-				const u = solution[p.row][p.column];
-				const v = solution[q.row][q.column];
-				const w = solution[r.row][r.column];
-				if (u !== '' && v !== '' && w !== '') {
+				const u = solution[p.row][p.column].digits?.[0];
+				const v = solution[q.row][q.column].digits?.[0];
+				const w = solution[r.row][r.column].digits?.[0];
+				if (u && v && w) {
 					const a = Math.ceil(parseInt(u) / 3);
 					const b = Math.ceil(parseInt(v) / 3);
 					const c = Math.ceil(parseInt(w) / 3);
@@ -481,8 +477,8 @@ export function verifyPath(
 		case 'Even': {
 			const invalidCells: Position[] = [];
 			path.positions.forEach((p) => {
-				const value = solution[p.row][p.column];
-				if (value !== '') {
+				const value = solution[p.row][p.column].digits?.[0];
+				if (value) {
 					const digit = parseInt(value);
 					if (digit % 2 !== (path.type === 'Odd' ? 1 : 0)) {
 						invalidCells.push(p);
@@ -497,9 +493,9 @@ export function verifyPath(
 			for (let i = 1; i < path.positions.length; ++i) {
 				const p = path.positions[i - 1];
 				const q = path.positions[i];
-				const u = solution[p.row][p.column];
-				const v = solution[q.row][q.column];
-				if (u !== '' && v !== '') {
+				const u = solution[p.row][p.column].digits?.[0];
+				const v = solution[q.row][q.column].digits?.[0];
+				if (u && v) {
 					const a = parseInt(u) % 2;
 					const b = parseInt(v) % 2;
 					if (a === b) {

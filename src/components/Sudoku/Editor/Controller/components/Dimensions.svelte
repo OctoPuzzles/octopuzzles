@@ -7,15 +7,11 @@
 		defaultCages,
 		defaultCellclues,
 		defaultCells,
-		defaultCentermarks,
-		defaultCornermarks,
 		defaultEditorColors,
-		defaultGameColors,
 		defaultGivens,
-		defaultModifiers,
 		defaultPaths,
-		defaultValues,
-		defaultRegions
+		defaultRegions,
+		defaultCellValues
 	} from '$utils/defaults';
 	import { editorHistory, gameHistory, setMargins } from '$stores/sudokuStore';
 	import type { Dimensions } from '$models/Sudoku';
@@ -77,12 +73,8 @@
 				)
 		) {
 			gameHistory.set({
-				values: defaultValues(newDimensions),
-				centermarks: defaultCentermarks(newDimensions),
-				cornermarks: defaultCornermarks(newDimensions),
-				colors: defaultGameColors(newDimensions),
-				annotations: defaultAnnotations(),
-				modifiers: defaultModifiers()
+				cellValues: defaultCellValues(newDimensions),
+				annotations: defaultAnnotations()
 			});
 			editorHistory.set({
 				dimensions: newDimensions,

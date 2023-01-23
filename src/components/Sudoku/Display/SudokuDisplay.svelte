@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import type { EditorHistoryStep, GameHistoryStep } from '$types';
+	import type { EditorHistoryStep } from '$types';
 	import BorderClues from './Clues/borderclues/BorderClues.svelte';
 	import CellClues from './Clues/CellClues.svelte';
 	import Cells from './Clues/Cells.svelte';
@@ -14,7 +14,7 @@
 	import Notes from './Clues/Notes.svelte';
 	import Logic from './Clues/Logic.svelte';
 	import Regions from './Clues/Regions.svelte';
-	import type { Position } from '$models/Sudoku';
+	import type { Position, GameData } from '$models/Sudoku';
 	import Interface from './Clues/Interface.svelte';
 	import type {
 		ArrowHandler,
@@ -23,7 +23,7 @@
 	} from '$stores/sudokuStore/interactionHandlers';
 
 	export let clues: EditorHistoryStep;
-	export let userInputs: GameHistoryStep | undefined = undefined;
+	export let gameData: GameData | undefined = undefined;
 	export let selectedCells: Position[] | undefined = undefined;
 	export let highlightedCells: Position[] | undefined = undefined;
 	export let wrongCells: Position[] | undefined = undefined;
@@ -40,11 +40,7 @@
 	viewBox="-2 -2 {clues.dimensions.columns * cellSize + 4} {clues.dimensions.rows * cellSize + 4}"
 	class="max-h-full max-w-full"
 >
-	<Colors
-		editorColors={clues.colors}
-		gameColors={userInputs?.colors}
-		dimensions={clues.dimensions}
-	/>
+	<Colors editorColors={clues.colors} {gameData} dimensions={clues.dimensions} />
 	<g id="highlights">
 		{#if wrongCells}
 			{#each wrongCells as cell}
@@ -89,30 +85,13 @@
 	<Paths paths={clues.paths} />
 	<KillerCages cages={clues.extendedcages} dimensions={clues.dimensions} />
 	<Cells cells={clues.cells} />
-	<Notes annotations={userInputs?.annotations} {onClickNote} />
+	<Notes annotations={gameData?.annotations} {onClickNote} />
 	<Regions regions={clues.regions} dimensions={clues.dimensions} />
 	<BorderClues borderClues={clues.borderclues} />
 	<CellClues cellClues={clues.cellclues} />
-	<Modifiers modifiers={userInputs?.modifiers} />
-	<CornerMarks
-		values={userInputs?.values}
-		givens={clues.givens}
-		dimensions={clues.dimensions}
-		cornermarks={userInputs?.cornermarks}
-		modifiers={userInputs?.modifiers}
-	/>
-	<CenterMarks
-		values={userInputs?.values}
-		givens={clues.givens}
-		dimensions={clues.dimensions}
-		centermarks={userInputs?.centermarks}
-		modifiers={userInputs?.modifiers}
-	/>
-	<Numbers
-		values={userInputs?.values}
-		givens={clues.givens}
-		dimensions={clues.dimensions}
-		modifiers={userInputs?.modifiers}
-	/>
+	<Modifiers {gameData} dimensions={clues.dimensions} />
+	<CornerMarks {gameData} givens={clues.givens} dimensions={clues.dimensions} />
+	<CenterMarks {gameData} givens={clues.givens} dimensions={clues.dimensions} />
+	<Numbers {gameData} givens={clues.givens} dimensions={clues.dimensions} />
 	<Logic logic={clues.logic} dimensions={clues.dimensions} />
 </svg>

@@ -1,4 +1,11 @@
-import type { Borderclue, BorderClueType, Color, Position, Shape } from '$models/Sudoku';
+import type {
+	Borderclue,
+	BorderClueType,
+	CellValues,
+	Color,
+	Position,
+	Shape
+} from '$models/Sudoku';
 import type { EditorHistoryStep } from '$types';
 
 export function emptyBorderClue(
@@ -71,7 +78,11 @@ export function getBorderCluesToDraw(clue: Borderclue): Borderclue[] {
 	];
 }
 
-export function verifyBorderClue(borderclue: Borderclue, solution: string[][], clues:EditorHistoryStep): Position[] {
+export function verifyBorderClue(
+	borderclue: Borderclue,
+	solution: CellValues,
+	clues: EditorHistoryStep
+): Position[] {
 	let isValid = true;
 
 	if (borderclue.type === 'Quadruple') {
@@ -79,12 +90,12 @@ export function verifyBorderClue(borderclue: Borderclue, solution: string[][], c
 			const p = borderclue.positions[0];
 			const q = borderclue.positions[1];
 			const values = [
-				solution[p.row][p.column],
-				solution[p.row][q.column],
-				solution[q.row][q.column],
-				solution[q.row][p.column]
+				solution[p.row][p.column].digits?.[0],
+				solution[p.row][q.column].digits?.[0],
+				solution[q.row][q.column].digits?.[0],
+				solution[q.row][p.column].digits?.[0]
 			];
-			if (!values.some((v) => v === '')) {
+			if (!values.some((v) => !v)) {
 				isValid = borderclue.text.split(',').every((v) => {
 					const i = values.findIndex((u) => u === v);
 					if (i !== -1) {
@@ -101,10 +112,10 @@ export function verifyBorderClue(borderclue: Borderclue, solution: string[][], c
 	} else {
 		const p = borderclue.positions[0];
 		const q = borderclue.positions[1];
-		const a = solution[p.row][p.column];
-		const b = solution[q.row][q.column];
+		const a = solution[p.row][p.column].digits?.[0];
+		const b = solution[q.row][q.column].digits?.[0];
 
-		if (a === '' || b === '') return [];
+		if (!a || !b) return [];
 
 		const x = parseInt(a);
 		const y = parseInt(b);

@@ -32,23 +32,11 @@ function createWalkthroughStore() {
 
 	function addStep(stepIndex = -1, replace = false): void {
 		const currentSteps = deepCopy(get(steps));
-		const values = deepCopy(get(gameHistory.getValue('values')));
-		const cornermarks = deepCopy(get(gameHistory.getValue('cornermarks')));
-		const centermarks = deepCopy(get(gameHistory.getValue('centermarks')));
-		const colors = deepCopy(get(gameHistory.getValue('colors')));
-		const annotations = deepCopy(get(gameHistory.getValue('annotations')));
-		const modifiers = deepCopy(get(gameHistory.getValue('modifiers')));
+		const gameData = deepCopy(get(gameHistory.subscribeToInputs()));
 
 		const newStep = {
 			description: stepIndex >= 0 && replace ? currentSteps[stepIndex].description : '',
-			step: {
-				values,
-				cornermarks,
-				centermarks,
-				colors,
-				annotations,
-				modifiers
-			},
+			gameData,
 			timestamp: new Date()
 		};
 

@@ -5,6 +5,7 @@
 	import { scanner } from '$stores/sudokuStore/scanner';
 	import { settings } from '$stores/settingsStore';
 	import Keypad from '../Keypad.svelte';
+	import { undefinedIfEmpty } from '$utils/undefinedIfEmpty';
 
 	const { selectedCells } = highlights;
 </script>
@@ -15,15 +16,12 @@
 		const positions = get(selectedCells).filter((p) => !(givens[p.row]?.[p.column] !== ''));
 		if (positions.length === 0) return;
 
-		const currentValues = get(gameHistory.getValue('values'));
-		const currentModifiers = get(gameHistory.getValue('modifiers'));
-		const newValues = deepCopy(currentValues);
-		const newCentermarks = deepCopy(get(gameHistory.getValue('centermarks')));
-		const newCornermarks = deepCopy(get(gameHistory.getValue('cornermarks')));
+		const currentCellValues = get(gameHistory.getValue('cellValues'));
+		const newCellValues = deepCopy(currentCellValues);
 
 		// Check if we should clear all game cells
 		const clearAllGameCells =
-			digit === '' && positions.every((p) => currentValues[p.row][p.column] === '');
+			digit === '' && positions.every((p) => !currentCellValues[p.row][p.column].digits);
 		if (clearAllGameCells) {
 			// clear all the cells in the game
 			gameHistory.clearCells(positions);
@@ -36,55 +34,44 @@
 			if (digit === '') {
 				for (const position of positions) {
 					// If the cell is already empty
-					if (newValues[position.row][position.column] === '') continue;
+					if (!newCellValues[position.row][position.column].digits) continue;
 
 					// Delete the value in the cell
-					newValues[position.row][position.column] = '';
+					delete newCellValues[position.row][position.column].digits;
 					anyChanges = true;
 				}
 			} else {
 				// We are putting some number in the cell
 				let allCellsHaveValue = positions.every((p) => {
-					const isSCell = currentModifiers.some(
-						(m) => m.type === 'SCell' && m.position.row === p.row && m.position.column === p.column
-					);
-					if (isSCell) {
-						return currentValues[p.row][p.column].split('/').includes(digit);
-					} else {
-						return currentValues[p.row][p.column] === digit;
-					}
+					return currentCellValues[p.row][p.column].digits?.includes(digit);
 				});
 
 				if (!allCellsHaveValue) {
 					// Add it to the cells that do not have it
 					positions.forEach((p) => {
-						const isSCell = currentModifiers.some(
-							(m) =>
-								m.type === 'SCell' && m.position.row === p.row && m.position.column === p.column
+						const isSCell = currentCellValues[p.row][p.column].modifiers?.some(
+							(m) => m === 'SCell'
 						);
-						if (isSCell && currentValues[p.row][p.column] !== '') {
-							let cellValues = currentValues[p.row][p.column].split('/');
-
-							newValues[p.row][p.column] = [cellValues[0], digit].sort().join('/');
-							newCentermarks[p.row][p.column] = '';
-							newCornermarks[p.row][p.column] = '';
-						} else if (currentValues[p.row][p.column] !== digit) {
+						if (isSCell && currentCellValues[p.row][p.column].digits) {
+							newCellValues[p.row][p.column].digits = [
+								currentCellValues[p.row][p.column].digits?.[0] ?? '',
+								digit
+							].sort();
+							delete newCellValues[p.row][p.column].centermarks;
+							delete newCellValues[p.row][p.column].cornermarks;
+						} else if (!currentCellValues[p.row][p.column].digits?.includes(digit)) {
 							// Insert the number
-							newValues[p.row][p.column] = digit;
+							newCellValues[p.row][p.column].digits = [digit];
 							if (isSCell) {
-								positions.forEach((p) => {
-									newCentermarks[p.row][p.column] = newCentermarks[p.row][p.column]
-										.split('')
-										.filter((s) => s !== digit)
-										.join('');
-									newCornermarks[p.row][p.column] = newCornermarks[p.row][p.column]
-										.split('')
-										.filter((s) => s !== digit)
-										.join('');
-								});
+								newCellValues[p.row][p.column].centermarks = undefinedIfEmpty(
+									newCellValues[p.row][p.column].centermarks?.filter((s) => s !== digit)
+								);
+								newCellValues[p.row][p.column].cornermarks = undefinedIfEmpty(
+									newCellValues[p.row][p.column].cornermarks?.filter((s) => s !== digit)
+								);
 							} else {
-								newCentermarks[p.row][p.column] = '';
-								newCornermarks[p.row][p.column] = '';
+								delete newCellValues[p.row][p.column].centermarks;
+								delete newCellValues[p.row][p.column].cornermarks;
 							}
 						} else {
 							return;
@@ -95,16 +82,9 @@
 				} else {
 					// Remove it from all cells
 					positions.forEach((p) => {
-						const isSCell = currentModifiers.some(
-							(m) =>
-								m.type === 'SCell' && m.position.row === p.row && m.position.column === p.column
+						newCellValues[p.row][p.column].digits = undefinedIfEmpty(
+							currentCellValues[p.row][p.column].digits?.filter((d) => d !== digit)
 						);
-						if (isSCell && currentValues[p.row][p.column].includes('/')) {
-							newValues[p.row][p.column] =
-								currentValues[p.row][p.column].split('/').find((v) => v !== digit) ?? '';
-						} else {
-							newValues[p.row][p.column] = '';
-						}
 						anyChanges = true;
 					});
 				}
@@ -112,9 +92,7 @@
 				// If there has actually been any changes, update the game history
 				if (anyChanges) {
 					gameHistory.set({
-						values: newValues,
-						cornermarks: newCornermarks,
-						centermarks: newCentermarks
+						cellValues: newCellValues
 					});
 
 					if (runScan) {

@@ -2,7 +2,7 @@ import type {
 	Annotations,
 	Borderclues,
 	Cellclues,
-	CellModifiers,
+	CellData,
 	Dimensions,
 	Extendedcages,
 	Logic,
@@ -115,16 +115,13 @@ function defaultItem<T>(
 	value: T,
 	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
 ): T[][] {
-	return Array(dimensions.rows).fill(Array(dimensions.columns).fill(value));
+	return Array(dimensions.rows).fill(Array(dimensions.columns).fill(deepCopy(value)));
 }
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const defaultEditorColors = (
 	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
 ) => defaultItem(null, dimensions);
-export const defaultGameColors = (
-	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem([], dimensions);
 export const defaultCells = (
 	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
 ) => {
@@ -146,17 +143,10 @@ export const defaultCells = (
 export const defaultGivens = (
 	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
 ) => defaultItem('', dimensions);
-export const defaultCornermarks = (
+export const defaultCellValues = (
 	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem('', dimensions);
-export const defaultCentermarks = (
-	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem('', dimensions);
-export const defaultValues = (
-	dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem('', dimensions);
+) => defaultItem({} as CellData, dimensions);
 export const defaultAnnotations = (): Annotations => [];
-export const defaultModifiers = (): CellModifiers => [];
 export const defaultCages = (): Extendedcages => [];
 export const defaultBorderclues = (): Borderclues => [];
 export const defaultCellclues = (): Cellclues => [];

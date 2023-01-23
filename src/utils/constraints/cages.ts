@@ -1,4 +1,4 @@
-import type { CageType, Color, Extendedcage, Position } from '$models/Sudoku';
+import type { CageType, CellValues, Color, Extendedcage, Position } from '$models/Sudoku';
 import type { EditorHistoryStep } from '$types';
 
 export function emptyCage(positions: Position[], type?: CageType): Extendedcage {
@@ -13,7 +13,11 @@ export function cageDefaults(type: CageType | null | 'CUSTOM'): {
 	return { text: '', color: 'Black', uniqueDigits: type === 'Killer' };
 }
 
-export function verifyCage(cage: Extendedcage, solution: string[][], clues:EditorHistoryStep): Position[] {
+export function verifyCage(
+	cage: Extendedcage,
+	solution: CellValues,
+	clues: EditorHistoryStep
+): Position[] {
 	let isValid = true;
 
 	switch (cage.type) {
@@ -22,12 +26,12 @@ export function verifyCage(cage: Extendedcage, solution: string[][], clues:Edito
 				const target = parseInt(cage.text);
 				if (!isNaN(target)) {
 					const values = cage.positions.map((p) => {
-						return solution[p.row][p.column];
+						return solution[p.row][p.column].digits?.[0];
 					});
 					let total = 0;
 					let count = 0;
 					values.forEach((v) => {
-						if (v !== '') {
+						if (v) {
 							total += parseInt(v);
 							++count;
 						}

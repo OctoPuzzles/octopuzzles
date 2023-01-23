@@ -1,3 +1,4 @@
+import type { Annotation } from '$models/Sudoku';
 import {
 	WalkthroughStepValidator,
 	WalkthroughValidator,
@@ -20,13 +21,36 @@ export default trpc
 			});
 			const walkthrough: Walkthrough | null =
 				walkthroughRaw !== null ? WalkthroughValidator.parse(walkthroughRaw) : null;
-			walkthrough?.steps?.forEach(s => {
-				s.step.notes?.forEach((row, i) => {
-					row.forEach((note, j) => {
-						s.step.annotations.push({positions:[{row:i, column:j}], type:'Note', details:note})
-					});
-				});
-				s.step.notes = undefined;
+			walkthrough?.steps?.forEach((s) => {
+				//migrate old style game data
+				if (s.step) {
+					const annotations: Annotation[] = [];
+					s.gameData = {
+						cellValues: s.step.values.map((row, i) => {
+							return row.map((digit, j) => {
+								const centermarks = s.step?.centermarks[i][j] ?? '';
+								const cornermarks = s.step?.cornermarks[i][j] ?? '';
+								const colors = s.step?.colors[i][j] ?? [];
+								const note = s.step?.notes[i][j] ?? '';
+								if (note !== '') {
+									annotations.push({
+										positions: [{ row: i, column: j }],
+										type: 'Note',
+										details: note
+									});
+								}
+								return {
+									digits: digit !== '' ? [digit] : undefined,
+									cornermarks: cornermarks !== '' ? cornermarks.split('') : undefined,
+									centermarks: centermarks !== '' ? centermarks.split('') : undefined,
+									colors: colors.length > 0 ? colors : undefined
+								};
+							});
+						}),
+						annotations
+					};
+					delete s.step;
+				}
 			});
 			return walkthrough;
 		}

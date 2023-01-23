@@ -228,17 +228,10 @@ export const LogicFlagValidator = z.enum([
 ]);
 export type LogicFlag = z.infer<typeof LogicFlagValidator>;
 
-export const SCellTypeValidator = z.enum([
-	'Both',
-	'Either',
-	'Average'
-]);
+export const SCellTypeValidator = z.enum(['Both', 'Either', 'Average']);
 export type SCellType = z.infer<typeof SCellTypeValidator>;
 
-export const DoublerTypeValidator = z.enum([
-	'Unique',
-	'NonUnique'
-]);
+export const DoublerTypeValidator = z.enum(['Unique', 'NonUnique']);
 export type DoublerType = z.infer<typeof DoublerTypeValidator>;
 
 export const LogicValidator = z.object({
@@ -250,9 +243,7 @@ export const LogicValidator = z.object({
 });
 export type Logic = z.infer<typeof LogicValidator>;
 
-export const AnnotationTypeValidator = z.enum([
-	'Note'
-]);
+export const AnnotationTypeValidator = z.enum(['Note']);
 export type AnnotationType = z.infer<typeof AnnotationTypeValidator>;
 
 export const AnnotationValidator = z.object({
@@ -263,17 +254,7 @@ export const AnnotationValidator = z.object({
 });
 export type Annotation = z.infer<typeof AnnotationValidator>;
 
-export const CellModifierTypeValidator = z.enum([
-	'SCell',
-	'Doubler'
-]);
-export type CellModifierType = z.infer<typeof CellModifierTypeValidator>;
-
-export const CellModifierValidator = z.object({
-	position: PositionValidator,
-	type: CellModifierTypeValidator,
-	value: z.string().nullish()
-});
+export const CellModifierValidator = z.enum(['SCell', 'Doubler']);
 export type CellModifier = z.infer<typeof CellModifierValidator>;
 
 export const CellsValidator = z.array(z.array(z.boolean()));
@@ -363,3 +344,21 @@ export const NewSudokuValidator = SudokuCluesValidator.extend({
 	description: z.string().max(4096).min(1)
 });
 export const UpdateSudokuValidator = NewSudokuValidator.partial();
+
+export const CellDataValidator = z.object({
+	digits: z.array(z.string().length(1)).optional(),
+	centermarks: z.array(z.string().length(1)).optional(),
+	cornermarks: z.array(z.string().length(1)).optional(),
+	colors: z.array(ColorValidator).optional(),
+	modifiers: z.array(CellModifierValidator).optional()
+});
+export type CellData = z.infer<typeof CellDataValidator>;
+
+export const CellValuesValidator = z.array(z.array(CellDataValidator));
+export type CellValues = z.infer<typeof CellValuesValidator>;
+
+export const GameDataValidator = z.object({
+	cellValues: CellValuesValidator,
+	annotations: AnnotationsValidator
+});
+export type GameData = z.infer<typeof GameDataValidator>;

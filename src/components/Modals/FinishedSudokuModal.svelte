@@ -25,23 +25,30 @@
 	let solutionCode: string = '';
 
 	function generateSolutionCode(): void {
-		const solution = getUserSolution({
-			givens: get(editorHistory.getClue('givens')),
-			values: get(gameHistory.getValue('values'))
-		});
+		const solution = getUserSolution(
+			get(gameHistory.getValue('cellValues')),
+			editorHistory.getClue('givens')
+		);
 
 		solutionCode = '';
 		solutionCodeKey.split(';').forEach((k) => {
 			if (k[0] === 'R') {
 				const row = parseInt(k.substring(1)) - 1;
 				if (row >= 0 && row < solution.length) {
-					solutionCode += solution[row].join('');
+					solution[row].forEach((cell) => {
+						if (cell.digits) {
+							solutionCode += cell.digits.join('');
+						}
+					});
 				}
 			} else if (k[0] === 'C') {
 				const column = parseInt(k.substring(1)) - 1;
 				if (column >= 0 && column < solution[0].length) {
 					solution.forEach((r) => {
-						solutionCode += r[column];
+						const cell = r[column];
+						if (cell.digits) {
+							solutionCode += cell.digits?.join('') ?? '';
+						}
 					});
 				}
 			}

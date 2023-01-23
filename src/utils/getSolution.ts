@@ -1,17 +1,12 @@
+import type { CellValues, Givens } from '$models/Sudoku';
 import deepCopy from './deepCopy';
 
-export function getUserSolution({
-	givens,
-	values
-}: {
-	givens: string[][];
-	values: string[][];
-}): string[][] {
-	const userSolution = deepCopy(values);
-	givens.forEach((row, rowIndex) => {
-		row.forEach((cell, columnIndex) => {
-			if (cell.length > 0) {
-				userSolution[rowIndex][columnIndex] = cell;
+export function getUserSolution(userInput: CellValues, givens: Givens): CellValues {
+	const userSolution = deepCopy(userInput);
+	givens.forEach((row, i) => {
+		row.forEach((v, j) => {
+			if (v.length > 0) {
+				userSolution[i][j].digits = [v];
 			}
 		});
 	});

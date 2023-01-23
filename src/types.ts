@@ -1,5 +1,4 @@
-import type { SudokuClues } from '$models/Sudoku';
-import type { SolutionStep } from '$models/Walkthrough';
+import type { SudokuClues, GameData } from '$models/Sudoku';
 
 export type Mode = 'editor' | 'game';
 
@@ -9,9 +8,15 @@ type NonNullableFields<T> = {
 
 export type EditorHistoryStep = NonNullableFields<SudokuClues>;
 
-export type GameHistoryStep = SolutionStep;
+export type GameHistoryStep = GameData;
 
-export type InputMode = keyof EditorHistoryStep | keyof GameHistoryStep;
+export type InputMode =
+	| keyof EditorHistoryStep
+	| 'digits'
+	| 'cornermarks'
+	| 'centermarks'
+	| 'colors'
+	| 'notes';
 
 /**
  * Either some type or a number to indicate the index where the previous clue lies

@@ -37,7 +37,7 @@
 		{#if $walkthroughStore.length === 0}
 			<p class="text-gray-700">No steps added yet</p>
 		{/if}
-		{#each $walkthroughStore as { step, description, timestamp }, i (timestamp)}
+		{#each $walkthroughStore as { gameData, description, timestamp }, i (timestamp)}
 			<div id={'step' + i}>
 				<div>
 					<div class="flex space-x-4 items-center mb-2 mt-2">
@@ -45,7 +45,7 @@
 						<button
 							class="w-6 h-6 rounded-full p-1 hover:bg-gray-100 hover:text-gray-600"
 							on:click={() => {
-								gameHistory.set(step);
+								gameHistory.set(gameData);
 							}}
 							title="Reset to this step"><ArrowsCounterClockwise size={16} /></button
 						>
@@ -74,7 +74,7 @@
 				</div>
 				<div class="grid gap-2 grid-cols-2">
 					<div>
-						<SudokuDisplay {clues} userInputs={step} />
+						<SudokuDisplay {clues} {gameData} />
 					</div>
 					<div>
 						<div

@@ -8,7 +8,8 @@
 		handleMouseDown,
 		handleMouseEnter
 	} from '$stores/sudokuStore';
-	import type { EditorHistoryStep, GameHistoryStep } from '$types';
+	import type { EditorHistoryStep } from '$types';
+	import type { GameData } from '$models/Sudoku';
 
 	const { selectedCells, highlightedCells, wrongCells } = highlights;
 
@@ -23,7 +24,7 @@
 
 	export let clues: EditorHistoryStep;
 
-	export let userInputs: GameHistoryStep;
+	export let gameData: GameData;
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
@@ -32,7 +33,7 @@
 	<div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
 		<SudokuDisplay
 			{clues}
-			{userInputs}
+			{gameData}
 			highlightedCells={$highlightedCells}
 			selectedCells={$selectedCells}
 			wrongCells={$wrongCells}

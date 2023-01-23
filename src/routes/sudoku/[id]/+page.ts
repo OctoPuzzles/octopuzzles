@@ -2,7 +2,7 @@ import trpc from '$lib/client/trpc';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { decompressFromBase64 } from '$features/compressor';
-import type { SolutionStep } from '$models/Walkthrough';
+import type { GameData } from '$models/Sudoku';
 
 export const load: PageLoad = async ({ fetch, params, url }) => {
 	const trpcClient = trpc(fetch);
@@ -21,7 +21,7 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
 		sudoku,
 		walkthrough,
 		gameData: dataParam
-			? (decompressFromBase64(dataParam.replace(/ /g, '+')) as SolutionStep)
+			? (decompressFromBase64(dataParam.replace(/ /g, '+')) as GameData)
 			: savedGame?.gameData
 	};
 };

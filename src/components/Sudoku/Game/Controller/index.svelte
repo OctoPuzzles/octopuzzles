@@ -75,7 +75,7 @@
 	}
 
 	onMount(() => {
-		$inputMode = 'values';
+		$inputMode = 'digits';
 	});
 
 	let gameInputModePreShortcut = get(inputMode);
@@ -92,7 +92,7 @@
 		switch (k.key) {
 			case 'z':
 				k.preventDefault();
-				$inputMode = 'values';
+				$inputMode = 'digits';
 				gameInputModePreShortcut = $inputMode;
 				break;
 			case 'x':
@@ -197,23 +197,11 @@
 	}
 
 	async function saveProgress(): Promise<void> {
-		const values = get(gameHistory.getValue('values'));
-		const cornermarks = get(gameHistory.getValue('cornermarks'));
-		const centermarks = get(gameHistory.getValue('centermarks'));
-		const colors = get(gameHistory.getValue('colors'));
-		const annotations = get(gameHistory.getValue('annotations'));
-		const modifiers = get(gameHistory.getValue('modifiers'));
+		const gameData = get(gameHistory.subscribeToInputs());
 
 		await trpc().mutation('savedGames:createOrUpdate', {
 			sudokuId: parseInt($page.params.id),
-			gameData: {
-				values,
-				cornermarks,
-				centermarks,
-				colors,
-				annotations,
-				modifiers
-			}
+			gameData
 		});
 	}
 

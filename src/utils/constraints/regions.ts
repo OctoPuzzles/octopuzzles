@@ -1,4 +1,4 @@
-import type { Color, Position, Region, RegionType } from '$models/Sudoku';
+import type { CellValues, Color, Position, Region, RegionType } from '$models/Sudoku';
 import type { EditorHistoryStep } from '$types';
 import deepCopy from '$utils/deepCopy';
 import { comparePositions, topLeftOfPositions } from '$utils/topLeftOfPositions';
@@ -50,7 +50,11 @@ export function getRegionsToDraw(region: Region): Region[] {
 	];
 }
 
-export function verifyRegion(region: Region, solution: string[][], clues:EditorHistoryStep): Position[] {
+export function verifyRegion(
+	region: Region,
+	solution: CellValues,
+	clues: EditorHistoryStep
+): Position[] {
 	switch (region.type) {
 		case 'MagicSquare': {
 			const n = Math.sqrt(region.positions.length);
@@ -60,7 +64,7 @@ export function verifyRegion(region: Region, solution: string[][], clues:EditorH
 				values[i] = [];
 				for (let j = 0; j < n; ++j) {
 					const p = positions[i * n + j];
-					values[i].push(solution[p.row][p.column]);
+					values[i].push(solution[p.row][p.column].digits?.[0] ?? '');
 				}
 			}
 			let target = NaN;

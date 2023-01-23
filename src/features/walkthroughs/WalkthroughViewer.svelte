@@ -39,7 +39,7 @@
 	</div>
 
 	<div class="shrink overflow-y-auto p-4">
-		{#each walkthrough as { step, description }, i}
+		{#each walkthrough as { gameData, description }, i}
 			<div>
 				<div class="flex space-x-4 items-center mb-2 mt-2">
 					<h4 class="font-medium">Step {i + 1}</h4>
@@ -47,7 +47,7 @@
 						<button
 							class="w-6 h-6 rounded-full p-1 hover:bg-gray-100 hover:text-gray-600"
 							on:click={() => {
-								gameHistory.set(step);
+								gameHistory.set(gameData);
 							}}
 							title="Reset to this step"><ArrowsCounterClockwise size={16} /></button
 						>
@@ -56,7 +56,7 @@
 							class="w-6 h-6 rounded-full p-1 hover:bg-gray-100 hover:text-gray-600"
 							href={`${$page.url.pathname.replace(
 								'/walkthrough',
-								'?data=' + compressToBase64(step)
+								'?data=' + compressToBase64(gameData)
 							)}`}
 							target="_blank"
 							rel="noopener noreferrer"
@@ -67,7 +67,7 @@
 			</div>
 			<div class="grid gap-2 grid-cols-2">
 				<div>
-					<SudokuDisplay {clues} userInputs={step} />
+					<SudokuDisplay {clues} {gameData} />
 				</div>
 				<div>
 					<HtmlContent content={description} />

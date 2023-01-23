@@ -7,6 +7,7 @@
 	import deepCopy from '$utils/deepCopy';
 	import { get } from 'svelte/store';
 	import classNames from 'classnames';
+	import { undefinedIfEmpty } from '$utils/undefinedIfEmpty';
 
 	export let getButtonInfo: ((digit: string) => { class: string; custom: boolean }) | undefined =
 		undefined;
@@ -41,39 +42,39 @@
 			const positions = get(selectedCells).filter((p) => !(givens[p.row]?.[p.column] !== ''));
 			if (positions.length === 0) return;
 
-			const currentModifiers = get(gameHistory.getValue('modifiers'));
-			let newModifiers = deepCopy(currentModifiers);
-			const modifierType = key === '/' ? 'SCell' : 'Doubler';
+			const currentCellValues = get(gameHistory.getValue('cellValues'));
+			let newCellValues = deepCopy(currentCellValues);
+			const modifier = key === '/' ? 'SCell' : 'Doubler';
 			const allCellsHaveModifier = positions.every((p) =>
-				currentModifiers.some(
-					(m) =>
-						m.type === modifierType && m.position.row === p.row && m.position.column === p.column
-				)
+				currentCellValues[p.row][p.column].modifiers?.includes(modifier)
 			);
 
 			if (!allCellsHaveModifier) {
+				// Add it to the cells that does not have it
 				positions.forEach((p) => {
-					if (
-						!currentModifiers.some(
-							(m) =>
-								m.type === modifierType &&
-								m.position.row === p.row &&
-								m.position.column === p.column
-						)
-					) {
-						newModifiers.push({ position: p, type: modifierType });
+					const modifiers = currentCellValues[p.row][p.column].modifiers;
+					if (modifiers) {
+						if (!modifiers.includes(modifier)) {
+							newCellValues[p.row][p.column].modifiers = [...modifiers, modifier];
+						}
+					} else {
+						newCellValues[p.row][p.column].modifiers = [modifier];
 					}
 				});
 			} else {
-				newModifiers = newModifiers.filter(
-					(m) =>
-						m.type !== modifierType ||
-						!positions.some((p) => m.position.row === p.row && m.position.column === p.column)
-				);
+				// Remove it from all cells
+				positions.forEach((p) => {
+					const modifiers = currentCellValues[p.row][p.column].modifiers;
+					if (modifiers) {
+						newCellValues[p.row][p.column].modifiers = undefinedIfEmpty(
+							modifiers.filter((m) => m !== modifier)
+						);
+					}
+				});
 			}
 
 			gameHistory.set({
-				modifiers: newModifiers
+				cellValues: newCellValues
 			});
 		}
 	}

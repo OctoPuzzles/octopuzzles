@@ -13,6 +13,7 @@ import { verifyBorderClue } from '$utils/constraints/borderclues';
 import { verifyCellClue } from '$utils/constraints/cellclues';
 import { verifyLogic } from '$utils/constraints/logic';
 import { settings } from '$stores/settingsStore';
+import { undefinedIfEmpty } from '$utils/undefinedIfEmpty';
 
 // WRITABLES
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -86,8 +87,7 @@ function createScannerStore() {
 		const rows = dimensions.rows - rowOffset - (dimensions.margins?.bottom ?? 0);
 		const columns = dimensions.columns - columnOffset - (dimensions.margins?.right ?? 0);
 
-		const values = get(gameHistory.getValue('values'));
-		const centermarks = get(gameHistory.getValue('centermarks'));
+		const cellValues = get(gameHistory.getValue('cellValues'));
 
 		let allDigits: string[] = [];
 		let candidates: string[][][] = [];
@@ -105,12 +105,13 @@ function createScannerStore() {
 
 			for (let j = 0; j < columns; ++j) {
 				const column = j + columnOffset;
+				const cell = cellValues[row][column];
 
-				if (givens[row][column] === '' && values[row][column] === '') {
+				if (givens[row][column] === '' && !cell.digits) {
 					queue.push({ row, column });
 
-					if (centermarks[row][column].length) {
-						candidates[row][column] = centermarks[row][column].split('');
+					if (cell.centermarks) {
+						candidates[row][column] = [...cell.centermarks];
 					} else {
 						candidates[row][column] = [...allDigits];
 					}
@@ -340,11 +341,11 @@ function createScannerStore() {
 	function getTuples(
 		cell: Position,
 		seen = true
-	): { tuple: string; context: string; cells: Position[] }[] {
-		const centermarks = get(gameHistory.getValue('centermarks'));
-		if (!seen && centermarks[cell.row][cell.column] === '') return [];
+	): { tuple: string[]; context: string; cells: Position[] }[] {
+		const cellValues = get(gameHistory.getValue('cellValues'));
+		if (!seen && !cellValues[cell.row][cell.column].centermarks) return [];
 
-		const tuples: { tuple: string; context: string; cells: Position[] }[] = [];
+		const tuples: { tuple: string[]; context: string; cells: Position[] }[] = [];
 		const seenCells = getSeenCells(cell);
 		let context = '';
 
@@ -352,7 +353,7 @@ function createScannerStore() {
 			if (s.context !== context) {
 				context = s.context;
 				const contextCells = seenCells.filter(
-					(c) => c.context === context && centermarks[c.row][c.column] !== ''
+					(c) => c.context === context && cellValues[c.row][c.column].centermarks
 				);
 
 				if (contextCells.length) {
@@ -360,8 +361,8 @@ function createScannerStore() {
 						contextCells.unshift({ ...cell, context });
 					}
 					contextCells.sort((a, b) => {
-						const atuple = centermarks[a.row][a.column];
-						const btuple = centermarks[b.row][b.column];
+						const atuple = cellValues[a.row][a.column].centermarks ?? [];
+						const btuple = cellValues[b.row][b.column].centermarks ?? [];
 
 						if (atuple.length > btuple.length) return seen ? -1 : 1;
 						else if (atuple.length < btuple.length) return seen ? 1 : -1;
@@ -371,14 +372,14 @@ function createScannerStore() {
 					const skipIndexes: number[] = [];
 					for (let i = 0; i < contextCells.length; ++i) {
 						const c = contextCells[i];
-						const tuple = centermarks[c.row][c.column];
+						const tuple = cellValues[c.row][c.column].centermarks ?? [];
 						const cells = [c];
 						const indexes = [];
 						for (let j = seen ? i + 1 : 0; j < contextCells.length; ++j) {
 							if (j == i || (seen && skipIndexes.includes(j))) continue;
 
 							const d = contextCells[j];
-							if (centermarks[d.row][d.column].split('').every((v) => tuple.includes(v))) {
+							if (cellValues[d.row][d.column].centermarks?.every((v) => tuple.includes(v))) {
 								cells.push(d);
 								indexes.push(j);
 							}
@@ -405,13 +406,13 @@ function createScannerStore() {
 		const sets: { digit: string; cells: Position[] }[] = [];
 
 		const regions = editorHistory.getClue('regions');
-		const cornermarks = get(gameHistory.getValue('cornermarks'));
+		const cellValues = get(gameHistory.getValue('cellValues'));
 
 		if (seen) {
 			const seenCells = getSeenCells(cell);
 
 			seenCells
-				.filter((s) => cornermarks[s.row][s.column] !== '')
+				.filter((s) => cellValues[s.row][s.column].cornermarks)
 				.forEach((c) => {
 					const regionCells =
 						regions
@@ -421,11 +422,11 @@ function createScannerStore() {
 									(r.uniqueDigits ?? true) &&
 									r.positions.some((p) => p.row === c.row && p.column === c.column)
 							)
-							?.positions.filter((p) => cornermarks[p.row][p.column] !== '') ?? [];
+							?.positions.filter((p) => cellValues[p.row][p.column].cornermarks) ?? [];
 
-					cornermarks[c.row][c.column].split('').forEach((v) => {
-						const valueCells = regionCells.filter(
-							(p) => cornermarks[p.row][p.column].includes(v)
+					cellValues[c.row][c.column].cornermarks?.forEach((v) => {
+						const valueCells = regionCells.filter((p) =>
+							cellValues[p.row][p.column].cornermarks?.includes(v)
 						);
 						if (
 							valueCells.every((q) =>
@@ -436,7 +437,7 @@ function createScannerStore() {
 						}
 					});
 				});
-		} else if (cornermarks[cell.row][cell.column] !== '') {
+		} else if (cellValues[cell.row][cell.column].cornermarks) {
 			const regionCells =
 				regions
 					.find(
@@ -445,12 +446,12 @@ function createScannerStore() {
 							(r.uniqueDigits ?? true) &&
 							r.positions.some((p) => p.row === cell.row && p.column === cell.column)
 					)
-					?.positions.filter((p) => cornermarks[p.row][p.column] !== '') ?? [];
+					?.positions.filter((p) => cellValues[p.row][p.column].cornermarks) ?? [];
 
-			cornermarks[cell.row][cell.column].split('').forEach((v) => {
+			cellValues[cell.row][cell.column].cornermarks?.forEach((v) => {
 				sets.push({
 					digit: v,
-					cells: regionCells.filter((p) => cornermarks[p.row][p.column].includes(v))
+					cells: regionCells.filter((p) => cellValues[p.row][p.column].cornermarks?.includes(v))
 				});
 			});
 		}
@@ -504,7 +505,7 @@ function createScannerStore() {
 		const settings = get(scannerSettings);
 		const flags = editorHistory.getClue('logic').flags ?? [];
 		const givens = editorHistory.getClue('givens');
-		const values = get(gameHistory.getValue('values'));
+		const cellValues = get(gameHistory.getValue('cellValues'));
 
 		const candidateValues = context.candidates[cell.row][cell.column];
 		if (candidateValues.length <= 1) return true;
@@ -515,7 +516,7 @@ function createScannerStore() {
 		let newCandidateValues = candidateValues.filter((v) => {
 			const seenCells = getSeenCells(cell);
 			const found = seenCells.find(
-				(s) => givens[s.row][s.column] === v || values[s.row][s.column] === v
+				(s) => givens[s.row][s.column] === v || cellValues[s.row][s.column].digits?.includes(v)
 			);
 			if (found) {
 				highlightedCells.push(found);
@@ -541,7 +542,7 @@ function createScannerStore() {
 
 		if (
 			newCandidateValues.length > 1 &&
-			!(flags.includes('NonStandard')) &&
+			!flags.includes('NonStandard') &&
 			settings.useCornerMarks
 		) {
 			//if all cells that contain a cornermark within a region for a value are seen by this cell we can eliminate that value
@@ -584,12 +585,12 @@ function createScannerStore() {
 							)
 								return false;
 
-							let value = givens[n.row][n.column];
-							if (value === '') {
-								value = values[n.row][n.column];
+							let digits = givens[n.row][n.column] ? [givens[n.row][n.column]] : undefined;
+							if (!digits) {
+								digits = cellValues[n.row][n.column].digits;
 							}
-							if (value !== '') {
-								if (Math.abs(parseInt(value) - parseInt(v)) === 1) {
+							if (digits) {
+								if (digits.some((d) => Math.abs(parseInt(d) - parseInt(v)) === 1)) {
 									highlightedCells.push(n);
 
 									return true;
@@ -617,12 +618,16 @@ function createScannerStore() {
 							)
 								return false;
 
-							let value = givens[n.row][n.column];
-							if (value === '') {
-								value = values[n.row][n.column];
+							let digits = givens[n.row][n.column] ? [givens[n.row][n.column]] : undefined;
+							if (!digits) {
+								digits = cellValues[n.row][n.column].digits;
 							}
-							if (value !== '') {
-								if (parseInt(value) === 2 * parseInt(v) || 2 * parseInt(value) === parseInt(v)) {
+							if (digits) {
+								if (
+									digits.some(
+										(d) => parseInt(d) === 2 * parseInt(v) || 2 * parseInt(d) === parseInt(v)
+									)
+								) {
 									highlightedCells.push(n);
 
 									return true;
@@ -650,12 +655,12 @@ function createScannerStore() {
 							)
 								return false;
 
-							let value = givens[n.row][n.column];
-							if (value === '') {
-								value = values[n.row][n.column];
+							let digits = givens[n.row][n.column] ? [givens[n.row][n.column]] : undefined;
+							if (!digits) {
+								digits = cellValues[n.row][n.column].digits;
 							}
-							if (value !== '') {
-								if (parseInt(value) + parseInt(v) === 10) {
+							if (digits) {
+								if (digits.some((d) => parseInt(d) + parseInt(v) === 10)) {
 									highlightedCells.push(n);
 
 									return true;
@@ -683,12 +688,12 @@ function createScannerStore() {
 							)
 								return false;
 
-							let value = givens[n.row][n.column];
-							if (value === '') {
-								value = values[n.row][n.column];
+							let digits = givens[n.row][n.column] ? [givens[n.row][n.column]] : undefined;
+							if (!digits) {
+								digits = cellValues[n.row][n.column].digits;
 							}
-							if (value !== '') {
-								if (parseInt(value) + parseInt(v) === 5) {
+							if (digits) {
+								if (digits.some((d) => parseInt(d) + parseInt(v) === 5)) {
 									highlightedCells.push(n);
 
 									return true;
@@ -716,9 +721,7 @@ function createScannerStore() {
 
 		const context = get(scannerContext);
 		const settings = get(scannerSettings);
-		const values = get(gameHistory.getValue('values'));
-		const centermarks = get(gameHistory.getValue('centermarks'));
-		const cornermarks = get(gameHistory.getValue('cornermarks'));
+		const cellValues = get(gameHistory.getValue('cellValues'));
 
 		//iterate through every cell in the queue in order
 		for (let n = 0; n < context.queue.length; ++n) {
@@ -726,60 +729,57 @@ function createScannerStore() {
 			//if we are not able to eliminate any possible candidate values, move on to the next cell
 			if (!updateCandidateValues(cell)) continue;
 
-			let value = '';
-			let center: string = centermarks[cell.row][cell.column];
-			let corner: string = cornermarks[cell.row][cell.column];
+			let digits: string[] | undefined = undefined;
+			let centermarks = deepCopy(cellValues[cell.row][cell.column].centermarks);
+			let cornermarks = deepCopy(cellValues[cell.row][cell.column].cornermarks);
+			let changed = false;
 
 			const candidateValues = context.candidates[cell.row][cell.column];
 			if (candidateValues.length <= 1) {
 				//update the grid and remove the cell from the scanning queue
-				value = candidateValues.length ? candidateValues[0] : '';
-				center = '';
-				corner = '';
+				digits = undefinedIfEmpty([...candidateValues]);
+				centermarks = undefined;
+				cornermarks = undefined;
+				changed = true;
 
 				context.queue.splice(n, 1);
 			} else {
 				//remove eliminated values from any pencil marks
-				if (center !== '') {
-					center = candidateValues.join('');
+				if (centermarks) {
+					centermarks = [...candidateValues];
+					changed = true;
 				}
-				if (corner !== '') {
-					corner = corner
-						.split('')
-						.filter((u) => candidateValues.some((v) => v === u))
-						.join('');
+				if (cornermarks) {
+					cornermarks = undefinedIfEmpty(
+						cornermarks.filter((u) => candidateValues.some((v) => v === u))
+					);
+					changed = true;
 				}
 			}
 
 			//update the game history if there are any changes
-			if (
-				value !== values[cell.row][cell.column] ||
-				center !== centermarks[cell.row][cell.column] ||
-				corner !== cornermarks[cell.row][cell.column]
-			) {
-				const newValues = deepCopy(values);
-				const newCentermarks = deepCopy(centermarks);
-				const newCornermarks = deepCopy(cornermarks);
+			if (changed) {
+				const newCellValues = deepCopy(cellValues);
 
-				newValues[cell.row][cell.column] = value;
-				newCentermarks[cell.row][cell.column] = center;
-				newCornermarks[cell.row][cell.column] = corner;
+				newCellValues[cell.row][cell.column].digits = undefinedIfEmpty(digits);
+				newCellValues[cell.row][cell.column].centermarks = undefinedIfEmpty(centermarks);
+				newCellValues[cell.row][cell.column].cornermarks = undefinedIfEmpty(cornermarks);
 
-				if (corner !== cornermarks[cell.row][cell.column]) {
+				if (cornermarks?.length !== cellValues[cell.row][cell.column].cornermarks?.length) {
 					//find the set of cornermarks that this cell is part of
 					getCornerSets(cell, false).forEach((s) => {
-						if (s.digit === value) {
+						if (digits?.includes(s.digit)) {
 							//remove all cornermarks that match the placed digit
 							s.cells.forEach((c) => {
-								newCornermarks[c.row][c.column] = '';
+								delete newCellValues[c.row][c.column].cornermarks;
 							});
-						} else if (s.cells.length === 2 && !corner.includes(s.digit)) {
+						} else if (s.cells.length === 2 && cornermarks && !cornermarks.includes(s.digit)) {
 							//if there is only one possible cornermark for this digit left, set it as the sole candidate value
 							s.cells.some((c) => {
 								if (c.row !== cell.row || c.column !== cell.column) {
 									context.candidates[c.row][c.column] = [s.digit];
-									newCentermarks[c.row][c.column] = s.digit;
-									newCornermarks[c.row][c.column] = '';
+									cellValues[c.row][c.column].centermarks = [s.digit];
+									delete cellValues[c.row][c.column].cornermarks;
 									return true;
 								}
 								return false;
@@ -789,9 +789,7 @@ function createScannerStore() {
 				}
 
 				gameHistory.set({
-					values: newValues,
-					centermarks: newCentermarks,
-					cornermarks: newCornermarks
+					cellValues: newCellValues
 				});
 
 				if (settings.scannerSpeed !== 'Instant') {
@@ -871,8 +869,8 @@ function createScannerStore() {
 				}
 			});
 		} else if (highlightMode == 'Tuples') {
-			const centermarks = get(gameHistory.getValue('centermarks'));
-			if (!selectedCells.some((c) => centermarks[c.row][c.column] === '')) {
+			const cellValues = get(gameHistory.getValue('cellValues'));
+			if (!selectedCells.some((c) => cellValues[c.row][c.column].centermarks)) {
 				let tuples = getTuples(selectedCells[0], false);
 				if (selectedCells.length > 1) {
 					tuples = tuples.filter((t) =>
@@ -898,10 +896,10 @@ function createScannerStore() {
 	}
 
 	function getErrorCells(solution?: string[][] | null): Position[] {
-		const userSolution = getUserSolution({
-			givens: editorHistory.getClue('givens'),
-			values: get(gameHistory.getValue('values'))
-		});
+		const userSolution = getUserSolution(
+			get(gameHistory.getValue('cellValues')),
+			editorHistory.getClue('givens')
+		);
 
 		const wrongCells: Position[] = [];
 
@@ -909,9 +907,9 @@ function createScannerStore() {
 
 		if (solution != null) {
 			userSolution.forEach((r, i) => {
-				r.forEach((v, j) => {
-					if (solution[i][j] !== v) {
-						if (v !== '') {
+				r.forEach((cell, j) => {
+					if (cell.digits) {
+						if (solution[i][j] !== cell.digits.join('')) {
 							wrongCells.push({ row: i, column: j });
 						}
 					}
@@ -919,15 +917,17 @@ function createScannerStore() {
 			});
 		} else {
 			userSolution.forEach((r, i) => {
-				r.forEach((v, j) => {
-					if (v !== '') {
+				r.forEach((cell, j) => {
+					if (cell.digits) {
 						getSeenCells({ row: i, column: j }, true).forEach((c) => {
-							if (
-								v === userSolution[c.row][c.column] &&
-								!wrongCells.some((w) => w.row === c.row && w.column === c.column)
-							) {
-								wrongCells.push(c);
-							}
+							cell.digits?.forEach((d) => {
+								if (
+									userSolution[c.row][c.column].digits?.includes(d) &&
+									!wrongCells.some((w) => w.row === c.row && w.column === c.column)
+								) {
+									wrongCells.push(c);
+								}
+							});
 						});
 					}
 				});

@@ -8,18 +8,14 @@ import {
 	defaultBorderclues,
 	defaultCages,
 	defaultCellclues,
-	defaultModifiers,
 	defaultCells,
-	defaultCentermarks,
-	defaultCornermarks,
 	defaultEditorColors,
-	defaultGameColors,
 	defaultGivens,
 	defaultLogic,
 	defaultPaths,
 	defaultRegions,
 	defaultRegionSize,
-	defaultValues
+	defaultCellValues
 } from '$utils/defaults';
 import { emptyBorderClue } from '$utils/constraints/borderclues';
 import { emptyCage } from '$utils/constraints/cages';
@@ -170,12 +166,8 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): void {
 		logic: defaultLogic()
 	};
 	const newGameHistory: GameHistoryStep = {
-		values: defaultValues(dim),
-		colors: defaultGameColors(dim),
-		cornermarks: defaultCornermarks(dim),
-		centermarks: defaultCentermarks(dim),
-		annotations: defaultAnnotations(),
-		modifiers: defaultModifiers()
+		cellValues: defaultCellValues(dim),
+		annotations: defaultAnnotations()
 	};
 
 	/* eslint-disable @typescript-eslint/no-empty-function */
@@ -693,17 +685,17 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): void {
 			newEditorHistory.cellclues = newCellClues;
 		},
 		solution: (fpuzzleSolution) => {
-			const newSolution = deepCopy(newGameHistory.values);
+			const newCellValues = deepCopy(newGameHistory.cellValues);
 
 			for (let rowIndex = 0; rowIndex < fpuzzle.size; rowIndex++) {
 				for (let columnIndex = 0; columnIndex < fpuzzle.size; columnIndex++) {
-					newSolution[rowIndex + offsets.top][columnIndex + offsets.left] = String(
-						fpuzzleSolution[fpuzzle.size * rowIndex + columnIndex]
-					);
+					newCellValues[rowIndex + offsets.top][columnIndex + offsets.left].digits = [
+						String(fpuzzleSolution[fpuzzle.size * rowIndex + columnIndex])
+					];
 				}
 			}
 
-			newGameHistory.values = newSolution;
+			newGameHistory.cellValues = newCellValues;
 		},
 		'sumdot(intersection)': () => {},
 		text: (fpuzzleText) => {

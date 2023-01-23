@@ -6,15 +6,11 @@ import {
 	defaultBorderclues,
 	defaultCellclues,
 	defaultCells,
-	defaultCentermarks,
-	defaultCornermarks,
-	defaultModifiers,
+	defaultCellValues,
 	defaultEditorColors,
-	defaultGameColors,
 	defaultGivens,
 	defaultCages,
 	defaultPaths,
-	defaultValues,
 	defaultLogic,
 	defaultRegions
 } from '$utils/defaults';
@@ -224,12 +220,8 @@ function createGameHistoryStore() {
 	// History
 	const history = writable<GameHistoryStep[]>([
 		{
-			values: defaultValues(),
-			colors: defaultGameColors(),
-			cornermarks: defaultCornermarks(),
-			centermarks: defaultCentermarks(),
-			annotations: defaultAnnotations(),
-			modifiers: defaultModifiers()
+			cellValues: defaultCellValues(),
+			annotations: defaultAnnotations()
 		}
 	]);
 
@@ -314,48 +306,36 @@ function createGameHistoryStore() {
 		const dim = editorHistory.getClue('dimensions');
 		history.set([
 			{
-				values: defaultValues(dim),
-				colors: defaultGameColors(dim),
-				cornermarks: defaultCornermarks(dim),
-				centermarks: defaultCentermarks(dim),
-				annotations: defaultAnnotations(),
-				modifiers: defaultModifiers()
+				cellValues: defaultCellValues(dim),
+				annotations: defaultAnnotations()
 			}
 		]);
 	}
 
 	/** Clear every input-values, and colors from the specified cells in the editor */
 	function clearCells(cells: Position[]): void {
-		const newValues = get(getValue('values'));
-		const newCornerMarks = get(getValue('cornermarks'));
-		const newCenterMarks = get(getValue('centermarks'));
-		const newColors = get(getValue('colors'));
+		const newCellValues = get(getValue('cellValues'));
 		let changes = false;
 		cells.forEach((cell) => {
-			if (newValues[cell.row]?.[cell.column] !== '') {
+			if (newCellValues[cell.row][cell.column].digits) {
 				changes = true;
-				newValues[cell.row][cell.column] = '';
+				delete newCellValues[cell.row][cell.column].digits;
 			}
-			if (newCornerMarks[cell.row][cell.column] !== '') {
+			if (newCellValues[cell.row][cell.column].cornermarks) {
 				changes = true;
-				newCornerMarks[cell.row][cell.column] = '';
+				delete newCellValues[cell.row][cell.column].cornermarks;
 			}
-			if (newCenterMarks[cell.row][cell.column] !== '') {
+			if (newCellValues[cell.row][cell.column].centermarks) {
 				changes = true;
-				newCenterMarks[cell.row][cell.column] = '';
+				delete newCellValues[cell.row][cell.column].centermarks;
 			}
-			if (newColors[cell.row][cell.column] != null) {
+			if (newCellValues[cell.row][cell.column].colors) {
 				changes = true;
-				newColors[cell.row][cell.column] = [];
+				delete newCellValues[cell.row][cell.column].colors;
 			}
 		});
 		if (changes) {
-			set({
-				values: newValues,
-				cornermarks: newCornerMarks,
-				centermarks: newCenterMarks,
-				colors: newColors
-			});
+			set({cellValues: newCellValues});
 
 			verify();
 		}
@@ -491,12 +471,8 @@ export function setMargins(margins?: Margins | null): void {
 	const paths = editorHistory.getClue('paths');
 	const cells = editorHistory.getClue('cells');
 	const regions = editorHistory.getClue('regions');
-	const values = get(gameHistory.getValue('values'));
-	const gamecolors = get(gameHistory.getValue('colors'));
-	const cornermarks = get(gameHistory.getValue('cornermarks'));
-	const centermarks = get(gameHistory.getValue('centermarks'));
+	const cellValues = get(gameHistory.getValue('cellValues'));
 	const annotations = get(gameHistory.getValue('annotations'));
-	const modifiers = get(gameHistory.getValue('modifiers'));
 
 	const offsets: Margins = {
 		left: (margins?.left ?? 0) - (dimensions.margins?.left ?? 0),
@@ -560,26 +536,12 @@ export function setMargins(margins?: Margins | null): void {
 				.filter((region) => region.positions.every(isValidPosition))
 		});
 		gameHistory.set({
-			values: offsetMatrix(values, offsets, ''),
-			colors: offsetMatrix(gamecolors, offsets, []),
-			cornermarks: offsetMatrix(cornermarks, offsets, ''),
-			centermarks: offsetMatrix(centermarks, offsets, ''),
+			cellValues: offsetMatrix(cellValues, offsets, {}),
 			annotations: annotations
 				.map((annotation) => {
 					return { ...annotation, positions: offsetPositions(annotation.positions, offsets) };
 				})
-				.filter((annotation) => annotation.positions.every(isValidPosition)),
-				modifiers: modifiers
-				.map((modifier) => {
-					return {
-						...modifier,
-						position: {
-							row: modifier.position.row + offsets.top,
-							column: modifier.position.column + offsets.left
-						}
-					};
-				})
-				.filter((modifier) => isValidPosition(modifier.position)),
+				.filter((annotation) => annotation.positions.every(isValidPosition))
 		});
 
 		const { selectedCells, highlightedCells, wrongCells } = highlights;

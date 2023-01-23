@@ -4,6 +4,7 @@
 	import { get } from 'svelte/store';
 	import { colorNumberMap, numberColorMap } from '$constants';
 	import Keypad from '../Keypad.svelte';
+	import { undefinedIfEmpty } from '$utils/undefinedIfEmpty';
 
 	const { selectedCells } = highlights;
 </script>
@@ -18,11 +19,11 @@
 		const positions = get(selectedCells);
 		if (positions.length === 0) return;
 
-		const currentColors = get(gameHistory.getValue('colors'));
-		const newColors = deepCopy(currentColors);
+		const currentCellValues = get(gameHistory.getValue('cellValues'));
+		const newCellValues = deepCopy(currentCellValues);
 
 		if (color === undefined) {
-			const clearAllGameCells = positions.every((p) => currentColors[p.row][p.column].length === 0);
+			const clearAllGameCells = positions.every((p) => !currentCellValues[p.row][p.column].colors);
 			if (clearAllGameCells) {
 				// completely clear the selected cells
 				gameHistory.clearCells(positions);
@@ -30,30 +31,42 @@
 			} else {
 				// Remove the colors from all selected cells
 				positions.forEach((p) => {
-					newColors[p.row][p.column] = [];
+					delete newCellValues[p.row][p.column].colors;
 				});
 			}
 		} else {
-			let allCellsHasColor = positions.every((p) => currentColors[p.row][p.column].includes(color));
+			let allCellsHasColor = positions.every((p) =>
+				currentCellValues[p.row][p.column].colors?.includes(color)
+			);
 
 			if (!allCellsHasColor) {
 				// Add it to the cells that does not have it
 				positions.forEach((p) => {
-					if (!currentColors[p.row][p.column].includes(color)) {
-						newColors[p.row][p.column] = [...currentColors[p.row][p.column], color]
-							.map((c) => colorNumberMap[c])
-							.sort()
-							.map((n) => numberColorMap[n]);
+					const colors = currentCellValues[p.row][p.column].colors;
+					if (colors) {
+						if (!colors.includes(color)) {
+							newCellValues[p.row][p.column].colors = [...colors, color]
+								.map((c) => colorNumberMap[c])
+								.sort()
+								.map((n) => numberColorMap[n]);
+						}
+					} else {
+						newCellValues[p.row][p.column].colors = [color];
 					}
 				});
 			} else {
 				// Remove it from all cells
 				positions.forEach((p) => {
-					newColors[p.row][p.column] = currentColors[p.row][p.column].filter((c) => c !== color);
+					const colors = currentCellValues[p.row][p.column].colors;
+					if (colors) {
+						newCellValues[p.row][p.column].colors = undefinedIfEmpty(
+							colors.filter((c) => c !== color)
+						);
+					}
 				});
 			}
 		}
 
-		gameHistory.set({ colors: newColors });
+		gameHistory.set({ cellValues: newCellValues });
 	}}
 />

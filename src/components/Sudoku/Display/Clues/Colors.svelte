@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import type { Dimensions, EditorColors } from '$models/Sudoku';
-	import type { GameColors } from '$models/Walkthrough';
+	import type { Dimensions, EditorColors, GameData } from '$models/Sudoku';
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
 	export let editorColors: EditorColors;
-	export let gameColors: GameColors | undefined;
+	export let gameData: GameData | undefined;
 	export let dimensions: Dimensions;
 
 	function polarToCartesian(
@@ -59,7 +58,7 @@
 	{#each arrayfrom0ToN(dimensions.rows) as row}
 		{#each arrayfrom0ToN(dimensions.columns) as column}
 			{@const editorColor = editorColors[row][column]}
-			{@const gameColor = gameColors?.[row]?.[column]}
+			{@const gameColors = gameData?.cellValues[row][column].colors}
 			{#if editorColor}
 				<rect
 					x={cellSize * column}
@@ -68,13 +67,13 @@
 					vector-effect="non-scaling-size"
 				/>
 			{/if}
-			{#if gameColor && gameColor.length > 0}
+			{#if gameColors}
 				<clipPath id="square-{row}-{column}" clipPathUnits="userSpaceOnUse">
 					<rect x={cellSize * column} y={cellSize * row} width={cellSize} height={cellSize} />
 				</clipPath>
-				{#each gameColor as color, i}
+				{#each gameColors as color, i}
 					<path
-						d={describeArc(i, gameColor.length, row, column)}
+						d={describeArc(i, gameColors.length, row, column)}
 						clip-path="url(#square-{row}-{column})"
 						class="fill-current text-{color.toLowerCase()} w-cell h-cell opacity-60"
 					/>

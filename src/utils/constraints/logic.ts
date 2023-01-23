@@ -1,10 +1,10 @@
-import type { LogicFlag, Position } from '$models/Sudoku';
+import type { CellValues, LogicFlag, Position } from '$models/Sudoku';
 import type { EditorHistoryStep } from '$types';
 
 export function verifyLogic(
 	flags: LogicFlag[],
-	solution: string[][],
-	clues:EditorHistoryStep
+	solution: CellValues,
+	clues: EditorHistoryStep
 ): Position[] {
 	const invalidCells: Position[] = [];
 
@@ -24,8 +24,8 @@ export function verifyLogic(
 				j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0);
 				++j
 			) {
-				const v = solution[i][j];
-				if (v !== '') {
+				const v = solution[i][j].digits?.[0];
+				if (v) {
 					const a = parseInt(v);
 					const nbrCells = [];
 					for (const step of [
@@ -38,7 +38,7 @@ export function verifyLogic(
 							row < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) &&
 							column < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0)
 						) {
-							if (solution[row][column] !== '') {
+							if (solution[row][column].digits?.[0]) {
 								nbrCells.push({ row, column });
 							}
 						}
@@ -46,8 +46,13 @@ export function verifyLogic(
 
 					if (nonConsecutive) {
 						const invalidNbrs = nbrCells.filter((c) => {
-							const b = parseInt(solution[c.row][c.column]);
-							return Math.abs(a - b) === 1;
+							const u = solution[c.row][c.column].digits?.[0];
+							if (u) {
+								const b = parseInt(u);
+								return Math.abs(a - b) === 1;
+							} else {
+								return false;
+							}
 						});
 						if (invalidNbrs.length > 0) {
 							invalidCells.push(
@@ -59,19 +64,24 @@ export function verifyLogic(
 					}
 					if (negativeBlack) {
 						const invalidNbrs = nbrCells.filter((c) => {
-							const b = parseInt(solution[c.row][c.column]);
-							return (
-								(a === 2 * b || b === 2 * a) &&
-								!clues.borderclues.some(
-									(b) =>
-										b.type === 'KropkiBlack' &&
-										b.positions.every(
-											(p) =>
-												(p.row === i && p.column === j) ||
-												(p.row === c.row && p.column === c.column)
-										)
-								)
-							);
+							const u = solution[c.row][c.column].digits?.[0];
+							if (u) {
+								const b = parseInt(u);
+								return (
+									(a === 2 * b || b === 2 * a) &&
+									!clues.borderclues.some(
+										(b) =>
+											b.type === 'KropkiBlack' &&
+											b.positions.every(
+												(p) =>
+													(p.row === i && p.column === j) ||
+													(p.row === c.row && p.column === c.column)
+											)
+									)
+								);
+							} else {
+								return false;
+							}
 						});
 						if (invalidNbrs.length > 0) {
 							invalidCells.push(
@@ -83,19 +93,24 @@ export function verifyLogic(
 					}
 					if (negativeWhite) {
 						const invalidNbrs = nbrCells.filter((c) => {
-							const b = parseInt(solution[c.row][c.column]);
-							return (
-								Math.abs(a - b) === 1 &&
-								!clues.borderclues.some(
-									(b) =>
-										b.type === 'KropkiWhite' &&
-										b.positions.every(
-											(p) =>
-												(p.row === i && p.column === j) ||
-												(p.row === c.row && p.column === c.column)
-										)
-								)
-							);
+							const u = solution[c.row][c.column].digits?.[0];
+							if (u) {
+								const b = parseInt(u);
+								return (
+									Math.abs(a - b) === 1 &&
+									!clues.borderclues.some(
+										(b) =>
+											b.type === 'KropkiWhite' &&
+											b.positions.every(
+												(p) =>
+													(p.row === i && p.column === j) ||
+													(p.row === c.row && p.column === c.column)
+											)
+									)
+								);
+							} else {
+								return false;
+							}
 						});
 						if (invalidNbrs.length > 0) {
 							invalidCells.push(
@@ -107,19 +122,24 @@ export function verifyLogic(
 					}
 					if (negativeX) {
 						const invalidNbrs = nbrCells.filter((c) => {
-							const b = parseInt(solution[c.row][c.column]);
-							return (
-								a + b === 10 &&
-								!clues.borderclues.some(
-									(b) =>
-										b.type === 'XvX' &&
-										b.positions.every(
-											(p) =>
-												(p.row === i && p.column === j) ||
-												(p.row === c.row && p.column === c.column)
-										)
-								)
-							);
+							const u = solution[c.row][c.column].digits?.[0];
+							if (u) {
+								const b = parseInt(u);
+								return (
+									a + b === 10 &&
+									!clues.borderclues.some(
+										(b) =>
+											b.type === 'XvX' &&
+											b.positions.every(
+												(p) =>
+													(p.row === i && p.column === j) ||
+													(p.row === c.row && p.column === c.column)
+											)
+									)
+								);
+							} else {
+								return false;
+							}
 						});
 						if (invalidNbrs.length > 0) {
 							invalidCells.push(
@@ -131,19 +151,24 @@ export function verifyLogic(
 					}
 					if (negativeV) {
 						const invalidNbrs = nbrCells.filter((c) => {
-							const b = parseInt(solution[c.row][c.column]);
-							return (
-								a + b === 5 &&
-								!clues.borderclues.some(
-									(b) =>
-										b.type === 'XvV' &&
-										b.positions.every(
-											(p) =>
-												(p.row === i && p.column === j) ||
-												(p.row === c.row && p.column === c.column)
-										)
-								)
-							);
+							const u = solution[c.row][c.column].digits?.[0];
+							if (u) {
+								const b = parseInt(u);
+								return (
+									a + b === 5 &&
+									!clues.borderclues.some(
+										(b) =>
+											b.type === 'XvV' &&
+											b.positions.every(
+												(p) =>
+													(p.row === i && p.column === j) ||
+													(p.row === c.row && p.column === c.column)
+											)
+									)
+								);
+							} else {
+								return false;
+							}
 						});
 						if (invalidNbrs.length > 0) {
 							invalidCells.push(
@@ -168,8 +193,8 @@ export function verifyLogic(
 				j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0) - 1;
 				++j
 			) {
-				const v = solution[i][j];
-				if (v !== '') {
+				const v = solution[i][j].digits?.[0];
+				if (v) {
 					const a = parseInt(v);
 					const nbrCells = [];
 					for (const step of [
@@ -179,16 +204,16 @@ export function verifyLogic(
 					]) {
 						const row = i + step.x;
 						const column = j + step.y;
-						if (solution[row][column] !== '') {
+						if (solution[row][column].digits) {
 							nbrCells.push({ row, column });
 						} else {
 							break;
 						}
 					}
 					if (nbrCells.length === 3) {
-						const b = parseInt(solution[nbrCells[0].row][nbrCells[0].column]);
-						const c = parseInt(solution[nbrCells[1].row][nbrCells[1].column]);
-						const d = parseInt(solution[nbrCells[2].row][nbrCells[2].column]);
+						const b = parseInt(solution[nbrCells[0].row][nbrCells[0].column].digits?.[0] ?? '');
+						const c = parseInt(solution[nbrCells[1].row][nbrCells[1].column].digits?.[0] ?? '');
+						const d = parseInt(solution[nbrCells[2].row][nbrCells[2].column].digits?.[0] ?? '');
 
 						let invalid = false;
 						if (Math.ceil(a / 3) === Math.ceil(b / 3)) {
@@ -224,11 +249,11 @@ export function verifyLogic(
 			++i
 		) {
 			for (const d of [1, 5, 9]) {
-				let v = solution[i][(clues.dimensions.margins?.left ?? 0) + d - 1];
-				if (v !== '') {
+				let v = solution[i][(clues.dimensions.margins?.left ?? 0) + d - 1].digits?.[0];
+				if (v) {
 					const j = parseInt(v) - 1;
-					v = solution[i][j];
-					if (v !== '' && parseInt(v) !== d) {
+					v = solution[i][j].digits?.[0];
+					if (v && parseInt(v) !== d) {
 						invalidCells.push(
 							{ row: i, column: (clues.dimensions.margins?.left ?? 0) + d - 1 },
 							{ row: i, column: j }

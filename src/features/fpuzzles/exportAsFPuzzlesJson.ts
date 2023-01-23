@@ -23,10 +23,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	const logic = editorHistory.getClue('logic');
 	const flags = logic.flags ?? [];
 
-	const values = get(gameHistory.getValue('values'));
-	const gameColors = get(gameHistory.getValue('colors'));
-	const cornermarks = get(gameHistory.getValue('cornermarks'));
-	const centermarks = get(gameHistory.getValue('centermarks'));
+	const cellValues = get(gameHistory.getValue('cellValues'));
 	//const annotations = get(gameHistory.getValue('annotations');
 	//const modifiers = get(gameHistory.getValue('modifiers');
 
@@ -106,21 +103,22 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 			if (editorColors[i][j] !== null) {
 				fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor[editorColors[i][j] as Color];
 			}
-			if (values[i][j] !== '') {
-				fPuzzle.grid[gridRow][gridColumn].value = parseInt(values[i][j]);
+			if (cellValues[i][j].digits) {
+				fPuzzle.grid[gridRow][gridColumn].value = parseInt(String(cellValues[i][j].digits?.[0]));
 			}
-			if (gameColors[i][j].length !== 0) {
-				fPuzzle.grid[gridRow][gridColumn].highlight = colorToHexColor[gameColors[i][j][0] as Color];
+			if (cellValues[i][j].colors) {
+				fPuzzle.grid[gridRow][gridColumn].highlight =
+					colorToHexColor[cellValues[i][j].colors?.[0] as Color];
 			}
-			if (cornermarks[i][j] !== '') {
-				fPuzzle.grid[gridRow][gridColumn].cornerPencilMarks = cornermarks[i][j]
-					.split('')
-					.map((m) => parseInt(m));
+			if (cellValues[i][j].cornermarks) {
+				fPuzzle.grid[gridRow][gridColumn].cornerPencilMarks = cellValues[i][j].cornermarks?.map(
+					(m) => parseInt(m)
+				);
 			}
-			if (centermarks[i][j] !== '') {
-				fPuzzle.grid[gridRow][gridColumn].centerPencilMarks = centermarks[i][j]
-					.split('')
-					.map((m) => parseInt(m));
+			if (cellValues[i][j].centermarks) {
+				fPuzzle.grid[gridRow][gridColumn].centerPencilMarks = cellValues[i][j].centermarks?.map(
+					(m) => parseInt(m)
+				);
 			}
 		}
 	}

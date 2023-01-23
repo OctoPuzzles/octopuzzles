@@ -5,14 +5,7 @@
 	import Input from '$ui/Input.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import {
-		defaultAnnotations,
-		defaultCentermarks,
-		defaultCornermarks,
-		defaultGameColors,
-		defaultModifiers,
-		defaultValues
-	} from '$utils/defaults';
+	import { defaultCellValues, defaultAnnotations } from '$utils/defaults';
 	import { page } from '$app/stores';
 	import { openModal } from '$stores/modalStore';
 	import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
@@ -65,11 +58,11 @@
 		// create solution
 		if (provideSolution) {
 			if ($walkthroughStore.length) {
-				const finalStep = $walkthroughStore[$walkthroughStore.length - 1].step;
+				const finalStep = $walkthroughStore[$walkthroughStore.length - 1].gameData;
 				if (
-					$userInputs.values.some((row, i) => {
-						return row.some((value, j) => {
-							return value === '' && finalStep.values[i][j] !== '';
+					$gameData.cellValues.some((row, i) => {
+						return row.some((cell, j) => {
+							return !cell.digits && finalStep.cellValues[i][j].digits;
 						});
 					})
 				) {
@@ -77,7 +70,9 @@
 				}
 			}
 			solution = {
-				numbers: getUserSolution({ givens: $sudokuClues.givens, values: $userInputs.values })
+				numbers: getUserSolution($gameData.cellValues, $sudokuClues.givens).map((row) =>
+					row.map((cell) => cell.digits?.join('') ?? '')
+				)
 			};
 		}
 		await trpc().mutation('sudokus:provideSolutionToPuzzle', {
@@ -103,12 +98,8 @@
 			provideSolution = sud.solution != null;
 			isPublic = sud.publicSince != null;
 			gameHistory.set({
-				values: defaultValues(sud.dimensions),
-				centermarks: defaultCentermarks(sud.dimensions),
-				cornermarks: defaultCornermarks(sud.dimensions),
-				colors: defaultGameColors(sud.dimensions),
-				annotations: defaultAnnotations(),
-				modifiers: defaultModifiers()
+				cellValues: defaultCellValues(sud.dimensions),
+				annotations: defaultAnnotations()
 			});
 			editorHistory.reset({
 				borderclues: sud.borderclues ?? undefined,
@@ -124,7 +115,12 @@
 			});
 			if (sud.solution) {
 				gameHistory.set({
-					values: sud.solution.numbers
+					cellValues: sud.solution.numbers.map((row) =>
+						row.map((value) => {
+							const digits = value.split('');
+							return digits.length ? { digits } : {};
+						})
+					)
 				});
 			}
 		} else {
@@ -158,7 +154,7 @@
 	let provideSolution = false;
 
 	const sudokuClues = editorHistory.subscribeToClues();
-	const userInputs = gameHistory.subscribeToInputs();
+	const gameData = gameHistory.subscribeToInputs();
 
 	async function save(): Promise<void> {
 		loading = true;
@@ -285,13 +281,13 @@
 	}
 
 	function doesSolutionHaveHoles(): boolean {
-		if (!$sudokuClues.givens || !$userInputs.values) return false;
+		if (!$sudokuClues.givens || !$gameData.cellValues) return false;
 
-		let userSolution = getUserSolution({ givens: $sudokuClues.givens, values: $userInputs.values });
+		let userSolution = getUserSolution($gameData.cellValues, $sudokuClues.givens);
 
 		for (const row of userSolution) {
 			for (const cell of row) {
-				if (cell.length === 0) {
+				if (!cell.digits) {
 					return true;
 				}
 			}
@@ -301,7 +297,7 @@
 	}
 
 	let solutionHasHoles = false;
-	$: if ($userInputs.values && $sudokuClues.givens) {
+	$: if ($gameData.cellValues && $sudokuClues.givens) {
 		solutionHasHoles = doesSolutionHaveHoles();
 	}
 </script>
@@ -338,7 +334,7 @@
 {#if tab === 'editor'}
 	<SudokuEditor clues={$sudokuClues} />
 {:else if tab === 'game'}
-	<SudokuGame clues={$sudokuClues} userInputs={$userInputs} />
+	<SudokuGame clues={$sudokuClues} gameData={$gameData} />
 {:else}
 	<div class="m-auto container p-4">
 		<form>

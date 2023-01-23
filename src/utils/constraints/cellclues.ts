@@ -3,6 +3,7 @@ import type {
 	CellClueLocation,
 	CellClueSize,
 	CellClueType,
+	CellValues,
 	Color,
 	Position,
 	Rotation,
@@ -163,8 +164,8 @@ export function getCellCluesToDraw(clue: Cellclue): Cellclue[] {
 
 export function verifyCellClue(
 	cellclue: Cellclue,
-	solution: string[][],
-	clues:EditorHistoryStep
+	solution: CellValues,
+	clues: EditorHistoryStep
 ): Position[] {
 	switch (cellclue.type) {
 		case 'LittleKillerNW':
@@ -200,8 +201,8 @@ export function verifyCellClue(
 					j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0);
 					i += rowStep, j += colStep
 				) {
-					const v = solution[i][j];
-					if (v !== '') {
+					const v = solution[i][j].digits?.[0];
+					if (v) {
 						total += parseInt(v);
 						++count;
 					}
@@ -226,7 +227,10 @@ export function verifyCellClue(
 				let colStep = 0;
 				if (cellclue.position.row === (clues.dimensions.margins?.top ?? 0) - 1) {
 					rowStep = 1;
-				} else if (cellclue.position.row === clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0)) {
+				} else if (
+					cellclue.position.row ===
+					clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0)
+				) {
 					rowStep = -1;
 				}
 				if (cellclue.position.column === (clues.dimensions.margins?.left ?? 0) - 1) {
@@ -245,18 +249,18 @@ export function verifyCellClue(
 				let j = cellclue.position.column + colStep;
 				let key = 0;
 				if (cellclue.type === 'XSum' || cellclue.type === 'NumberedRoom') {
-					if (solution[i][j] === '') {
+					if (!solution[i][j].digits) {
 						break;
 					} else {
-						key = parseInt(solution[i][j]);
+						key = parseInt(solution[i][j].digits?.[0] ?? '');
 						if (cellclue.type === 'NumberedRoom') {
 							i += (key - 1) * rowStep;
 							j += (key - 1) * colStep;
-							if (solution[i][j] === '') {
+							if (!solution[i][j].digits) {
 								break;
 							} else {
-								const v = solution[i][j];
-								if (v === '') {
+								const v = solution[i][j].digits?.[0];
+								if (!v) {
 									break;
 								} else if (parseInt(v) !== key) {
 									return [cellclue.position];
@@ -277,8 +281,8 @@ export function verifyCellClue(
 					i < (clues.dimensions.margins?.left ?? 0) + clues.dimensions.columns;
 					i += rowStep, j += colStep
 				) {
-					const v = solution[i][j];
-					if (v !== '') {
+					const v = solution[i][j].digits?.[0];
+					if (v) {
 						const d = parseInt(v);
 						if (cellclue.type === 'Skyscraper') {
 							if (d > key) {
@@ -321,8 +325,8 @@ export function verifyCellClue(
 		}
 		case 'Maximum':
 		case 'Minimum': {
-			const v = solution[cellclue.position.row][cellclue.position.column];
-			if (v !== '') {
+			const v = solution[cellclue.position.row][cellclue.position.column].digits?.[0];
+			if (v) {
 				const nbrCells = [];
 				for (const step of [
 					{ x: -1, y: 0 },
@@ -333,7 +337,7 @@ export function verifyCellClue(
 					const row = cellclue.position.row + step.x;
 					const column = cellclue.position.column + step.y;
 					if (row >= 0 && row < solution.length && column >= 0 && column < solution[0].length) {
-						if (solution[row][column] !== '') {
+						if (solution[row][column].digits) {
 							nbrCells.push({ row, column });
 						}
 					}
@@ -341,9 +345,9 @@ export function verifyCellClue(
 
 				const invalidCells = nbrCells.filter((c) => {
 					if (cellclue.type === 'Maximum') {
-						return v < solution[c.row][c.column];
+						return v < (solution[c.row][c.column].digits?.[0] ?? '');
 					} else {
-						return v > solution[c.row][c.column];
+						return v > (solution[c.row][c.column].digits?.[0] ?? '');
 					}
 				});
 				if (invalidCells.length) {

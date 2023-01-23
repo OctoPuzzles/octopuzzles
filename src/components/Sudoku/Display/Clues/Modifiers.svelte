@@ -1,34 +1,43 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import type { CellModifiers } from '$models/Sudoku';
+	import type { Dimensions, GameData } from '$models/Sudoku';
+	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
-	export let modifiers: CellModifiers | undefined;
+	export let dimensions: Dimensions;
+	export let gameData: GameData | undefined;
 </script>
 
-{#if modifiers}
+{#if gameData}
 	<g id="modifiers">
-		{#each modifiers as modifier}
-			<g class="pointer-events-none">
-				{#if modifier.type === 'SCell'}
-					<line
-						x1={cellSize * (modifier.position.column + 0.1)}
-						y1={cellSize * (modifier.position.row + 0.9)}
-						x2={cellSize * (modifier.position.column + 0.9)}
-						y2={cellSize * (modifier.position.row + 0.1)}
-						class={`stroke-current stroke-5 cursor text-gray`}
-						stroke-linecap="round"
-					/>
-				{:else if modifier.type === 'Doubler'}
-					<text
-						x={cellSize * (modifier.position.column + 0.88)}
-						y={cellSize * (modifier.position.row + 0.92)}
-						dominant-baseline="middle"
-						class="fill-current text-blue-700 select-none"
-					>
-						{'x' + (modifier.value ?? '2')}
-					</text>
+		{#each arrayfrom0ToN(dimensions.rows) as row}
+			{#each arrayfrom0ToN(dimensions.columns) as column}
+				{@const modifiers = gameData?.cellValues[row][column].modifiers}
+				{#if modifiers}
+					{#each modifiers as modifier}
+						<g class="pointer-events-none">
+							{#if modifier === 'SCell'}
+								<line
+									x1={cellSize * (column + 0.1)}
+									y1={cellSize * (row + 0.9)}
+									x2={cellSize * (column + 0.9)}
+									y2={cellSize * (row + 0.1)}
+									class={`stroke-current stroke-5 cursor text-gray`}
+									stroke-linecap="round"
+								/>
+							{:else if modifier === 'Doubler'}
+								<text
+									x={cellSize * (column + 0.88)}
+									y={cellSize * (row + 0.92)}
+									dominant-baseline="middle"
+									class="fill-current text-blue-700 select-none"
+								>
+									x2
+								</text>
+							{/if}
+						</g>
+					{/each}
 				{/if}
-			</g>
+			{/each}
 		{/each}
 	</g>
 {/if}
