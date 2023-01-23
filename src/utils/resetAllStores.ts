@@ -3,7 +3,7 @@ import { editorHistory, gameHistory, highlights, inputMode } from '$stores/sudok
 export function resetAllSudokuStores(): void {
 	const { highlightedCells, highlightedItemIndex, selectedCells, selectedItemIndex, wrongCells } =
 		highlights;
-	inputMode.set('values');
+	inputMode.set('digits');
 	highlightedItemIndex.set(-1);
 	selectedItemIndex.set(-1);
 	selectedCells.set([]);

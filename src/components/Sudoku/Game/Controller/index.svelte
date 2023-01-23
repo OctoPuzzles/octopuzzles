@@ -49,7 +49,7 @@
 		string,
 		{ icon: typeof NumbersIcon; controller: typeof Numbers; label: string; shortcut?: string }
 	> = {
-		values: { icon: NumbersIcon, controller: Numbers, label: 'Numbers', shortcut: 'Z' },
+		digits: { icon: NumbersIcon, controller: Numbers, label: 'Digits', shortcut: 'Z' },
 		cornermarks: {
 			icon: CornerMarksIcon,
 			controller: CornerMarks,
