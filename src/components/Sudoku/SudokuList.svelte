@@ -55,7 +55,7 @@
 									{/if}
 									<span class="mx-1">•</span>
 									<p class="">
-										{sudoku.points ?? 0} point{Math.abs(sudoku.points) !== 1 ? 's' : ''}
+										{sudoku.points ?? 0} upvote{Math.abs(sudoku.points) !== 1 ? 's' : ''}
 									</p>
 									<span class="mx-1">•</span>
 									{#if sudoku.publicSince}

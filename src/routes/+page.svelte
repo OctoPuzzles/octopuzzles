@@ -103,16 +103,7 @@
 			{#each data.labels as label}
 				{@const selected = activeLabels.includes(label.id)}
 				<button on:click={() => toggleLabel(label.id)}>
-					<PuzzleLabel
-						{label}
-						class={classNames(
-							'hover:ring-1 hover:ring-orange-500 active:bg-orange-200 transition-colors',
-							{
-								'!bg-orange-200': selected,
-								'bg-gray-300': !selected
-							}
-						)}
-					/>
+					<PuzzleLabel {label} {selected} />
 				</button>
 			{/each}
 		</div>

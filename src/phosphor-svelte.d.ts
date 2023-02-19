@@ -34,3 +34,4 @@ declare module 'phosphor-svelte/lib/Play/Play.svelte';
 declare module 'phosphor-svelte/lib/Pause/Pause.svelte';
 declare module 'phosphor-svelte/lib/Atom/Atom.svelte';
 declare module 'phosphor-svelte/lib/Crosshair/Crosshair.svelte';
+declare module 'phosphor-svelte/lib/Check/Check.svelte';
