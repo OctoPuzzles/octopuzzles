@@ -77,6 +77,24 @@
 			(k.target as HTMLElement).parentElement?.dataset.ignoreshortcuts != null
 		)
 			return;
+		if (isCommandKey(k) && $inputMode !== 'notes') {
+			switch (k.key) {
+				case 'z':
+					k.preventDefault();
+					if (k.shiftKey && get(gameHistory.canRedo)) {
+						gameHistory.redo();
+					} else if (!k.shiftKey && get(gameHistory.canUndo)) {
+						gameHistory.undo();
+					}
+					break;
+				case 'y':
+					k.preventDefault();
+					if (get(gameHistory.canRedo)) {
+						gameHistory.redo();
+					}
+					break;
+			}
+		}
 		// In notes mode, you should use command keys
 		if ($inputMode === 'notes' && !isCommandKey(k)) return;
 		switch (k.key) {
