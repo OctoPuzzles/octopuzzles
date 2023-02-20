@@ -119,15 +119,15 @@ function createEditorHistoryStore() {
 	 * // To get the current killercages
 	 * const killercages = getEditorState("killercages");
 	 */
-	function getClue<T extends keyof EditorHistoryStep>(type: T): EditorHistoryStep[T] {
-		const h = get(history);
-		const s = get(step);
-		const res = h[s]?.[type];
-		if (typeof res === 'number') {
-			return h[res]?.[type] as EditorHistoryStep[T];
-		} else {
-			return res as EditorHistoryStep[T];
-		}
+	function getClue<T extends keyof EditorHistoryStep>(type: T): Readable<EditorHistoryStep[T]> {
+		return derived([history, step], ([$editorHistory, $editorStep]) => {
+			const res = $editorHistory[$editorStep]?.[type];
+			if (typeof res === 'number') {
+				return $editorHistory[res]?.[type] as EditorHistoryStep[T];
+			} else {
+				return res as EditorHistoryStep[T];
+			}
+		});
 	}
 
 	/**
@@ -140,10 +140,10 @@ function createEditorHistoryStore() {
 	const canUndo = derived(step, ($step) => $step > 0);
 
 	function redo(): void {
-		step.update((step) => Math.min(get(history).length, step + 1));
+		step.update((step) => Math.min(get(history).length - 1, step + 1));
 	}
 
-	const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
+	const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 2);
 
 	/** Reset the editor */
 	function reset(startState?: Partial<EditorHistoryStep>): void {
@@ -167,8 +167,8 @@ function createEditorHistoryStore() {
 
 	/** Clear every input-values, and colors from the specified cells in the editor */
 	function clearCells(cells: Position[]): void {
-		const newGivens = getClue('givens');
-		const newColors = getClue('colors');
+		const newGivens = get(getClue('givens'));
+		const newColors = get(getClue('colors'));
 		let changes = false;
 		cells.forEach((cell) => {
 			let newGiven = newGivens[cell.row]?.[cell.column];
@@ -277,7 +277,7 @@ function createGameHistoryStore() {
 	}
 
 	/**
-	 * Undo a step in the editor
+	 * Undo a step in the game
 	 */
 	function undo(): void {
 		step.update((oldStep) => Math.max(0, oldStep - 1));
@@ -288,12 +288,12 @@ function createGameHistoryStore() {
 	const canUndo = derived(step, ($step) => $step > 0);
 
 	function redo(): void {
-		step.update((step) => Math.min(get(history).length, step + 1));
+		step.update((step) => Math.min(get(history).length - 1, step + 1));
 
 		verify();
 	}
 
-	const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
+	const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 2);
 
 	/** Reset the game */
 	function reset(): void {
@@ -303,7 +303,7 @@ function createGameHistoryStore() {
 		selectedCells.set([]);
 		highlightedCells.set([]);
 		step.set(0);
-		const dim = editorHistory.getClue('dimensions');
+		const dim = get(editorHistory.getClue('dimensions'));
 		history.set([
 			{
 				cellValues: defaultCellValues(dim),
@@ -335,7 +335,7 @@ function createGameHistoryStore() {
 			}
 		});
 		if (changes) {
-			set({cellValues: newCellValues});
+			set({ cellValues: newCellValues });
 
 			verify();
 		}
@@ -462,28 +462,19 @@ export const handleArrows = writable<ArrowHandler>(defaultHandleArrows);
 // DERIVED STORES
 
 export function setMargins(margins?: Margins | null): void {
-	const dimensions = editorHistory.getClue('dimensions');
-	const borderclues = editorHistory.getClue('borderclues');
-	const cellclues = editorHistory.getClue('cellclues');
-	const editorColors = editorHistory.getClue('colors');
-	const cages = editorHistory.getClue('extendedcages');
-	const givens = editorHistory.getClue('givens');
-	const paths = editorHistory.getClue('paths');
-	const cells = editorHistory.getClue('cells');
-	const regions = editorHistory.getClue('regions');
-	const cellValues = get(gameHistory.getValue('cellValues'));
-	const annotations = get(gameHistory.getValue('annotations'));
+	const clues = get(editorHistory.subscribeToClues());
+	const userInputs = get(gameHistory.subscribeToInputs());
 
 	const offsets: Margins = {
-		left: (margins?.left ?? 0) - (dimensions.margins?.left ?? 0),
-		right: (margins?.right ?? 0) - (dimensions.margins?.right ?? 0),
-		top: (margins?.top ?? 0) - (dimensions.margins?.top ?? 0),
-		bottom: (margins?.bottom ?? 0) - (dimensions.margins?.bottom ?? 0)
+		left: (margins?.left ?? 0) - (clues.dimensions.margins?.left ?? 0),
+		right: (margins?.right ?? 0) - (clues.dimensions.margins?.right ?? 0),
+		top: (margins?.top ?? 0) - (clues.dimensions.margins?.top ?? 0),
+		bottom: (margins?.bottom ?? 0) - (clues.dimensions.margins?.bottom ?? 0)
 	};
 	if (offsets.left !== 0 || offsets.right !== 0 || offsets.top !== 0 || offsets.bottom !== 0) {
 		const newDimensions = {
-			rows: dimensions.rows + offsets.top + offsets.bottom,
-			columns: dimensions.columns + offsets.left + offsets.right,
+			rows: clues.dimensions.rows + offsets.top + offsets.bottom,
+			columns: clues.dimensions.columns + offsets.left + offsets.right,
 			margins:
 				margins && (margins.left > 0 || margins.right > 0 || margins.top > 0 || margins.bottom > 0)
 					? margins
@@ -497,7 +488,7 @@ export function setMargins(margins?: Margins | null): void {
 
 		editorHistory.set({
 			dimensions: newDimensions,
-			borderclues: borderclues
+			borderclues: clues.borderclues
 				.map((clue) => {
 					return {
 						...clue,
@@ -505,7 +496,7 @@ export function setMargins(margins?: Margins | null): void {
 					};
 				})
 				.filter((clue) => clue.positions.every(isValidPosition)),
-			cellclues: cellclues
+			cellclues: clues.cellclues
 				.map((clue) => {
 					return {
 						...clue,
@@ -516,28 +507,28 @@ export function setMargins(margins?: Margins | null): void {
 					};
 				})
 				.filter((clue) => isValidPosition(clue.position)),
-			colors: offsetMatrix(editorColors, offsets, null),
-			extendedcages: cages
+			colors: offsetMatrix(clues.colors, offsets, null),
+			extendedcages: clues.extendedcages
 				.map((cage) => {
 					return { ...cage, positions: offsetPositions(cage.positions, offsets) };
 				})
 				.filter((clue) => clue.positions.every(isValidPosition)),
-			givens: offsetMatrix(givens, offsets, ''),
-			paths: paths
+			givens: offsetMatrix(clues.givens, offsets, ''),
+			paths: clues.paths
 				.map((path) => {
 					return { ...path, positions: offsetPositions(path.positions, offsets) };
 				})
 				.filter((clue) => clue.positions.every(isValidPosition)),
-			cells: offsetMatrix(cells, offsets, false),
-			regions: regions
+			cells: offsetMatrix(clues.cells, offsets, false),
+			regions: clues.regions
 				.map((region) => {
 					return { ...region, positions: offsetPositions(region.positions, offsets) };
 				})
 				.filter((region) => region.positions.every(isValidPosition))
 		});
 		gameHistory.set({
-			cellValues: offsetMatrix(cellValues, offsets, {}),
-			annotations: annotations
+			cellValues: offsetMatrix(userInputs.cellValues, offsets, {}),
+			annotations: userInputs.annotations
 				.map((annotation) => {
 					return { ...annotation, positions: offsetPositions(annotation.positions, offsets) };
 				})

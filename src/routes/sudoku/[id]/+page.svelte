@@ -14,6 +14,7 @@
 	import trpc from '$lib/client/trpc';
 	import { scanner } from '$stores/sudokuStore/scanner';
 	import { settings } from '$stores/settingsStore';
+	import { getValuesFromRange } from '$utils/keyboard/getValuesFromRange';
 
 	export let data: PageData;
 
@@ -100,17 +101,26 @@
 	let generalSettings = settings.getGroup('general');
 
 	function checkSolution(): boolean {
+		const allDigits = getValuesFromRange(
+			$sudokuClues.logic.digits ??
+				($sudokuClues.logic.flags?.includes('SCells') ? '0-' : '1-') +
+					($sudokuClues.dimensions.rows -
+						($sudokuClues.dimensions.margins?.top ?? 0) -
+						($sudokuClues.dimensions.margins?.bottom ?? 0))
+		);
+		//check that every row has the required number of digits before validating the solution
 		if (
-			$gameData.cellValues.some((r, i) =>
-				r.some(
-					(cell, j) =>
-						!cell.digits && $sudokuClues.givens[i][j] === '' && $sudokuClues.cells[i][j] === true
-				)
-			)
+			$gameData.cellValues.some((row, i) => {
+				let numDigits = 0;
+				row.forEach((cell, j) => {
+					numDigits += $sudokuClues.givens[i][j] !== '' ? 1 : cell.digits?.length ?? 0;
+				});
+				return numDigits === allDigits.length;
+			})
 		) {
 			return false;
 		}
-
+		//check that the provided solution has the same dimensions as the user input
 		if ($solution != null) {
 			if (
 				$solution.length !== $gameData.cellValues.length ||
@@ -120,6 +130,7 @@
 			}
 		}
 
+		//check for errors against the provided solution or the puzzle logic
 		const errorCells = scanner.getErrorCells($solution);
 		if (($generalSettings?.verificationMode ?? 'OnDemand') === 'OnComplete') {
 			$wrongCells = errorCells;

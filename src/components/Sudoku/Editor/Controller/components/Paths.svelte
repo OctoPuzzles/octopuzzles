@@ -39,7 +39,7 @@
 
 	let type: PathType | 'CUSTOM' = $sudokuClues.paths[0]?.type ?? 'CUSTOM';
 	let defaultSettings = pathDefaults(type);
-	let { color, width, form, fill, arrow, uniqueDigits } = defaultSettings;
+	let { color, width, form, fill, arrow, uniqueDigits, nonStandard } = defaultSettings;
 	$: hollow = fill === 'Hollow';
 
 	$: color, updateSelectedPath();
@@ -85,6 +85,7 @@
 		hollow = fill === 'Hollow';
 		arrow = path.arrow ?? defaultSettings.arrow;
 		uniqueDigits = path.uniqueDigits ?? defaultSettings.uniqueDigits;
+		nonStandard = path.nonStandard ?? defaultSettings.nonStandard;
 	}
 
 	function onChangeType() {
@@ -111,6 +112,12 @@
 
 	function toggleUniqueDigits(): void {
 		uniqueDigits = !uniqueDigits;
+
+		updateSelectedPath();
+	}
+
+	function toggleNonStandard(): void {
+		nonStandard = !nonStandard;
 
 		updateSelectedPath();
 	}
@@ -268,7 +275,7 @@
 		const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
 		if (lastSelectedCell) {
 			const { row, column } = lastSelectedCell;
-			let dim = editorHistory.getClue('dimensions');
+			let dim = $sudokuClues.dimensions;
 			let newCell: Position | undefined = undefined;
 			switch (k.key) {
 				case 'ArrowUp':
@@ -440,5 +447,15 @@
 				on:change={() => toggleUniqueDigits()}
 			/>
 		</div>
+
+		{#if type !== 'CUSTOM'}
+			<div>
+				<Checkbox
+					bind:checked={nonStandard}
+					label="Non-Standard logic"
+					on:change={() => toggleNonStandard()}
+				/>
+			</div>
+		{/if}
 	</div>
 </div>

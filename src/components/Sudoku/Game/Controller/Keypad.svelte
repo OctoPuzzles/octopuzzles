@@ -14,6 +14,7 @@
 	export let handleDigit: ((digit: string) => void) | undefined = undefined;
 
 	const { selectedCells } = highlights;
+	const clues = editorHistory.subscribeToClues();
 
 	function handleKeyDown(k: KeyboardEvent): void {
 		//do not accept keyboard input when any modal controls are open
@@ -33,12 +34,11 @@
 	}
 
 	function handleModifier(key: string): void {
-		const logic = editorHistory.getClue('logic');
-		const sCells = logic.flags?.includes('SCells') ?? false;
-		const doublers = logic.flags?.includes('Doublers') ?? false;
+		const sCells = $clues.logic.flags?.includes('SCells') ?? false;
+		const doublers = $clues.logic.flags?.includes('Doublers') ?? false;
 
 		if ((key === '/' && sCells) || (key === '*' && doublers)) {
-			const givens = editorHistory.getClue('givens');
+			const givens = $clues.givens;
 			const positions = get(selectedCells).filter((p) => !(givens[p.row]?.[p.column] !== ''));
 			if (positions.length === 0) return;
 
@@ -100,9 +100,8 @@
 			</div>
 		{/each}
 		{#if true}
-			{@const logic = editorHistory.getClue('logic')}
-			{@const sCells = logic.flags?.includes('SCells')}
-			{@const doublers = logic.flags?.includes('Doublers')}
+			{@const sCells = $clues.logic.flags?.includes('SCells')}
+			{@const doublers = $clues.logic.flags?.includes('Doublers')}
 			<div
 				class={classNames({
 					'col-span-2': !sCells && !doublers

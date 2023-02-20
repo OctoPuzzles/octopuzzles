@@ -61,8 +61,7 @@
 
 		importFPuzzleIntoEditorHistory(jsonString);
 
-		let dim = editorHistory.getClue('dimensions');
-		gameHistory.set({ cellValues: defaultCellValues(dim) });
+		gameHistory.set({ cellValues: defaultCellValues($sudokuClues.dimensions) });
 		loading = false;
 	});
 

@@ -10,6 +10,7 @@
 	import { hasOpenModals } from '$stores/modalStore';
 
 	const { selectedCells } = highlights;
+	const colors = editorHistory.getClue('colors');
 
 	function handleKeyDown(k: KeyboardEvent): void {
 		//do not accept keyboard input when any modal controls are open
@@ -27,7 +28,7 @@
 		const positions = get(selectedCells);
 		if (positions.length === 0) return;
 
-		const currentColors = editorHistory.getClue('colors');
+		const currentColors = $colors;
 		const newColors = deepCopy(currentColors);
 
 		// Whether there has been any changes

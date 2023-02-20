@@ -11,25 +11,16 @@ import { getRegionsToDraw } from '$utils/constraints/regions';
 import type { Color, Position } from '$models/Sudoku';
 
 export function exportAsFPuzzlesJson(): FPuzzlesJson {
-	const givens = editorHistory.getClue('givens');
-	const borderClues = editorHistory.getClue('borderclues');
-	const cellClues = editorHistory.getClue('cellclues');
-	const regions = editorHistory.getClue('regions');
-	//const cells = editorHistory.getClue('cells');
-	const editorColors = editorHistory.getClue('colors');
-	const cages = editorHistory.getClue('extendedcages');
-	const paths = editorHistory.getClue('paths');
-	const dimensions = editorHistory.getClue('dimensions');
-	const logic = editorHistory.getClue('logic');
-	const flags = logic.flags ?? [];
+	const clues = get(editorHistory.subscribeToClues());
+	const flags = clues.logic.flags ?? [];
 
 	const cellValues = get(gameHistory.getValue('cellValues'));
 	//const annotations = get(gameHistory.getValue('annotations');
 	//const modifiers = get(gameHistory.getValue('modifiers');
 
 	const getPositionString = (position: Position): PositionString => {
-		return `R${position.row + 1 - (dimensions.margins?.top ?? 0)}C${
-			position.column + 1 - (dimensions.margins?.left ?? 0)
+		return `R${position.row + 1 - (clues.dimensions.margins?.top ?? 0)}C${
+			position.column + 1 - (clues.dimensions.margins?.left ?? 0)
 		}`;
 	};
 	const getPositionStrings = (positions: Position[]): PositionString[] => {
@@ -50,8 +41,12 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	};
 
 	const size = Math.max(
-		dimensions.rows - (dimensions.margins?.top ?? 0) - (dimensions.margins?.bottom ?? 0),
-		dimensions.columns - (dimensions.margins?.left ?? 0) - (dimensions.margins?.right ?? 0)
+		clues.dimensions.rows -
+			(clues.dimensions.margins?.top ?? 0) -
+			(clues.dimensions.margins?.bottom ?? 0),
+		clues.dimensions.columns -
+			(clues.dimensions.margins?.left ?? 0) -
+			(clues.dimensions.margins?.right ?? 0)
 	);
 	const grid = deepCopy(new Array(size).fill(new Array(size).fill({})));
 
@@ -82,26 +77,26 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	};
 
 	for (
-		let i = dimensions.margins?.top ?? 0;
-		i < dimensions.rows - (dimensions.margins?.bottom ?? 0);
+		let i = clues.dimensions.margins?.top ?? 0;
+		i < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0);
 		++i
 	) {
 		for (
-			let j = dimensions.margins?.left ?? 0;
-			j < dimensions.columns - (dimensions.margins?.right ?? 0);
+			let j = clues.dimensions.margins?.left ?? 0;
+			j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0);
 			++j
 		) {
-			const gridRow = i - (dimensions.margins?.top ?? 0);
-			const gridColumn = j - (dimensions.margins?.top ?? 0);
-			if (givens[i][j] !== '') {
-				fPuzzle.grid[gridRow][gridColumn].value = parseInt(givens[i][j]);
+			const gridRow = i - (clues.dimensions.margins?.top ?? 0);
+			const gridColumn = j - (clues.dimensions.margins?.top ?? 0);
+			if (clues.givens[i][j] !== '') {
+				fPuzzle.grid[gridRow][gridColumn].value = parseInt(clues.givens[i][j]);
 				fPuzzle.grid[gridRow][gridColumn].given = true;
 			}
 			if (flags.some((f) => f === 'Indexed159') && (j === 0 || j === 4 || j === 8)) {
 				fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor.Red;
 			}
-			if (editorColors[i][j] !== null) {
-				fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor[editorColors[i][j] as Color];
+			if (clues.colors[i][j] !== null) {
+				fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor[clues.colors[i][j] as Color];
 			}
 			if (cellValues[i][j].digits) {
 				fPuzzle.grid[gridRow][gridColumn].value = parseInt(String(cellValues[i][j].digits?.[0]));
@@ -124,9 +119,9 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	}
 
 	const handledRegions: number[] = [];
-	const defaultNormalRegions = defaultRegions(dimensions);
+	const defaultNormalRegions = defaultRegions(clues.dimensions);
 	let regionNumber = 0;
-	regions.forEach((r, i) => {
+	clues.regions.forEach((r, i) => {
 		if (handledRegions.includes(i)) return;
 
 		switch (r.type) {
@@ -137,8 +132,8 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 							(q) => q.row === p.row && q.column === p.column
 						)
 					) {
-						fPuzzle.grid[p.row - (dimensions.margins?.top ?? 0)][
-							p.column - (dimensions.margins?.left ?? 0)
+						fPuzzle.grid[p.row - (clues.dimensions.margins?.top ?? 0)][
+							p.column - (clues.dimensions.margins?.left ?? 0)
 						].region = regionNumber;
 					}
 				});
@@ -154,7 +149,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 				const clone = fPuzzle.clone ?? (fPuzzle.clone = []);
 
 				const topLeftR = topLeftOfPositions(r.positions);
-				regions.forEach((s, j) => {
+				clues.regions.forEach((s, j) => {
 					if (j > i && handledRegions.includes(j)) {
 						if (s.color === r.color && s.positions.length === r.positions.length) {
 							const topLeftS = topLeftOfPositions(s.positions);
@@ -184,8 +179,8 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 		getRegionsToDraw(r).forEach((s) => {
 			if (s.color) {
 				s.positions.forEach((p) => {
-					fPuzzle.grid[p.row - (dimensions.margins?.top ?? 0)][
-						p.column - (dimensions.margins?.left ?? 0)
+					fPuzzle.grid[p.row - (clues.dimensions.margins?.top ?? 0)][
+						p.column - (clues.dimensions.margins?.left ?? 0)
 					].c = colorToHexColor[s.color as Color];
 				});
 			}
@@ -193,14 +188,14 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	});
 
 	const handledPaths: number[] = [];
-	paths.forEach((p, i) => {
+	clues.paths.forEach((p, i) => {
 		if (handledPaths.includes(i)) return;
 
 		switch (p.type) {
 			case 'Arrow': {
 				const arrow = fPuzzle.arrow ?? (fPuzzle.arrow = []);
 
-				const pillIndex = paths.findIndex(
+				const pillIndex = clues.paths.findIndex(
 					(q, j) =>
 						j > i &&
 						q.type === 'Pill' &&
@@ -212,7 +207,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 				arrow.push({
 					cells:
 						pillIndex !== -1
-							? getPositionStrings(paths[pillIndex].positions)
+							? getPositionStrings(clues.paths[pillIndex].positions)
 							: [getPositionString(p.positions[0])],
 					lines: p.positions.length > 1 ? [getPositionStrings(p.positions)] : []
 				});
@@ -311,7 +306,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 		});
 	});
 
-	borderClues.forEach((c) => {
+	clues.borderclues.forEach((c) => {
 		const minRow = Math.min(c.positions[0].row, c.positions[1].row);
 		const maxRow = Math.max(c.positions[0].row, c.positions[1].row);
 		const minColumn = Math.min(c.positions[0].column, c.positions[1].column);
@@ -437,7 +432,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 		});
 	});
 
-	cellClues.forEach((c) => {
+	clues.cellclues.forEach((c) => {
 		switch (c.type) {
 			case 'Maximum': {
 				const maximum = fPuzzle.maximum ?? (fPuzzle.maximum = []);
@@ -520,7 +515,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 		});
 	});
 
-	cages.forEach((c) => {
+	clues.extendedcages.forEach((c) => {
 		switch (c.type) {
 			case 'Killer': {
 				const killercage = fPuzzle.killercage ?? (fPuzzle.killercage = []);

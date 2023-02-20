@@ -8,12 +8,13 @@
 	import { hasOpenModals } from '$stores/modalStore';
 
 	const { selectedCells } = highlights;
+	const givens = editorHistory.getClue('givens');
 
 	function handleClick(newGiven: string): void {
 		const positions = get(selectedCells);
 		if (positions.length === 0) return;
 
-		const currentGivens = editorHistory.getClue('givens');
+		const currentGivens = $givens;
 		const newGivens = deepCopy(currentGivens);
 
 		// Whether there has been any changes

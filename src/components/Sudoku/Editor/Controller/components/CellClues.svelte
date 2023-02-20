@@ -32,6 +32,7 @@
 	import moveArrayElement from '$utils/moveArrayElement';
 	import { cellClueDefaults } from '$utils/constraints/cellclues';
 	import { onDestroy } from 'svelte';
+	import Checkbox from '$ui/Checkbox.svelte';
 
 	const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
 	const labels = editorHistory.labels;
@@ -39,7 +40,7 @@
 
 	let type: CellClueType | 'CUSTOM' = $sudokuClues.cellclues[0]?.type ?? 'CUSTOM';
 	let defaultSettings = cellClueDefaults(type);
-	let { location, text, size, symbol, rotation, color } = defaultSettings;
+	let { location, text, size, symbol, rotation, color, nonStandard } = defaultSettings;
 
 	$: color, updateSelectedClue();
 
@@ -110,6 +111,7 @@
 		symbol = clue.symbol ?? defaultSettings.symbol;
 		rotation = clue.rotation ?? defaultSettings.rotation;
 		color = clue.color ?? defaultSettings.color;
+		nonStandard = clue.nonStandard ?? defaultSettings.nonStandard;
 	}
 
 	function changeType(type: CellClueType | 'CUSTOM') {
@@ -125,6 +127,12 @@
 		}
 
 		updateSettings(type !== 'CUSTOM' ? { type } : {});
+
+		updateSelectedClue();
+	}
+
+	function toggleNonStandard(): void {
+		nonStandard = !nonStandard;
 
 		updateSelectedClue();
 	}
@@ -405,6 +413,16 @@
 						{rotationNames[option]}
 					</div>
 				</Select>
+			</div>
+		{/if}
+
+		{#if type !== 'CUSTOM'}
+			<div>
+				<Checkbox
+					bind:checked={nonStandard}
+					label="Non-Standard logic"
+					on:change={() => toggleNonStandard()}
+				/>
 			</div>
 		{/if}
 	</div>

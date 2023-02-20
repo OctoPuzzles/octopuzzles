@@ -1,264 +1,357 @@
-import type { CellValues, LogicFlag, Position } from '$models/Sudoku';
+import { digitValue } from '$constants';
+import type { CellModifier, CellValues, Logic, Position } from '$models/Sudoku';
 import type { EditorHistoryStep } from '$types';
+import { getValuesFromRange } from '$utils/keyboard/getValuesFromRange';
 
 export function verifyLogic(
-	flags: LogicFlag[],
+	logic: Logic,
 	solution: CellValues,
 	clues: EditorHistoryStep
 ): Position[] {
 	const invalidCells: Position[] = [];
 
-	const nonConsecutive = flags.includes('Nonconsecutive');
-	const negativeBlack = flags.includes('NegativeBlack');
-	const negativeWhite = flags.includes('NegativeWhite');
-	const negativeX = flags.includes('NegativeX');
-	const negativeV = flags.includes('NegativeV');
-	if (nonConsecutive || negativeBlack || negativeWhite || negativeX || negativeV) {
-		for (
-			let i = clues.dimensions.margins?.top ?? 0;
-			i < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0);
-			++i
-		) {
+	if (logic.flags) {
+		const nonConsecutive = logic.flags.includes('Nonconsecutive');
+		const negativeBlack = logic.flags.includes('NegativeBlack');
+		const negativeWhite = logic.flags.includes('NegativeWhite');
+		const negativeX = logic.flags.includes('NegativeX');
+		const negativeV = logic.flags.includes('NegativeV');
+		if (nonConsecutive || negativeBlack || negativeWhite || negativeX || negativeV) {
 			for (
-				let j = clues.dimensions.margins?.left ?? 0;
-				j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0);
-				++j
+				let i = clues.dimensions.margins?.top ?? 0;
+				i < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0);
+				++i
 			) {
-				const v = solution[i][j].digits?.[0];
-				if (v) {
-					const a = parseInt(v);
-					const nbrCells = [];
-					for (const step of [
-						{ x: 1, y: 0 },
-						{ x: 0, y: 1 }
-					]) {
-						const row = i + step.x;
-						const column = j + step.y;
-						if (
-							row < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) &&
-							column < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0)
-						) {
-							if (solution[row][column].digits?.[0]) {
+				for (
+					let j = clues.dimensions.margins?.left ?? 0;
+					j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0);
+					++j
+				) {
+					const cell = solution[i][j];
+					if (cell.digits) {
+						const nbrCells = [];
+						for (const step of [
+							{ x: 1, y: 0 },
+							{ x: 0, y: 1 }
+						]) {
+							const row = i + step.x;
+							const column = j + step.y;
+							if (
+								row < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) &&
+								column < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0)
+							) {
+								if (solution[row][column].digits?.[0]) {
+									nbrCells.push({ row, column });
+								}
+							}
+						}
+
+						if (nonConsecutive) {
+							const invalidNbrs = nbrCells.filter((c) => {
+								const nbrCell = solution[c.row][c.column];
+								if (nbrCell.digits) {
+									return cell.digits?.some((d) =>
+										nbrCell.digits?.some((e) => Math.abs(digitValue[d] - digitValue[e]) === 1)
+									);
+								} else {
+									return false;
+								}
+							});
+							if (invalidNbrs.length > 0) {
+								invalidCells.push(
+									...[{ row: i, column: j }, ...invalidNbrs].filter(
+										(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+									)
+								);
+							}
+						}
+						if (negativeBlack) {
+							const invalidNbrs = nbrCells.filter((c) => {
+								const nbrCell = solution[c.row][c.column];
+								if (nbrCell.digits) {
+									return (
+										cell.digits?.some((d) =>
+											nbrCell.digits?.some(
+												(e) =>
+													digitValue[d] === 2 * digitValue[e] || digitValue[e] === 2 * digitValue[d]
+											)
+										) &&
+										!clues.borderclues.some(
+											(b) =>
+												b.type === 'KropkiBlack' &&
+												b.positions.every(
+													(p) =>
+														(p.row === i && p.column === j) ||
+														(p.row === c.row && p.column === c.column)
+												)
+										)
+									);
+								} else {
+									return false;
+								}
+							});
+							if (invalidNbrs.length > 0) {
+								invalidCells.push(
+									...[{ row: i, column: j }, ...invalidNbrs].filter(
+										(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+									)
+								);
+							}
+						}
+						if (negativeWhite) {
+							const invalidNbrs = nbrCells.filter((c) => {
+								const nbrCell = solution[c.row][c.column];
+								if (nbrCell.digits) {
+									return (
+										cell.digits?.some((d) =>
+											nbrCell.digits?.some((e) => Math.abs(digitValue[d] - digitValue[e]) === 1)
+										) &&
+										!clues.borderclues.some(
+											(b) =>
+												b.type === 'KropkiWhite' &&
+												b.positions.every(
+													(p) =>
+														(p.row === i && p.column === j) ||
+														(p.row === c.row && p.column === c.column)
+												)
+										)
+									);
+								} else {
+									return false;
+								}
+							});
+							if (invalidNbrs.length > 0) {
+								invalidCells.push(
+									...[{ row: i, column: j }, ...invalidNbrs].filter(
+										(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+									)
+								);
+							}
+						}
+						if (cell.value !== undefined) {
+							if (negativeX) {
+								const invalidNbrs = nbrCells.filter((c) => {
+									const nbrCell = solution[c.row][c.column];
+									if (nbrCell.value !== undefined) {
+										return (
+											(cell.value ?? NaN) + nbrCell.value === 10 &&
+											!clues.borderclues.some(
+												(b) =>
+													b.type === 'XvX' &&
+													b.positions.every(
+														(p) =>
+															(p.row === i && p.column === j) ||
+															(p.row === c.row && p.column === c.column)
+													)
+											)
+										);
+									} else {
+										return false;
+									}
+								});
+								if (invalidNbrs.length > 0) {
+									invalidCells.push(
+										...[{ row: i, column: j }, ...invalidNbrs].filter(
+											(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+										)
+									);
+								}
+							}
+							if (negativeV) {
+								const invalidNbrs = nbrCells.filter((c) => {
+									const nbrCell = solution[c.row][c.column];
+									if (nbrCell.value !== undefined) {
+										return (
+											(cell.value ?? NaN) + nbrCell.value === 5 &&
+											!clues.borderclues.some(
+												(b) =>
+													b.type === 'XvV' &&
+													b.positions.every(
+														(p) =>
+															(p.row === i && p.column === j) ||
+															(p.row === c.row && p.column === c.column)
+													)
+											)
+										);
+									} else {
+										return false;
+									}
+								});
+								if (invalidNbrs.length > 0) {
+									invalidCells.push(
+										...[{ row: i, column: j }, ...invalidNbrs].filter(
+											(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
+										)
+									);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if (logic.flags.includes('Entropy')) {
+			for (
+				let i = clues.dimensions.margins?.top ?? 0;
+				i < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) - 1;
+				++i
+			) {
+				for (
+					let j = clues.dimensions.margins?.left ?? 0;
+					j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0) - 1;
+					++j
+				) {
+					const cell = solution[i][j];
+					if (cell.digits) {
+						const nbrCells = [];
+						const digits = [...cell.digits];
+						for (const step of [
+							{ x: 1, y: 0 },
+							{ x: 0, y: 1 },
+							{ x: 1, y: 1 }
+						]) {
+							const row = i + step.x;
+							const column = j + step.y;
+							const nbrCell = solution[row][column];
+							if (nbrCell.digits) {
 								nbrCells.push({ row, column });
+								digits.push(...nbrCell.digits);
+							} else {
+								break;
 							}
 						}
-					}
+						if (nbrCells.length === 3) {
+							const entropySets = digits.map((d) => Math.ceil(digitValue[d] / 3));
 
-					if (nonConsecutive) {
-						const invalidNbrs = nbrCells.filter((c) => {
-							const u = solution[c.row][c.column].digits?.[0];
-							if (u) {
-								const b = parseInt(u);
-								return Math.abs(a - b) === 1;
-							} else {
-								return false;
-							}
-						});
-						if (invalidNbrs.length > 0) {
-							invalidCells.push(
-								...[{ row: i, column: j }, ...invalidNbrs].filter(
-									(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
-								)
-							);
-						}
-					}
-					if (negativeBlack) {
-						const invalidNbrs = nbrCells.filter((c) => {
-							const u = solution[c.row][c.column].digits?.[0];
-							if (u) {
-								const b = parseInt(u);
-								return (
-									(a === 2 * b || b === 2 * a) &&
-									!clues.borderclues.some(
-										(b) =>
-											b.type === 'KropkiBlack' &&
-											b.positions.every(
-												(p) =>
-													(p.row === i && p.column === j) ||
-													(p.row === c.row && p.column === c.column)
-											)
+							if (
+								!entropySets.includes(1) ||
+								!entropySets.includes(2) ||
+								!entropySets.includes(3)
+							) {
+								invalidCells.push(
+									...[{ row: i, column: j }, ...nbrCells].filter(
+										(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
 									)
 								);
-							} else {
-								return false;
 							}
-						});
-						if (invalidNbrs.length > 0) {
-							invalidCells.push(
-								...[{ row: i, column: j }, ...invalidNbrs].filter(
-									(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
-								)
-							);
-						}
-					}
-					if (negativeWhite) {
-						const invalidNbrs = nbrCells.filter((c) => {
-							const u = solution[c.row][c.column].digits?.[0];
-							if (u) {
-								const b = parseInt(u);
-								return (
-									Math.abs(a - b) === 1 &&
-									!clues.borderclues.some(
-										(b) =>
-											b.type === 'KropkiWhite' &&
-											b.positions.every(
-												(p) =>
-													(p.row === i && p.column === j) ||
-													(p.row === c.row && p.column === c.column)
-											)
-									)
-								);
-							} else {
-								return false;
-							}
-						});
-						if (invalidNbrs.length > 0) {
-							invalidCells.push(
-								...[{ row: i, column: j }, ...invalidNbrs].filter(
-									(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
-								)
-							);
-						}
-					}
-					if (negativeX) {
-						const invalidNbrs = nbrCells.filter((c) => {
-							const u = solution[c.row][c.column].digits?.[0];
-							if (u) {
-								const b = parseInt(u);
-								return (
-									a + b === 10 &&
-									!clues.borderclues.some(
-										(b) =>
-											b.type === 'XvX' &&
-											b.positions.every(
-												(p) =>
-													(p.row === i && p.column === j) ||
-													(p.row === c.row && p.column === c.column)
-											)
-									)
-								);
-							} else {
-								return false;
-							}
-						});
-						if (invalidNbrs.length > 0) {
-							invalidCells.push(
-								...[{ row: i, column: j }, ...invalidNbrs].filter(
-									(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
-								)
-							);
-						}
-					}
-					if (negativeV) {
-						const invalidNbrs = nbrCells.filter((c) => {
-							const u = solution[c.row][c.column].digits?.[0];
-							if (u) {
-								const b = parseInt(u);
-								return (
-									a + b === 5 &&
-									!clues.borderclues.some(
-										(b) =>
-											b.type === 'XvV' &&
-											b.positions.every(
-												(p) =>
-													(p.row === i && p.column === j) ||
-													(p.row === c.row && p.column === c.column)
-											)
-									)
-								);
-							} else {
-								return false;
-							}
-						});
-						if (invalidNbrs.length > 0) {
-							invalidCells.push(
-								...[{ row: i, column: j }, ...invalidNbrs].filter(
-									(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
-								)
-							);
 						}
 					}
 				}
 			}
 		}
-	}
-	if (flags.includes('Entropy')) {
-		for (
-			let i = clues.dimensions.margins?.top ?? 0;
-			i < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) - 1;
-			++i
-		) {
+		if (logic.flags.includes('Indexed159')) {
 			for (
-				let j = clues.dimensions.margins?.left ?? 0;
-				j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0) - 1;
-				++j
+				let i = clues.dimensions.margins?.top ?? 0;
+				i < clues.dimensions.rows + (clues.dimensions.margins?.top ?? 0);
+				++i
 			) {
-				const v = solution[i][j].digits?.[0];
-				if (v) {
-					const a = parseInt(v);
-					const nbrCells = [];
-					for (const step of [
-						{ x: 1, y: 0 },
-						{ x: 0, y: 1 },
-						{ x: 1, y: 1 }
-					]) {
-						const row = i + step.x;
-						const column = j + step.y;
-						if (solution[row][column].digits) {
-							nbrCells.push({ row, column });
-						} else {
-							break;
-						}
-					}
-					if (nbrCells.length === 3) {
-						const b = parseInt(solution[nbrCells[0].row][nbrCells[0].column].digits?.[0] ?? '');
-						const c = parseInt(solution[nbrCells[1].row][nbrCells[1].column].digits?.[0] ?? '');
-						const d = parseInt(solution[nbrCells[2].row][nbrCells[2].column].digits?.[0] ?? '');
-
-						let invalid = false;
-						if (Math.ceil(a / 3) === Math.ceil(b / 3)) {
-							invalid =
-								Math.ceil(a / 3) === Math.ceil(c / 3) ||
-								Math.ceil(a / 3) === Math.ceil(d / 3) ||
-								Math.ceil(c / 3) === Math.ceil(d / 3);
-						} else if (Math.ceil(a / 3) === Math.ceil(c / 3)) {
-							invalid =
-								Math.ceil(a / 3) === Math.ceil(d / 3) || Math.ceil(b / 3) === Math.ceil(d / 3);
-						} else if (Math.ceil(a / 3) === Math.ceil(d / 3)) {
-							invalid = Math.ceil(b / 3) === Math.ceil(c / 3);
-						} else if (Math.ceil(b / 3) === Math.ceil(c / 3)) {
-							invalid = Math.ceil(b / 3) === Math.ceil(d / 3);
-						}
-
-						if (invalid) {
+				for (const d of [1, 5, 9]) {
+					let cell = solution[i][(clues.dimensions.margins?.left ?? 0) + d - 1];
+					if (cell.value !== undefined) {
+						const j = cell.value - 1;
+						cell = solution[i][j];
+						if (cell.digits && !cell.digits.includes(String(d))) {
 							invalidCells.push(
-								...[{ row: i, column: j }, ...nbrCells].filter(
-									(c) => !invalidCells.some((d) => d.row === c.row && d.column === c.column)
-								)
+								{ row: i, column: (clues.dimensions.margins?.left ?? 0) + d - 1 },
+								{ row: i, column: j }
 							);
 						}
 					}
 				}
 			}
 		}
-	}
-	if (flags.includes('Indexed159')) {
-		for (
-			let i = clues.dimensions.margins?.top ?? 0;
-			i < clues.dimensions.rows + (clues.dimensions.margins?.top ?? 0);
-			++i
-		) {
-			for (const d of [1, 5, 9]) {
-				let v = solution[i][(clues.dimensions.margins?.left ?? 0) + d - 1].digits?.[0];
-				if (v) {
-					const j = parseInt(v) - 1;
-					v = solution[i][j].digits?.[0];
-					if (v && parseInt(v) !== d) {
+		const sCells = logic.flags.includes('SCells') && logic.sCellType !== 'NonStandard';
+		const doublers = logic.flags.includes('Doublers') && logic.doublerType !== 'NonStandard';
+		if (sCells || doublers) {
+			const rows =
+				clues.dimensions.rows -
+				(clues.dimensions.margins?.top ?? 0) -
+				(clues.dimensions.margins?.bottom ?? 0);
+			const columns =
+				clues.dimensions.columns -
+				(clues.dimensions.margins?.left ?? 0) -
+				(clues.dimensions.margins?.right ?? 0);
+			const targetCounts: Map<CellModifier, number> = new Map();
+			if (sCells) {
+				const allDigits = getValuesFromRange(clues.logic.digits ?? (sCells ? '0-' : '1-') + rows);
+				targetCounts.set('SCell', allDigits.length - rows);
+			}
+			if (doublers) {
+				targetCounts.set('Doubler', 1);
+			}
+
+			let modifiedCells: Map<CellModifier, Position[]>;
+			for (let n = 0; n < rows; ++n) {
+				modifiedCells = new Map();
+
+				const i = n + (clues.dimensions.margins?.top ?? 0);
+				for (let m = 0; m < columns; ++m) {
+					const j = m + (clues.dimensions.margins?.left ?? 0);
+					solution[i][j].modifiers?.forEach((m) => {
+						if (modifiedCells.has(m)) {
+							modifiedCells.get(m)?.push({ row: i, column: j });
+						} else {
+							modifiedCells.set(m, [{ row: i, column: j }]);
+						}
+					});
+				}
+				for (const [m, cells] of modifiedCells.entries()) {
+					if (cells.length > (targetCounts.get(m) ?? 1)) {
 						invalidCells.push(
-							{ row: i, column: (clues.dimensions.margins?.left ?? 0) + d - 1 },
-							{ row: i, column: j }
+							...cells.filter(
+								(s) => !invalidCells.some((c) => c.row === s.row && c.column === s.column)
+							)
 						);
 					}
+				}
+			}
+
+			for (let m = 0; m < columns; ++m) {
+				modifiedCells = new Map();
+
+				const j = m + (clues.dimensions.margins?.left ?? 0);
+				for (let n = 0; n < rows; ++n) {
+					const i = n + (clues.dimensions.margins?.top ?? 0);
+					solution[i][j].modifiers?.forEach((m) => {
+						if (modifiedCells.has(m)) {
+							modifiedCells.get(m)?.push({ row: i, column: j });
+						} else {
+							modifiedCells.set(m, [{ row: i, column: j }]);
+						}
+					});
+				}
+				for (const [m, cells] of modifiedCells.entries()) {
+					if (cells.length > (targetCounts.get(m) ?? 1)) {
+						invalidCells.push(
+							...cells.filter(
+								(s) => !invalidCells.some((c) => c.row === s.row && c.column === s.column)
+							)
+						);
+					}
+				}
+			}
+
+			modifiedCells = new Map();
+			clues.regions
+				.filter((r) => r.type === 'Normal')
+				.forEach((r) => {
+					r.positions.forEach((p) => {
+						solution[p.row][p.column].modifiers?.forEach((m) => {
+							if (modifiedCells.has(m)) {
+								modifiedCells.get(m)?.push(p);
+							} else {
+								modifiedCells.set(m, [p]);
+							}
+						});
+					});
+				});
+			for (const [m, cells] of modifiedCells.entries()) {
+				if (cells.length > (targetCounts.get(m) ?? 1)) {
+					invalidCells.push(
+						...cells.filter(
+							(s) => !invalidCells.some((c) => c.row === s.row && c.column === s.column)
+						)
+					);
 				}
 			}
 		}

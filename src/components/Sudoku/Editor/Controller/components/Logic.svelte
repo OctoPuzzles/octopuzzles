@@ -39,22 +39,23 @@
 		);
 	}
 
-	$: sCellType = $sudokuClues.logic.sCellType ?? 'Both';
+	$: sCellType = $sudokuClues.logic.sCellType ?? 'Sum';
 	$: doublerType = $sudokuClues.logic.doublerType ?? 'Unique';
 
-	const sCellTypes: SCellType[] = ['Both', 'Either', 'Average'];
+	const sCellTypes: SCellType[] = ['Sum', 'Average', 'NonStandard'];
 
 	const sCellTypeLabels: Record<SCellType, string> = {
-		Both: 'Constraints apply to both digits',
-		Either: 'Constraints apply to one digit only',
-		Average: 'Constraints apply to the average of the digits'
+		Sum: 'Cell value is treated as the sum of the digits',
+		Average: 'Cell value is treated as the average of the digits',
+		NonStandard: 'SCells do not exhibit standard behaviour'
 	};
 
-	const doublerTypes: DoublerType[] = ['Unique', 'NonUnique'];
+	const doublerTypes: DoublerType[] = ['Unique', 'NonUnique', 'NonStandard'];
 
 	const doublerTypeLabels: Record<DoublerType, string> = {
 		Unique: 'Each digit must be doubled exactly once',
-		NonUnique: 'Digits may be doubled more than once'
+		NonUnique: 'Digits may be doubled more than once',
+		NonStandard: 'Doublers do not exhibit standard behaviour'
 	};
 
 	function update(): void {

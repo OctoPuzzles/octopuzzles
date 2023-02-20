@@ -6,9 +6,10 @@
 	import { hasOpenModals } from '$stores/modalStore';
 
 	const { selectedCells } = highlights;
+	const cells = editorHistory.getClue('cells');
 
 	function handleClick(b: boolean): void {
-		const newCells = deepCopy(editorHistory.getClue('cells'));
+		const newCells = deepCopy($cells);
 		if ($selectedCells.length > 0) {
 			$selectedCells.forEach((cell) => {
 				newCells[cell.row][cell.column] = b;

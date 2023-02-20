@@ -27,7 +27,7 @@
 	function generateSolutionCode(): void {
 		const solution = getUserSolution(
 			get(gameHistory.getValue('cellValues')),
-			editorHistory.getClue('givens')
+			get(editorHistory.getClue('givens'))
 		);
 
 		solutionCode = '';

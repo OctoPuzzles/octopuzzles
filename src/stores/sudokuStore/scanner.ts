@@ -78,22 +78,21 @@ function createScannerStore() {
 	}
 
 	function initScan(seed?: Position) {
-		const dimensions = editorHistory.getClue('dimensions');
-		const givens = editorHistory.getClue('givens');
-		const logic = editorHistory.getClue('logic');
+		const clues = get(editorHistory.subscribeToClues());
 
-		const rowOffset = dimensions.margins?.top ?? 0;
-		const columnOffset = dimensions.margins?.left ?? 0;
-		const rows = dimensions.rows - rowOffset - (dimensions.margins?.bottom ?? 0);
-		const columns = dimensions.columns - columnOffset - (dimensions.margins?.right ?? 0);
+		const rowOffset = clues.dimensions.margins?.top ?? 0;
+		const columnOffset = clues.dimensions.margins?.left ?? 0;
+		const rows = clues.dimensions.rows - rowOffset - (clues.dimensions.margins?.bottom ?? 0);
+		const columns =
+			clues.dimensions.columns - columnOffset - (clues.dimensions.margins?.right ?? 0);
 
 		const cellValues = get(gameHistory.getValue('cellValues'));
 
-		let allDigits: string[] = [];
+		const allDigits = getValuesFromRange(
+			clues.logic.digits ?? (clues.logic.flags?.includes('SCells') ? '0-' : '1-') + rows
+		);
 		let candidates: string[][][] = [];
 		let queue: Position[] = [];
-
-		allDigits = getValuesFromRange(logic.digits ?? '1-' + rows);
 
 		candidates = [];
 		queue = [];
@@ -107,7 +106,7 @@ function createScannerStore() {
 				const column = j + columnOffset;
 				const cell = cellValues[row][column];
 
-				if (givens[row][column] === '' && !cell.digits) {
+				if (clues.givens[row][column] === '' && !cell.digits) {
 					queue.push({ row, column });
 
 					if (cell.centermarks) {
@@ -155,20 +154,20 @@ function createScannerStore() {
 		cell: Position,
 		all = false
 	): { row: number; column: number; context: string }[] {
-		const dimensions = editorHistory.getClue('dimensions');
-		const rowOffset = dimensions.margins?.top ?? 0;
-		const columnOffset = dimensions.margins?.left ?? 0;
-		const rows = dimensions.rows - rowOffset - (dimensions.margins?.bottom ?? 0);
-		const columns = dimensions.columns - columnOffset - (dimensions.margins?.right ?? 0);
-		const { width, height } = defaultRegionSize(dimensions);
+		const clues = get(editorHistory.subscribeToClues());
+		const rowOffset = clues.dimensions.margins?.top ?? 0;
+		const columnOffset = clues.dimensions.margins?.left ?? 0;
+		const rows = clues.dimensions.rows - rowOffset - (clues.dimensions.margins?.bottom ?? 0);
+		const columns =
+			clues.dimensions.columns - columnOffset - (clues.dimensions.margins?.right ?? 0);
+		const { width, height } = defaultRegionSize(clues.dimensions);
 
 		const seen: { row: number; column: number; context: string }[] = [];
 
 		const i = cell.row - rowOffset;
 		const j = cell.column - columnOffset;
 
-		const logic = editorHistory.getClue('logic');
-		const flags = logic.flags ?? [];
+		const flags = clues.logic.flags ?? [];
 		const nonstandard = flags.includes('NonStandard');
 		const diagonalPos = flags.includes('DiagonalPos');
 		const diagonalNeg = flags.includes('DiagonalNeg');
@@ -196,8 +195,7 @@ function createScannerStore() {
 			}
 		}
 
-		const regions = editorHistory.getClue('regions');
-		regions.forEach((r) => {
+		clues.regions.forEach((r) => {
 			if (r.type === 'Normal' && (r.uniqueDigits ?? !nonstandard)) {
 				if (r.positions.some((p) => p.row === cell.row && p.column === cell.column)) {
 					r.positions.forEach((p) => {
@@ -278,8 +276,7 @@ function createScannerStore() {
 				}
 			}
 			if (all || settings.scanCages) {
-				const cages = editorHistory.getClue('extendedcages');
-				cages.forEach((c, n) => {
+				clues.extendedcages.forEach((c, n) => {
 					if (c.uniqueDigits ?? cageDefaults(c.type ?? 'CUSTOM').uniqueDigits) {
 						if (c.positions.some((p) => p.row === cell.row && p.column === cell.column)) {
 							c.positions.forEach((p) => {
@@ -296,8 +293,7 @@ function createScannerStore() {
 				});
 			}
 			if (all || settings.scanPaths) {
-				const paths = editorHistory.getClue('paths');
-				paths.forEach((l, n) => {
+				clues.paths.forEach((l, n) => {
 					if (l.uniqueDigits ?? pathDefaults(l.type ?? 'CUSTOM').uniqueDigits) {
 						if (l.positions.some((p) => p.row === cell.row && p.column === cell.column)) {
 							l.positions.forEach((p) => {
@@ -314,7 +310,7 @@ function createScannerStore() {
 				});
 			}
 			if (all || settings.scanExtraRegions) {
-				regions.forEach((r, n) => {
+				clues.regions.forEach((r, n) => {
 					if (
 						(r.type ?? 'CUSTOM') !== 'Normal' &&
 						(r.uniqueDigits ?? regionDefaults(r.type, nonstandard).uniqueDigits)
@@ -405,7 +401,7 @@ function createScannerStore() {
 	function getCornerSets(cell: Position, seen = true): { digit: string; cells: Position[] }[] {
 		const sets: { digit: string; cells: Position[] }[] = [];
 
-		const regions = editorHistory.getClue('regions');
+		const regions = get(editorHistory.getClue('regions'));
 		const cellValues = get(gameHistory.getValue('cellValues'));
 
 		if (seen) {
@@ -460,7 +456,7 @@ function createScannerStore() {
 	}
 
 	function getNbrCells(cell: Position): Position[] {
-		const dimensions = editorHistory.getClue('dimensions');
+		const dimensions = get(editorHistory.getClue('dimensions'));
 		const rowOffset = dimensions.margins?.top ?? 0;
 		const columnOffset = dimensions.margins?.left ?? 0;
 		const rows = dimensions.rows - rowOffset - (dimensions.margins?.bottom ?? 0);
@@ -503,8 +499,8 @@ function createScannerStore() {
 	function updateCandidateValues(cell: Position): boolean {
 		const context = get(scannerContext);
 		const settings = get(scannerSettings);
-		const flags = editorHistory.getClue('logic').flags ?? [];
-		const givens = editorHistory.getClue('givens');
+		const clues = get(editorHistory.subscribeToClues());
+		const flags = clues.logic.flags ?? [];
 		const cellValues = get(gameHistory.getValue('cellValues'));
 
 		const candidateValues = context.candidates[cell.row][cell.column];
@@ -516,7 +512,8 @@ function createScannerStore() {
 		let newCandidateValues = candidateValues.filter((v) => {
 			const seenCells = getSeenCells(cell);
 			const found = seenCells.find(
-				(s) => givens[s.row][s.column] === v || cellValues[s.row][s.column].digits?.includes(v)
+				(s) =>
+					clues.givens[s.row][s.column] === v || cellValues[s.row][s.column].digits?.includes(v)
 			);
 			if (found) {
 				highlightedCells.push(found);
@@ -545,22 +542,34 @@ function createScannerStore() {
 			!flags.includes('NonStandard') &&
 			settings.useCornerMarks
 		) {
-			//if all cells that contain a cornermark within a region for a value are seen by this cell we can eliminate that value
-			const sets = getCornerSets(cell);
-			newCandidateValues = newCandidateValues.filter((v) => {
-				const found = sets.find((s) => s.digit === v);
-				if (found) {
-					highlightedCells.push(...found.cells);
-					return false;
-				}
+			//if the cell contains the only cornermark in that region for a digit, then that should be the sole candidate
+			if (
+				!getCornerSets(cell, false)
+					.filter((s) => s.cells.length == 1)
+					.some((s) => {
+						if (newCandidateValues.includes(s.digit)) {
+							newCandidateValues = [s.digit];
+							return true;
+						}
+						return false;
+					})
+			) {
+				//otherwise if all cells that contain a cornermark within a region for a value are seen by this cell we can eliminate that value
+				const sets = getCornerSets(cell, true);
+				newCandidateValues = newCandidateValues.filter((v) => {
+					const found = sets.find((s) => s.digit === v);
+					if (found) {
+						highlightedCells.push(...found.cells);
+						return false;
+					}
 
-				return true;
-			});
+					return true;
+				});
+			}
 		}
 
 		if (newCandidateValues.length > 1 && settings.mode === 'Extreme') {
 			//check negative constraints and eliminate any values that would be invalid
-			const borderclues = editorHistory.getClue('borderclues');
 			const nbrCells = getNbrCells(cell);
 
 			if (
@@ -573,7 +582,7 @@ function createScannerStore() {
 							if (
 								flags.includes('NegativeWhite') &&
 								settings.scanNegativeKropki &&
-								borderclues.some(
+								clues.borderclues.some(
 									(c) =>
 										c.type === 'KropkiWhite' &&
 										c.positions.every(
@@ -585,7 +594,9 @@ function createScannerStore() {
 							)
 								return false;
 
-							let digits = givens[n.row][n.column] ? [givens[n.row][n.column]] : undefined;
+							let digits = clues.givens[n.row][n.column]
+								? [clues.givens[n.row][n.column]]
+								: undefined;
 							if (!digits) {
 								digits = cellValues[n.row][n.column].digits;
 							}
@@ -606,7 +617,7 @@ function createScannerStore() {
 					(v) =>
 						!nbrCells.some((n) => {
 							if (
-								borderclues.some(
+								clues.borderclues.some(
 									(c) =>
 										c.type === 'KropkiBlack' &&
 										c.positions.every(
@@ -618,7 +629,9 @@ function createScannerStore() {
 							)
 								return false;
 
-							let digits = givens[n.row][n.column] ? [givens[n.row][n.column]] : undefined;
+							let digits = clues.givens[n.row][n.column]
+								? [clues.givens[n.row][n.column]]
+								: undefined;
 							if (!digits) {
 								digits = cellValues[n.row][n.column].digits;
 							}
@@ -643,7 +656,7 @@ function createScannerStore() {
 					(v) =>
 						!nbrCells.some((n) => {
 							if (
-								borderclues.some(
+								clues.borderclues.some(
 									(c) =>
 										c.type === 'XvX' &&
 										c.positions.every(
@@ -655,7 +668,9 @@ function createScannerStore() {
 							)
 								return false;
 
-							let digits = givens[n.row][n.column] ? [givens[n.row][n.column]] : undefined;
+							let digits = clues.givens[n.row][n.column]
+								? [clues.givens[n.row][n.column]]
+								: undefined;
 							if (!digits) {
 								digits = cellValues[n.row][n.column].digits;
 							}
@@ -676,7 +691,7 @@ function createScannerStore() {
 					(v) =>
 						!nbrCells.some((n) => {
 							if (
-								borderclues.some(
+								clues.borderclues.some(
 									(c) =>
 										c.type === 'XvV' &&
 										c.positions.every(
@@ -688,7 +703,9 @@ function createScannerStore() {
 							)
 								return false;
 
-							let digits = givens[n.row][n.column] ? [givens[n.row][n.column]] : undefined;
+							let digits = clues.givens[n.row][n.column]
+								? [clues.givens[n.row][n.column]]
+								: undefined;
 							if (!digits) {
 								digits = cellValues[n.row][n.column].digits;
 							}
@@ -730,8 +747,8 @@ function createScannerStore() {
 			if (!updateCandidateValues(cell)) continue;
 
 			let digits: string[] | undefined = undefined;
-			let centermarks = deepCopy(cellValues[cell.row][cell.column].centermarks);
-			let cornermarks = deepCopy(cellValues[cell.row][cell.column].cornermarks);
+			let centermarks = cellValues[cell.row][cell.column].centermarks;
+			let cornermarks = cellValues[cell.row][cell.column].cornermarks;
 			let changed = false;
 
 			const candidateValues = context.candidates[cell.row][cell.column];
@@ -743,6 +760,8 @@ function createScannerStore() {
 				changed = true;
 
 				context.queue.splice(n, 1);
+
+				sortQueue(cell);
 			} else {
 				//remove eliminated values from any pencil marks
 				if (centermarks) {
@@ -751,9 +770,15 @@ function createScannerStore() {
 				}
 				if (cornermarks) {
 					cornermarks = undefinedIfEmpty(
-						cornermarks.filter((u) => candidateValues.some((v) => v === u))
+						cornermarks.filter((u) => {
+							if (candidateValues.some((v) => v === u)) {
+								return true;
+							} else {
+								changed = true;
+								return false;
+							}
+						})
 					);
-					changed = true;
 				}
 			}
 
@@ -765,7 +790,7 @@ function createScannerStore() {
 				newCellValues[cell.row][cell.column].centermarks = undefinedIfEmpty(centermarks);
 				newCellValues[cell.row][cell.column].cornermarks = undefinedIfEmpty(cornermarks);
 
-				if (cornermarks?.length !== cellValues[cell.row][cell.column].cornermarks?.length) {
+				/*if (cornermarks?.length !== cellValues[cell.row][cell.column].cornermarks?.length) {
 					//find the set of cornermarks that this cell is part of
 					getCornerSets(cell, false).forEach((s) => {
 						if (digits?.includes(s.digit)) {
@@ -773,20 +798,9 @@ function createScannerStore() {
 							s.cells.forEach((c) => {
 								delete newCellValues[c.row][c.column].cornermarks;
 							});
-						} else if (s.cells.length === 2 && cornermarks && !cornermarks.includes(s.digit)) {
-							//if there is only one possible cornermark for this digit left, set it as the sole candidate value
-							s.cells.some((c) => {
-								if (c.row !== cell.row || c.column !== cell.column) {
-									context.candidates[c.row][c.column] = [s.digit];
-									cellValues[c.row][c.column].centermarks = [s.digit];
-									delete cellValues[c.row][c.column].cornermarks;
-									return true;
-								}
-								return false;
-							});
 						}
 					});
-				}
+				}*/
 
 				gameHistory.set({
 					cellValues: newCellValues
@@ -796,8 +810,6 @@ function createScannerStore() {
 					highlights.selectedCells.set([cell]);
 					highlights.highlightedCells.set(context.highlightedCells);
 				}
-
-				sortQueue(cell);
 
 				return true;
 			}
@@ -898,7 +910,8 @@ function createScannerStore() {
 	function getErrorCells(solution?: string[][] | null): Position[] {
 		const userSolution = getUserSolution(
 			get(gameHistory.getValue('cellValues')),
-			editorHistory.getClue('givens')
+			get(editorHistory.getClue('givens')),
+			get(editorHistory.getClue('logic'))
 		);
 
 		const wrongCells: Position[] = [];
@@ -951,7 +964,7 @@ function createScannerStore() {
 
 			clues.borderclues.forEach((b) => {
 				wrongCells.push(
-					...verifyBorderClue(b, userSolution, clues).filter(
+					...verifyBorderClue(b, userSolution).filter(
 						(p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
 					)
 				);
@@ -967,7 +980,7 @@ function createScannerStore() {
 
 			clues.extendedcages.forEach((k) => {
 				wrongCells.push(
-					...verifyCage(k, userSolution, clues).filter(
+					...verifyCage(k, userSolution).filter(
 						(p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
 					)
 				);
@@ -975,7 +988,7 @@ function createScannerStore() {
 
 			if (clues.logic.flags) {
 				wrongCells.push(
-					...verifyLogic(clues.logic.flags, userSolution, clues).filter(
+					...verifyLogic(clues.logic, userSolution, clues).filter(
 						(p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
 					)
 				);

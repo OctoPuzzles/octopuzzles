@@ -6,6 +6,7 @@
 	import { undefinedIfEmpty } from '$utils/undefinedIfEmpty';
 
 	const { selectedCells } = highlights;
+	const givens = editorHistory.getClue('givens');
 </script>
 
 <Keypad
@@ -15,10 +16,9 @@
 	handleDigit={(digit) => {
 		let currentCellValues = get(gameHistory.getValue('cellValues'));
 		let newCellValues = deepCopy(currentCellValues);
-		const givens = editorHistory.getClue('givens');
 		let positions = deepCopy(get(selectedCells));
 
-		positions = positions.filter((p) => givens[p.row][p.column] === '');
+		positions = positions.filter((p) => $givens[p.row][p.column] === '');
 		if (positions.length === 0) return;
 
 		if (digit === '') {

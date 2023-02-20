@@ -1,48 +1,77 @@
 import type { CageType, CellValues, Color, Extendedcage, Position } from '$models/Sudoku';
-import type { EditorHistoryStep } from '$types';
 
 export function emptyCage(positions: Position[], type?: CageType): Extendedcage {
-	return { type, positions, text: undefined, color: undefined, uniqueDigits: undefined };
+	return {
+		type,
+		positions,
+		text: undefined,
+		color: undefined,
+		uniqueDigits: undefined,
+		nonStandard: undefined
+	};
 }
 
 export function cageDefaults(type: CageType | null | 'CUSTOM'): {
 	text: string;
 	color: Color;
 	uniqueDigits: boolean;
+	nonStandard: boolean;
 } {
-	return { text: '', color: 'Black', uniqueDigits: type === 'Killer' };
+	return { text: '', color: 'Black', uniqueDigits: type === 'Killer', nonStandard: false };
 }
 
-export function verifyCage(
-	cage: Extendedcage,
-	solution: CellValues,
-	clues: EditorHistoryStep
-): Position[] {
+export function verifyCage(cage: Extendedcage, solution: CellValues): Position[] {
 	let isValid = true;
 
-	switch (cage.type) {
-		case 'Killer': {
-			if (cage.text) {
-				const target = parseInt(cage.text);
-				if (!isNaN(target)) {
-					const values = cage.positions.map((p) => {
-						return solution[p.row][p.column].digits?.[0];
-					});
-					let total = 0;
-					let count = 0;
-					values.forEach((v) => {
-						if (v) {
-							total += parseInt(v);
-							++count;
-						}
-					});
+	if (!(cage.nonStandard ?? false)) {
+		switch (cage.type) {
+			case 'Killer': {
+				if (cage.text) {
+					const target = parseFloat(cage.text);
 
-					if (count === cage.positions.length) {
+					let total = 0;
+					if (
+						cage.positions.every((p) => {
+							const value = solution[p.row][p.column].value;
+							if (value !== undefined) {
+								total += value;
+								return true;
+							}
+						})
+					) {
 						isValid = total === target;
 					}
 				}
+				break;
 			}
-			break;
+			case 'LookAndSay': {
+				if (cage.text) {
+					const keys = cage.text.split('');
+					const counts = new Map<string, number>();
+					if (
+						!cage.positions.every((p) => {
+							const cell = solution[p.row][p.column];
+							if (cell.digits && (!cell.modifiers?.includes('SCell') || cell.digits.length == 2)) {
+								cell.digits.forEach((d) => {
+									counts.set(d, (counts.get(d) ?? 0) + 1);
+								});
+								return true;
+							}
+						})
+					) {
+						for (let n = 0; n < keys.length; n += 2) {
+							const count = parseInt(keys[n]);
+							const digit = keys[n];
+
+							if (counts.get(digit) !== count) {
+								isValid = false;
+								break;
+							}
+						}
+					}
+				}
+				break;
+			}
 		}
 	}
 

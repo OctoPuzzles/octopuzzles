@@ -8,12 +8,12 @@
 	import { undefinedIfEmpty } from '$utils/undefinedIfEmpty';
 
 	const { selectedCells } = highlights;
+	const givens = editorHistory.getClue('givens');
 </script>
 
 <Keypad
 	handleDigit={(digit) => {
-		const givens = editorHistory.getClue('givens');
-		const positions = get(selectedCells).filter((p) => !(givens[p.row]?.[p.column] !== ''));
+		const positions = get(selectedCells).filter((p) => !($givens[p.row]?.[p.column] !== ''));
 		if (positions.length === 0) return;
 
 		const currentCellValues = get(gameHistory.getValue('cellValues'));
