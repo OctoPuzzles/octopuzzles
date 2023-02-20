@@ -2,22 +2,23 @@
 	import { cellSize } from '$constants';
 	import classNames from 'classnames';
 	import { topLeftOfPositions } from '$utils/topLeftOfPositions';
-	import { createEdges } from '$utils/createEdges';
+	import { createOutlines } from '$utils/createEdges';
 	import type { Dimensions, Extendedcage } from '$models/Sudoku';
 
 	export let cage: Extendedcage;
 	export let dimensions: Dimensions;
 
 	$: topLeft = topLeftOfPositions(cage.positions);
+	$: outlines = createOutlines(cage.positions, dimensions, 4);
 </script>
 
-{#each createEdges(cage.positions, dimensions, 0.1) as edge}
-	<line
-		class={classNames('stroke-current', cage.color != null && `text-${cage.color?.toLowerCase()}`)}
-		x1={edge.x1 * cellSize}
-		y1={edge.y1 * cellSize}
-		x2={edge.x2 * cellSize}
-		y2={edge.y2 * cellSize}
+{#each outlines as outline}
+	<polyline
+		points={outline}
+		class={classNames(
+			'stroke-current fill-none',
+			cage.color != null && `text-${cage.color?.toLowerCase()}`
+		)}
 	/>
 {/each}
 {#if cage.text && cage.text.length > 0}
@@ -33,7 +34,7 @@
 {/if}
 
 <style>
-	line {
+	polyline {
 		stroke-dasharray: 3 5;
 		stroke-width: 1.5px;
 		stroke-linecap: square;

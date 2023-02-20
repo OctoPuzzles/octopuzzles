@@ -21,6 +21,7 @@
 	import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
 	import RichTextEditor from '$components/RichTextEditor.svelte';
 	import { resetAllSudokuStores } from '$utils/resetAllStores';
+	import PuzzleLabel from '$ui/PuzzleLabel.svelte';
 
 	export let data: PageData;
 
@@ -86,11 +87,13 @@
 
 		gameHistory.reset();
 		$labels =
-			data.labels.map((l) => ({
-				label: l,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				selected: sud?.labels?.some((label) => label.id === l.id) ?? false
-			})) ?? [];
+			data.labels
+				.sort((a, b) => (a.name > b.name ? 1 : -1))
+				.map((l) => ({
+					label: l,
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					selected: sud?.labels?.some((label) => label.id === l.id) ?? false
+				})) ?? [];
 		if (sud != null) {
 			$sudokuTitle = sud.title;
 			$description = sud.description;
@@ -247,14 +250,16 @@
 		}
 	}
 
+	let descriptionEditor: RichTextEditor;
+
 	function openAddDescriptionModal(): void {
 		openModal(CommonDescriptionsModal, {
 			addLabel: (l) => {
-				if ($description.length === 0) {
-					$description = `${l.name}: ${l.description}`;
-				} else {
-					$description = `${$description}\n\n${l.name}: ${l.description}`;
+				let newDescription = `<p><strong>${l.name}</strong>: ${l.description}</p>`;
+				if ($description.length !== 0) {
+					newDescription = `${$description}${newDescription}`;
 				}
+				descriptionEditor.setRichEditorContent(newDescription);
 				let newLabels = $labels;
 				newLabels.map((label) => {
 					if (l.id === label.label.id) {
@@ -365,7 +370,11 @@
 					on:click={openAddDescriptionModal}><Plus size={24} /></button
 				>
 				<div class="rounded-lg border mt-2 p-1 min-h-[10rem]">
-					<RichTextEditor bind:content={$description} placeholder="Normal sudoku rules apply..." />
+					<RichTextEditor
+						bind:this={descriptionEditor}
+						bind:content={$description}
+						placeholder="Normal sudoku rules apply..."
+					/>
 					{#if errors.description}
 						<p class="text-red-500">
 							{errors.description}
@@ -389,16 +398,10 @@
 
 			<h1 class="font-semibold mt-8">Labels</h1>
 			<p class="mb-2">Pick the labels that match your puzzle</p>
-			<div class="flex flex-wrap gap-2 h-96 overflow-y-auto p-4 bg-gray-100">
-				{#each $labels.sort((a, b) => (a.label.name > b.label.name ? 1 : -1)) as label}
-					<Label
-						class={classNames('cursor-pointer p-2 rounded-md shadow w-56 bg-white', {
-							'ring-blue-500 ring-2': label.selected,
-							'ring-gray-300 ring-1': !label.selected
-						})}
-					>
-						<h6 class="font-semibold">{label.label.name}</h6>
-						<p>{label.label.description}</p>
+			<div class="flex flex-wrap gap-3">
+				{#each $labels as label}
+					<Label>
+						<PuzzleLabel label={label.label} selected={label.selected} />
 						<input
 							type="checkbox"
 							class="rounded text-blue-500 hidden"

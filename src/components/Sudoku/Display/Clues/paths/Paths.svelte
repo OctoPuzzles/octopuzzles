@@ -6,7 +6,7 @@
 </script>
 
 {#if paths.length > 0}
-	<g id="paths" class="opacity-60">
+	<g id="paths" class="opacity-60 select-none pointer-events-none">
 		{#each paths as path}
 			<Path {path} />
 		{/each}

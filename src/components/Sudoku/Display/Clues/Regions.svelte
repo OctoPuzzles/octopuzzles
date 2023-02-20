@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
 	import type { Dimensions, Regions } from '$models/Sudoku';
-	import { createEdges } from '$utils/createEdges';
+	import { createOutlines } from '$utils/createEdges';
 	import { getRegionsToDraw } from '$utils/constraints/regions';
 
 	export let regions: Regions;
@@ -24,14 +24,8 @@
 					{/each}
 				{/if}
 				{#if region.borders}
-					{#each createEdges(region.positions, dimensions) as edge}
-						<line
-							class="stroke-black stroke-3 linecap-square"
-							x1={edge.x1 * cellSize}
-							y1={edge.y1 * cellSize}
-							x2={edge.x2 * cellSize}
-							y2={edge.y2 * cellSize}
-						/>
+					{#each createOutlines(region.positions, dimensions) as outline}
+						<polyline class="stroke-black stroke-3 linecap-square fill-none" points={outline} />
 					{/each}
 				{/if}
 			{/each}

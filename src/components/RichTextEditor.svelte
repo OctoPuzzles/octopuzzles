@@ -42,6 +42,11 @@
 			editor.destroy();
 		}
 	});
+
+	export const setRichEditorContent = (newContent: string): void => {
+		editor?.commands.setContent(newContent);
+		content = newContent;
+	};
 </script>
 
 <div class="rich-text-editor h-full flex flex-col">
