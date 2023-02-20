@@ -88,16 +88,16 @@
 						anyChanges = true;
 					});
 				}
+			}
 
-				// If there has actually been any changes, update the game history
-				if (anyChanges) {
-					gameHistory.set({
-						cellValues: newCellValues
-					});
+			// If there has actually been any changes, update the game history
+			if (anyChanges) {
+				gameHistory.set({
+					cellValues: newCellValues
+				});
 
-					if (runScan) {
-						scanner.startScan(positions[0]);
-					}
+				if (runScan) {
+					scanner.startScan(positions[0]);
 				}
 			}
 		}
