@@ -46,7 +46,11 @@
 	viewBox="-2 -2 {clues.dimensions.columns * cellSize + 4} {clues.dimensions.rows * cellSize + 4}"
 	class="max-h-full max-w-full"
 >
-	<Colors editorColors={clues.colors} {gameData} dimensions={clues.dimensions} />
+	<Colors
+		editorColors={clues.colors}
+		cellValues={gameData?.cellValues}
+		dimensions={clues.dimensions}
+	/>
 	{#if interactive}
 		<g id="highlights">
 			{#if wrongCells}
@@ -97,9 +101,17 @@
 	<Regions regions={clues.regions} dimensions={clues.dimensions} />
 	<BorderClues borderClues={clues.borderclues} />
 	<CellClues cellClues={clues.cellclues} />
-	<Modifiers {gameData} dimensions={clues.dimensions} />
-	<CornerMarks {gameData} givens={clues.givens} dimensions={clues.dimensions} />
-	<CenterMarks {gameData} givens={clues.givens} dimensions={clues.dimensions} />
-	<Numbers {gameData} givens={clues.givens} dimensions={clues.dimensions} />
+	<Modifiers cellValues={gameData?.cellValues} dimensions={clues.dimensions} />
+	<CornerMarks
+		cellValues={gameData?.cellValues}
+		givens={clues.givens}
+		dimensions={clues.dimensions}
+	/>
+	<CenterMarks
+		cellValues={gameData?.cellValues}
+		givens={clues.givens}
+		dimensions={clues.dimensions}
+	/>
+	<Numbers cellValues={gameData?.cellValues} givens={clues.givens} dimensions={clues.dimensions} />
 	<Logic logic={clues.logic} dimensions={clues.dimensions} />
 </svg>

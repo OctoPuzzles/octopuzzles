@@ -20,7 +20,7 @@
 {#if isOpen}
 	<div role="dialog" class="bg-white shadow rounded-md p-4 flex flex-col">
 		<div class="grid grid-cols-1 w-full h-full p-2">
-			<div class="px-2 flex flex-col overflow-hidden justify-between">
+			<div class="px-2 flex flex-col justify-between">
 				<div>
 					<Label id="highlightErrors">Show Error Cells</Label>
 					<RadioGroup

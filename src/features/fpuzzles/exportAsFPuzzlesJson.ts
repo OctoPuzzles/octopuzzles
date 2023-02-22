@@ -9,14 +9,13 @@ import { getCellCluesToDraw } from '$utils/constraints/cellclues';
 import { getPathsToDraw } from '$utils/constraints/paths';
 import { getRegionsToDraw } from '$utils/constraints/regions';
 import type { Color, Position } from '$models/Sudoku';
+import { compressToBase64 } from '$features/compressor';
 
-export function exportAsFPuzzlesJson(): FPuzzlesJson {
+function getFPuzzlesJson(): FPuzzlesJson {
 	const clues = get(editorHistory.subscribeToClues());
 	const flags = clues.logic.flags ?? [];
 
 	const cellValues = get(gameHistory.getValue('cellValues'));
-	//const annotations = get(gameHistory.getValue('annotations');
-	//const modifiers = get(gameHistory.getValue('modifiers');
 
 	const getPositionString = (position: Position): PositionString => {
 		return `R${position.row + 1 - (clues.dimensions.margins?.top ?? 0)}C${
@@ -534,4 +533,22 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
 	});
 
 	return fPuzzle;
+}
+
+export function exportPuzzle(to: 'FPuzzles' | 'CTC') {
+	let href: string;
+	switch (to) {
+		case 'FPuzzles':
+			href = 'https://www.f-puzzles.com/?load=';
+			break;
+		case 'CTC':
+			href = 'https://app.crackingthecryptic.com/sudoku/?puzzleid=fpuzzles';
+			break;
+		default:
+			return;
+	}
+
+	href += compressToBase64(getFPuzzlesJson());
+
+	window.open(href, '_blank', 'noreferrer');
 }

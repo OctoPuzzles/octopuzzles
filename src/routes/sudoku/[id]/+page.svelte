@@ -115,7 +115,7 @@
 				row.forEach((cell, j) => {
 					numDigits += $sudokuClues.givens[i][j] !== '' ? 1 : cell.digits?.length ?? 0;
 				});
-				return numDigits === allDigits.length;
+				return numDigits !== allDigits.length;
 			})
 		) {
 			return false;

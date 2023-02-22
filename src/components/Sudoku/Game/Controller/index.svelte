@@ -37,8 +37,7 @@
 	import trpc from '$lib/client/trpc';
 	import UserSettingsModal from '$components/Modals/UserSettingsModal.svelte';
 	import { navigating } from '$app/stores';
-	import { compressToBase64 } from '$features/compressor';
-	import { exportAsFPuzzlesJson } from '$features/fpuzzles/exportAsFPuzzlesJson';
+	import { exportPuzzle } from '$features/fpuzzles/exportAsFPuzzlesJson';
 	import FPuzzles from '$icons/FPuzzles.svelte';
 	import CtC from '$icons/CtC.svelte';
 
@@ -226,24 +225,6 @@
 	let exportDetails: HTMLDetailsElement;
 
 	$: if ($navigating && exportDetails) exportDetails.open = false;
-
-	function exportPuzzle(to: 'FPuzzles' | 'CTC') {
-		let href: string;
-		switch (to) {
-			case 'FPuzzles':
-				href = 'https://www.f-puzzles.com/?load=';
-				break;
-			case 'CTC':
-				href = 'https://app.crackingthecryptic.com/sudoku/?puzzleid=fpuzzles';
-				break;
-			default:
-				return;
-		}
-
-		href += compressToBase64(exportAsFPuzzlesJson());
-
-		window.open(href, '_blank', 'noreferrer');
-	}
 </script>
 
 <svelte:window on:keydown={handleKeyboardShortcuts} on:keyup={handleKeyUp} />

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import type { Dimensions, Givens, GameData } from '$models/Sudoku';
+	import type { Dimensions, Givens, CellValues } from '$models/Sudoku';
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 	import classNames from 'classnames';
 
 	export let givens: Givens;
-	export let gameData: GameData | undefined;
+	export let cellValues: CellValues | undefined;
 	export let dimensions: Dimensions;
 </script>
 
@@ -13,9 +13,9 @@
 	{#each arrayfrom0ToN(dimensions.rows) as row}
 		{#each arrayfrom0ToN(dimensions.columns) as column}
 			{@const isGiven = !!givens[row][column]}
-			{@const digits = isGiven ? [givens[row][column]] : gameData?.cellValues[row][column].digits}
+			{@const digits = isGiven ? [givens[row][column]] : cellValues?.[row][column].digits}
 			{#if digits}
-				{@const sCell = gameData?.cellValues[row][column].modifiers?.some((m) => m === 'SCell')}
+				{@const sCell = cellValues?.[row][column].modifiers?.some((m) => m === 'SCell')}
 				<text
 					x={cellSize * (column + (sCell ? 0.25 : 0.5))}
 					y={cellSize * (row + (sCell ? 0.3 : 0.55))}

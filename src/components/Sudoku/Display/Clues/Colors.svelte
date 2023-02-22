@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import type { Dimensions, EditorColors, GameData } from '$models/Sudoku';
+	import type { CellValues, Dimensions, EditorColors } from '$models/Sudoku';
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
 	export let editorColors: EditorColors;
-	export let gameData: GameData | undefined;
+	export let cellValues: CellValues | undefined;
 	export let dimensions: Dimensions;
 
 	function polarToCartesian(
@@ -25,8 +25,9 @@
 		const x = 64 * (column + 0.5);
 		const y = 64 * (row + 0.5);
 		const radius = 64;
-		const startAngle = (360 / numColors) * i + 225;
-		const endAngle = (360 / numColors) * (i + 1) - (numColors === 1 ? 0.0001 : 0) + 225;
+		const angleOffset = 225;
+		const startAngle = (360 / numColors) * i + angleOffset;
+		const endAngle = (360 / numColors) * (i + 1) - (numColors === 1 ? 0.0001 : 0) + angleOffset;
 		var start = polarToCartesian(x, y, radius, endAngle);
 		var end = polarToCartesian(x, y, radius, startAngle);
 
@@ -58,7 +59,7 @@
 	{#each arrayfrom0ToN(dimensions.rows) as row}
 		{#each arrayfrom0ToN(dimensions.columns) as column}
 			{@const editorColor = editorColors[row][column]}
-			{@const gameColors = gameData?.cellValues[row][column].colors}
+			{@const gameColors = cellValues?.[row][column].colors}
 			{#if editorColor}
 				<rect
 					x={cellSize * column}

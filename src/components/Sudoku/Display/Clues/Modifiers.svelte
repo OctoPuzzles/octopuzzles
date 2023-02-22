@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { cellSize } from '$constants';
-	import type { Dimensions, GameData } from '$models/Sudoku';
+	import type { CellValues, Dimensions } from '$models/Sudoku';
 	import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
 	export let dimensions: Dimensions;
-	export let gameData: GameData | undefined;
+	export let cellValues: CellValues | undefined;
 </script>
 
-{#if gameData}
+{#if cellValues}
 	<g id="modifiers">
 		{#each arrayfrom0ToN(dimensions.rows) as row}
 			{#each arrayfrom0ToN(dimensions.columns) as column}
-				{@const modifiers = gameData?.cellValues[row][column].modifiers}
+				{@const modifiers = cellValues[row][column].modifiers}
 				{#if modifiers}
 					{#each modifiers as modifier}
 						<g class="pointer-events-none">

@@ -61,12 +61,7 @@ export default trpc
 				});
 			}
 
-			const passwordIsValid = await argon2.verify(
-				user.password,
-				input.password /* {
-				salt: Buffer.from(ARGON2_SALT)
-			} */
-			);
+			const passwordIsValid = await argon2.verify(user.password, input.password);
 			if (!passwordIsValid) {
 				throw new TRPCError({
 					message: 'Wrong password',
