@@ -3,7 +3,6 @@
 	import PuzzleLabel from '$ui/PuzzleLabel.svelte';
 	import Filters from '$icons/Filters.svelte';
 	import { page } from '$app/stores';
-	import classNames from 'classnames';
 	import Button from '$ui/Button.svelte';
 	import type { PageData } from './$types';
 	import trpc from '$lib/client/trpc';

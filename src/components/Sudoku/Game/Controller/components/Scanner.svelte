@@ -13,7 +13,6 @@
 	import { regionDefaults } from '$utils/constraints/regions';
 	import type { ScannerHighlightMode, ScannerMode, ScannerSpeed } from '$models/UserSettings';
 
-	import { me } from '$stores/meStore';
 	import { scanner } from '$stores/sudokuStore/scanner';
 	import { hasOpenModals } from '$stores/modalStore';
 	import { settings } from '$stores/settingsStore';

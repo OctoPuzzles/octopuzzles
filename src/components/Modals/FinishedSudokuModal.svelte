@@ -21,8 +21,8 @@
 	export let takeScreenshot: () => void;
 	export let finishTime: string;
 
-	let solutionCodeKey: string = '';
-	let solutionCode: string = '';
+	let solutionCodeKey = '';
+	let solutionCode = '';
 
 	function generateSolutionCode(): void {
 		const solution = getUserSolution(
@@ -58,7 +58,6 @@
 	const copySolutionCode = async () => {
 		try {
 			await navigator.clipboard.writeText(solutionCode);
-			console.log('Copied solution code to clipboard');
 		} catch (err) {
 			console.error('Failed to copy solution code: ', err);
 		}

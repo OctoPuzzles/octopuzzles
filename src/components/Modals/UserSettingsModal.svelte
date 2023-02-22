@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { VerificationMode } from '$models/UserSettings';
-	import { me } from '$stores/meStore';
 	import { settings } from '$stores/settingsStore';
 	import Label from '$ui/Label.svelte';
 	import RadioGroup from '$ui/RadioGroup.svelte';

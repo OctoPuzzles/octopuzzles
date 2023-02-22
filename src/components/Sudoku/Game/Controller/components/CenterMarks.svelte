@@ -10,7 +10,7 @@
 </script>
 
 <Keypad
-	getButtonInfo={(digit) => {
+	getButtonInfo={() => {
 		return { class: '', custom: false };
 	}}
 	handleDigit={(digit) => {

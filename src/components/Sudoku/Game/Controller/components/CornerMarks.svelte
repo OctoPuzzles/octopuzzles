@@ -11,7 +11,7 @@
 </script>
 
 <Keypad
-	getButtonInfo={(digit) => {
+	getButtonInfo={() => {
 		return { class: 'p-1', custom: false };
 	}}
 	handleDigit={(digit) => {
