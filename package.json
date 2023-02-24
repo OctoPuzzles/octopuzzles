@@ -4,11 +4,24 @@
     "apps/*",
     "packages/*"
   ],
+  "prisma": {
+    "schema": "apps/website/prisma/schema.prisma",
+    "seed": "tsx apps/website/prisma/seed.ts"
+  },
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write ."
+    "check": "turbo run lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:migrate:deploy": "turbo run db:migrate:deploy",
+    "db:migrate:reset": "turbo run db:migrate:reset",
+    "db:push": "turbo run db:push",
+    "db:seed": "turbo run db:seed",
+    "generate": "turbo run generate",
+    "test:unit": "turbo run test:unit",
+    "test:e2e": "turbo run test:unit"
   },
   "devDependencies": {
     "eslint": "^8.0.0",

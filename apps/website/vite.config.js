@@ -10,7 +10,8 @@ const config = {
 		})
 	],
 	define: {
-		'import.meta.vitest': 'undefined'
+		'import.meta.vitest': 'undefined',
+		'process.env': process.env
 	},
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}'],

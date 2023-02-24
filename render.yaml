@@ -7,18 +7,18 @@ services:
     region: oregon
     plan: standard
     previewPlan: starter
-    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
-    startCommand: node build/index.js
+    buildCommand: npm install && npm run generate && npx run db:migrate:deploy && npm run build
+    startCommand: node apps/website/build/index.js
     pullRequestPreviewsEnabled: true
-    initialDeployHook: npx prisma db seed
+    initialDeployHook: npm run db:seed
     buildFilter:
       paths:
-        - src/**/*.svelte
-        - src/**/*.ts
-        - src/**/*.html
+        - ./**/*.svelte
+        - ./**/*.ts
+        - ./**/*.html
       ignoredPaths:
-        - src/**/*.test.js
-        - tests/**/*.ts
+        - ./**/*.test.js
+        - ./**/tests/**/*.ts
     envVars:
       - key: DATABASE_URL
         fromDatabase:
