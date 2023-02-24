@@ -22,7 +22,7 @@
       "persistent": true
     },
     "generate": {
-      "inputs": ["prisma/schema.prisma"],
+      "inputs": ["apps/website/prisma/schema.prisma"],
       "cache": false
     },
     "db:migrate:deploy": {},
@@ -30,7 +30,7 @@
       "dependsOn": ["^generate"]
     },
     "db:push": {
-      "inputs": ["prisma/schema.prisma"],
+      "inputs": ["apps/website/prisma/schema.prisma"],
       "cache": false
     },
     "db:seed": {},
