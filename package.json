@@ -13,7 +13,7 @@
     "preview": "turbo run preview",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "check": "turbo run lint",
+    "check": "turbo run check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:migrate:deploy": "turbo run db:migrate:deploy",
@@ -22,7 +22,7 @@
     "db:seed": "turbo run db:seed",
     "generate": "turbo run generate",
     "test:unit": "turbo run test:unit",
-    "test:e2e": "turbo run test:unit"
+    "test:e2e": "turbo run test:e2e"
   },
   "devDependencies": {
     "eslint": "^8.0.0",
