@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "preview": "turbo run preview",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "check": "turbo run lint",

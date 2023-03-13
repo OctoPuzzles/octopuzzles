@@ -21,6 +21,10 @@
       "cache": false,
       "persistent": true
     },
+    "preview": {
+      "cache": false,
+      "persistent": true
+    },
     "generate": {
       "inputs": ["apps/website/prisma/schema.prisma"],
       "cache": false
