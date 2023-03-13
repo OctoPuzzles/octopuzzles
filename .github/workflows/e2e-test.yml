@@ -14,7 +14,7 @@ env:
 jobs:
   test:
     services:
-      # 2. Include a postgres service, this will spin up a database for you in your CI environment (check the script below if you want to use mysql)
+      # 2. Include a postgres service, this will spin up a database for you in your CI environment
       postgres:
         image: postgres
         env:
@@ -32,15 +32,29 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
       - name: Install modules
         run: npm ci
+
       - name: Migrate database
-        run: npx prisma migrate reset --force
+        run: npm run db:migrate:reset -- -- --force
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+
       - name: E2E tests
         run: npm run test:e2e
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:

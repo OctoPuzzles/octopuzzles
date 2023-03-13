@@ -1,0 +1,46 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env"],
+  "globalEnv": [
+    "DATABASE_URL",
+    "NODE_ENV",
+    "SMTP_SERVER",
+    "SMTP_PORT",
+    "SMTP_LOGIN",
+    "SMTP_PASSWORD",
+    "BASE_URL"
+  ],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".svelte-kit/**", ".vercel/**"]
+    },
+    "lint": {},
+    "check": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "preview": {
+      "cache": false,
+      "persistent": true
+    },
+    "generate": {
+      "inputs": ["apps/website/prisma/schema.prisma"],
+      "cache": false
+    },
+    "db:migrate:deploy": {},
+    "db:migrate:reset": {
+      "dependsOn": ["^generate"]
+    },
+    "db:push": {
+      "inputs": ["apps/website/prisma/schema.prisma"],
+      "cache": false
+    },
+    "db:seed": {},
+    "test:unit": {},
+    "test:e2e": {
+      "dependsOn": ["^build"]
+    }
+  }
+}
