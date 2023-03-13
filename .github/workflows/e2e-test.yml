@@ -47,7 +47,7 @@ jobs:
         run: npm ci
 
       - name: Migrate database
-        run: npm run db:migrate:reset
+        run: npm run db:migrate:reset -- -- --force
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps

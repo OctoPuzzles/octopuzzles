@@ -11,7 +11,7 @@
     "test:e2e": "playwright test",
     "test:unit": "vitest run",
     "db:migrate:deploy": "prisma migrate deploy",
-    "db:migrate:reset": "prisma migrate reset -- --force",
+    "db:migrate:reset": "prisma migrate reset",
     "db:migrate:dev": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
