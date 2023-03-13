@@ -89,33 +89,3 @@ declare module 'phosphor-svelte/lib/Alien/Alien.svelte';
 ```
 
 if it does not already exist.
-
-### Repo structure
-
-The code is somewhat structured, meaning files should be put in places according to what they do.
-
-- utils/
-  - Utility functions that are agnostic to any environment.
-  - Util functions should always be unit tested
-- lib/
-  - Used for the api side of things
-- models/
-  - A lot of the models in the databse have to make heavy use of jsonb to represent sudokus. THis is not very typesafe. So we use zod schemas to ensure they have the right shape, and for input and output validation in the api.
-  - Whenever you update the prisma schema, this file should probably be updated as well
-- routes/
-  - pages, fetching etc.
-- server/
-  - the trpc endpoints
-- stores/
-  - Stores for working with complex logic across multiple components. A lot of the stores should be put into contexts so they dont pollute across pages.
-- ui/
-  - Generic ui components that have no business logic, and are very simple.
-  - E.g. a generic button should live in ui/, but a button with arrows for rearranging and a delete button for deleting should live in components/
-  - ui components should have a storybook page
-- components/
-  - See ui above
-  - components should also have a storybook page
-- features/
-  - Features are the step above components. They are tied very closely with the feature they are working on, and should probably not have a storybook page
-- icons/
-  - When phosphor icons don't have an icon we need, we create our own and put it in here
