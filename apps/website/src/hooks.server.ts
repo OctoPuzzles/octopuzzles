@@ -13,6 +13,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       const secure = dev ? '' : 'Secure';
       return {
         headers: {
+          // TODO: Find a better way to do this
           'set-cookie': `token=${token ?? ''}; SameSite=Lax; Path=/; Max-Age=${
             60 * 60 * 24
           }; HttpOnly; ${secure}`
