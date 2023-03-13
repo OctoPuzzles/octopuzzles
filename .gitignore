@@ -8,3 +8,4 @@ node_modules
 !.env.example
 .vercel
 launch.json
+history.txt

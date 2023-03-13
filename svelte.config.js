@@ -20,6 +20,7 @@ const config = {
 			$features: 'src/features',
 			$stores: 'src/stores',
 			$server: 'src/server',
+			$db: 'src/db',
 			$models: 'src/models'
 		}
 	}
