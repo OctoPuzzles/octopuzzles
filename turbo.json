@@ -38,7 +38,9 @@
       "cache": false
     },
     "db:seed": {},
-    "test:unit": {},
+    "test:unit": {
+      "dependsOn": ["^build"]
+    },
     "test:e2e": {
       "dependsOn": ["^build"]
     }
