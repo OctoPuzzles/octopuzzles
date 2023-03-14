@@ -1,5 +1,5 @@
 <p align="center">
-    <img width="300" src="./static/favicon.svg" alt="OctoPuzzles Icon">
+    <img width="300" src="./apps/website/static/favicon.svg" alt="OctoPuzzles Icon">
 </p>
 
 <h1 align="center"><a style="color: white" target="_blank" rel="noreferrer noopener" href="https://octopuzzles.com">OctoPuzzles.com</a></h1>
