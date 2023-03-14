@@ -1,7 +1,7 @@
 import { editorHistory, gameHistory } from '$stores/sudokuStore';
 import type { FPuzzlesJson, HexColor, PositionString } from './types';
 import { get } from 'svelte/store';
-import deepCopy from '$utils/deepCopy';
+import { deepCopy } from '@octopuzzles/utils';
 import { defaultRegions } from '$utils/defaults';
 import { topLeftOfPositions } from '$utils/topLeftOfPositions';
 import {

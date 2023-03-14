@@ -17,7 +17,7 @@
   import { walkthroughStore } from '$stores/walkthroughStore';
   import type { InputMode } from '$types';
   import SquareButton from '$ui/SquareButton.svelte';
-  import { isCommandKey } from '$utils/keyboard/isCommandKey';
+  import { isCommandKey } from '@octopuzzles/utils';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
   import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';

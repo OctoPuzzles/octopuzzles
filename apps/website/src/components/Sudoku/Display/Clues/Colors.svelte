@@ -2,7 +2,7 @@
   import { cellSize } from '$constants';
   import type { Dimensions, EditorColors } from '@octopuzzles/models';
   import type { GameColors } from '@octopuzzles/models';
-  import arrayfrom0ToN from '$utils/arrayfrom0ToN';
+  import { arrayfrom0ToN } from '@octopuzzles/utils';
 
   export let editorColors: EditorColors;
   export let gameColors: GameColors | undefined;

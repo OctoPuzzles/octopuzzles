@@ -1,6 +1,6 @@
 import type { Position } from '@octopuzzles/models';
 import { hasOpenModals } from '$stores/modalStore';
-import { isCommandKey } from '$utils/keyboard/isCommandKey';
+import { isCommandKey } from '@octopuzzles/utils';
 import { get } from 'svelte/store';
 import { editorHistory, highlights } from '.';
 

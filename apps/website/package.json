@@ -52,6 +52,8 @@
   },
   "type": "module",
   "dependencies": {
+    "@octopuzzles/models": "*",
+    "@octopuzzles/utils": "*",
     "@prisma/client": "^4.7.1",
     "@tiptap/core": "^2.0.0-beta.205",
     "@tiptap/extension-placeholder": "^2.0.0-beta.205",
@@ -62,7 +64,6 @@
     "html2canvas": "^1.4.1",
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
-    "@octopuzzles/models": "*",
     "nodemailer": "^6.8.0",
     "trpc-sveltekit": "^2.3.6",
     "trpc-transformer": "^2.3.0",

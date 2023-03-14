@@ -2,9 +2,8 @@
   import SquareButton from '$ui/SquareButton.svelte';
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
-  import deepCopy from '$utils/deepCopy';
+  import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
   import { get } from 'svelte/store';
-  import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
   import { hasOpenModals } from '$stores/modalStore';
   import { me } from '$stores/meStore';
   import { scanner } from '$stores/sudokuStore/scanner';

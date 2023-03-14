@@ -1,5 +1,5 @@
 import type { WalkthroughStep } from '@octopuzzles/models';
-import deepCopy from '$utils/deepCopy';
+import { deepCopy } from '@octopuzzles/utils';
 import { get, writable } from 'svelte/store';
 import { gameHistory } from './sudokuStore';
 

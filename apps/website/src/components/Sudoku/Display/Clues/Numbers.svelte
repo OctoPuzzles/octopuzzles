@@ -2,7 +2,7 @@
   import { cellSize } from '$constants';
   import type { Dimensions, Givens } from '@octopuzzles/models';
   import type { GameValues } from '@octopuzzles/models';
-  import arrayfrom0ToN from '$utils/arrayfrom0ToN';
+  import { arrayfrom0ToN } from '@octopuzzles/utils';
   import classNames from 'classnames';
 
   export let givens: Givens;

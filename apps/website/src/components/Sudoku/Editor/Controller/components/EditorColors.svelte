@@ -1,11 +1,10 @@
 <script lang="ts">
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { editorHistory, highlights } from '$stores/sudokuStore';
-  import deepCopy from '$utils/deepCopy';
   import SquareButton from '$ui/SquareButton.svelte';
   import { get } from 'svelte/store';
   import { numberColorMap } from '$constants';
-  import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
+  import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
   import type { Color } from '@octopuzzles/models';
   import { hasOpenModals } from '$stores/modalStore';
 

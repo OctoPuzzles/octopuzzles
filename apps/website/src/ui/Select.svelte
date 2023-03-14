@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useId } from '$utils/useId';
+  import { useId } from '@octopuzzles/utils';
 
   import classNames from 'classnames';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';

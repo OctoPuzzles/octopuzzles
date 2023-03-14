@@ -1,6 +1,6 @@
 import { cellSize } from '$constants';
 import type { Dimensions, Position } from '@octopuzzles/models';
-import deepCopy from './deepCopy';
+import { deepCopy } from '@octopuzzles/utils';
 
 type Point = {
   x: number;

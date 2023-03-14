@@ -20,10 +20,7 @@
   import ColorSelect from '$ui/ColorSelect.svelte';
   import ControllerButton from '$ui/ControllerButton.svelte';
   import Select from '$ui/Select.svelte';
-  import deepCopy from '$utils/deepCopy';
-  import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
-  import { isCommandKey } from '$utils/keyboard/isCommandKey';
-  import moveArrayElement from '$utils/moveArrayElement';
+  import { isCommandKey, isDeleteKey, moveArrayElement, deepCopy } from '@octopuzzles/utils';
   import { regionDefaults } from '$utils/prefabs';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
