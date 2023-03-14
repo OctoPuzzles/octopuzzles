@@ -4,8 +4,7 @@
   import HtmlContent from '$components/HTMLContent.svelte';
   import type { InferQueryOutput } from '$lib/client/trpc';
   import trpc from '$lib/client/trpc';
-  import { openModal } from '$stores/modalStore';
-  import Button from '$ui/Button.svelte';
+  import { Button, openModal } from '@octopuzzles/ui';
   import { formatDistanceToNowStrict } from 'date-fns';
 
   export let comment: InferQueryOutput<'comments:onSudoku'>['comments'][0];

@@ -1,8 +1,7 @@
 <script lang="ts">
   import type { Position } from '@octopuzzles/models';
   import { gameHistory, highlights } from '$stores/sudokuStore';
-  import Button from '$ui/Button.svelte';
-  import Input from '$ui/Input.svelte';
+  import { Button, Input } from '@octopuzzles/ui';
   import { deepCopy } from '@octopuzzles/utils';
 
   const { selectedCells } = highlights;

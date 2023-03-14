@@ -3,7 +3,6 @@
   import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
   import { cageTypeNames, cageTypesToLabel } from '$constants';
   import type { CageType, Extendedcage, Position } from '@octopuzzles/models';
-  import { hasOpenModals } from '$stores/modalStore';
   import {
     editorHistory,
     handleArrows,
@@ -17,13 +16,16 @@
     MouseEnterHandler
   } from '$stores/sudokuStore/interactionHandlers';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-  import Button from '$ui/Button.svelte';
-  import Checkbox from '$ui/Checkbox.svelte';
-  import ColorSelect from '$ui/ColorSelect.svelte';
-  import ControllerButton from '$ui/ControllerButton.svelte';
-  import Input from '$ui/Input.svelte';
-  import Label from '$ui/Label.svelte';
-  import Select from '$ui/Select.svelte';
+  import {
+    Button,
+    Checkbox,
+    ControllerButton,
+    Input,
+    Label,
+    Select,
+    hasOpenModals
+  } from '@octopuzzles/ui';
+  import ColorSelect from '$components/ColorSelect.svelte';
   import { isDeleteKey, isArrowKey, isCommandKey, moveArrayElement } from '@octopuzzles/utils';
   import { cageDefaults } from '$utils/prefabs';
   import { onMount } from 'svelte';

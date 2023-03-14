@@ -10,6 +10,7 @@ coverage
 
 # svelte
 .svelte-kit
+package
 
 # misc
 .DS_Store
@@ -32,3 +33,4 @@ yarn-error.log*
 
 .vercel
 dist
+build

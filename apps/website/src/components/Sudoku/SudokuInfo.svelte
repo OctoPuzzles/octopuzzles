@@ -9,7 +9,7 @@
   import type { Sudoku } from '@octopuzzles/models';
   import type { User } from '@octopuzzles/models';
   import type { Vote } from '@octopuzzles/models';
-  import PuzzleLabel from '$ui/PuzzleLabel.svelte';
+  import { PuzzleLabel } from '@octopuzzles/ui';
   import classNames from 'classnames';
   import { formatDistanceToNowStrict } from 'date-fns';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';

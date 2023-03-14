@@ -1,10 +1,9 @@
 <script lang="ts">
-  import SquareButton from '$ui/SquareButton.svelte';
+  import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { editorHistory, highlights } from '$stores/sudokuStore';
   import { get } from 'svelte/store';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
-  import { hasOpenModals } from '$stores/modalStore';
 
   const { selectedCells } = highlights;
 

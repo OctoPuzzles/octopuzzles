@@ -1,14 +1,12 @@
 <script lang="ts">
   import SudokuDisplay from './Display/SudokuDisplay.svelte';
   import { formatDistanceToNowStrict } from 'date-fns';
-  import Button from '$ui/Button.svelte';
+  import { Button, Spinner, PuzzleLabel } from '@octopuzzles/ui';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
   import NotePencil from 'phosphor-svelte/lib/NotePencil/NotePencil.svelte';
-  import LoadingIndicator from '$ui/LoadingIndicator.svelte';
   import type { Sudoku } from '@octopuzzles/models';
   import type { User } from '@octopuzzles/models';
   import type { Label } from '@octopuzzles/models';
-  import PuzzleLabel from '$ui/PuzzleLabel.svelte';
   import { fillSudokuWithDefaults } from '$utils/fillSudokuWithDefaults';
 
   export let sudokus:
@@ -22,7 +20,7 @@
 
 {#if !sudokus && loading}
   <div class="w-full flex justify-center mt-4">
-    <LoadingIndicator class="w-40 h-40 text-orange-500" />
+    <Spinner class="w-40 h-40 text-orange-500" />
   </div>
 {/if}
 {#if sudokus}

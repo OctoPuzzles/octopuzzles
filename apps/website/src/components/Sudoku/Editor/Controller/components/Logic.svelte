@@ -1,8 +1,6 @@
 <script lang="ts">
-  import Input from '$ui/Input.svelte';
-  import Checkbox from '$ui/Checkbox.svelte';
+  import { Input, Checkbox, Label } from '@octopuzzles/ui';
   import { editorHistory } from '$stores/sudokuStore';
-  import Label from '$ui/Label.svelte';
   import { logicFlagNames, logicFlagsToLabel } from '$constants';
   import type { Logic, LogicFlag } from '@octopuzzles/models';
 

@@ -11,12 +11,11 @@
   import NotesIcon from '$icons/Notes.svelte';
   import NumbersIcon from '$icons/Numbers.svelte';
   import ScannerIcon from '$icons/Scanner.svelte';
-  import { openModal } from '$stores/modalStore';
   import { gameHistory, inputMode, highlights, editorHistory } from '$stores/sudokuStore';
   import { scanner } from '$stores/sudokuStore/scanner';
   import { walkthroughStore } from '$stores/walkthroughStore';
   import type { InputMode } from '$types';
-  import SquareButton from '$ui/SquareButton.svelte';
+  import { SquareButton, openModal } from '@octopuzzles/ui';
   import { isCommandKey } from '@octopuzzles/utils';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';

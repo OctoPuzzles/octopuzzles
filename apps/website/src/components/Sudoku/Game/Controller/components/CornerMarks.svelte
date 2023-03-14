@@ -3,9 +3,8 @@
   import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
   import { get } from 'svelte/store';
   import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
-  import SquareButton from '$ui/SquareButton.svelte';
+  import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
   import classNames from 'classnames';
-  import { hasOpenModals } from '$stores/modalStore';
 
   const { selectedCells } = highlights;
 

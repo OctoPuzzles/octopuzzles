@@ -1,7 +1,6 @@
 <script lang="ts">
   import { pathTypeNames, pathTypesToLabel } from '$constants';
   import type { Form, Path, PathType, Position } from '@octopuzzles/models';
-  import { hasOpenModals } from '$stores/modalStore';
   import {
     editorHistory,
     handleArrows,
@@ -15,14 +14,17 @@
     MouseEnterHandler
   } from '$stores/sudokuStore/interactionHandlers';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-  import Button from '$ui/Button.svelte';
-  import Checkbox from '$ui/Checkbox.svelte';
-  import ColorSelect from '$ui/ColorSelect.svelte';
-  import ControllerButton from '$ui/ControllerButton.svelte';
-  import Label from '$ui/Label.svelte';
-  import RadioGroup from '$ui/RadioGroup.svelte';
-  import Range from '$ui/Range.svelte';
-  import Select from '$ui/Select.svelte';
+  import {
+    Button,
+    Checkbox,
+    ControllerButton,
+    Label,
+    RadioGroup,
+    Range,
+    Select,
+    hasOpenModals
+  } from '@octopuzzles/ui';
+  import ColorSelect from '$components/ColorSelect.svelte';
   import { isCommandKey, deepCopy, isDeleteKey, moveArrayElement } from '@octopuzzles/utils';
   import { pathDefaults } from '$utils/prefabs';
   import { onMount } from 'svelte';

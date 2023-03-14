@@ -2,7 +2,7 @@
   import { walkthroughStore } from '$stores/walkthroughStore';
   import { gameHistory } from '$stores/sudokuStore';
   import SudokuDisplay from '$components/Sudoku/Display/SudokuDisplay.svelte';
-  import Button from '$ui/Button.svelte';
+  import { Button } from '@octopuzzles/ui';
   import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
   import Swap from 'phosphor-svelte/lib/Swap/Swap.svelte';

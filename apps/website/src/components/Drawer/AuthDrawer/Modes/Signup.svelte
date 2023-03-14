@@ -1,7 +1,6 @@
 <script lang="ts">
-  import Button from '$ui/Button.svelte';
+  import { Button, Input } from '@octopuzzles/ui';
   import Logo from '$icons/Logo.svelte';
-  import Input from '$ui/Input.svelte';
   import { authMode } from '$stores/authStore';
   import type { InferMutationInput } from '$lib/client/trpc';
   import trpc from '$lib/client/trpc';

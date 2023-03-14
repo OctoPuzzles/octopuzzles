@@ -5,7 +5,7 @@
   import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
   import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { openModal } from '$stores/modalStore';
+  import { openModal } from '@octopuzzles/ui';
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
   import { getUserSolution } from '$utils/getSolution';
   import type { PageData } from './$types';

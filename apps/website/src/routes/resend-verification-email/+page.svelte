@@ -1,6 +1,5 @@
 <script lang="ts">
-  import Input from '$ui/Input.svelte';
-  import Button from '$ui/Button.svelte';
+  import { Input, Button } from '@octopuzzles/ui';
   import trpc from '$lib/client/trpc';
 
   let email = '';

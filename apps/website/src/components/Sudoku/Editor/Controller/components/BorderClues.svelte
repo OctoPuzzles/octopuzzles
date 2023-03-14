@@ -1,18 +1,20 @@
 <script lang="ts">
-  import Button from '$ui/Button.svelte';
-  import Input from '$ui/Input.svelte';
-  import Label from '$ui/Label.svelte';
-  import ColorSelect from '$ui/ColorSelect.svelte';
-  import RadioGroup from '$ui/RadioGroup.svelte';
+  import {
+    Button,
+    Input,
+    Label,
+    RadioGroup,
+    ControllerButton,
+    Select,
+    hasOpenModals
+  } from '@octopuzzles/ui';
+  import ColorSelect from '$components/ColorSelect.svelte';
   import { borderClueTypeNames, borderClueTypesToLabel } from '$constants';
   import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
   import { deepCopy, isArrowKey, moveArrayElement, isDeleteKey } from '@octopuzzles/utils';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
   import { borderClueDefaults } from '$utils/prefabs';
   import type { Borderclue, BorderClueType, Position, Shape } from '@octopuzzles/models';
-  import { hasOpenModals } from '$stores/modalStore';
-  import ControllerButton from '$ui/ControllerButton.svelte';
-  import Select from '$ui/Select.svelte';
   import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
   import { default as BorderclueComponent } from '$components/Sudoku/Display/Clues/borderclues/Borderclue.svelte';
 
