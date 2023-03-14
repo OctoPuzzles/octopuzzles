@@ -1,13 +1,3 @@
 module.exports = {
-  extends: ['next', 'turbo', 'prettier'],
-  settings: {
-    react: {
-      version: 'detect'
-    }
-  },
-  parserOptions: {
-    babelOptions: {
-      presets: [require.resolve('next/babel')]
-    }
-  }
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'turbo', 'prettier']
 };
