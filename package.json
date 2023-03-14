@@ -25,8 +25,6 @@
     "test:e2e": "turbo run test:e2e"
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
-    "eslint-config-custom": "*",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
     "turbo": "latest"

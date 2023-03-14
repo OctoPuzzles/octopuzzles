@@ -5,10 +5,10 @@
   import TwitterLink from '$components/shareButtons/TwitterLink.svelte';
   import WhatsAppLink from '$components/shareButtons/WhatsAppLink.svelte';
   import trpc from '$lib/client/trpc';
-  import type { Label } from '$models/Label';
-  import type { Sudoku } from '$models/Sudoku';
-  import type { User } from '$models/User';
-  import type { Vote } from '$models/Vote';
+  import type { Label } from '@octopuzzles/models';
+  import type { Sudoku } from '@octopuzzles/models';
+  import type { User } from '@octopuzzles/models';
+  import type { Vote } from '@octopuzzles/models';
   import PuzzleLabel from '$ui/PuzzleLabel.svelte';
   import classNames from 'classnames';
   import { formatDistanceToNowStrict } from 'date-fns';

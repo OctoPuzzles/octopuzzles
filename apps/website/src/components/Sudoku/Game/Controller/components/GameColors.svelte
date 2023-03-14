@@ -6,7 +6,7 @@
   import { get } from 'svelte/store';
   import { numberColorMap } from '$constants';
   import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
-  import type { Color } from '$models/Sudoku';
+  import type { Color } from '@octopuzzles/models';
   import { hasOpenModals } from '$stores/modalStore';
 
   const { selectedCells } = highlights;

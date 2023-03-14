@@ -1,5 +1,5 @@
 import trpc from '$lib/client/trpc';
-import type { User, UserSettings } from '$models/User';
+import type { User, UserSettings } from '@octopuzzles/models';
 import { get, writable } from 'svelte/store';
 import { scanner } from './sudokuStore/scanner';
 

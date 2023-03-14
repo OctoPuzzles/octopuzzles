@@ -1,6 +1,6 @@
 <script lang="ts">
   import { regionTypeNames, regionTypesToLabel } from '$constants';
-  import type { Position, Region, RegionType } from '$models/Sudoku';
+  import type { Position, Region, RegionType } from '@octopuzzles/models';
   import { hasOpenModals } from '$stores/modalStore';
   import {
     editorHistory,

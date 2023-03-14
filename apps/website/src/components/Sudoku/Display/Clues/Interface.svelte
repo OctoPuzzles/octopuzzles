@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cellSize } from '$constants';
-  import type { Cells, Dimensions, Position } from '$models/Sudoku';
+  import type { Cells, Dimensions, Position } from '@octopuzzles/models';
   import type {
     ArrowHandler,
     MouseDownHandler,

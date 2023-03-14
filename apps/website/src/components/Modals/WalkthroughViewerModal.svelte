@@ -1,6 +1,6 @@
 <script lang="ts">
   import WalkthroughViewer from '$features/walkthroughs/WalkthroughViewer.svelte';
-  import type { WalkthroughStep } from '$models/Walkthrough';
+  import type { WalkthroughStep } from '@octopuzzles/models';
   import type { EditorHistoryStep } from '$types';
 
   export let isOpen: boolean;

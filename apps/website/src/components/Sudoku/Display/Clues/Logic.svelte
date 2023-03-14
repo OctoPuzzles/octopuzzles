@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cellSize, symbolsMap } from '$constants';
-  import type { Dimensions, Logic } from '$models/Sudoku';
+  import type { Dimensions, Logic } from '@octopuzzles/models';
   import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
   export let logic: Logic;

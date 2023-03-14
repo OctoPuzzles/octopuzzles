@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cellSize } from '$constants';
-  import type { Cells } from '$models/Sudoku';
+  import type { Cells } from '@octopuzzles/models';
 
   export let cells: Cells;
 </script>

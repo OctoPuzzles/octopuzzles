@@ -16,7 +16,7 @@
     defaultRegions
   } from '$utils/defaults';
   import { editorHistory, gameHistory, setMargins } from '$stores/sudokuStore';
-  import type { Dimensions } from '$models/Sudoku';
+  import type { Dimensions } from '@octopuzzles/models';
 
   const sudokuClues = editorHistory.subscribeToClues();
 

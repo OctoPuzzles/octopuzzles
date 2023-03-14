@@ -3,7 +3,7 @@ import * as trpc from '@trpc/server';
 import type { TRPCContext } from '.';
 import { intervalToDuration } from 'date-fns';
 import { rankingAlgorithm } from '$utils/rankingAlgorithm';
-import { VoteValidator, type Vote } from '$models/Vote';
+import { VoteValidator, type Vote } from '@octopuzzles/models';
 
 export default trpc.router<TRPCContext>().mutation('vote', {
   input: VoteValidator.pick({ sudokuId: true, value: true }),

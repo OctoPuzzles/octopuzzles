@@ -14,7 +14,7 @@
     ScannerMode,
     ScannerSettings,
     ScannerSpeed
-  } from '$models/User';
+  } from '@octopuzzles/models';
 
   import { me } from '$stores/meStore';
   import { scanner } from '$stores/sudokuStore/scanner';

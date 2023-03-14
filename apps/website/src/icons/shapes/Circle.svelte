@@ -1,6 +1,6 @@
 <script lang="ts">
   import { rotationsToDegree } from '$constants';
-  import type { Color, Rotation } from '$models/Sudoku';
+  import type { Color, Rotation } from '@octopuzzles/models';
   import classNames from 'classnames';
 
   export let size = 64;

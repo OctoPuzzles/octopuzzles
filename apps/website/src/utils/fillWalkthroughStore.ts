@@ -1,4 +1,4 @@
-import type { Walkthrough } from '$models/Walkthrough';
+import type { Walkthrough } from '@octopuzzles/models';
 import { walkthroughStore } from '$stores/walkthroughStore';
 import { get } from 'svelte/store';
 

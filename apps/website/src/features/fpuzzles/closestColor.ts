@@ -1,4 +1,4 @@
-import type { Color } from '$models/Sudoku';
+import type { Color } from '@octopuzzles/models';
 import type { HexColor } from './types';
 
 function deltaE(rgbA: Rgb, rgbB: Rgb): number {

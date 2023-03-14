@@ -1,4 +1,4 @@
-import type { Dimensions } from '$models/Sudoku';
+import type { Dimensions } from '@octopuzzles/models';
 import { PrismaClient } from '@prisma/client';
 
 const prismaRaw = new PrismaClient();

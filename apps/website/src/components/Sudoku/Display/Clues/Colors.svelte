@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cellSize } from '$constants';
-  import type { Dimensions, EditorColors } from '$models/Sudoku';
-  import type { GameColors } from '$models/Walkthrough';
+  import type { Dimensions, EditorColors } from '@octopuzzles/models';
+  import type { GameColors } from '@octopuzzles/models';
   import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
   export let editorColors: EditorColors;

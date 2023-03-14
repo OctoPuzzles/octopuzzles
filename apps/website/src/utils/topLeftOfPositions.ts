@@ -1,4 +1,4 @@
-import type { Position } from '$models/Sudoku';
+import type { Position } from '@octopuzzles/models';
 
 /**
  * Finds the top left of positions in a list.

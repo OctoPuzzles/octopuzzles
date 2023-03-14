@@ -4,7 +4,7 @@
   import { closeModal } from '$stores/modalStore';
   import Button from '$ui/Button.svelte';
   import classNames from 'classnames';
-  import type { Label } from '$models/Label';
+  import type { Label } from '@octopuzzles/models';
   import { editorHistory } from '$stores/sudokuStore';
 
   export let isOpen: boolean;

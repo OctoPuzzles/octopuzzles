@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import type { Role } from '$models/User';
+import type { Role } from '@octopuzzles/models';
 import type { RequestEvent } from '@sveltejs/kit';
 
 export function getJwt(event: RequestEvent<Partial<Record<string, string>>>) {

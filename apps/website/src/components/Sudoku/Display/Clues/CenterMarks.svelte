@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cellSize } from '$constants';
-  import type { Dimensions, Givens } from '$models/Sudoku';
-  import type { Centermarks, GameValues } from '$models/Walkthrough';
+  import type { Dimensions, Givens } from '@octopuzzles/models';
+  import type { Centermarks, GameValues } from '@octopuzzles/models';
   import arrayfrom0ToN from '$utils/arrayfrom0ToN';
 
   export let dimensions: Dimensions;

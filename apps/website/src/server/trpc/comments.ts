@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import * as trpc from '@trpc/server';
 import type { TRPCContext } from '.';
-import { CommentValidator } from '$models/Comment';
+import { CommentValidator } from '@octopuzzles/models';
 import { z } from 'zod';
 
 export default trpc

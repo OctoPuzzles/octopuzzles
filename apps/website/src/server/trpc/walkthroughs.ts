@@ -2,7 +2,7 @@ import {
   WalkthroughStepValidator,
   WalkthroughValidator,
   type Walkthrough
-} from '$models/Walkthrough';
+} from '@octopuzzles/models';
 import * as trpc from '@trpc/server';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';

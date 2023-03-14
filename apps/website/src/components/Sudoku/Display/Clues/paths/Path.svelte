@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cellSize } from '$constants';
-  import type { Path, Position } from '$models/Sudoku';
+  import type { Path, Position } from '@octopuzzles/models';
   import { getPathsToDraw } from '$utils/prefabs';
   import classNames from 'classnames';
 

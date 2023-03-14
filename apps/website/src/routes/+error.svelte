@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cellSize } from '../constants';
   import { page } from '$app/stores';
-  import type { Position } from '$models/Sudoku';
+  import type { Position } from '@octopuzzles/models';
 
   $: firstNumber = Math.floor($page.status / 100);
   $: secondNumber = Math.floor(($page.status - firstNumber * 100) / 10);

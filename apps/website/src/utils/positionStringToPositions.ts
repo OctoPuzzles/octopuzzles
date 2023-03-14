@@ -1,4 +1,4 @@
-import type { Position } from '$models/Sudoku';
+import type { Position } from '@octopuzzles/models';
 import type { PositionString } from '../features/fpuzzles/types';
 
 function positionFromPositionString(positionString: PositionString): Position {

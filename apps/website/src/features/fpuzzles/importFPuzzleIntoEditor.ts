@@ -28,7 +28,7 @@ import type {
   Dimensions,
   Position,
   Region
-} from '$models/Sudoku';
+} from '@octopuzzles/models';
 import type { EditorHistoryStep, GameHistoryStep } from '$types';
 
 type Handlers<T> = {

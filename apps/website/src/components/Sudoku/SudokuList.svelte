@@ -5,9 +5,9 @@
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
   import NotePencil from 'phosphor-svelte/lib/NotePencil/NotePencil.svelte';
   import LoadingIndicator from '$ui/LoadingIndicator.svelte';
-  import type { Sudoku } from '$models/Sudoku';
-  import type { User } from '$models/User';
-  import type { Label } from '$models/Label';
+  import type { Sudoku } from '@octopuzzles/models';
+  import type { User } from '@octopuzzles/models';
+  import type { Label } from '@octopuzzles/models';
   import PuzzleLabel from '$ui/PuzzleLabel.svelte';
   import { fillSudokuWithDefaults } from '$utils/fillSudokuWithDefaults';
 

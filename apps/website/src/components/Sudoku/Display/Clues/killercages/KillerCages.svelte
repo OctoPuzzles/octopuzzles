@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Dimensions, Extendedcages } from '$models/Sudoku';
+  import type { Dimensions, Extendedcages } from '@octopuzzles/models';
   import Killercage from './Killercage.svelte';
 
   export let cages: Extendedcages;

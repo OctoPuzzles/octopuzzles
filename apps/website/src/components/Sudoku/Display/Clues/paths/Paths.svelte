@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Paths } from '$models/Sudoku';
+  import type { Paths } from '@octopuzzles/models';
   import Path from './Path.svelte';
 
   export let paths: Paths;

@@ -13,7 +13,7 @@
   import Notes from './Clues/Notes.svelte';
   import Logic from './Clues/Logic.svelte';
   import Regions from './Clues/Regions.svelte';
-  import type { Position } from '$models/Sudoku';
+  import type { Position } from '@octopuzzles/models';
   import Interface from './Clues/Interface.svelte';
   import type {
     ArrowHandler,
