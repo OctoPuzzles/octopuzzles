@@ -2,7 +2,7 @@
   import { cellSize, symbolsMap } from '$constants';
   import classNames from 'classnames';
   import { getCellCluesToDraw } from '$utils/prefabs';
-  import type { CellClueLocation, Cellclues, CellClueSize } from '$models/Sudoku';
+  import type { CellClueLocation, Cellclues, CellClueSize } from '@octopuzzles/models';
 
   export let cellClues: Cellclues;
 

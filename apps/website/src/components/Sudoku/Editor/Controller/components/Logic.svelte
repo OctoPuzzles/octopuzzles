@@ -4,7 +4,7 @@
   import { editorHistory } from '$stores/sudokuStore';
   import Label from '$ui/Label.svelte';
   import { logicFlagNames, logicFlagsToLabel } from '$constants';
-  import type { Logic, LogicFlag } from '$models/Sudoku';
+  import type { Logic, LogicFlag } from '@octopuzzles/models';
 
   const sudokuClues = editorHistory.subscribeToClues();
   const labels = editorHistory.labels;

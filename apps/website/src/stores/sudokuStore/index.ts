@@ -23,8 +23,8 @@ import {
   defaultHandleMouseEnter
 } from './interactionHandlers';
 import type { ArrowHandler, MouseDownHandler, MouseEnterHandler } from './interactionHandlers';
-import type { Label } from '$models/Label';
-import type { Position, Margins, Dimensions } from '$models/Sudoku';
+import type { Label } from '@octopuzzles/models';
+import type { Position, Margins, Dimensions } from '@octopuzzles/models';
 import type {
   EditorHistoryStep,
   EditorHistoryStepWithNumbers,

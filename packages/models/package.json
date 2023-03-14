@@ -1,0 +1,25 @@
+{
+  "name": "@octopuzzles/models",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "lint": "eslint \"src/**/*.ts*\""
+  },
+  "dependencies": {
+    "zod": "^3.19.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-octopuzzles-basic": "*",
+    "tsconfig": "*",
+    "typescript": "^4.5.3"
+  }
+}

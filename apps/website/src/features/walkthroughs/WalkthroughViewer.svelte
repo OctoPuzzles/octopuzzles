@@ -9,7 +9,7 @@
   import { compressToBase64 } from '$features/compressor';
   import Play from 'phosphor-svelte/lib/Play/Play.svelte';
   import type { EditorHistoryStep } from '$types';
-  import type { WalkthroughStep } from '$models/Walkthrough';
+  import type { WalkthroughStep } from '@octopuzzles/models';
 
   const inModal = !$page.url.pathname.endsWith('/walkthrough');
 

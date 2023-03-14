@@ -21,7 +21,7 @@ import type {
   Rotation,
   Shape,
   SymbolType
-} from '$models/Sudoku';
+} from '@octopuzzles/models';
 
 export const cellSize = 64;
 

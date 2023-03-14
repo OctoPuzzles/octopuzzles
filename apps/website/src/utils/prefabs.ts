@@ -18,7 +18,7 @@ import type {
   Rotation,
   Shape,
   SymbolType
-} from '$models/Sudoku';
+} from '@octopuzzles/models';
 
 export function emptyCage(positions: Position[], type?: CageType): Extendedcage {
   return { type, positions, text: undefined, color: undefined, uniqueDigits: undefined };

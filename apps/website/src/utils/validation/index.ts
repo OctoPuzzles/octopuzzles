@@ -1,4 +1,4 @@
-import type { Dimensions, Sudoku } from '$models/Sudoku';
+import type { Dimensions, Sudoku } from '@octopuzzles/models';
 import { TRPCError } from '@trpc/server';
 
 export function validateCorrectDimension(

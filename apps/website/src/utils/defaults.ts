@@ -7,7 +7,7 @@ import type {
   Paths,
   Position,
   Regions
-} from '$models/Sudoku';
+} from '@octopuzzles/models';
 import deepCopy from './deepCopy';
 
 export const defaultRegionSize = (

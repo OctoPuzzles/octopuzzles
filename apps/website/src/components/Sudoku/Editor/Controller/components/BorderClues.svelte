@@ -12,7 +12,7 @@
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
   import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
   import { borderClueDefaults } from '$utils/prefabs';
-  import type { Borderclue, BorderClueType, Position, Shape } from '$models/Sudoku';
+  import type { Borderclue, BorderClueType, Position, Shape } from '@octopuzzles/models';
   import { hasOpenModals } from '$stores/modalStore';
   import ControllerButton from '$ui/ControllerButton.svelte';
   import Select from '$ui/Select.svelte';

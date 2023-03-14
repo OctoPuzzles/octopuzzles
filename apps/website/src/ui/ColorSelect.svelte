@@ -1,6 +1,6 @@
 <script lang="ts">
   import { colors } from '$constants';
-  import type { Color } from '$models/Sudoku';
+  import type { Color } from '@octopuzzles/models';
   import capitalize from '$utils/capitalize';
 
   import classNames from 'classnames';

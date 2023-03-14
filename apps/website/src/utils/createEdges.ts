@@ -1,5 +1,5 @@
 import { cellSize } from '$constants';
-import type { Dimensions, Position } from '$models/Sudoku';
+import type { Dimensions, Position } from '@octopuzzles/models';
 import deepCopy from './deepCopy';
 
 type Point = {

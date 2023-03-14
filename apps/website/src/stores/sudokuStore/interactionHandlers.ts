@@ -1,4 +1,4 @@
-import type { Position } from '$models/Sudoku';
+import type { Position } from '@octopuzzles/models';
 import { hasOpenModals } from '$stores/modalStore';
 import { isCommandKey } from '$utils/keyboard/isCommandKey';
 import { get } from 'svelte/store';

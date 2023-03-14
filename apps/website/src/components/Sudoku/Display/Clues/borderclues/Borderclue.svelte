@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cellSize } from '$constants';
-  import type { Borderclue } from '$models/Sudoku';
+  import type { Borderclue } from '@octopuzzles/models';
   import { getBorderCluesToDraw } from '$utils/prefabs';
   import classNames from 'classnames';
 

@@ -6,7 +6,7 @@ import {
   SolutionValidator,
   SudokuValidator,
   UpdateSudokuValidator
-} from '$models/Sudoku';
+} from '@octopuzzles/models';
 import type { TRPCContext } from '.';
 import { TRPCError } from '@trpc/server';
 
@@ -15,8 +15,8 @@ import {
   validateCorrectDimensionsOfSudokuClues
 } from '$utils/validation';
 import type { Sudoku } from '@prisma/client';
-import { LabelValidator } from '$models/Label';
-import { FrontendUserValidator } from '$models/User';
+import { LabelValidator } from '@octopuzzles/models';
+import { FrontendUserValidator } from '@octopuzzles/models';
 
 export default trpc
   .router<TRPCContext>()

@@ -5,7 +5,11 @@ import * as trpc from '@trpc/server';
 import type { TRPCContext } from '.';
 import { sendVerifyUserMail } from '$server/email';
 import pick from 'lodash/pick';
-import { UpdateUserSettingsValidator, UserSettingsValidator, UserValidator } from '$models/User';
+import {
+  UpdateUserSettingsValidator,
+  UserSettingsValidator,
+  UserValidator
+} from '@octopuzzles/models';
 import { setCookie } from '$utils/jwt/setCookie';
 import type { Prisma } from '@prisma/client';
 

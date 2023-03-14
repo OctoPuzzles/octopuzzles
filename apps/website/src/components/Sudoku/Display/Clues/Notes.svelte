@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cellSize } from '$constants';
-  import type { Position } from '$models/Sudoku';
-  import type { Notes } from '$models/Walkthrough';
+  import type { Position } from '@octopuzzles/models';
+  import type { Notes } from '@octopuzzles/models';
 
   export let notes: Notes | undefined;
   export let onClickNote: ((note: string, position: Position) => void) | undefined = undefined;

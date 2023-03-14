@@ -1,6 +1,6 @@
 <script lang="ts">
   import { pathTypeNames, pathTypesToLabel } from '$constants';
-  import type { Form, Path, PathType, Position } from '$models/Sudoku';
+  import type { Form, Path, PathType, Position } from '@octopuzzles/models';
   import { hasOpenModals } from '$stores/modalStore';
   import {
     editorHistory,

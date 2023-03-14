@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Label } from '$models/Label';
+  import type { Label } from '@octopuzzles/models';
   import classNames from 'classnames';
 
   export let label: Label;

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cellSize } from '$constants';
-  import type { Dimensions, Regions } from '$models/Sudoku';
+  import type { Dimensions, Regions } from '@octopuzzles/models';
   import { createOutlines } from '$utils/createEdges';
   import { getRegionsToDraw } from '$utils/prefabs';
 

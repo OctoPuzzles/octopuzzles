@@ -2,7 +2,7 @@
   import Killercage from '$components/Sudoku/Display/Clues/killercages/Killercage.svelte';
   import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
   import { cageTypeNames, cageTypesToLabel } from '$constants';
-  import type { CageType, Extendedcage, Position } from '$models/Sudoku';
+  import type { CageType, Extendedcage, Position } from '@octopuzzles/models';
   import { hasOpenModals } from '$stores/modalStore';
   import {
     editorHistory,

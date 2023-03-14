@@ -3,7 +3,7 @@
   import classNames from 'classnames';
   import { topLeftOfPositions } from '$utils/topLeftOfPositions';
   import { createOutlines } from '$utils/createEdges';
-  import type { Dimensions, Extendedcage } from '$models/Sudoku';
+  import type { Dimensions, Extendedcage } from '@octopuzzles/models';
 
   export let cage: Extendedcage;
   export let dimensions: Dimensions;

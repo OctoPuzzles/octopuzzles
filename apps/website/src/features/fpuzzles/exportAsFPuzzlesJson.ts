@@ -10,7 +10,7 @@ import {
   getPathsToDraw,
   getRegionsToDraw
 } from '$utils/prefabs';
-import type { Color, Position } from '$models/Sudoku';
+import type { Color, Position } from '@octopuzzles/models';
 
 export function exportAsFPuzzlesJson(): FPuzzlesJson {
   const givens = editorHistory.getClue('givens');

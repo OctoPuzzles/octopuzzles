@@ -1,8 +1,8 @@
 import { get, writable } from 'svelte/store';
 import deepCopy from '$utils/deepCopy';
 import { defaultRegionSize } from '$utils/defaults';
-import type { Position } from '$models/Sudoku';
-import type { ScannerSettings } from '$models/User';
+import type { Position } from '@octopuzzles/models';
+import type { ScannerSettings } from '@octopuzzles/models';
 import { editorHistory, gameHistory, mode, highlights } from '.';
 import { cageDefaults, pathDefaults, regionDefaults } from '$utils/prefabs';
 import { getValuesFromRange } from '$utils/keyboard/getValuesFromRange';

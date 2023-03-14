@@ -16,7 +16,7 @@
     Position,
     Rotation,
     SymbolType
-  } from '$models/Sudoku';
+  } from '@octopuzzles/models';
   import { hasOpenModals } from '$stores/modalStore';
   import { editorHistory, handleArrows, highlights, setMargins } from '$stores/sudokuStore';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
