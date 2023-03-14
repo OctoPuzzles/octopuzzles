@@ -2,9 +2,8 @@
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
   import { get } from 'svelte/store';
-  import deepCopy from '$utils/deepCopy';
+  import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
   import SquareButton from '$ui/SquareButton.svelte';
-  import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
   import { hasOpenModals } from '$stores/modalStore';
 
   const { selectedCells } = highlights;

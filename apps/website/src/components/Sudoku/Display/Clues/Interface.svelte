@@ -7,7 +7,7 @@
     MouseEnterHandler
   } from '$stores/sudokuStore/interactionHandlers';
   import { defaultCells } from '$utils/defaults';
-  import { isCommandKey } from '$utils/keyboard/isCommandKey';
+  import { isCommandKey } from '@octopuzzles/utils';
 
   export let cells: Cells;
   export let dimensions: Dimensions;

@@ -8,7 +8,7 @@ import type {
   Position,
   Regions
 } from '@octopuzzles/models';
-import deepCopy from './deepCopy';
+import { deepCopy } from '@octopuzzles/utils';
 
 export const defaultRegionSize = (
   dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }

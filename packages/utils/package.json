@@ -1,0 +1,25 @@
+{
+  "name": "@octopuzzles/utils",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsc -w",
+    "lint": "eslint \"src/**/*.ts*\"",
+    "test:unit": "vitest run"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-octopuzzles-basic": "*",
+    "tsconfig": "*",
+    "typescript": "^4.5.3",
+    "vitest": "^0.29.2"
+  }
+}

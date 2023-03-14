@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import deepCopy from '$utils/deepCopy';
+import { deepCopy } from '@octopuzzles/utils';
 import { defaultRegionSize } from '$utils/defaults';
 import type { Position } from '@octopuzzles/models';
 import type { ScannerSettings } from '@octopuzzles/models';

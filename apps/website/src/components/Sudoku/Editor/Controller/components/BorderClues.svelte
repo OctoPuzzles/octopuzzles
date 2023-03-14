@@ -6,11 +6,8 @@
   import RadioGroup from '$ui/RadioGroup.svelte';
   import { borderClueTypeNames, borderClueTypesToLabel } from '$constants';
   import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
-  import deepCopy from '$utils/deepCopy';
-  import isArrowKey from '$utils/keyboard/isArrowKey';
-  import moveArrayElement from '$utils/moveArrayElement';
+  import { deepCopy, isArrowKey, moveArrayElement, isDeleteKey } from '@octopuzzles/utils';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-  import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
   import { borderClueDefaults } from '$utils/prefabs';
   import type { Borderclue, BorderClueType, Position, Shape } from '@octopuzzles/models';
   import { hasOpenModals } from '$stores/modalStore';
@@ -179,7 +176,7 @@
     //do not accept keyboard input when any modal controls are open
     if (hasOpenModals()) return;
 
-    if (!isArrowKey(k.key)) {
+    if (!isArrowKey(k)) {
       input.focus();
     }
 

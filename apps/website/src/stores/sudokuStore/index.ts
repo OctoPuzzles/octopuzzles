@@ -1,6 +1,6 @@
 import { derived, get, writable } from 'svelte/store';
 import type { Readable } from 'svelte/store';
-import deepCopy from '$utils/deepCopy';
+import { deepCopy } from '@octopuzzles/utils';
 import {
   defaultBorderclues,
   defaultCellclues,

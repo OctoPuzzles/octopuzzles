@@ -1,4 +1,4 @@
-import deepCopy from './deepCopy';
+import { deepCopy } from '@octopuzzles/utils';
 
 export function getUserSolution({
   givens,

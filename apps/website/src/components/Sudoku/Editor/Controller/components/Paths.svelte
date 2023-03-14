@@ -23,10 +23,7 @@
   import RadioGroup from '$ui/RadioGroup.svelte';
   import Range from '$ui/Range.svelte';
   import Select from '$ui/Select.svelte';
-  import deepCopy from '$utils/deepCopy';
-  import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
-  import { isCommandKey } from '$utils/keyboard/isCommandKey';
-  import moveArrayElement from '$utils/moveArrayElement';
+  import { isCommandKey, deepCopy, isDeleteKey, moveArrayElement } from '@octopuzzles/utils';
   import { pathDefaults } from '$utils/prefabs';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';

@@ -24,10 +24,7 @@
   import Input from '$ui/Input.svelte';
   import Label from '$ui/Label.svelte';
   import Select from '$ui/Select.svelte';
-  import { isDeleteKey } from '$utils/keyboard/isDeleteKey';
-  import isArrowKey from '$utils/keyboard/isArrowKey';
-  import { isCommandKey } from '$utils/keyboard/isCommandKey';
-  import moveArrayElement from '$utils/moveArrayElement';
+  import { isDeleteKey, isArrowKey, isCommandKey, moveArrayElement } from '@octopuzzles/utils';
   import { cageDefaults } from '$utils/prefabs';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
@@ -133,7 +130,7 @@
     //do not accept keyboard input when any modal controls are open
     if (hasOpenModals()) return;
 
-    if (!isArrowKey(k.key)) {
+    if (!isArrowKey(k)) {
       input.focus();
     }
 

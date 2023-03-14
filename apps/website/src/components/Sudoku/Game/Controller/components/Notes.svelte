@@ -3,7 +3,7 @@
   import { gameHistory, highlights } from '$stores/sudokuStore';
   import Button from '$ui/Button.svelte';
   import Input from '$ui/Input.svelte';
-  import deepCopy from '$utils/deepCopy';
+  import { deepCopy } from '@octopuzzles/utils';
 
   const { selectedCells } = highlights;
 
