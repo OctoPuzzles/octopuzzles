@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Label from '$ui/Label.svelte';
+  import Label from './Label.svelte';
   import classNames from 'classnames';
 
   /** Label */

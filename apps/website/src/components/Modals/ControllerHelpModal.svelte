@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { closeModal } from '$stores/modalStore';
   import type { Mode } from '$types';
-  import Button from '$ui/Button.svelte';
+  import { Button, closeModal } from '@octopuzzles/ui';
 
   export let isOpen: boolean;
   export let mode: Mode;

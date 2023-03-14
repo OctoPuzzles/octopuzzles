@@ -1,13 +1,10 @@
 <script lang="ts">
-  import SquareButton from '$ui/SquareButton.svelte';
+  import { SquareButton, Label, RadioGroup, Checkbox, hasOpenModals } from '@octopuzzles/ui';
   import Play from 'phosphor-svelte/lib/Play/Play.svelte';
   import Pause from 'phosphor-svelte/lib/Pause/Pause.svelte';
   import Step from '$icons/Step.svelte';
   import Atom from 'phosphor-svelte/lib/Atom/Atom.svelte';
   import { editorHistory } from '$stores/sudokuStore';
-  import Label from '$ui/Label.svelte';
-  import RadioGroup from '$ui/RadioGroup.svelte';
-  import Checkbox from '$ui/Checkbox.svelte';
   import { cageDefaults, pathDefaults, regionDefaults } from '$utils/prefabs';
   import type {
     ScannerHighlightMode,
@@ -15,10 +12,8 @@
     ScannerSettings,
     ScannerSpeed
   } from '@octopuzzles/models';
-
   import { me } from '$stores/meStore';
   import { scanner } from '$stores/sudokuStore/scanner';
-  import { hasOpenModals } from '$stores/modalStore';
 
   let scannerSettings: ScannerSettings = me.getSettings().scanner ?? {};
   let highlightMode = scannerSettings.highlightMode ?? 'None';

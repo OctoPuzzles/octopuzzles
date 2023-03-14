@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { closeModal } from '$stores/modalStore';
-  import Button from '$ui/Button.svelte';
-  import Input from '$ui/Input.svelte';
+  import { closeModal, Button, Input } from '@octopuzzles/ui';
   import { decompressFromBase64 } from '$features/compressor';
   import type { FPuzzlesJson } from '$features/fpuzzles/types';
   import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';

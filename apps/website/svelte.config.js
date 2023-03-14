@@ -13,7 +13,6 @@ const config = {
     alias: {
       $constants: 'src/constants.ts',
       $types: 'src/types.ts',
-      $ui: 'src/ui',
       $utils: 'src/utils',
       $icons: 'src/icons',
       $components: 'src/components',

@@ -13,10 +13,9 @@
   import LogicIcon from '$icons/Logic.svelte';
   import PathsIcon from '$icons/Paths.svelte';
   import RegionsIcon from '$icons/Regions.svelte';
-  import { openModal } from '$stores/modalStore';
   import { editorHistory, inputMode } from '$stores/sudokuStore';
   import type { InputMode } from '$types';
-  import SquareButton from '$ui/SquareButton.svelte';
+  import { SquareButton, openModal } from '@octopuzzles/ui';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
   import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';

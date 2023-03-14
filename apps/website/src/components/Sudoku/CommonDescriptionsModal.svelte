@@ -1,8 +1,7 @@
 <script lang="ts">
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import Check from 'phosphor-svelte/lib/Check/Check.svelte';
-  import { closeModal } from '$stores/modalStore';
-  import Button from '$ui/Button.svelte';
+  import { closeModal, Button } from '@octopuzzles/ui';
   import classNames from 'classnames';
   import type { Label } from '@octopuzzles/models';
   import { editorHistory } from '$stores/sudokuStore';

@@ -1,6 +1,6 @@
 <script lang="ts">
   import classNames from 'classnames';
-  import LoadingIndicator from '$ui/LoadingIndicator.svelte';
+  import LoadingIndicator from './Spinner.svelte';
 
   type ButtonVariant = 'default' | 'primary' | 'secondary' | 'subtle' | 'danger';
 

@@ -1,8 +1,7 @@
 <script lang="ts">
-  import Button from '$ui/Button.svelte';
+  import { Button, hasOpenModals } from '@octopuzzles/ui';
   import { editorHistory, highlights } from '$stores/sudokuStore';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
-  import { hasOpenModals } from '$stores/modalStore';
 
   const { selectedCells } = highlights;
 

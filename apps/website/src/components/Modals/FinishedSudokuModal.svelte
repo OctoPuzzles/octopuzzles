@@ -8,8 +8,7 @@
   import TwitterLogo from 'phosphor-svelte/lib/TwitterLogo/TwitterLogo.svelte';
   import WhatsappLogo from 'phosphor-svelte/lib/WhatsappLogo/WhatsappLogo.svelte';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
-  import { closeModal } from '$stores/modalStore';
-  import Button from '$ui/Button.svelte';
+  import { Button, closeModal } from '@octopuzzles/ui';
 
   export let isOpen: boolean;
   export let sudokuId: number;

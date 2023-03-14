@@ -1,7 +1,6 @@
 <script lang="ts">
   import { regionTypeNames, regionTypesToLabel } from '$constants';
   import type { Position, Region, RegionType } from '@octopuzzles/models';
-  import { hasOpenModals } from '$stores/modalStore';
   import {
     editorHistory,
     handleArrows,
@@ -15,11 +14,8 @@
     MouseEnterHandler
   } from '$stores/sudokuStore/interactionHandlers';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-  import Button from '$ui/Button.svelte';
-  import Checkbox from '$ui/Checkbox.svelte';
-  import ColorSelect from '$ui/ColorSelect.svelte';
-  import ControllerButton from '$ui/ControllerButton.svelte';
-  import Select from '$ui/Select.svelte';
+  import { Button, Checkbox, ControllerButton, Select, hasOpenModals } from '@octopuzzles/ui';
+  import ColorSelect from '$components/ColorSelect.svelte';
   import { isCommandKey, isDeleteKey, moveArrayElement, deepCopy } from '@octopuzzles/utils';
   import { regionDefaults } from '$utils/prefabs';
   import { onMount } from 'svelte';

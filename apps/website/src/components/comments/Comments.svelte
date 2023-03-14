@@ -2,7 +2,7 @@
   import RichTextEditor from '$components/RichTextEditor.svelte';
   import type { InferQueryOutput } from '$lib/client/trpc';
   import trpc from '$lib/client/trpc';
-  import Button from '$ui/Button.svelte';
+  import { Button } from '@octopuzzles/ui';
   import { onMount } from 'svelte';
   import Comment from './Comment.svelte';
 

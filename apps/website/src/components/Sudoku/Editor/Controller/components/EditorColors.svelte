@@ -1,12 +1,11 @@
 <script lang="ts">
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { editorHistory, highlights } from '$stores/sudokuStore';
-  import SquareButton from '$ui/SquareButton.svelte';
+  import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
   import { get } from 'svelte/store';
   import { numberColorMap } from '$constants';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
   import type { Color } from '@octopuzzles/models';
-  import { hasOpenModals } from '$stores/modalStore';
 
   const { selectedCells } = highlights;
 

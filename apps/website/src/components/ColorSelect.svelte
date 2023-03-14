@@ -4,7 +4,7 @@
   import { capitalize } from '@octopuzzles/utils';
 
   import classNames from 'classnames';
-  import Select from './Select.svelte';
+  import { Select } from '@octopuzzles/ui';
 
   let className = '';
   export let color: Color | 'NONE';

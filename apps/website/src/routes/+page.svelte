@@ -1,12 +1,10 @@
 <script lang="ts">
   import SudokuList from '$components/Sudoku/SudokuList.svelte';
-  import PuzzleLabel from '$ui/PuzzleLabel.svelte';
+  import { PuzzleLabel, Button } from '@octopuzzles/ui';
   import Filters from '$icons/Filters.svelte';
   import { page } from '$app/stores';
-  import Button from '$ui/Button.svelte';
   import type { PageData } from './$types';
   import trpc from '$lib/client/trpc';
-  import { arrayfrom0ToN } from '@octopuzzles/utils';
 
   export let data: PageData;
   let sudokus = data.sudokuData;

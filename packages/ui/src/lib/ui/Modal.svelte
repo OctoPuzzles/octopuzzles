@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { modals, exitBeforeEnter, transitioning, closeModal } from '$stores/modalStore';
+  import { modals, exitBeforeEnter, transitioning, closeModal } from '../modalStore';
   import { fade } from 'svelte/transition';
 </script>
 

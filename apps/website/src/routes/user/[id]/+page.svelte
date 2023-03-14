@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { openModal } from '$stores/modalStore';
+  import { openModal } from '@octopuzzles/ui';
   import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
   import SudokuList from '$components/Sudoku/SudokuList.svelte';
   import trpc from '$lib/client/trpc';

@@ -1,8 +1,7 @@
 <script lang="ts">
   import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
   import SudokuEditor from '$components/Sudoku/Editor/SudokuEditor.svelte';
-  import Button from '$ui/Button.svelte';
-  import Input from '$ui/Input.svelte';
+  import { Button, Input, openModal, Label, PuzzleLabel } from '@octopuzzles/ui';
   import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import {
@@ -12,12 +11,10 @@
     defaultValues
   } from '$utils/defaults';
   import { page } from '$app/stores';
-  import { openModal } from '$stores/modalStore';
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import { getUserSolution } from '$utils/getSolution';
   import { editorHistory, gameHistory, mode } from '$stores/sudokuStore';
-  import Label from '$ui/Label.svelte';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
   import { walkthroughStore } from '$stores/walkthroughStore';
@@ -26,7 +23,6 @@
   import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
   import RichTextEditor from '$components/RichTextEditor.svelte';
   import { resetAllSudokuStores } from '$utils/resetAllStores';
-  import PuzzleLabel from '$ui/PuzzleLabel.svelte';
 
   export let data: PageData;
 
