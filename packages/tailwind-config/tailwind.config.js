@@ -107,22 +107,14 @@ const config = {
     },
     extend: {
       width: {
-        cell: '64px',
-        '3cell': '192px',
         120: '30rem'
       },
       height: {
-        cell: '64px',
-        '3cell': '192px',
         112: '28rem',
         120: '30rem',
         128: '32rem',
         140: '35rem',
         160: '40rem'
-      },
-      strokeWidth: {
-        0.5: '0.5',
-        3: '3'
       }
     },
     stroke: (theme) => ({

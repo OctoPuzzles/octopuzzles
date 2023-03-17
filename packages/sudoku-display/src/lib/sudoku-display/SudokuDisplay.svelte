@@ -1,25 +1,26 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { EditorHistoryStep, GameHistoryStep } from '$types';
-  import BorderClues from './Clues/borderclues/BorderClues.svelte';
-  import CellClues from './Clues/CellClues.svelte';
-  import Cells from './Clues/Cells.svelte';
-  import Colors from './Clues/Colors.svelte';
-  import CornerMarks from './Clues/CornerMarks.svelte';
-  import CenterMarks from './Clues/CenterMarks.svelte';
-  import KillerCages from './Clues/killercages/KillerCages.svelte';
-  import Numbers from './Clues/Numbers.svelte';
-  import Paths from './Clues/paths/Paths.svelte';
-  import Notes from './Clues/Notes.svelte';
-  import Logic from './Clues/Logic.svelte';
-  import Regions from './Clues/Regions.svelte';
-  import type { Position } from '@octopuzzles/models';
-  import Interface from './Clues/Interface.svelte';
   import type {
+    EditorHistoryStep,
+    GameHistoryStep,
+    Position,
     ArrowHandler,
     MouseDownHandler,
     MouseEnterHandler
-  } from '$stores/sudokuStore/interactionHandlers';
+  } from '@octopuzzles/models';
+  import BorderClues from './sudoku-clues/borderclues/BorderClues.svelte';
+  import CellClues from './sudoku-clues/CellClues.svelte';
+  import Cells from './sudoku-clues/Cells.svelte';
+  import Colors from './sudoku-clues/Colors.svelte';
+  import CornerMarks from './sudoku-clues/CornerMarks.svelte';
+  import CenterMarks from './sudoku-clues/CenterMarks.svelte';
+  import KillerCages from './sudoku-clues/killercages/KillerCages.svelte';
+  import Numbers from './sudoku-clues/Numbers.svelte';
+  import Paths from './sudoku-clues/paths/Paths.svelte';
+  import Notes from './sudoku-clues/Notes.svelte';
+  import Logic from './sudoku-clues/Logic.svelte';
+  import Regions from './sudoku-clues/Regions.svelte';
+  import Interface from './sudoku-clues/Interface.svelte';
 
   export let clues: EditorHistoryStep;
   export let userInputs: GameHistoryStep | undefined = undefined;
@@ -55,9 +56,11 @@
       {#if wrongCells}
         {#each wrongCells as cell}
           <rect
-            class="fill-current w-cell h-cell text-red-200"
+            class="fill-current text-red-200"
             x={CELL_SIZE * cell.column}
             y={CELL_SIZE * cell.row}
+            width={CELL_SIZE}
+            height={CELL_SIZE}
             vector-effect="non-scaling-size"
           />
         {/each}
@@ -65,9 +68,11 @@
       {#if selectedCells}
         {#each selectedCells as cell}
           <rect
-            class="fill-current w-cell h-cell text-orange-300 text-opacity-40"
+            class="fill-current text-orange-300 text-opacity-40"
             x={CELL_SIZE * cell.column}
             y={CELL_SIZE * cell.row}
+            width={CELL_SIZE}
+            height={CELL_SIZE}
             vector-effect="non-scaling-size"
           />
         {/each}
@@ -75,9 +80,11 @@
       {#if highlightedCells}
         {#each highlightedCells as cell}
           <rect
-            class="fill-current w-cell h-cell text-blue-100"
+            class="fill-current text-blue-100"
             x={CELL_SIZE * cell.column}
             y={CELL_SIZE * cell.row}
+            width={CELL_SIZE}
+            height={CELL_SIZE}
             vector-effect="non-scaling-size"
           />
         {/each}

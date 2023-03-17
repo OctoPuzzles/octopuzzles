@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { rotationsToDegree } from '$constants';
+  import { rotationsToDegree } from '$lib/constants';
   import type { Color, Rotation } from '@octopuzzles/models';
 
   export let size = 64;

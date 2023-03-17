@@ -12,7 +12,6 @@ const config = {
     adapter: adapter(),
     alias: {
       $constants: 'src/constants.ts',
-      $types: 'src/types.ts',
       $utils: 'src/utils',
       $icons: 'src/icons',
       $components: 'src/components',

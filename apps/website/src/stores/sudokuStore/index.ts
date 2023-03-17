@@ -31,7 +31,7 @@ import type {
   GameHistoryStep,
   InputMode,
   Mode
-} from '$types';
+} from '@octopuzzles/models';
 import { scanner } from './scanner';
 
 // WRITABLES

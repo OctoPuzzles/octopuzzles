@@ -1,32 +1,14 @@
-import type { Position } from '@octopuzzles/models';
+import type {
+  ArrowHandler,
+  MouseDownHandler,
+  MouseEnterHandler,
+  Position
+} from '@octopuzzles/models';
 import { hasOpenModals } from '@octopuzzles/ui';
 import { isCommandKey } from '@octopuzzles/utils';
 import { get } from 'svelte/store';
 import { editorHistory, highlights } from '.';
 
-export type MouseDownHandler = ({
-  cell,
-  metaButtonClicked
-}: {
-  cell: Position;
-  metaButtonClicked: boolean;
-}) => void;
-export type MouseEnterHandler = ({
-  cell,
-  metaButtonClicked,
-  mouseDown
-}: {
-  cell: Position;
-  metaButtonClicked: boolean;
-  mouseDown: boolean;
-}) => void;
-export type ArrowHandler = ({
-  k,
-  metaButtonClicked
-}: {
-  k: KeyboardEvent;
-  metaButtonClicked: boolean;
-}) => void;
 /**
  * Default action to do when user clicks on a cell
  */

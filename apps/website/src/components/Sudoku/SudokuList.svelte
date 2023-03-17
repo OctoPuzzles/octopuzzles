@@ -1,5 +1,5 @@
 <script lang="ts">
-  import SudokuDisplay from './Display/SudokuDisplay.svelte';
+  import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import { formatDistanceToNowStrict } from 'date-fns';
   import { Button, Spinner, PuzzleLabel } from '@octopuzzles/ui';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';

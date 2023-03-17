@@ -1,5 +1,5 @@
 <script lang="ts">
-  import SudokuDisplay from '$components/Sudoku/Display/SudokuDisplay.svelte';
+  import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import Controller from './Controller/index.svelte';
   import {
     highlights,
@@ -8,7 +8,7 @@
     handleMouseDown,
     handleMouseEnter
   } from '$stores/sudokuStore';
-  import type { EditorHistoryStep, GameHistoryStep } from '$types';
+  import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
 
   const { selectedCells, highlightedCells, wrongCells } = highlights;
 

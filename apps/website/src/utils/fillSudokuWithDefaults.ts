@@ -1,5 +1,5 @@
 import type { SudokuClues } from '@octopuzzles/models';
-import type { EditorHistoryStep } from '$types';
+import type { EditorHistoryStep } from '@octopuzzles/models';
 import {
   defaultBorderclues,
   defaultCages,

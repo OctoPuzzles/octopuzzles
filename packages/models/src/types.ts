@@ -1,5 +1,4 @@
-import type { SudokuClues } from '@octopuzzles/models';
-import type { SolutionStep } from '@octopuzzles/models';
+import type { SudokuClues, SolutionStep, Position } from '.';
 
 export type Mode = 'editor' | 'game';
 
@@ -22,3 +21,27 @@ type WithNumbers<Type> = {
 
 export type EditorHistoryStepWithNumbers = WithNumbers<EditorHistoryStep>;
 export type GameHistoryStepWithNumbers = WithNumbers<GameHistoryStep>;
+
+export type MouseDownHandler = ({
+  cell,
+  metaButtonClicked
+}: {
+  cell: Position;
+  metaButtonClicked: boolean;
+}) => void;
+export type MouseEnterHandler = ({
+  cell,
+  metaButtonClicked,
+  mouseDown
+}: {
+  cell: Position;
+  metaButtonClicked: boolean;
+  mouseDown: boolean;
+}) => void;
+export type ArrowHandler = ({
+  k,
+  metaButtonClicked
+}: {
+  k: KeyboardEvent;
+  metaButtonClicked: boolean;
+}) => void;

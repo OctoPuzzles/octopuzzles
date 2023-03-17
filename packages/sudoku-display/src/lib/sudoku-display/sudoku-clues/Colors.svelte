@@ -63,7 +63,9 @@
         <rect
           x={CELL_SIZE * column}
           y={CELL_SIZE * row}
-          class="fill-current text-{editorColor.toLowerCase()} w-cell h-cell opacity-60"
+          width={CELL_SIZE}
+          height={CELL_SIZE}
+          class="fill-current text-{editorColor.toLowerCase()} opacity-60"
           vector-effect="non-scaling-size"
         />
       {/if}
@@ -73,9 +75,11 @@
         </clipPath>
         {#each gameColor as color, i}
           <path
+            width={CELL_SIZE}
+            height={CELL_SIZE}
             d={describeArc(i, gameColor.length, row, column)}
             clip-path="url(#square-{row}-{column})"
-            class="fill-current text-{color.toLowerCase()} w-cell h-cell opacity-60"
+            class="fill-current text-{color.toLowerCase()} opacity-60"
           />
         {/each}
       {/if}

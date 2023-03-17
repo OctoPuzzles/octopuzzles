@@ -14,7 +14,7 @@
   import { gameHistory, inputMode, highlights, editorHistory } from '$stores/sudokuStore';
   import { scanner } from '$stores/sudokuStore/scanner';
   import { walkthroughStore } from '$stores/walkthroughStore';
-  import type { InputMode } from '$types';
+  import type { InputMode } from '@octopuzzles/models';
   import { SquareButton, openModal } from '@octopuzzles/ui';
   import { isCommandKey } from '@octopuzzles/utils';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';

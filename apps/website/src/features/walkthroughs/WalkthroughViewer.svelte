@@ -1,6 +1,6 @@
 <script lang="ts">
   import { gameHistory } from '$stores/sudokuStore';
-  import SudokuDisplay from '$components/Sudoku/Display/SudokuDisplay.svelte';
+  import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
   import AppWindow from 'phosphor-svelte/lib/AppWindow/AppWindow.svelte';
   import { page } from '$app/stores';
@@ -8,7 +8,7 @@
   import HtmlContent from '$components/HTMLContent.svelte';
   import { compressToBase64 } from '$features/compressor';
   import Play from 'phosphor-svelte/lib/Play/Play.svelte';
-  import type { EditorHistoryStep } from '$types';
+  import type { EditorHistoryStep } from '@octopuzzles/models';
   import type { WalkthroughStep } from '@octopuzzles/models';
 
   const inModal = !$page.url.pathname.endsWith('/walkthrough');

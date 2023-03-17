@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Mode } from '$types';
+  import type { Mode } from '@octopuzzles/models';
   import { Button, closeModal } from '@octopuzzles/ui';
 
   export let isOpen: boolean;

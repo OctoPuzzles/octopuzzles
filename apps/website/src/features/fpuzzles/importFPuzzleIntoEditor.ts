@@ -35,7 +35,7 @@ import type {
   Position,
   Region
 } from '@octopuzzles/models';
-import type { EditorHistoryStep, GameHistoryStep } from '$types';
+import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
 
 type Handlers<T> = {
   [Property in keyof T]-?: (object: NonNullable<T[Property]>) => void;

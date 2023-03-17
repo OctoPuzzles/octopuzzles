@@ -14,7 +14,7 @@
   import PathsIcon from '$icons/Paths.svelte';
   import RegionsIcon from '$icons/Regions.svelte';
   import { editorHistory, inputMode } from '$stores/sudokuStore';
-  import type { InputMode } from '$types';
+  import type { InputMode } from '@octopuzzles/models';
   import { SquareButton, openModal } from '@octopuzzles/ui';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';

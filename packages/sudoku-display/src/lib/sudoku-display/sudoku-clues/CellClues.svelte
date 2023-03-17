@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { symbolsMap } from '$constants';
+  import { symbolsMap } from '$lib/constants';
   import classNames from 'classnames';
   import { getCellCluesToDraw } from '@octopuzzles/sudoku-utils';
   import type { CellClueLocation, Cellclues, CellClueSize } from '@octopuzzles/models';
