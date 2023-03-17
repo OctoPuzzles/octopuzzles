@@ -1,11 +1,8 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { Cells, Dimensions, Position } from '@octopuzzles/models';
-  import type {
-    ArrowHandler,
+  import type { Cells, Dimensions, Position, ArrowHandler,
     MouseDownHandler,
-    MouseEnterHandler
-  } from '$stores/sudokuStore/interactionHandlers';
+    MouseEnterHandler } from '@octopuzzles/models';
   import { defaultCells } from '@octopuzzles/sudoku-utils';
   import { isCommandKey } from '@octopuzzles/utils';
 

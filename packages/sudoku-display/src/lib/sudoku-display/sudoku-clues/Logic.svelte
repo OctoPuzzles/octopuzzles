@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { symbolsMap } from '$constants';
+  import { symbolsMap } from '$lib/constants';
   import type { Dimensions, Logic } from '@octopuzzles/models';
   import { CELL_SIZE } from '@octopuzzles/models';
   import { arrayfrom0ToN } from '@octopuzzles/utils';

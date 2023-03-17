@@ -16,7 +16,7 @@
   import { borderClueDefaults } from '@octopuzzles/sudoku-utils';
   import type { Borderclue, BorderClueType, Position, Shape } from '@octopuzzles/models';
   import ScaledSvg from '$components/ScaledSvg.svelte';
-  import { default as BorderclueComponent } from '$components/Sudoku/Display/Clues/borderclues/Borderclue.svelte';
+  import { Borderclue as BorderclueComponent } from '@octopuzzles/sudoku-display';
 
   const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();

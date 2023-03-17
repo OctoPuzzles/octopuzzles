@@ -1,13 +1,3 @@
-import DiagonalNorthWestToSouthEast from '$icons/symbols/DiagonalNorthWestToSouthEast.svelte';
-import Arrow from '$icons/symbols/Arrow.svelte';
-import SmallArrow from '$icons/symbols/SmallArrow.svelte';
-import Arrowhead from '$icons/symbols/Arrowhead.svelte';
-import InvertedArrowhead from '$icons/symbols/InvertedArrowhead.svelte';
-import Square from '$icons/shapes/Square.svelte';
-import Circle from '$icons/shapes/Circle.svelte';
-import Diamond from '$icons/shapes/Diamond.svelte';
-import Star from '$icons/shapes/Star.svelte';
-import Line from '$icons/shapes/Line.svelte';
 import type {
   BorderClueType,
   CageType,
@@ -19,7 +9,6 @@ import type {
   PathType,
   RegionType,
   Rotation,
-  Shape,
   SymbolType
 } from '@octopuzzles/models';
 
@@ -34,25 +23,6 @@ export const numberColorMap: Record<number, Color> = {
   8: 'Orange',
   9: 'Purple',
   0: 'White'
-};
-
-export const symbolsMap: Record<SymbolType, typeof DiagonalNorthWestToSouthEast> = {
-  Diagonal: DiagonalNorthWestToSouthEast,
-  Arrow: Arrow,
-  SmallArrow: SmallArrow,
-  Arrowhead: Arrowhead,
-  InvertedArrowhead: InvertedArrowhead
-};
-
-export const rotationsToDegree: Record<Rotation, number> = {
-  North: 0,
-  NorthEast: 45,
-  East: 90,
-  SouthEast: 135,
-  South: 180,
-  SouthWest: 225,
-  West: 270,
-  NorthWest: 315
 };
 
 export const pathTypeNames: Record<PathType | 'CUSTOM', string> = {
@@ -178,14 +148,6 @@ export const isFrameCellClue: Record<CellClueType, boolean> = {
   Sandwich: true,
   Skyscraper: true,
   XSum: true
-};
-
-export const shapesToIcon: Record<Shape, typeof Circle> = {
-  Circle: Circle,
-  Square: Square,
-  Diamond: Diamond,
-  Star: Star,
-  Line: Line
 };
 
 export const pathTypesToLabel: Record<PathType, string> = {

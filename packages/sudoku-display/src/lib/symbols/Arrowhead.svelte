@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { rotationsToDegree } from '$constants';
+  import { rotationsToDegree } from '$lib/constants';
   import type { Color, Rotation } from '@octopuzzles/models';
 
   export let size = 64;
@@ -22,17 +22,6 @@
 >
   <g transform="rotate({rotate} 128 128)">
     {#if rotate % 90 === 0}
-      <line
-        x1="128"
-        y1="90"
-        x2="128"
-        y2="20"
-        fill="none"
-        class="stroke-current text-{color.toLowerCase()}"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width={5}
-      />
       <polyline
         points="92 56 128 20 164 56"
         fill="none"
@@ -42,17 +31,6 @@
         stroke-width={5}
       />
     {:else}
-      <line
-        x1="128"
-        y1="70"
-        x2="128"
-        y2="0"
-        fill="none"
-        class="stroke-current text-{color.toLowerCase()}"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width={5}
-      />
       <polyline
         points="92 36 128 0 164 36"
         fill="none"

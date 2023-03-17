@@ -1,24 +1,26 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { EditorHistoryStep, GameHistoryStep, Position } from '@octopuzzles/models';
-  import BorderClues from './Clues/borderclues/BorderClues.svelte';
-  import CellClues from './Clues/CellClues.svelte';
-  import Cells from './Clues/Cells.svelte';
-  import Colors from './Clues/Colors.svelte';
-  import CornerMarks from './Clues/CornerMarks.svelte';
-  import CenterMarks from './Clues/CenterMarks.svelte';
-  import KillerCages from './Clues/killercages/KillerCages.svelte';
-  import Numbers from './Clues/Numbers.svelte';
-  import Paths from './Clues/paths/Paths.svelte';
-  import Notes from './Clues/Notes.svelte';
-  import Logic from './Clues/Logic.svelte';
-  import Regions from './Clues/Regions.svelte';
-  import Interface from './Clues/Interface.svelte';
   import type {
+    EditorHistoryStep,
+    GameHistoryStep,
+    Position,
     ArrowHandler,
     MouseDownHandler,
     MouseEnterHandler
-  } from '$stores/sudokuStore/interactionHandlers';
+  } from '@octopuzzles/models';
+  import BorderClues from './sudoku-clues/borderclues/BorderClues.svelte';
+  import CellClues from './sudoku-clues/CellClues.svelte';
+  import Cells from './sudoku-clues/Cells.svelte';
+  import Colors from './sudoku-clues/Colors.svelte';
+  import CornerMarks from './sudoku-clues/CornerMarks.svelte';
+  import CenterMarks from './sudoku-clues/CenterMarks.svelte';
+  import KillerCages from './sudoku-clues/killercages/KillerCages.svelte';
+  import Numbers from './sudoku-clues/Numbers.svelte';
+  import Paths from './sudoku-clues/paths/Paths.svelte';
+  import Notes from './sudoku-clues/Notes.svelte';
+  import Logic from './sudoku-clues/Logic.svelte';
+  import Regions from './sudoku-clues/Regions.svelte';
+  import Interface from './sudoku-clues/Interface.svelte';
 
   export let clues: EditorHistoryStep;
   export let userInputs: GameHistoryStep | undefined = undefined;

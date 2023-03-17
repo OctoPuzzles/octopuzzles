@@ -1,8 +1,7 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
   import type { Dimensions, Regions } from '@octopuzzles/models';
-  import { createOutlines } from '@octopuzzles/sudoku-utils';
-  import { getRegionsToDraw } from '@octopuzzles/sudoku-utils';
+  import { createOutlines, getRegionsToDraw } from '@octopuzzles/sudoku-utils';
 
   export let regions: Regions;
 
