@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { cellSize } from '$constants';
+  import { CELL_SIZE } from '@octopuzzles/models';
   import type { Borderclue } from '@octopuzzles/models';
-  import { getBorderCluesToDraw } from '$utils/prefabs';
+  import { getBorderCluesToDraw } from '@octopuzzles/sudoku-utils';
   import classNames from 'classnames';
 
   let propBorderclue: Borderclue;
@@ -36,7 +36,7 @@
   }
 
   function adjustedRadius(r: number): number {
-    return (r / 100) * cellSize;
+    return (r / 100) * CELL_SIZE;
   }
 
   function getStarPoints(x: number, y: number, radius: number): string {
@@ -92,17 +92,17 @@
   <g>
     {#if borderclue.shape === 'Line'}
       <line
-        x1={(x + 0.5) * cellSize - (firstPosition.row - secondPosition.row) * radius}
-        y1={(y + 0.5) * cellSize + (firstPosition.column - secondPosition.column) * radius}
-        x2={(x + 0.5) * cellSize + (firstPosition.row - secondPosition.row) * radius}
-        y2={(y + 0.5) * cellSize - (firstPosition.column - secondPosition.column) * radius}
+        x1={(x + 0.5) * CELL_SIZE - (firstPosition.row - secondPosition.row) * radius}
+        y1={(y + 0.5) * CELL_SIZE + (firstPosition.column - secondPosition.column) * radius}
+        x2={(x + 0.5) * CELL_SIZE + (firstPosition.row - secondPosition.row) * radius}
+        y2={(y + 0.5) * CELL_SIZE - (firstPosition.column - secondPosition.column) * radius}
         class={`stroke-current stroke-3 cursor text-${borderclue.color?.toLowerCase() ?? 'white'}`}
         stroke-linecap="square"
       />
     {:else if borderclue.shape === 'Circle'}
       <circle
-        cx={(x + 0.5) * cellSize}
-        cy={(y + 0.5) * cellSize}
+        cx={(x + 0.5) * CELL_SIZE}
+        cy={(y + 0.5) * CELL_SIZE}
         r={radius}
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -116,8 +116,8 @@
       />
     {:else if borderclue.shape === 'Square'}
       <rect
-        x={(x + 0.5) * cellSize - radius}
-        y={(y + 0.5) * cellSize - radius}
+        x={(x + 0.5) * CELL_SIZE - radius}
+        y={(y + 0.5) * CELL_SIZE - radius}
         width={radius * 2}
         height={radius * 2}
         rx="2"
@@ -132,10 +132,10 @@
         )}
       />
     {:else if borderclue.shape === 'Diamond'}
-      <g transform="rotate(45 {(x + 0.5) * cellSize} {(y + 0.5) * cellSize})">
+      <g transform="rotate(45 {(x + 0.5) * CELL_SIZE} {(y + 0.5) * CELL_SIZE})">
         <rect
-          x={(x + 0.5) * cellSize - radius / 2}
-          y={(y + 0.5) * cellSize - radius / 2}
+          x={(x + 0.5) * CELL_SIZE - radius / 2}
+          y={(y + 0.5) * CELL_SIZE - radius / 2}
           width={radius}
           height={radius}
           rx="1"
@@ -152,7 +152,7 @@
       </g>
     {:else if borderclue.shape === 'Star'}
       <polygon
-        points={getStarPoints((x + 0.5) * cellSize, (y + 0.5) * cellSize, radius)}
+        points={getStarPoints((x + 0.5) * CELL_SIZE, (y + 0.5) * CELL_SIZE, radius)}
         stroke-linecap="round"
         stroke-linejoin="round"
         stroke-width="1"
@@ -175,8 +175,8 @@
             'fill-current',
             ['Black', 'Gray'].includes(borderclue.color ?? 'None') ? 'text-white' : 'text-black'
           )}
-          x={(x + 0.5) * cellSize + xOffset}
-          y={(y + 0.52) * cellSize + yOffset}
+          x={(x + 0.5) * CELL_SIZE + xOffset}
+          y={(y + 0.52) * CELL_SIZE + yOffset}
           dominant-baseline="middle"
           style="font-size: {fontSize};"
         >

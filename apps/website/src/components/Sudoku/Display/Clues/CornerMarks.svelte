@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { cellSize } from '$constants';
-  import type { Dimensions, Givens } from '@octopuzzles/models';
-  import type { Cornermarks, GameValues } from '@octopuzzles/models';
+  import { CELL_SIZE } from '@octopuzzles/models';
+  import type { Dimensions, Givens, Cornermarks, GameValues } from '@octopuzzles/models';
   import { arrayfrom0ToN } from '@octopuzzles/utils';
 
   export let dimensions: Dimensions;
@@ -17,8 +16,8 @@
       {#if cornermark && cornermark.length > 0 && !givens[row][column] && !values?.[row]?.[column]}
         {#each cornermark.split('') as cornerMark, i}
           <text
-            x={cellSize * (column + 0.18 + 0.3 * (i % 3))}
-            y={cellSize * (row + 0.22 + 0.3 * Math.floor(i / 3))}
+            x={CELL_SIZE * (column + 0.18 + 0.3 * (i % 3))}
+            y={CELL_SIZE * (row + 0.22 + 0.3 * Math.floor(i / 3))}
             dominant-baseline="middle"
             class="fill-current text-blue-700 select-none"
           >

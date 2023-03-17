@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { cellSize } from '$constants';
+  import { CELL_SIZE } from '@octopuzzles/models';
   import type { Dimensions, Regions } from '@octopuzzles/models';
-  import { createOutlines } from '$utils/createEdges';
-  import { getRegionsToDraw } from '$utils/prefabs';
+  import { createOutlines } from '@octopuzzles/sudoku-utils';
+  import { getRegionsToDraw } from '@octopuzzles/sudoku-utils';
 
   export let regions: Regions;
 
@@ -16,8 +16,8 @@
         {#if region.color != null}
           {#each region.positions as position}
             <rect
-              x={cellSize * position.column}
-              y={cellSize * position.row}
+              x={CELL_SIZE * position.column}
+              y={CELL_SIZE * position.row}
               class="fill-current text-{region.color.toLowerCase()} w-cell h-cell opacity-60"
               vector-effect="non-scaling-size"
             />

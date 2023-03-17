@@ -5,7 +5,7 @@
   import Step from '$icons/Step.svelte';
   import Atom from 'phosphor-svelte/lib/Atom/Atom.svelte';
   import { editorHistory } from '$stores/sudokuStore';
-  import { cageDefaults, pathDefaults, regionDefaults } from '$utils/prefabs';
+  import { cageDefaults, pathDefaults, regionDefaults } from '@octopuzzles/sudoku-utils';
   import type {
     ScannerHighlightMode,
     ScannerMode,

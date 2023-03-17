@@ -17,7 +17,7 @@
   import { Button, Checkbox, ControllerButton, Select, hasOpenModals } from '@octopuzzles/ui';
   import ColorSelect from '$components/ColorSelect.svelte';
   import { isCommandKey, isDeleteKey, moveArrayElement, deepCopy } from '@octopuzzles/utils';
-  import { regionDefaults } from '$utils/prefabs';
+  import { regionDefaults } from '@octopuzzles/sudoku-utils';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
 

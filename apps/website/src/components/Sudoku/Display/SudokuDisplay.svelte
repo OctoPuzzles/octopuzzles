@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cellSize } from '$constants';
+  import { CELL_SIZE } from '@octopuzzles/models';
   import type { EditorHistoryStep, GameHistoryStep } from '$types';
   import BorderClues from './Clues/borderclues/BorderClues.svelte';
   import CellClues from './Clues/CellClues.svelte';
@@ -42,7 +42,7 @@
 </script>
 
 <svg
-  viewBox="-2 -2 {clues.dimensions.columns * cellSize + 4} {clues.dimensions.rows * cellSize + 4}"
+  viewBox="-2 -2 {clues.dimensions.columns * CELL_SIZE + 4} {clues.dimensions.rows * CELL_SIZE + 4}"
   class="max-h-full max-w-full"
 >
   <Colors
@@ -56,8 +56,8 @@
         {#each wrongCells as cell}
           <rect
             class="fill-current w-cell h-cell text-red-200"
-            x={cellSize * cell.column}
-            y={cellSize * cell.row}
+            x={CELL_SIZE * cell.column}
+            y={CELL_SIZE * cell.row}
             vector-effect="non-scaling-size"
           />
         {/each}
@@ -66,8 +66,8 @@
         {#each selectedCells as cell}
           <rect
             class="fill-current w-cell h-cell text-orange-300 text-opacity-40"
-            x={cellSize * cell.column}
-            y={cellSize * cell.row}
+            x={CELL_SIZE * cell.column}
+            y={CELL_SIZE * cell.row}
             vector-effect="non-scaling-size"
           />
         {/each}
@@ -76,8 +76,8 @@
         {#each highlightedCells as cell}
           <rect
             class="fill-current w-cell h-cell text-blue-100"
-            x={cellSize * cell.column}
-            y={cellSize * cell.row}
+            x={CELL_SIZE * cell.column}
+            y={CELL_SIZE * cell.row}
             vector-effect="non-scaling-size"
           />
         {/each}

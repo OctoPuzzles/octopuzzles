@@ -54,6 +54,7 @@
   "type": "module",
   "dependencies": {
     "@octopuzzles/models": "*",
+    "@octopuzzles/sudoku-utils": "*",
     "@octopuzzles/utils": "*",
     "@octopuzzles/ui": "*",
     "@prisma/client": "^4.7.1",

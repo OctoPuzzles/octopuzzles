@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cellSize } from '$constants';
+  import { CELL_SIZE } from '@octopuzzles/models';
   import type { Cells } from '@octopuzzles/models';
 
   export let cells: Cells;
@@ -12,8 +12,8 @@
         id="cell"
         x={0}
         y={0}
-        width={cellSize}
-        height={cellSize}
+        width={CELL_SIZE}
+        height={CELL_SIZE}
         stroke="black"
         fill="none"
         stroke-width="0.5"
@@ -23,7 +23,7 @@
     {#each cells as row, rowIndex}
       {#each row as cell, columnIndex}
         {#if cell}
-          <use href="#cell" x={cellSize * columnIndex} y={cellSize * rowIndex} />
+          <use href="#cell" x={CELL_SIZE * columnIndex} y={CELL_SIZE * rowIndex} />
         {/if}
       {/each}
     {/each}

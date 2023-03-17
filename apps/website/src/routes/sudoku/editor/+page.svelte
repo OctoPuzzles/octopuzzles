@@ -9,7 +9,7 @@
     defaultCornermarks,
     defaultGameColors,
     defaultValues
-  } from '$utils/defaults';
+  } from '@octopuzzles/sudoku-utils';
   import { page } from '$app/stores';
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';

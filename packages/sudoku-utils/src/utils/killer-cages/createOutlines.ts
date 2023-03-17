@@ -1,5 +1,5 @@
-import { cellSize } from '$constants';
 import type { Dimensions, Position } from '@octopuzzles/models';
+import { CELL_SIZE } from '@octopuzzles/models';
 import { deepCopy } from '@octopuzzles/utils';
 
 type Point = {
@@ -57,7 +57,7 @@ function findOutlinePoints(
       if ((n == null && w == null) || (n != null && nw == null && w != null)) {
         points.push({
           forAlgorithm: { x: columnIndex, y: rowIndex },
-          forGraphics: { x: columnIndex * cellSize + offset, y: rowIndex * cellSize + offset },
+          forGraphics: { x: columnIndex * CELL_SIZE + offset, y: rowIndex * CELL_SIZE + offset },
           interCardinal: 'nw'
         });
       }
@@ -66,8 +66,8 @@ function findOutlinePoints(
         points.push({
           forAlgorithm: { x: columnIndex + 1, y: rowIndex },
           forGraphics: {
-            x: (columnIndex + 1) * cellSize - offset,
-            y: rowIndex * cellSize + offset
+            x: (columnIndex + 1) * CELL_SIZE - offset,
+            y: rowIndex * CELL_SIZE + offset
           },
           interCardinal: 'ne'
         });
@@ -77,8 +77,8 @@ function findOutlinePoints(
         points.push({
           forAlgorithm: { x: columnIndex, y: rowIndex + 1 },
           forGraphics: {
-            x: columnIndex * cellSize + offset,
-            y: (rowIndex + 1) * cellSize - offset
+            x: columnIndex * CELL_SIZE + offset,
+            y: (rowIndex + 1) * CELL_SIZE - offset
           },
           interCardinal: 'sw'
         });
@@ -88,8 +88,8 @@ function findOutlinePoints(
         points.push({
           forAlgorithm: { x: columnIndex + 1, y: rowIndex + 1 },
           forGraphics: {
-            x: (columnIndex + 1) * cellSize - offset,
-            y: (rowIndex + 1) * cellSize - offset
+            x: (columnIndex + 1) * CELL_SIZE - offset,
+            y: (rowIndex + 1) * CELL_SIZE - offset
           },
           interCardinal: 'se'
         });

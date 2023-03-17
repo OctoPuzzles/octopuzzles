@@ -13,7 +13,7 @@
     defaultPaths,
     defaultValues,
     defaultRegions
-  } from '$utils/defaults';
+  } from '@octopuzzles/sudoku-utils';
   import { editorHistory, gameHistory, setMargins } from '$stores/sudokuStore';
   import type { Dimensions } from '@octopuzzles/models';
 

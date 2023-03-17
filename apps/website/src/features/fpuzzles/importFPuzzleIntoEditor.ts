@@ -19,8 +19,14 @@ import {
   defaultRegions,
   defaultRegionSize,
   defaultValues
-} from '$utils/defaults';
-import { emptyBorderClue, emptyCage, emptyCellClue, emptyPath, emptyRegion } from '$utils/prefabs';
+} from '@octopuzzles/sudoku-utils';
+import {
+  emptyBorderClue,
+  emptyCage,
+  emptyCellClue,
+  emptyPath,
+  emptyRegion
+} from '@octopuzzles/sudoku-utils';
 import type {
   BorderClueType,
   CellClueSize,

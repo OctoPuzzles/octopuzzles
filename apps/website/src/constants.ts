@@ -23,8 +23,6 @@ import type {
   SymbolType
 } from '@octopuzzles/models';
 
-export const cellSize = 64;
-
 export const colors: Color[] = [
   'Black',
   'White',

@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { cellSize } from '$constants';
-  import type { Dimensions, EditorColors } from '@octopuzzles/models';
-  import type { GameColors } from '@octopuzzles/models';
+  import { CELL_SIZE } from '@octopuzzles/models';
+  import type { Dimensions, EditorColors, GameColors } from '@octopuzzles/models';
   import { arrayfrom0ToN } from '@octopuzzles/utils';
 
   export let editorColors: EditorColors;
@@ -62,15 +61,15 @@
       {@const gameColor = gameColors?.[row]?.[column]}
       {#if editorColor}
         <rect
-          x={cellSize * column}
-          y={cellSize * row}
+          x={CELL_SIZE * column}
+          y={CELL_SIZE * row}
           class="fill-current text-{editorColor.toLowerCase()} w-cell h-cell opacity-60"
           vector-effect="non-scaling-size"
         />
       {/if}
       {#if gameColor && gameColor.length > 0}
         <clipPath id="square-{row}-{column}" clipPathUnits="userSpaceOnUse">
-          <rect x={cellSize * column} y={cellSize * row} width={cellSize} height={cellSize} />
+          <rect x={CELL_SIZE * column} y={CELL_SIZE * row} width={CELL_SIZE} height={CELL_SIZE} />
         </clipPath>
         {#each gameColor as color, i}
           <path

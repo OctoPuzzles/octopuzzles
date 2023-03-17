@@ -16,7 +16,7 @@ import {
   defaultValues,
   defaultLogic,
   defaultRegions
-} from '$utils/defaults';
+} from '@octopuzzles/sudoku-utils';
 import {
   defaultHandleArrows,
   defaultHandleMouseDown,

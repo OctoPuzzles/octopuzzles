@@ -1,14 +1,13 @@
 <script lang="ts">
-  import { cellSize } from '$constants';
+  import { CELL_SIZE } from '@octopuzzles/models';
   import classNames from 'classnames';
-  import { topLeftOfPositions } from '$utils/topLeftOfPositions';
-  import { createOutlines } from '$utils/createEdges';
+  import { topLeftPosition, createOutlines } from '@octopuzzles/sudoku-utils';
   import type { Dimensions, Extendedcage } from '@octopuzzles/models';
 
   export let cage: Extendedcage;
   export let dimensions: Dimensions;
 
-  $: topLeft = topLeftOfPositions(cage.positions);
+  $: topLeft = topLeftPosition(cage.positions);
   $: outlines = createOutlines(cage.positions, dimensions, 4);
 </script>
 
@@ -24,10 +23,10 @@
 {#if cage.text && cage.text.length > 0}
   <text
     class={classNames('stroke-current', cage.color != null && `text-${cage.color?.toLowerCase()}`)}
-    x={cellSize * topLeft.column + 2}
-    y={cellSize * topLeft.row + 2}
-    width={cellSize}
-    height={cellSize}
+    x={CELL_SIZE * topLeft.column + 2}
+    y={CELL_SIZE * topLeft.row + 2}
+    width={CELL_SIZE}
+    height={CELL_SIZE}
     filter="url(#solid)"
     dominant-baseline="hanging">{cage.text}</text
   >

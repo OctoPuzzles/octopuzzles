@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { cellSize, symbolsMap } from '$constants';
+  import { symbolsMap } from '$constants';
   import classNames from 'classnames';
-  import { getCellCluesToDraw } from '$utils/prefabs';
+  import { getCellCluesToDraw } from '@octopuzzles/sudoku-utils';
   import type { CellClueLocation, Cellclues, CellClueSize } from '@octopuzzles/models';
+  import { CELL_SIZE } from '@octopuzzles/models';
 
   export let cellClues: Cellclues;
 
@@ -83,8 +84,8 @@
         <g class="pointer-events-none">
           {#if cellClue.text && cellClue.text.length > 0}
             <text
-              x={cellSize * (cellClue.position.column + horizontalOffset(cellClue.location))}
-              y={cellSize * (cellClue.position.row + verticalOffset(cellClue.location))}
+              x={CELL_SIZE * (cellClue.position.column + horizontalOffset(cellClue.location))}
+              y={CELL_SIZE * (cellClue.position.row + verticalOffset(cellClue.location))}
               dominant-baseline="middle"
               class={classNames(
                 'fill-current text-4xl textanchor-middle',
@@ -98,8 +99,8 @@
           {#if cellClue.symbol && cellClue.color}
             <svelte:component
               this={symbolsMap[cellClue.symbol]}
-              x={cellClue.position.column * cellSize}
-              y={cellClue.position.row * cellSize}
+              x={cellClue.position.column * CELL_SIZE}
+              y={cellClue.position.row * CELL_SIZE}
               rotation={cellClue.rotation}
               color={cellClue.color}
             />

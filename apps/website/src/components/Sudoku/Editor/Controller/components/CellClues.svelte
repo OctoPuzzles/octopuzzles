@@ -22,7 +22,7 @@
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
   import ColorSelect from '$components/ColorSelect.svelte';
   import { deepCopy, isDeleteKey, isArrowKey, moveArrayElement } from '@octopuzzles/utils';
-  import { cellClueDefaults } from '$utils/prefabs';
+  import { cellClueDefaults } from '@octopuzzles/sudoku-utils';
   import { onDestroy } from 'svelte';
 
   const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
