@@ -2,14 +2,14 @@ import { editorHistory, gameHistory } from '$stores/sudokuStore';
 import type { FPuzzlesJson, HexColor, PositionString } from './types';
 import { get } from 'svelte/store';
 import { deepCopy } from '@octopuzzles/utils';
-import { defaultRegions } from '$utils/defaults';
-import { topLeftOfPositions } from '$utils/topLeftOfPositions';
+import { defaultRegions } from '@octopuzzles/sudoku-utils';
+import { topLeftPosition } from '@octopuzzles/sudoku-utils';
 import {
   getBorderCluesToDraw,
   getCellCluesToDraw,
   getPathsToDraw,
   getRegionsToDraw
-} from '$utils/prefabs';
+} from '@octopuzzles/sudoku-utils';
 import type { Color, Position } from '@octopuzzles/models';
 
 export function exportAsFPuzzlesJson(): FPuzzlesJson {
@@ -156,11 +156,11 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
       case 'Clone': {
         const clone = fPuzzle.clone ?? (fPuzzle.clone = []);
 
-        const topLeftR = topLeftOfPositions(r.positions);
+        const topLeftR = topLeftPosition(r.positions);
         regions.forEach((s, j) => {
           if (j > i && handledRegions.indexOf(j) === -1) {
             if (s.color === r.color && s.positions.length === r.positions.length) {
-              const topLeftS = topLeftOfPositions(s.positions);
+              const topLeftS = topLeftPosition(s.positions);
               const rowOffset = topLeftS.row - topLeftR.row;
               const columnOffset = topLeftS.column - topLeftR.column;
 

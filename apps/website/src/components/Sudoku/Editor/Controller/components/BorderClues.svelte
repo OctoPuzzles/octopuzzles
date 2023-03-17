@@ -13,7 +13,7 @@
   import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
   import { deepCopy, isArrowKey, moveArrayElement, isDeleteKey } from '@octopuzzles/utils';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-  import { borderClueDefaults } from '$utils/prefabs';
+  import { borderClueDefaults } from '@octopuzzles/sudoku-utils';
   import type { Borderclue, BorderClueType, Position, Shape } from '@octopuzzles/models';
   import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
   import { default as BorderclueComponent } from '$components/Sudoku/Display/Clues/borderclues/Borderclue.svelte';

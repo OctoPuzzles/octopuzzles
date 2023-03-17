@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cellSize } from '../constants';
+  import { CELL_SIZE } from '@octopuzzles/models';
   import { page } from '$app/stores';
   import type { Position } from '@octopuzzles/models';
 
@@ -153,8 +153,8 @@
           {#each [0, 1, 2, 3, 4, 5, 6, 7, 8] as rowIndex}
             {#each [0, 1, 2, 3, 4, 5, 6, 7, 8] as columnIndex}
               <rect
-                x={cellSize * columnIndex}
-                y={cellSize * rowIndex}
+                x={CELL_SIZE * columnIndex}
+                y={CELL_SIZE * rowIndex}
                 vector-effect="non-scaling-size"
                 class="w-cell h-cell stroke-black fill-none stroke-0.5"
               />
@@ -163,8 +163,8 @@
           {#each [0, 1, 2] as rowIndex}
             {#each [0, 1, 2] as columnIndex}
               <rect
-                x={3 * cellSize * columnIndex}
-                y={3 * cellSize * rowIndex}
+                x={3 * CELL_SIZE * columnIndex}
+                y={3 * CELL_SIZE * rowIndex}
                 vector-effect="non-scaling-size"
                 class="w-3cell h-3cell stroke-black fill-none stroke-3"
               />
@@ -175,8 +175,8 @@
           {#each [firstNumber, secondNumber, thirdNumber] as n, i}
             {#each positionsForNumber(n, i) as position}
               <text
-                x={cellSize * (position.column + 0.5)}
-                y={cellSize * (position.row + 0.55)}
+                x={CELL_SIZE * (position.column + 0.5)}
+                y={CELL_SIZE * (position.row + 0.55)}
                 dominant-baseline="middle"
                 class="text-white text-5xl"
                 style="text-anchor: middle;"

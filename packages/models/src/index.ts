@@ -5,3 +5,5 @@ export * from './models/Token';
 export * from './models/User';
 export * from './models/Vote';
 export * from './models/Walkthrough';
+
+export const CELL_SIZE = 64;

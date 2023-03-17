@@ -27,7 +27,7 @@
   } from '@octopuzzles/ui';
   import ColorSelect from '$components/ColorSelect.svelte';
   import { isDeleteKey, isArrowKey, isCommandKey, moveArrayElement } from '@octopuzzles/utils';
-  import { cageDefaults } from '$utils/prefabs';
+  import { cageDefaults } from '@octopuzzles/sudoku-utils';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
 

@@ -10,7 +10,7 @@ import {
   defaultLogic,
   defaultPaths,
   defaultRegions
-} from './defaults';
+} from '@octopuzzles/sudoku-utils';
 
 export function fillSudokuWithDefaults(sudoku: SudokuClues): EditorHistoryStep {
   return {

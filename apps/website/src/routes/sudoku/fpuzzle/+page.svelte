@@ -4,7 +4,7 @@
   import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
   import { editorHistory, gameHistory } from '$stores/sudokuStore';
   import { decompressFromBase64 } from '$features/compressor';
-  import { defaultValues } from '$utils/defaults';
+  import { defaultValues } from '@octopuzzles/sudoku-utils';
   import type { FPuzzlesJson } from '$features/fpuzzles/types';
   import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
   import { onDestroy, onMount } from 'svelte';

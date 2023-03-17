@@ -26,7 +26,7 @@
   } from '@octopuzzles/ui';
   import ColorSelect from '$components/ColorSelect.svelte';
   import { isCommandKey, deepCopy, isDeleteKey, moveArrayElement } from '@octopuzzles/utils';
-  import { pathDefaults } from '$utils/prefabs';
+  import { pathDefaults } from '@octopuzzles/sudoku-utils';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import { default as PathComponent } from '$components/Sudoku/Display/Clues/paths/Path.svelte';

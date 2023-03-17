@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { cellSize } from '$constants';
-  import type { Dimensions, Givens } from '@octopuzzles/models';
-  import type { Centermarks, GameValues } from '@octopuzzles/models';
+  import { CELL_SIZE } from '@octopuzzles/models';
+  import type { Dimensions, Givens, Centermarks, GameValues } from '@octopuzzles/models';
   import { arrayfrom0ToN } from '@octopuzzles/utils';
 
   export let dimensions: Dimensions;
@@ -16,8 +15,8 @@
       {@const centermark = centermarks?.[row]?.[column]}
       {#if centermark && centermark.length > 0 && !givens[row][column] && !values?.[row]?.[column]}
         <text
-          x={cellSize * (column + 0.5)}
-          y={cellSize * (row + 0.55)}
+          x={CELL_SIZE * (column + 0.5)}
+          y={CELL_SIZE * (row + 0.55)}
           dominant-baseline="middle"
           class:small={centermark.length > 6}
           class="fill-current text-blue-700 select-none"

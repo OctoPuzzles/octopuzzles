@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { cellSize } from '$constants';
+  import { CELL_SIZE } from '@octopuzzles/models';
   import type { Path, Position } from '@octopuzzles/models';
-  import { getPathsToDraw } from '$utils/prefabs';
+  import { getPathsToDraw } from '@octopuzzles/sudoku-utils';
   import classNames from 'classnames';
 
   export let path: Path;
@@ -13,7 +13,7 @@
     let d = '';
     positions.forEach((cell, i) => {
       const letter = i === 0 ? 'M' : 'L';
-      d += `${letter}${(cell.column + 0.5) * cellSize} ${(cell.row + 0.5) * cellSize} `;
+      d += `${letter}${(cell.column + 0.5) * CELL_SIZE} ${(cell.row + 0.5) * CELL_SIZE} `;
     });
 
     return d;
@@ -21,9 +21,9 @@
 
   function createArrow({ row, column }: Position): string {
     let d = `
-			M${(column + 0.5) * cellSize + 10} ${(row + 0.5) * cellSize + 10}
-			L${(column + 0.5) * cellSize} ${(row + 0.5) * cellSize}
-			L${(column + 0.5) * cellSize + 10} ${(row + 0.5) * cellSize - 10}
+			M${(column + 0.5) * CELL_SIZE + 10} ${(row + 0.5) * CELL_SIZE + 10}
+			L${(column + 0.5) * CELL_SIZE} ${(row + 0.5) * CELL_SIZE}
+			L${(column + 0.5) * CELL_SIZE + 10} ${(row + 0.5) * CELL_SIZE - 10}
 		`;
     return d;
   }
@@ -46,11 +46,11 @@
         degrees = degrees + 180;
       }
     }
-    return `rotate(${degrees} ${(last.column + 0.5) * cellSize} ${(last.row + 0.5) * cellSize})`;
+    return `rotate(${degrees} ${(last.column + 0.5) * CELL_SIZE} ${(last.row + 0.5) * CELL_SIZE})`;
   }
 
   function getSize(width: number): number {
-    return (cellSize * width) / 100;
+    return (CELL_SIZE * width) / 100;
   }
 
   function pathHasArrow(p: Path) {
@@ -84,8 +84,8 @@
         <rect
           height={size}
           width={size}
-          x={cellSize * firstPosition.column + (cellSize - size) * 0.5}
-          y={cellSize * firstPosition.row + (cellSize - size) * 0.5}
+          x={CELL_SIZE * firstPosition.column + (CELL_SIZE - size) * 0.5}
+          y={CELL_SIZE * firstPosition.row + (CELL_SIZE - size) * 0.5}
           dominant-baseline="middle"
           vector-effect="non-scaling-size"
           class={classNames(`stroke-current text-${color}`, 'fill-current')}
@@ -95,8 +95,8 @@
         <rect
           height={size * SIZE_SCALE}
           width={size * SIZE_SCALE}
-          x={cellSize * firstPosition.column + (cellSize - size * SIZE_SCALE) * 0.5}
-          y={cellSize * firstPosition.row + (cellSize - size * SIZE_SCALE) * 0.5}
+          x={CELL_SIZE * firstPosition.column + (CELL_SIZE - size * SIZE_SCALE) * 0.5}
+          y={CELL_SIZE * firstPosition.row + (CELL_SIZE - size * SIZE_SCALE) * 0.5}
           dominant-baseline="middle"
           vector-effect="non-scaling-size"
           class={classNames(`stroke-current text-${color}`, 'fill-current')}
@@ -104,8 +104,8 @@
         />
       {:else}
         <circle
-          cx={cellSize * (firstPosition.column + 0.5)}
-          cy={cellSize * (firstPosition.row + 0.5)}
+          cx={CELL_SIZE * (firstPosition.column + 0.5)}
+          cy={CELL_SIZE * (firstPosition.row + 0.5)}
           r={size * 0.5}
           class={classNames(`stroke-current text-${color}`, 'fill-current')}
         />
@@ -142,8 +142,8 @@
         <rect
           height={size * SIZE_SCALE}
           width={size * SIZE_SCALE}
-          x={cellSize * lastPosition.column + (cellSize - size * SIZE_SCALE) * 0.5 + 10}
-          y={cellSize * lastPosition.row + (cellSize - size * SIZE_SCALE) * 0.5 + 10}
+          x={CELL_SIZE * lastPosition.column + (CELL_SIZE - size * SIZE_SCALE) * 0.5 + 10}
+          y={CELL_SIZE * lastPosition.row + (CELL_SIZE - size * SIZE_SCALE) * 0.5 + 10}
           dominant-baseline="middle"
           vector-effect="non-scaling-size"
           class={classNames(`stroke-current text-${color}`, 'fill-current')}
@@ -152,8 +152,8 @@
         <rect
           height={size * SIZE_SCALE}
           width={size * SIZE_SCALE}
-          x={cellSize * lastPosition.column + (cellSize - size * SIZE_SCALE) * 0.5 + 10}
-          y={cellSize * lastPosition.row + (cellSize - size * SIZE_SCALE) * 0.5 - 10}
+          x={CELL_SIZE * lastPosition.column + (CELL_SIZE - size * SIZE_SCALE) * 0.5 + 10}
+          y={CELL_SIZE * lastPosition.row + (CELL_SIZE - size * SIZE_SCALE) * 0.5 - 10}
           dominant-baseline="middle"
           vector-effect="non-scaling-size"
           class={classNames(`stroke-current text-${color}`, 'fill-current')}
@@ -163,8 +163,8 @@
         <rect
           height={size * SIZE_SCALE}
           width={size * SIZE_SCALE}
-          x={cellSize * lastPosition.column + (cellSize - size * SIZE_SCALE) * 0.5}
-          y={cellSize * lastPosition.row + (cellSize - size * SIZE_SCALE) * 0.5}
+          x={CELL_SIZE * lastPosition.column + (CELL_SIZE - size * SIZE_SCALE) * 0.5}
+          y={CELL_SIZE * lastPosition.row + (CELL_SIZE - size * SIZE_SCALE) * 0.5}
           dominant-baseline="middle"
           vector-effect="non-scaling-size"
           class={classNames(`stroke-current text-${color}`, 'fill-current')}

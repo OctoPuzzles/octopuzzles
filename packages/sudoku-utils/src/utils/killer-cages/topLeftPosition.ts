@@ -5,7 +5,7 @@ import type { Position } from '@octopuzzles/models';
  * Prioritises tops.
  * If leftmost has lower index than topmost, uses left most, otherwise topmost
  */
-export function topLeftOfPositions(positions: Position[]): Position {
+export function topLeftPosition(positions: Position[]): Position {
   let topLeft = positions[0];
   for (const position of positions) {
     if (position.row < topLeft.row) {
@@ -21,7 +21,7 @@ if (import.meta.vitest) {
   const { it, expect } = import.meta.vitest;
   it('finds top left of positions', () => {
     expect(
-      topLeftOfPositions([
+      topLeftPosition([
         { row: 0, column: 0 },
         { row: 1, column: 1 },
         { row: 8, column: 6 },
