@@ -1,7 +1,7 @@
 <script lang="ts">
   import { walkthroughStore } from '$stores/walkthroughStore';
   import { gameHistory } from '$stores/sudokuStore';
-  import {SudokuDisplay} from '@octopuzzles/sudoku-display';
+  import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import { Button } from '@octopuzzles/ui';
   import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';

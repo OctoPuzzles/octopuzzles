@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {SudokuDisplay} from '@octopuzzles/sudoku-display';
+  import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import Controller from './Controller/index.svelte';
   import {
     highlights,
