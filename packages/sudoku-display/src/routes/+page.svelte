@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { SudokuDisplay } from '$lib';
+  // import { SudokuDisplay } from '$lib';
 </script>
 
-<div class="h-screen">
+Hello
+
+<!-- <div class="h-screen">
   <SudokuDisplay
     clues={{
       givens: [
@@ -792,4 +794,4 @@
       logic: {}
     }}
   />
-</div>
+</div> -->
