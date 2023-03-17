@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colors } from '$constants';
+  import { Colors } from '@octopuzzles/models';
   import type { Color } from '@octopuzzles/models';
   import { capitalize } from '@octopuzzles/utils';
 
@@ -16,7 +16,7 @@
 </script>
 
 <Select
-  options={allowNone ? ['NONE', ...colors] : colors}
+  options={allowNone ? ['NONE', ...Colors] : Colors}
   bind:option={color}
   class={classNames(className)}
   {onChange}

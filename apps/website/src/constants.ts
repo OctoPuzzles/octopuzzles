@@ -23,19 +23,6 @@ import type {
   SymbolType
 } from '@octopuzzles/models';
 
-export const colors: Color[] = [
-  'Black',
-  'White',
-  'LightGray',
-  'Gray',
-  'Red',
-  'Yellow',
-  'Green',
-  'Blue',
-  'Orange',
-  'Purple'
-];
-
 export const numberColorMap: Record<number, Color> = {
   1: 'LightGray',
   2: 'Gray',

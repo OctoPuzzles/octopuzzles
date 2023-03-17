@@ -36,8 +36,8 @@ export const ColorValidator = z.enum([
   'Green',
   'Blue'
 ]);
-
 export type Color = z.infer<typeof ColorValidator>;
+export const Colors = ColorValidator.options;
 
 export const PositionValidator = z.object({
   row: z.number().int(),
@@ -48,6 +48,7 @@ export type Position = z.infer<typeof PositionValidator>;
 
 export const RegionTypeValidator = z.enum(['Normal', 'Extra', 'Clone', 'MagicSquare']);
 export type RegionType = z.infer<typeof RegionTypeValidator>;
+export const RegionTypes = RegionTypeValidator.options;
 
 export const RegionValidator = z.object({
   positions: z.array(PositionValidator),
@@ -74,6 +75,7 @@ export type Line = z.infer<typeof LineValidator>;
 
 export const CageTypeValidator = z.enum(['Killer']);
 export type CageType = z.infer<typeof CageTypeValidator>;
+export const CageTypes = CageTypeValidator.options;
 
 export const ExtendedcageValidator = z.object({
   positions: z.array(PositionValidator),
@@ -101,12 +103,15 @@ export const PathTypeValidator = z.enum([
   'Pill'
 ]);
 export type PathType = z.infer<typeof PathTypeValidator>;
+export const PathTypes = PathTypeValidator.options;
 
 export const FormValidator = z.enum(['Square', 'Round', 'Diamond']);
 export type Form = z.infer<typeof FormValidator>;
+export const Forms = FormValidator.options;
 
 export const FillValidator = z.enum(['Solid', 'Hollow']);
 export type Fill = z.infer<typeof FillValidator>;
+export const Fills = FillValidator.options;
 
 export const PathValidator = z.object({
   positions: z.array(PositionValidator),
@@ -130,9 +135,11 @@ export const BorderClueTypeValidator = z.enum([
   'Border'
 ]);
 export type BorderClueType = z.infer<typeof BorderClueTypeValidator>;
+export const BorderClueTypes = BorderClueTypeValidator.options;
 
 export const ShapeValidator = z.enum(['Circle', 'Square', 'Diamond', 'Star', 'Line']);
 export type Shape = z.infer<typeof ShapeValidator>;
+export const Shapes = ShapeValidator.options;
 
 export const BorderclueValidator = z.object({
   positions: z.array(PositionValidator).length(2),
@@ -157,6 +164,7 @@ export const CellClueTypeValidator = z.enum([
   'NumberedRoom'
 ]);
 export type CellClueType = z.infer<typeof CellClueTypeValidator>;
+export const CellClueTypes = CellClueTypeValidator.options;
 
 export const CellClueLocationValidator = z.enum([
   'TopLeft',
@@ -170,9 +178,11 @@ export const CellClueLocationValidator = z.enum([
   'BottomRight'
 ]);
 export type CellClueLocation = z.infer<typeof CellClueLocationValidator>;
+export const CellClueLocations = CellClueLocationValidator.options;
 
 export const CellClueSizeValidator = z.enum(['Large', 'Medium', 'Small', 'XSmall']);
 export type CellClueSize = z.infer<typeof CellClueSizeValidator>;
+export const CellClueSizes = CellClueSizeValidator.options;
 
 export const SymbolTypeValidator = z.enum([
   'Arrowhead',
@@ -182,6 +192,7 @@ export const SymbolTypeValidator = z.enum([
   'Diagonal'
 ]);
 export type SymbolType = z.infer<typeof SymbolTypeValidator>;
+export const SymbolTypes = SymbolTypeValidator.options;
 
 export const RotationValidator = z.enum([
   'North',
@@ -194,6 +205,7 @@ export const RotationValidator = z.enum([
   'NorthWest'
 ]);
 export type Rotation = z.infer<typeof RotationValidator>;
+export const Rotations = RotationValidator.options;
 
 export const CellclueValidator = z.object({
   position: PositionValidator,
@@ -224,6 +236,7 @@ export const LogicFlagValidator = z.enum([
   'NegativeWhite'
 ]);
 export type LogicFlag = z.infer<typeof LogicFlagValidator>;
+export const LogicFlags = LogicFlagValidator.options;
 
 export const LogicValidator = z.object({
   /** the valid digits expected in the puzzle, as a comma separated list of ranges (num or alpha). If None, defaults to 1-9 */
