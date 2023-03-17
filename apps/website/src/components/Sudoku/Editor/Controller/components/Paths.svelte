@@ -30,7 +30,7 @@
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import { default as PathComponent } from '$components/Sudoku/Display/Clues/paths/Path.svelte';
-  import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
+  import ScaledSvg from '$components/ScaledSvg.svelte';
 
   const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();

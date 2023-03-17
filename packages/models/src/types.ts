@@ -1,5 +1,4 @@
-import type { SudokuClues } from '@octopuzzles/models';
-import type { SolutionStep } from '@octopuzzles/models';
+import type { SudokuClues, SolutionStep } from '.';
 
 export type Mode = 'editor' | 'game';
 

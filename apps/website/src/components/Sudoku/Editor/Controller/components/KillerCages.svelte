@@ -1,6 +1,6 @@
 <script lang="ts">
   import Killercage from '$components/Sudoku/Display/Clues/killercages/Killercage.svelte';
-  import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
+  import ScaledSvg from '$components/ScaledSvg.svelte';
   import { cageTypeNames, cageTypesToLabel } from '$constants';
   import type { CageType, Extendedcage, Position } from '@octopuzzles/models';
   import {

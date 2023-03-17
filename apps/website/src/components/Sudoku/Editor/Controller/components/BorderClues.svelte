@@ -15,7 +15,7 @@
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
   import { borderClueDefaults } from '@octopuzzles/sudoku-utils';
   import type { Borderclue, BorderClueType, Position, Shape } from '@octopuzzles/models';
-  import ScaledSvg from '$components/Sudoku/Display/ScaledSvg.svelte';
+  import ScaledSvg from '$components/ScaledSvg.svelte';
   import { default as BorderclueComponent } from '$components/Sudoku/Display/Clues/borderclues/Borderclue.svelte';
 
   const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;

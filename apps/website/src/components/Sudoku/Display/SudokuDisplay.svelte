@@ -1,6 +1,6 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { EditorHistoryStep, GameHistoryStep } from '$types';
+  import type { EditorHistoryStep, GameHistoryStep, Position } from '@octopuzzles/models';
   import BorderClues from './Clues/borderclues/BorderClues.svelte';
   import CellClues from './Clues/CellClues.svelte';
   import Cells from './Clues/Cells.svelte';
@@ -13,7 +13,6 @@
   import Notes from './Clues/Notes.svelte';
   import Logic from './Clues/Logic.svelte';
   import Regions from './Clues/Regions.svelte';
-  import type { Position } from '@octopuzzles/models';
   import Interface from './Clues/Interface.svelte';
   import type {
     ArrowHandler,

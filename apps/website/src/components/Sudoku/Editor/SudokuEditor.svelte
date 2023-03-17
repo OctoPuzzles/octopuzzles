@@ -2,7 +2,7 @@
   import SudokuDisplay from '$components/Sudoku/Display/SudokuDisplay.svelte';
   import Controller from './Controller/index.svelte';
   import { highlights, handleArrows, handleMouseDown, handleMouseEnter } from '$stores/sudokuStore';
-  import type { EditorHistoryStep } from '$types';
+  import type { EditorHistoryStep } from '@octopuzzles/models';
 
   const { selectedCells, highlightedCells } = highlights;
 
