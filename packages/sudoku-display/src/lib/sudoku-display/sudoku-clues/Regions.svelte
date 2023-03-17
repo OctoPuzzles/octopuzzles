@@ -26,7 +26,11 @@
         {/if}
         {#if region.borders}
           {#each createOutlines(region.positions, dimensions) as outline}
-            <polyline class="stroke-black stroke-3 linecap-square fill-none" points={outline} />
+            <polyline
+              class="stroke-black linecap-square fill-none"
+              points={outline}
+              stroke-width={3}
+            />
           {/each}
         {/if}
       {/each}

@@ -96,7 +96,8 @@
         y1={(y + 0.5) * CELL_SIZE + (firstPosition.column - secondPosition.column) * radius}
         x2={(x + 0.5) * CELL_SIZE + (firstPosition.row - secondPosition.row) * radius}
         y2={(y + 0.5) * CELL_SIZE - (firstPosition.column - secondPosition.column) * radius}
-        class={`stroke-current stroke-3 cursor text-${borderclue.color?.toLowerCase() ?? 'white'}`}
+        class={`stroke-current cursor text-${borderclue.color?.toLowerCase() ?? 'white'}`}
+        stroke-width={3}
         stroke-linecap="square"
       />
     {:else if borderclue.shape === 'Circle'}

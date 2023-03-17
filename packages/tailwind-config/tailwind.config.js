@@ -115,10 +115,6 @@ const config = {
         128: '32rem',
         140: '35rem',
         160: '40rem'
-      },
-      strokeWidth: {
-        0.5: '0.5',
-        3: '3'
       }
     },
     stroke: (theme) => ({
