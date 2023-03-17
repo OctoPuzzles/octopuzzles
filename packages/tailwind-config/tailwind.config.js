@@ -107,13 +107,9 @@ const config = {
     },
     extend: {
       width: {
-        cell: '64px',
-        '3cell': '192px',
         120: '30rem'
       },
       height: {
-        cell: '64px',
-        '3cell': '192px',
         112: '28rem',
         120: '30rem',
         128: '32rem',

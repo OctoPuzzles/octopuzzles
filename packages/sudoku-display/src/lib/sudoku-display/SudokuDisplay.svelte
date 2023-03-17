@@ -56,9 +56,11 @@
       {#if wrongCells}
         {#each wrongCells as cell}
           <rect
-            class="fill-current w-cell h-cell text-red-200"
+            class="fill-current text-red-200"
             x={CELL_SIZE * cell.column}
             y={CELL_SIZE * cell.row}
+            width={CELL_SIZE}
+            height={CELL_SIZE}
             vector-effect="non-scaling-size"
           />
         {/each}
@@ -66,9 +68,11 @@
       {#if selectedCells}
         {#each selectedCells as cell}
           <rect
-            class="fill-current w-cell h-cell text-orange-300 text-opacity-40"
+            class="fill-current text-orange-300 text-opacity-40"
             x={CELL_SIZE * cell.column}
             y={CELL_SIZE * cell.row}
+            width={CELL_SIZE}
+            height={CELL_SIZE}
             vector-effect="non-scaling-size"
           />
         {/each}
@@ -76,9 +80,11 @@
       {#if highlightedCells}
         {#each highlightedCells as cell}
           <rect
-            class="fill-current w-cell h-cell text-blue-100"
+            class="fill-current text-blue-100"
             x={CELL_SIZE * cell.column}
             y={CELL_SIZE * cell.row}
+            width={CELL_SIZE}
+            height={CELL_SIZE}
             vector-effect="non-scaling-size"
           />
         {/each}

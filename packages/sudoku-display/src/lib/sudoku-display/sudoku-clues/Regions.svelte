@@ -17,7 +17,9 @@
             <rect
               x={CELL_SIZE * position.column}
               y={CELL_SIZE * position.row}
-              class="fill-current text-{region.color.toLowerCase()} w-cell h-cell opacity-60"
+              width={CELL_SIZE}
+              height={CELL_SIZE}
+              class="fill-current text-{region.color.toLowerCase()} opacity-60"
               vector-effect="non-scaling-size"
             />
           {/each}

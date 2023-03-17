@@ -36,19 +36,25 @@
           <rect
             x={CELL_SIZE * (dimensions.margins?.left ?? 0)}
             y={CELL_SIZE * ((dimensions.margins?.top ?? 0) + rowIndex)}
-            class="fill-current text-red w-cell h-cell opacity-60"
+            width={CELL_SIZE}
+            height={CELL_SIZE}
+            class="fill-current text-red opacity-60"
             vector-effect="non-scaling-size"
           />
           <rect
             x={CELL_SIZE * ((dimensions.margins?.left ?? 0) + 4)}
             y={CELL_SIZE * ((dimensions.margins?.top ?? 0) + rowIndex)}
-            class="fill-current text-red w-cell h-cell opacity-60"
+            width={CELL_SIZE}
+            height={CELL_SIZE}
+            class="fill-current text-red opacity-60"
             vector-effect="non-scaling-size"
           />
           <rect
             x={CELL_SIZE * ((dimensions.margins?.left ?? 0) + 8)}
             y={CELL_SIZE * ((dimensions.margins?.top ?? 0) + rowIndex)}
-            class="fill-current text-red w-cell h-cell opacity-60"
+            width={CELL_SIZE}
+            height={CELL_SIZE}
+            class="fill-current text-red opacity-60"
             vector-effect="non-scaling-size"
           />
         {/each}

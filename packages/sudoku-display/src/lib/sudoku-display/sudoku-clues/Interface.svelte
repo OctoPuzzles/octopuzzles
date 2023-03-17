@@ -1,8 +1,13 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { Cells, Dimensions, Position, ArrowHandler,
+  import type {
+    Cells,
+    Dimensions,
+    Position,
+    ArrowHandler,
     MouseDownHandler,
-    MouseEnterHandler } from '@octopuzzles/models';
+    MouseEnterHandler
+  } from '@octopuzzles/models';
   import { defaultCells } from '@octopuzzles/sudoku-utils';
   import { isCommandKey } from '@octopuzzles/utils';
 
@@ -50,9 +55,11 @@
         <rect
           on:mousedown={(e) => realHandleMouseDown({ row: rowIndex, column: columnIndex }, e)}
           on:mouseenter={(e) => realHandleMouseEnter({ row: rowIndex, column: columnIndex }, e)}
-          class="fill-current w-cell h-cell cursor-pointer text-transparent hover:text-opacity-40"
+          class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
           x={CELL_SIZE * columnIndex}
           y={CELL_SIZE * rowIndex}
+          width={CELL_SIZE}
+          height={CELL_SIZE}
           vector-effect="non-scaling-size"
           data-row={rowIndex}
           data-column={columnIndex}

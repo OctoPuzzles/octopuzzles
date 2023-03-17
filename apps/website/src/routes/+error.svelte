@@ -155,8 +155,10 @@
               <rect
                 x={CELL_SIZE * columnIndex}
                 y={CELL_SIZE * rowIndex}
+                width={CELL_SIZE}
+                height={CELL_SIZE}
                 vector-effect="non-scaling-size"
-                class="w-cell h-cell stroke-black fill-none stroke-0.5"
+                class="stroke-black fill-none stroke-0.5"
               />
             {/each}
           {/each}
@@ -166,7 +168,9 @@
                 x={3 * CELL_SIZE * columnIndex}
                 y={3 * CELL_SIZE * rowIndex}
                 vector-effect="non-scaling-size"
-                class="w-3cell h-3cell stroke-black fill-none stroke-3"
+                width={3 * CELL_SIZE}
+                height={3 * CELL_SIZE}
+                class="stroke-black fill-none stroke-3"
               />
             {/each}
           {/each}
