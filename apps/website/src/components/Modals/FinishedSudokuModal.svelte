@@ -1,12 +1,5 @@
 <script lang="ts">
-  import FacebookLink from '$components/shareButtons/FacebookLink.svelte';
-  import RedditLink from '$components/shareButtons/RedditLink.svelte';
-  import TwitterLink from '$components/shareButtons/TwitterLink.svelte';
-  import WhatsAppLink from '$components/shareButtons/WhatsAppLink.svelte';
-  import FacebookLogo from 'phosphor-svelte/lib/FacebookLogo/FacebookLogo.svelte';
-  import RedditLogo from 'phosphor-svelte/lib/RedditLogo/RedditLogo.svelte';
-  import TwitterLogo from 'phosphor-svelte/lib/TwitterLogo/TwitterLogo.svelte';
-  import WhatsappLogo from 'phosphor-svelte/lib/WhatsappLogo/WhatsappLogo.svelte';
+  import { FacebookLink, RedditLink, TwitterLink, WhatsAppLink } from '@octopuzzles/ui';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
   import { Button, closeModal } from '@octopuzzles/ui';
 
@@ -27,24 +20,20 @@
         class="w-6 h-6 block"
         url="https://www.octopuzzles.com/sudoku/{sudokuId}"
         text="I solved this in {finishTime}, can you do better?"
-        ><TwitterLogo size={24} /></TwitterLink
-      >
+      />
 
-      <FacebookLink class="w-6 h-6 block" url="https://www.octopuzzles.com/sudoku/{sudokuId}"
-        ><FacebookLogo size={24} /></FacebookLink
-      >
+      <FacebookLink class="w-6 h-6 block" url="https://www.octopuzzles.com/sudoku/{sudokuId}" />
 
       <WhatsAppLink
         class="w-6 h-6 block"
         text="I solved this in {finishTime}, can you do better? https://www.octopuzzles.com/sudoku/{sudokuId}"
-        ><WhatsappLogo size={24} /></WhatsAppLink
-      >
+      />
 
       <RedditLink
         class="w-6 h-6 block"
         text="I solved this in {finishTime}, can you do better?"
-        url="https://www.octopuzzles.com/sudoku/{sudokuId}"><RedditLogo size={24} /></RedditLink
-      >
+        url="https://www.octopuzzles.com/sudoku/{sudokuId}"
+      />
 
       <button class="w-6 h-6 block" title="Take image of sudoku" on:click={takeScreenshot}
         ><Image size={24} /></button

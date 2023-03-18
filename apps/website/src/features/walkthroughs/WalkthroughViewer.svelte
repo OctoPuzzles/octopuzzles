@@ -5,8 +5,8 @@
   import AppWindow from 'phosphor-svelte/lib/AppWindow/AppWindow.svelte';
   import { page } from '$app/stores';
   import classNames from 'classnames';
-  import HtmlContent from '$components/HTMLContent.svelte';
-  import { compressToBase64 } from '$features/compressor';
+  import { HTMLContent } from '@octopuzzles/ui';
+  import { compressToBase64 } from '@octopuzzles/utils';
   import Play from 'phosphor-svelte/lib/Play/Play.svelte';
   import type { EditorHistoryStep } from '@octopuzzles/models';
   import type { WalkthroughStep } from '@octopuzzles/models';
@@ -70,7 +70,7 @@
           <SudokuDisplay {clues} userInputs={step} />
         </div>
         <div>
-          <HtmlContent content={description} />
+          <HTMLContent content={description} />
         </div>
       </div>
     {/each}

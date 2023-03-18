@@ -1,6 +1,14 @@
 <script lang="ts">
   import { pathTypeNames, pathTypesToLabel } from '$constants';
-  import type { Form, Path, PathType, Position } from '@octopuzzles/models';
+  import type {
+    Form,
+    Path,
+    PathType,
+    Position,
+    ArrowHandler,
+    MouseDownHandler,
+    MouseEnterHandler
+  } from '@octopuzzles/models';
   import {
     editorHistory,
     handleArrows,
@@ -8,11 +16,6 @@
     handleMouseEnter,
     highlights
   } from '$stores/sudokuStore';
-  import type {
-    ArrowHandler,
-    MouseDownHandler,
-    MouseEnterHandler
-  } from '$stores/sudokuStore/interactionHandlers';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
   import {
     Button,
@@ -22,15 +25,15 @@
     RadioGroup,
     Range,
     Select,
-    hasOpenModals
+    hasOpenModals,
+    ColorSelect,
+    ScaledSvg
   } from '@octopuzzles/ui';
-  import ColorSelect from '$components/ColorSelect.svelte';
   import { isCommandKey, deepCopy, isDeleteKey, moveArrayElement } from '@octopuzzles/utils';
   import { pathDefaults } from '@octopuzzles/sudoku-utils';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import { Path as PathComponent } from '@octopuzzles/sudoku-display';
-  import ScaledSvg from '$components/ScaledSvg.svelte';
 
   const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();

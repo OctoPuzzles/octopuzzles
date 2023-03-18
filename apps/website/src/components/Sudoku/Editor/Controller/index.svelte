@@ -3,16 +3,18 @@
   import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
   import ControllerSkeleton from '$components/Sudoku/ControllerSkeleton.svelte';
-  import BorderCluesIcon from '$icons/BorderClues.svelte';
-  import CellCluesIcon from '$icons/CellClues.svelte';
-  import CellsIcon from '$icons/Cells.svelte';
-  import ColorPicker from '$icons/ColorPicker.svelte';
-  import DimensionsIcon from '$icons/Dimensions.svelte';
-  import GivensIcon from '$icons/Givens.svelte';
-  import KillerCagesIcon from '$icons/KillerCages.svelte';
-  import LogicIcon from '$icons/Logic.svelte';
-  import PathsIcon from '$icons/Paths.svelte';
-  import RegionsIcon from '$icons/Regions.svelte';
+  import {
+    BorderClues as BorderCluesIcon,
+    CellClues as CellCluesIcon,
+    Cells as CellsIcon,
+    ColorPicker,
+    Dimensions as DimensionsIcon,
+    Givens as GivensIcon,
+    KillerCages as KillerCagesIcon,
+    Logic as LogicIcon,
+    Paths as PathsIcon,
+    Regions as RegionsIcon
+  } from '@octopuzzles/icons';
   import { editorHistory, inputMode } from '$stores/sudokuStore';
   import type { InputMode } from '@octopuzzles/models';
   import { SquareButton, openModal } from '@octopuzzles/ui';

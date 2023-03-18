@@ -1,8 +1,7 @@
 <script lang="ts">
-  import RichTextEditor from '$components/RichTextEditor.svelte';
   import type { InferQueryOutput } from '$lib/client/trpc';
   import trpc from '$lib/client/trpc';
-  import { Button } from '@octopuzzles/ui';
+  import { Button, RichTextEditor } from '@octopuzzles/ui';
   import { onMount } from 'svelte';
   import Comment from './Comment.svelte';
 

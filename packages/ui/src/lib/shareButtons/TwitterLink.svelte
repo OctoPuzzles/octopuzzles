@@ -1,14 +1,17 @@
 <script lang="ts">
+  import ExternalLink from '$lib/ui/ExternalLink.svelte';
+  import TwitterLogo from 'phosphor-svelte/lib/TwitterLogo/TwitterLogo.svelte';
+
   export let url: string;
   export let text: string;
   let className = '';
   export { className as class };
 </script>
 
-<a
+<ExternalLink
   class={className}
   title="Twitter"
   href="https://www.twitter.com/share?url={url}&text={text}"
-  target="_blank"
-  rel="noreferrer noopener"><slot /></a
 >
+  <TwitterLogo size={24} />
+</ExternalLink>

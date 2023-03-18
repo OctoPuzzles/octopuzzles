@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
-  import Logo from '$icons/Logo.svelte';
+  import { Logo } from '@octopuzzles/icons';
   import HeaderDropdown from './HeaderDropdown.svelte';
 
   $: isSudokuPage = $page.url.pathname.startsWith('/sudoku');

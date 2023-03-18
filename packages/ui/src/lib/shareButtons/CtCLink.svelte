@@ -1,14 +1,16 @@
 <script lang="ts">
+  import ExternalLink from '$lib/ui/ExternalLink.svelte';
+  import { CtC } from '@octopuzzles/icons';
+
   export let puzzleData: string;
   let className = '';
   export { className as class };
 </script>
 
-Cracking the Cryptic
-<a
+<ExternalLink
   class={className}
   title="Cracking The Cryptic"
   href="https://app.crackingthecryptic.com/sudoku/?puzzleid=fpuzzles{puzzleData}"
-  target="_blank"
-  rel="noreferrer noopener"><slot /></a
 >
+  <CtC />
+</ExternalLink>

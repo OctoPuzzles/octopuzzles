@@ -3,7 +3,7 @@
   import { page } from '$app/stores';
   import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
   import { editorHistory, gameHistory } from '$stores/sudokuStore';
-  import { decompressFromBase64 } from '$features/compressor';
+  import { decompressFromBase64 } from '@octopuzzles/utils';
   import { defaultValues } from '@octopuzzles/sudoku-utils';
   import type { FPuzzlesJson } from '$features/fpuzzles/types';
   import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';

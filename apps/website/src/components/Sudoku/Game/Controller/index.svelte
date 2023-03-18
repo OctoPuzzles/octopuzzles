@@ -5,12 +5,14 @@
   import WalkthroughEditorModal from '$components/Modals/WalkthroughEditorModal.svelte';
   import WalkthroughViewerModal from '$components/Modals/WalkthroughViewerModal.svelte';
   import ControllerSkeleton from '$components/Sudoku/ControllerSkeleton.svelte';
-  import CenterMarksIcon from '$icons/CenterMarks.svelte';
-  import ColorPicker from '$icons/ColorPicker.svelte';
-  import CornerMarksIcon from '$icons/CornerMarks.svelte';
-  import NotesIcon from '$icons/Notes.svelte';
-  import NumbersIcon from '$icons/Numbers.svelte';
-  import ScannerIcon from '$icons/Scanner.svelte';
+  import {
+    CenterMarks as CenterMarksIcon,
+    ColorPicker,
+    CornerMarks as CornerMarksIcon,
+    Notes as NotesIcon,
+    Numbers as NumbersIcon,
+    Scanner as ScannerIcon
+  } from '@octopuzzles/icons';
   import { gameHistory, inputMode, highlights, editorHistory } from '$stores/sudokuStore';
   import { scanner } from '$stores/sudokuStore/scanner';
   import { walkthroughStore } from '$stores/walkthroughStore';

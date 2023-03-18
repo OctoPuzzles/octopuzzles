@@ -17,10 +17,17 @@
     Rotation,
     SymbolType
   } from '@octopuzzles/models';
-  import { hasOpenModals, Button, ControllerButton, Input, Label, Select } from '@octopuzzles/ui';
+  import {
+    hasOpenModals,
+    Button,
+    ControllerButton,
+    Input,
+    Label,
+    Select,
+    ColorSelect
+  } from '@octopuzzles/ui';
   import { editorHistory, handleArrows, highlights, setMargins } from '$stores/sudokuStore';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
-  import ColorSelect from '$components/ColorSelect.svelte';
   import { deepCopy, isDeleteKey, isArrowKey, moveArrayElement } from '@octopuzzles/utils';
   import { cellClueDefaults } from '@octopuzzles/sudoku-utils';
   import { onDestroy } from 'svelte';

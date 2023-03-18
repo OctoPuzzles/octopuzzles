@@ -2,7 +2,7 @@
   import { SquareButton, Label, RadioGroup, Checkbox, hasOpenModals } from '@octopuzzles/ui';
   import Play from 'phosphor-svelte/lib/Play/Play.svelte';
   import Pause from 'phosphor-svelte/lib/Pause/Pause.svelte';
-  import Step from '$icons/Step.svelte';
+  import { Step } from '@octopuzzles/icons';
   import Atom from 'phosphor-svelte/lib/Atom/Atom.svelte';
   import { editorHistory } from '$stores/sudokuStore';
   import { cageDefaults, pathDefaults, regionDefaults } from '@octopuzzles/sudoku-utils';

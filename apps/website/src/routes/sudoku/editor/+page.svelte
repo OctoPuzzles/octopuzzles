@@ -1,7 +1,7 @@
 <script lang="ts">
   import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
   import SudokuEditor from '$components/Sudoku/Editor/SudokuEditor.svelte';
-  import { Button, Input, openModal, Label, PuzzleLabel } from '@octopuzzles/ui';
+  import { Button, Input, openModal, Label, PuzzleLabel, RichTextEditor } from '@octopuzzles/ui';
   import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import {
@@ -21,7 +21,6 @@
   import type { PageData } from './$types';
   import trpc, { type InferMutationInput } from '$lib/client/trpc';
   import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
-  import RichTextEditor from '$components/RichTextEditor.svelte';
   import { resetAllSudokuStores } from '$utils/resetAllStores';
 
   export let data: PageData;
