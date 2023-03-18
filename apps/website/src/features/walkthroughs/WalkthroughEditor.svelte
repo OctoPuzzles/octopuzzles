@@ -2,12 +2,11 @@
   import { walkthroughStore } from '$stores/walkthroughStore';
   import { gameHistory } from '$stores/sudokuStore';
   import { SudokuDisplay } from '@octopuzzles/sudoku-display';
-  import { Button } from '@octopuzzles/ui';
+  import { Button, RichTextEditor } from '@octopuzzles/ui';
   import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
   import Swap from 'phosphor-svelte/lib/Swap/Swap.svelte';
   import ArrowsOutLineVertical from 'phosphor-svelte/lib/ArrowsOutLineVertical/ArrowsOutLineVertical.svelte';
-  import RichTextEditor from '$components/RichTextEditor.svelte';
   import type { EditorHistoryStep } from '@octopuzzles/models';
   import { afterUpdate } from 'svelte';
 

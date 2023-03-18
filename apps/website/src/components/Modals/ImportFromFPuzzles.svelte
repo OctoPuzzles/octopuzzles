@@ -1,6 +1,6 @@
 <script lang="ts">
   import { closeModal, Button, Input } from '@octopuzzles/ui';
-  import { decompressFromBase64 } from '$features/compressor';
+  import { decompressFromBase64 } from '@octopuzzles/utils';
   import type { FPuzzlesJson } from '$features/fpuzzles/types';
   import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
 

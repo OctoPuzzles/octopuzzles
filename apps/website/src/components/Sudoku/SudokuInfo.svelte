@@ -1,25 +1,17 @@
 <script lang="ts">
   import Comments from '$components/comments/Comments.svelte';
-  import FacebookLink from '$components/shareButtons/FacebookLink.svelte';
-  import RedditLink from '$components/shareButtons/RedditLink.svelte';
-  import TwitterLink from '$components/shareButtons/TwitterLink.svelte';
-  import WhatsAppLink from '$components/shareButtons/WhatsAppLink.svelte';
+  import { FacebookLink, RedditLink, TwitterLink, WhatsAppLink } from '@octopuzzles/ui';
   import trpc from '$lib/client/trpc';
   import type { Label } from '@octopuzzles/models';
   import type { Sudoku } from '@octopuzzles/models';
   import type { User } from '@octopuzzles/models';
   import type { Vote } from '@octopuzzles/models';
-  import { PuzzleLabel } from '@octopuzzles/ui';
+  import { PuzzleLabel, HTMLContent } from '@octopuzzles/ui';
   import classNames from 'classnames';
   import { formatDistanceToNowStrict } from 'date-fns';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
   import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
-  import FacebookLogo from 'phosphor-svelte/lib/FacebookLogo/FacebookLogo.svelte';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
-  import RedditLogo from 'phosphor-svelte/lib/RedditLogo/RedditLogo.svelte';
-  import TwitterLogo from 'phosphor-svelte/lib/TwitterLogo/TwitterLogo.svelte';
-  import WhatsappLogo from 'phosphor-svelte/lib/WhatsappLogo/WhatsappLogo.svelte';
-  import HtmlContent from '../HTMLContent.svelte';
 
   export let sudoku: Sudoku & {
     user?: Pick<User, 'id' | 'username' | 'role'> | null;
@@ -123,24 +115,21 @@
       <TwitterLink
         class="w-6 h-6 block"
         url="https://www.octopuzzles.com/sudoku/{sudoku.id}"
-        text="Can you solve this?"><TwitterLogo size={24} /></TwitterLink
-      >
+        text="Can you solve this?"
+      />
 
-      <FacebookLink class="w-6 h-6 block" url="https://www.octopuzzles.com/sudoku/{sudoku.id}"
-        ><FacebookLogo size={24} /></FacebookLink
-      >
+      <FacebookLink class="w-6 h-6 block" url="https://www.octopuzzles.com/sudoku/{sudoku.id}" />
 
       <WhatsAppLink
         class="w-6 h-6 block"
         text="Can you solve this? https://www.octopuzzles.com/sudoku/{sudoku.id}"
-        ><WhatsappLogo size={24} /></WhatsAppLink
-      >
+      />
 
       <RedditLink
         class="w-6 h-6 block"
         text="Can you solve this?"
-        url="https://www.octopuzzles.com/sudoku/{sudoku.id}"><RedditLogo size={24} /></RedditLink
-      >
+        url="https://www.octopuzzles.com/sudoku/{sudoku.id}"
+      />
 
       <button class="w-6 h-6 block" title="Take image of sudoku" on:click={takeScreenshot}
         ><Image size={24} /></button
@@ -150,7 +139,7 @@
 
   <hr class="mb-4" />
 
-  <HtmlContent content={sudoku.description} />
+  <HTMLContent content={sudoku.description} />
 
   {#if sudoku.solution == null}
     <p class="text-gray-800 text-sm mt-4">Info: No solution provided for this puzzle</p>

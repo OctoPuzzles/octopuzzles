@@ -1,7 +1,7 @@
 <script lang="ts">
   import SudokuList from '$components/Sudoku/SudokuList.svelte';
   import { PuzzleLabel, Button } from '@octopuzzles/ui';
-  import Filters from '$icons/Filters.svelte';
+  import { Filters } from '@octopuzzles/icons';
   import { page } from '$app/stores';
   import type { PageData } from './$types';
   import trpc from '$lib/client/trpc';

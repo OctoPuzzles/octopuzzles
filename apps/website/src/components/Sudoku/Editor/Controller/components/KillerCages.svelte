@@ -1,8 +1,14 @@
 <script lang="ts">
   import { Killercage } from '@octopuzzles/sudoku-display';
-  import ScaledSvg from '$components/ScaledSvg.svelte';
   import { cageTypeNames, cageTypesToLabel } from '$constants';
-  import type { CageType, Extendedcage, Position } from '@octopuzzles/models';
+  import type {
+    CageType,
+    Extendedcage,
+    Position,
+    ArrowHandler,
+    MouseDownHandler,
+    MouseEnterHandler
+  } from '@octopuzzles/models';
   import {
     editorHistory,
     handleArrows,
@@ -10,11 +16,6 @@
     handleMouseEnter,
     highlights
   } from '$stores/sudokuStore';
-  import type {
-    ArrowHandler,
-    MouseDownHandler,
-    MouseEnterHandler
-  } from '$stores/sudokuStore/interactionHandlers';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
   import {
     Button,
@@ -23,9 +24,10 @@
     Input,
     Label,
     Select,
-    hasOpenModals
+    hasOpenModals,
+    ColorSelect,
+    ScaledSvg
   } from '@octopuzzles/ui';
-  import ColorSelect from '$components/ColorSelect.svelte';
   import { isDeleteKey, isArrowKey, isCommandKey, moveArrayElement } from '@octopuzzles/utils';
   import { cageDefaults } from '@octopuzzles/sudoku-utils';
   import { onMount } from 'svelte';

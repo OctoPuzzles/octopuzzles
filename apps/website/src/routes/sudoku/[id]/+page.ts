@@ -1,7 +1,7 @@
 import trpc from '$lib/client/trpc';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { decompressFromBase64 } from '$features/compressor';
+import { decompressFromBase64 } from '@octopuzzles/utils';
 import type { SolutionStep } from '@octopuzzles/models';
 
 export const load: PageLoad = async ({ fetch, params, url }) => {

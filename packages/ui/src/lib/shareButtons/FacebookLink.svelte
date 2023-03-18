@@ -1,13 +1,16 @@
 <script lang="ts">
+  import ExternalLink from '$lib/ui/ExternalLink.svelte';
+  import FacebookLogo from 'phosphor-svelte/lib/FacebookLogo/FacebookLogo.svelte';
+
   export let url: string;
   let className = '';
   export { className as class };
 </script>
 
-<a
+<ExternalLink
   class={className}
   title="Facebook"
   href="https://www.facebook.com/sharer/sharer.php?u={url}"
-  target="_blank"
-  rel="noreferrer noopener"><slot /></a
 >
+  <FacebookLogo size={24} />
+</ExternalLink>

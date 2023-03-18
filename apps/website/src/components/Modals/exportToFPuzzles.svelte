@@ -1,10 +1,7 @@
 <script lang="ts">
-  import CtCLink from '$components/shareButtons/CtCLink.svelte';
-  import FPuzzlesLink from '$components/shareButtons/FPuzzlesLink.svelte';
+  import { CtCLink, FPuzzlesLink } from '@octopuzzles/ui';
   import { exportAsFPuzzlesJson } from '$features/fpuzzles/exportAsFPuzzlesJson';
-  import CtC from '$icons/CtC.svelte';
-  import FPuzzles from '$icons/FPuzzles.svelte';
-  import { compressToBase64 } from '$features/compressor';
+  import { compressToBase64 } from '@octopuzzles/utils';
 
   export let isOpen: boolean;
 
@@ -13,7 +10,7 @@
 
 {#if isOpen}
   <div role="dialog" class="bg-white shadow rounded-md p-4 flex flex-col">
-    <FPuzzlesLink class="w-6 h-6 block" {puzzleData}><FPuzzles /></FPuzzlesLink>
-    <CtCLink class="w-6 h-6 block" {puzzleData}><CtC /></CtCLink>
+    <FPuzzlesLink class="w-6 h-6 block" {puzzleData} />
+    <CtCLink class="w-6 h-6 block" {puzzleData} />
   </div>
 {/if}

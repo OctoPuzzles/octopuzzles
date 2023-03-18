@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Logo from '$icons/Logo.svelte';
+  import { Logo } from '@octopuzzles/icons';
 </script>
 
 <footer class="flex items-center justify-between bg-gray-100 border-t py-20 px-4 md:px-20">

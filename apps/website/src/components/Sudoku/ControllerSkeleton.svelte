@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type NumbersIcon from '$icons/Numbers.svelte';
+  import type { Numbers as NumbersIcon } from '@octopuzzles/icons';
   import classNames from 'classnames';
 
   export let menuItems: {

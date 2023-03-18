@@ -53,6 +53,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@octopuzzles/icons": "*",
     "@octopuzzles/models": "*",
     "@octopuzzles/sudoku-utils": "*",
     "@octopuzzles/sudoku-display": "*",

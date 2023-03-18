@@ -6,16 +6,16 @@
     RadioGroup,
     ControllerButton,
     Select,
-    hasOpenModals
+    hasOpenModals,
+    ScaledSvg,
+    ColorSelect
   } from '@octopuzzles/ui';
-  import ColorSelect from '$components/ColorSelect.svelte';
   import { borderClueTypeNames, borderClueTypesToLabel } from '$constants';
   import { editorHistory, handleArrows, highlights } from '$stores/sudokuStore';
   import { deepCopy, isArrowKey, moveArrayElement, isDeleteKey } from '@octopuzzles/utils';
   import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
   import { borderClueDefaults } from '@octopuzzles/sudoku-utils';
   import type { Borderclue, BorderClueType, Position, Shape } from '@octopuzzles/models';
-  import ScaledSvg from '$components/ScaledSvg.svelte';
   import { Borderclue as BorderclueComponent } from '@octopuzzles/sudoku-display';
 
   const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;

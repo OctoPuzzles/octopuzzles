@@ -1,10 +1,8 @@
 <script lang="ts">
   import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
-  import RichTextEditor from '$components/RichTextEditor.svelte';
-  import HtmlContent from '$components/HTMLContent.svelte';
   import type { InferQueryOutput } from '$lib/client/trpc';
   import trpc from '$lib/client/trpc';
-  import { Button, openModal } from '@octopuzzles/ui';
+  import { Button, openModal, RichTextEditor, HTMLContent } from '@octopuzzles/ui';
   import { formatDistanceToNowStrict } from 'date-fns';
 
   export let comment: InferQueryOutput<'comments:onSudoku'>['comments'][0];
@@ -43,7 +41,7 @@
     >
   </div>
   {#if updatedContent == null}
-    <HtmlContent content={comment.body} />
+    <HTMLContent content={comment.body} />
   {:else}
     <RichTextEditor bind:content={updatedContent} placeholder="Update comment" />
     <div class="w-full justify-end gap-2">

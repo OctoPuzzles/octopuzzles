@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button, Input } from '@octopuzzles/ui';
-  import Logo from '$icons/Logo.svelte';
+  import { Logo } from '@octopuzzles/icons';
   import { authMode } from '$stores/authStore';
   import trpc from '$lib/client/trpc';
   import { me } from '$stores/meStore';
