@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { closeModal, Button, Input } from '@octopuzzles/ui';
+  import { Modal, Button, Input } from '@octopuzzles/ui';
   import { decompressFromBase64 } from '@octopuzzles/utils';
   import type { FPuzzlesJson } from '$features/fpuzzles/types';
   import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
@@ -9,6 +9,7 @@
   let url = '';
   let loading = false;
   let error = '';
+  let closeModal: () => void;
 
   function importPuzzle(): void {
     const beginnings = ['https://www.f-puzzles.com/?load=', 'https://f-puzzles.com/?load='];
@@ -32,8 +33,8 @@
   }
 </script>
 
-{#if isOpen}
-  <div role="dialog" class="bg-white shadow rounded-md p-4 flex flex-col">
+<Modal bind:isOpen let:close={closeModal}>
+  <div class="w-96 p-4">
     <h2>Import puzzle from f-puzzles.com</h2>
     {#if error.length > 0}
       <p class="text-red-500">{error}</p>
@@ -41,7 +42,9 @@
 
     <Input class="mt-4" placeholder="https://www.f-puzzles.com/?load=abcdef..." bind:value={url} />
 
-    <Button {loading} variant="default" class="mt-8" on:click={closeModal}>Cancel</Button>
-    <Button {loading} variant="primary" class="mt-2" on:click={importPuzzle}>Import</Button>
+    <div class="w-full mt-8 gap-2 flex flex-col">
+      <Button {loading} variant="default" on:click={closeModal}>Cancel</Button>
+      <Button {loading} variant="primary" on:click={importPuzzle}>Import</Button>
+    </div>
   </div>
-{/if}
+</Modal>

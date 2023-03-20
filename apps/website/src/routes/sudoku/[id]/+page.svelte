@@ -5,13 +5,13 @@
   import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
   import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { openModal } from '@octopuzzles/ui';
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
   import { getUserSolution } from '$utils/getSolution';
   import type { PageData } from './$types';
   import { walkthroughStore } from '$stores/walkthroughStore';
   import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
   import { resetAllSudokuStores } from '$utils/resetAllStores';
+  import type { GameValues } from '@octopuzzles/models';
 
   export let data: PageData;
 
@@ -124,19 +124,13 @@
     return isDone;
   }
 
-  function showDoneModal(): void {
-    if (data.sudoku?.id) {
-      openModal(FinishedSudokuModal, {
-        sudokuId: data.sudoku.id,
-        takeScreenshot,
-        finishTime: `${days}${hours}${minutes}:${seconds}`
-      });
-    }
-  }
+  $: checkFinished($userInputs.values);
 
-  $: if (checkSolution($userInputs.values)) {
-    clearInterval(timer);
-    showDoneModal();
+  function checkFinished(values: GameValues) {
+    if (checkSolution(values)) {
+      clearInterval(timer);
+      showFinishedSudokuModal = true;
+    }
   }
 
   function takeScreenshot(): void {
@@ -148,6 +142,8 @@
       window.open(base64image);
     });
   }
+
+  let showFinishedSudokuModal = false;
 </script>
 
 <svelte:head>
@@ -178,3 +174,10 @@
 <SudokuGame clues={$sudokuClues} userInputs={$userInputs} />
 
 <SudokuInfo sudoku={data.sudoku} {takeScreenshot} />
+
+<FinishedSudokuModal
+  bind:isOpen={showFinishedSudokuModal}
+  sudokuId={data.sudoku.id}
+  {takeScreenshot}
+  finishTime={`${days}${hours}${minutes}:${seconds}`}
+/>

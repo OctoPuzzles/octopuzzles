@@ -17,7 +17,7 @@
   import { scanner } from '$stores/sudokuStore/scanner';
   import { walkthroughStore } from '$stores/walkthroughStore';
   import type { InputMode } from '@octopuzzles/models';
-  import { SquareButton, openModal } from '@octopuzzles/ui';
+  import { SquareButton } from '@octopuzzles/ui';
   import { isCommandKey } from '@octopuzzles/utils';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
@@ -180,24 +180,18 @@
     }
   }
 
-  function showHelp(): void {
-    openModal(ControllerHelpModal, { mode: 'game' });
-  }
+  let controllerHelpModalIsOpen = false;
+  let exportToFPuzzlesModalIsOpen = false;
+  let walkthroughEditorModalIsOpen = false;
+  let walkthroughViewerModalIsOpen = false;
 
-  function showExportToFPuzzlesModal(): void {
-    openModal(ExportToFPuzzles);
-  }
+  let clues = editorHistory.subscribeToClues();
 
   function showWalkthroughEditorModal(): void {
     if ($page.url.pathname.includes('/sudoku/editor')) {
-      openModal(WalkthroughEditorModal, {
-        clues: get(editorHistory.subscribeToClues())
-      });
+      walkthroughEditorModalIsOpen = true;
     } else {
-      openModal(WalkthroughViewerModal, {
-        clues: get(editorHistory.subscribeToClues()),
-        walkthrough: $walkthroughStore
-      });
+      walkthroughViewerModalIsOpen = true;
     }
   }
 </script>
@@ -246,7 +240,7 @@
 
   <svelte:fragment slot="aux">
     <button
-      on:click={showHelp}
+      on:click={() => (controllerHelpModalIsOpen = true)}
       class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
       title="help"
     >
@@ -264,7 +258,7 @@
     {/if}
 
     <button
-      on:click={showExportToFPuzzlesModal}
+      on:click={() => (exportToFPuzzlesModalIsOpen = true)}
       class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
       title="Export"
     >
@@ -272,3 +266,12 @@
     </button>
   </svelte:fragment>
 </ControllerSkeleton>
+
+<ControllerHelpModal bind:isOpen={controllerHelpModalIsOpen} mode="game" />
+<ExportToFPuzzles bind:isOpen={exportToFPuzzlesModalIsOpen} />
+<WalkthroughEditorModal bind:isOpen={walkthroughEditorModalIsOpen} clues={$clues} />
+<WalkthroughViewerModal
+  bind:isOpen={walkthroughViewerModalIsOpen}
+  clues={$clues}
+  walkthrough={$walkthroughStore}
+/>

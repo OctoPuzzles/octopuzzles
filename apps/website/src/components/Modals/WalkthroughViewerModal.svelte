@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Modal } from '@octopuzzles/ui';
   import WalkthroughViewer from '$features/walkthroughs/WalkthroughViewer.svelte';
   import type { WalkthroughStep } from '@octopuzzles/models';
   import type { EditorHistoryStep } from '@octopuzzles/models';
@@ -9,11 +10,6 @@
   export let walkthrough: WalkthroughStep[];
 </script>
 
-{#if isOpen}
-  <div
-    role="dialog"
-    class="bg-white shadow max-h-[90vh] rounded-md flex flex-col overflow-y-hidden"
-  >
-    <WalkthroughViewer {clues} {walkthrough} />
-  </div>
-{/if}
+<Modal bind:isOpen>
+  <WalkthroughViewer {clues} {walkthrough} />
+</Modal>

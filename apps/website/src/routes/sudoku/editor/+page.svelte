@@ -1,7 +1,7 @@
 <script lang="ts">
   import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
   import SudokuEditor from '$components/Sudoku/Editor/SudokuEditor.svelte';
-  import { Button, Input, openModal, Label, PuzzleLabel, RichTextEditor } from '@octopuzzles/ui';
+  import { Button, Input, Label, PuzzleLabel, RichTextEditor } from '@octopuzzles/ui';
   import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import {
@@ -28,6 +28,9 @@
   const sudokuTitle = editorHistory.title;
   const description = editorHistory.description;
   const labels = editorHistory.labels;
+
+  let showImportFromFPuzzlesModal = false;
+  let showCommonDescriptionsModal = false;
 
   $: if (data.walkthrough?.steps) {
     // Just so ts will shut up
@@ -129,7 +132,7 @@
     }
 
     if ($page.url.searchParams.get('import')) {
-      openModal(ImportFromFPuzzles);
+      showImportFromFPuzzlesModal = true;
     }
   });
 
@@ -247,30 +250,6 @@
 
   let descriptionEditor: RichTextEditor;
 
-  function openAddDescriptionModal(): void {
-    openModal(CommonDescriptionsModal, {
-      addLabel: (l) => {
-        let newDescription = `<p><strong>${l.name}</strong>: ${l.description}</p>`;
-        if ($description.length !== 0) {
-          newDescription = `${$description}${newDescription}`;
-        }
-        descriptionEditor.setRichEditorContent(newDescription);
-        let newLabels = $labels;
-        newLabels.map((label) => {
-          if (l.id === label.label.id) {
-            label.selected = true;
-            return label;
-          } else {
-            return label;
-          }
-        });
-        $labels = newLabels;
-        return $description;
-      },
-      currentDescription: $description
-    });
-  }
-
   async function deleteSudoku(): Promise<void> {
     loading = true;
     if (id) {
@@ -362,7 +341,7 @@
           class="absolute top-2 p-1 right-2 w-6 h-6 rounded-full border border-orange-500 text-orange-500 bg-orange-100 hover:bg-orange-200 hover:text-orange-600 transition-colors shadow flex items-center justify-center"
           title="Add common descriptions"
           type="button"
-          on:click={openAddDescriptionModal}><Plus size={24} /></button
+          on:click={() => (showCommonDescriptionsModal = true)}><Plus size={24} /></button
         >
         <div class="rounded-lg border mt-2 p-1 min-h-[10rem]">
           <RichTextEditor
@@ -439,4 +418,28 @@
       </div>
     </form>
   </div>
+  <CommonDescriptionsModal
+    bind:isOpen={showCommonDescriptionsModal}
+    addLabel={(l) => {
+      let newDescription = `<p><strong>${l.name}</strong>: ${l.description}</p>`;
+      if ($description.length !== 0) {
+        newDescription = `${$description}${newDescription}`;
+      }
+      descriptionEditor.setRichEditorContent(newDescription);
+      let newLabels = $labels;
+      newLabels.map((label) => {
+        if (l.id === label.label.id) {
+          label.selected = true;
+          return label;
+        } else {
+          return label;
+        }
+      });
+      $labels = newLabels;
+      return $description;
+    }}
+    currentDescription={$description}
+  />
 {/if}
+
+<ImportFromFPuzzles bind:isOpen={showImportFromFPuzzlesModal} />

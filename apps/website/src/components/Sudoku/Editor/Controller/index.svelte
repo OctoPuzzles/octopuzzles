@@ -17,7 +17,7 @@
   } from '@octopuzzles/icons';
   import { editorHistory, inputMode } from '$stores/sudokuStore';
   import type { InputMode } from '@octopuzzles/models';
-  import { SquareButton, openModal } from '@octopuzzles/ui';
+  import { SquareButton } from '@octopuzzles/ui';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
   import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';
@@ -63,17 +63,9 @@
     $inputMode = 'givens';
   });
 
-  function showHelp(): void {
-    openModal(ControllerHelpModal, { mode: 'editor' });
-  }
-
-  function showImportFromFPuzzlesModal(): void {
-    openModal(ImportFromFPuzzles);
-  }
-
-  function showExportToFPuzzlesModal(): void {
-    openModal(ExportToFPuzzles);
-  }
+  let showHelpModal = false;
+  let showImportFromFPuzzlesModal = false;
+  let showExportToFPuzzlesModal = false;
 </script>
 
 <ControllerSkeleton
@@ -115,21 +107,21 @@
   </svelte:fragment>
   <svelte:fragment slot="aux">
     <button
-      on:click={showHelp}
+      on:click={() => (showHelpModal = true)}
       class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
       title="help"
     >
       <Question size={32} />
     </button>
     <button
-      on:click={showExportToFPuzzlesModal}
+      on:click={() => (showExportToFPuzzlesModal = true)}
       class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
       title="Export"
     >
       <FileArrowUp size={32} />
     </button>
     <button
-      on:click={showImportFromFPuzzlesModal}
+      on:click={() => (showImportFromFPuzzlesModal = true)}
       class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
       title="Import from f-puzzles"
     >
@@ -137,3 +129,7 @@
     </button>
   </svelte:fragment>
 </ControllerSkeleton>
+
+<ControllerHelpModal bind:isOpen={showHelpModal} mode="editor" />
+<ImportFromFPuzzles bind:isOpen={showImportFromFPuzzlesModal} />
+<ExportToFPuzzles bind:isOpen={showExportToFPuzzlesModal} />

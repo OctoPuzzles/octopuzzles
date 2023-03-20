@@ -4,6 +4,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "outDir": "./dist",
+    "declarationMap": true,
     "rootDir": "./src",
     "types": ["vitest/importMeta"]
   },

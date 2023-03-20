@@ -10,6 +10,7 @@
     "lib": ["es2020", "DOM"],
     "moduleResolution": "node",
     "module": "es2020",
+    "declarationMap": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,

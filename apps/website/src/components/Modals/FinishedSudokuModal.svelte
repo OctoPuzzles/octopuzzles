@@ -1,7 +1,7 @@
 <script lang="ts">
   import { FacebookLink, RedditLink, TwitterLink, WhatsAppLink } from '@octopuzzles/ui';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
-  import { Button, closeModal } from '@octopuzzles/ui';
+  import { Button, Modal } from '@octopuzzles/ui';
 
   export let isOpen: boolean;
   export let sudokuId: number;
@@ -9,12 +9,12 @@
   export let finishTime: string;
 </script>
 
-{#if isOpen}
-  <div role="dialog" class="bg-white shadow rounded-md p-4 flex flex-col">
+<Modal bind:isOpen let:close>
+  <div class="p-4">
     <h1 class="text-3xl mb-2 text-center">Congratulations!</h1>
-    <p class="text-center text-lg mb-2">You finished the puzzle!</p>
+    <p class="text-center text-lg">You finished the puzzle!</p>
 
-    <div class="flex space-x-2 mx-auto my-4">
+    <div class="flex space-x-2 mx-auto my-8">
       <p>Share:</p>
       <TwitterLink
         class="w-6 h-6 block"
@@ -40,6 +40,6 @@
       >
     </div>
 
-    <Button variant="primary" on:click={closeModal}>Okay</Button>
+    <Button variant="primary" class="w-full" on:click={close}>Okay</Button>
   </div>
-{/if}
+</Modal>
