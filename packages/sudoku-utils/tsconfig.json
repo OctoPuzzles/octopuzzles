@@ -3,6 +3,7 @@
     "lib": ["ESNext", "DOM"],
     "module": "ESNext",
     "target": "ESNext",
+    "declarationMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "types": ["vitest/importMeta"]

@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "allowJs": true,
     "checkJs": true,
+    "declarationMap": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["es2020", "DOM"],
     "moduleResolution": "node",

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { openModal } from '@octopuzzles/ui';
   import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
   import SudokuList from '$components/Sudoku/SudokuList.svelte';
   import trpc from '$lib/client/trpc';
@@ -25,13 +24,8 @@
     loading = false;
   }
 
-  function deleteSudoku(id: number): void {
-    openModal(DangerActionModal, {
-      onAccept: async () => {
-        await trpc().mutation('sudokus:delete', { id });
-      }
-    });
-  }
+  let showDeleteSudokuModal = false;
+  let sudokuToDelete: number | undefined = undefined;
 </script>
 
 <svelte:head>
@@ -52,5 +46,19 @@
   {loadNextPage}
   {loading}
   sudokus={data.sudokus.sudokus ?? null}
-  deleteSudoku={data.me != null && data.me.id === data.user.id ? deleteSudoku : undefined}
+  deleteSudoku={(id) => {
+    if (data.me != null && data.me.id === data.user.id) {
+      showDeleteSudokuModal = true;
+      sudokuToDelete = id;
+    }
+  }}
+/>
+
+<DangerActionModal
+  bind:isOpen={showDeleteSudokuModal}
+  onAccept={async () => {
+    if (sudokuToDelete == null) return;
+    await trpc().mutation('sudokus:delete', { id: sudokuToDelete });
+    showDeleteSudokuModal = false;
+  }}
 />

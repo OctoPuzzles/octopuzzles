@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { Mode } from '@octopuzzles/models';
-  import { Button, closeModal } from '@octopuzzles/ui';
+  import { Button, Modal } from '@octopuzzles/ui';
 
   export let isOpen: boolean;
   export let mode: Mode;
 </script>
 
-{#if isOpen}
-  <div role="dialog" class="bg-white shadow rounded-md p-6 flex flex-col">
+<Modal bind:isOpen let:close>
+  <div class="p-4">
     <section class="mb-2">
       <h2 class="text-lg font-semibold">General controls</h2>
 
@@ -232,7 +232,7 @@
     {/if}
 
     <div class="flex gap-2">
-      <Button class="w-full" variant="primary" on:click={closeModal}>Okay</Button>
+      <Button class="w-full" variant="primary" on:click={() => close()}>Okay</Button>
     </div>
   </div>
-{/if}
+</Modal>

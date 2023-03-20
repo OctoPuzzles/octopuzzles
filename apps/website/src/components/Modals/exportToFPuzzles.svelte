@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CtCLink, FPuzzlesLink } from '@octopuzzles/ui';
+  import { CtCLink, FPuzzlesLink, Modal } from '@octopuzzles/ui';
   import { exportAsFPuzzlesJson } from '$features/fpuzzles/exportAsFPuzzlesJson';
   import { compressToBase64 } from '@octopuzzles/utils';
 
@@ -8,9 +8,11 @@
   let puzzleData = compressToBase64(exportAsFPuzzlesJson());
 </script>
 
-{#if isOpen}
-  <div role="dialog" class="bg-white shadow rounded-md p-4 flex flex-col">
+<Modal bind:isOpen>
+  <div class="p-4">
+    Export to FPuzzles
     <FPuzzlesLink class="w-6 h-6 block" {puzzleData} />
+    Export to Cracking the Cryptic
     <CtCLink class="w-6 h-6 block" {puzzleData} />
   </div>
-{/if}
+</Modal>
