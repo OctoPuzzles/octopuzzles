@@ -8,8 +8,6 @@
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
   import { getUserSolution } from '$utils/getSolution';
   import type { PageData } from './$types';
-  import { walkthroughStore } from '$stores/walkthroughStore';
-  import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
   import { resetAllSudokuStores } from '$utils/resetAllStores';
   import type { GameValues } from '@octopuzzles/models';
 
@@ -19,13 +17,7 @@
 
   const sudokuTitle = editorHistory.title;
   const description = editorHistory.description;
-
-  $: if (data.walkthrough?.steps) {
-    // Just so ts will shut up
-    fillWalkthroughStore(data.walkthrough);
-  } else {
-    walkthroughStore.set([]);
-  }
+  let walkthrough = data.walkthrough?.steps ?? [];
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
   let now = Date.now();
@@ -171,7 +163,7 @@
   </div>
 </div>
 
-<SudokuGame clues={$sudokuClues} userInputs={$userInputs} />
+<SudokuGame bind:walkthrough clues={$sudokuClues} userInputs={$userInputs} />
 
 <SudokuInfo sudoku={data.sudoku} {takeScreenshot} />
 

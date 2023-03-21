@@ -8,7 +8,7 @@
     handleMouseDown,
     handleMouseEnter
   } from '$stores/sudokuStore';
-  import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
+  import type { EditorHistoryStep, GameHistoryStep, WalkthroughStep } from '@octopuzzles/models';
 
   const { selectedCells, highlightedCells, wrongCells } = highlights;
 
@@ -24,6 +24,8 @@
   export let clues: EditorHistoryStep;
 
   export let userInputs: GameHistoryStep;
+
+  export let walkthrough: WalkthroughStep[];
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
@@ -46,6 +48,6 @@
     />
   </div>
   <div class="my-auto">
-    <Controller />
+    <Controller bind:walkthrough />
   </div>
 </div>

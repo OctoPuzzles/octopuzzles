@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types';
-  import WalkthroughViewer from '$features/walkthroughs/WalkthroughViewer.svelte';
+  import { WalkthroughViewer } from '@octopuzzles/walkthroughs';
   import { fillSudokuWithDefaults } from '$utils/fillSudokuWithDefaults';
 
   export let data: PageData;

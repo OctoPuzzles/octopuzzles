@@ -17,10 +17,8 @@
   import { editorHistory, gameHistory, mode } from '$stores/sudokuStore';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
-  import { walkthroughStore } from '$stores/walkthroughStore';
   import type { PageData } from './$types';
   import trpc, { type InferMutationInput } from '$lib/client/trpc';
-  import { fillWalkthroughStore } from '$utils/fillWalkthroughStore';
   import { resetAllSudokuStores } from '$utils/resetAllStores';
 
   export let data: PageData;
@@ -28,16 +26,10 @@
   const sudokuTitle = editorHistory.title;
   const description = editorHistory.description;
   const labels = editorHistory.labels;
+  let walkthrough = data.walkthrough?.steps ?? [];
 
   let showImportFromFPuzzlesModal = false;
   let showCommonDescriptionsModal = false;
-
-  $: if (data.walkthrough?.steps) {
-    // Just so ts will shut up
-    fillWalkthroughStore(data.walkthrough);
-  } else {
-    walkthroughStore.set([]);
-  }
 
   async function changeUpdateStatus(make_public: boolean): Promise<void> {
     loading = true;
@@ -61,8 +53,8 @@
     let solution: InferMutationInput<'sudokus:provideSolutionToPuzzle'>['solution'] = undefined;
     // create solution
     if (provideSolution) {
-      if ($walkthroughStore.length) {
-        const finalStep = $walkthroughStore[$walkthroughStore.length - 1].step;
+      if (walkthrough.length) {
+        const finalStep = walkthrough[walkthrough.length - 1].step;
         if (
           $userInputs.values.some((row, i) => {
             return row.some((value, j) => {
@@ -186,10 +178,10 @@
           await saveSolution(id);
         }
 
-        if ($walkthroughStore.length > 0) {
+        if (walkthrough.length > 0) {
           await createOrUpdateWalkthrough({
             sudokuId: createdSudoku.id,
-            steps: $walkthroughStore
+            steps: walkthrough
           });
         }
       }
@@ -230,10 +222,10 @@
         id = updatedSudoku.id;
         await saveSolution(updatedSudoku.id);
 
-        if ($walkthroughStore.length > 0) {
+        if (walkthrough.length > 0) {
           await createOrUpdateWalkthrough({
             sudokuId: updatedSudoku.id,
-            steps: $walkthroughStore
+            steps: walkthrough
           });
         } else {
           await trpc().mutation('walkthroughs:delete', {
@@ -313,7 +305,7 @@
 {#if tab === 'editor'}
   <SudokuEditor clues={$sudokuClues} />
 {:else if tab === 'game'}
-  <SudokuGame clues={$sudokuClues} userInputs={$userInputs} />
+  <SudokuGame bind:walkthrough clues={$sudokuClues} userInputs={$userInputs} />
 {:else}
   <div class="m-auto container p-4">
     <form>
@@ -393,11 +385,8 @@
             </Button>
 
             {#if isPublic}
-              <Button
-                type="button"
-                class="bg-yellow-500"
-                {loading}
-                on:click={() => changeUpdateStatus(false)}>Depublish</Button
+              <Button type="button" {loading} on:click={() => changeUpdateStatus(false)}
+                >Depublish</Button
               >
             {:else}
               <Button type="button" {loading} on:click={() => changeUpdateStatus(true)}
