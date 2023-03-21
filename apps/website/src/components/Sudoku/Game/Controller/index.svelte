@@ -2,8 +2,7 @@
   import { page } from '$app/stores';
   import ControllerHelpModal from '$components/Modals/ControllerHelpModal.svelte';
   import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
-  import WalkthroughEditorModal from '$components/Modals/WalkthroughEditorModal.svelte';
-  import WalkthroughViewerModal from '$components/Modals/WalkthroughViewerModal.svelte';
+  import { WalkthroughEditorModal, WalkthroughViewerModal } from '@octopuzzles/walkthroughs';
   import ControllerSkeleton from '$components/Sudoku/ControllerSkeleton.svelte';
   import {
     CenterMarks as CenterMarksIcon,
@@ -15,10 +14,9 @@
   } from '@octopuzzles/icons';
   import { gameHistory, inputMode, highlights, editorHistory } from '$stores/sudokuStore';
   import { scanner } from '$stores/sudokuStore/scanner';
-  import { walkthroughStore } from '$stores/walkthroughStore';
-  import type { InputMode } from '@octopuzzles/models';
+  import type { InputMode, WalkthroughStep } from '@octopuzzles/models';
   import { SquareButton } from '@octopuzzles/ui';
-  import { isCommandKey } from '@octopuzzles/utils';
+  import { deepCopy, isCommandKey } from '@octopuzzles/utils';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
   import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';
@@ -35,6 +33,8 @@
   import Scanner from './components/Scanner.svelte';
 
   const { selectedCells, highlightedCells } = highlights;
+  const userInputs = gameHistory.subscribeToInputs();
+  export let walkthrough: WalkthroughStep[];
 
   const controls: Record<
     string,
@@ -163,7 +163,8 @@
       }
       case 'w': {
         k.preventDefault();
-        walkthroughStore.addStep();
+        walkthrough = [...walkthrough, { description: '', step: deepCopy($userInputs) }];
+        break;
       }
     }
   }
@@ -247,7 +248,7 @@
       <Question size={32} />
     </button>
 
-    {#if $page.url.pathname.includes('/sudoku/editor') || $walkthroughStore.length > 0}
+    {#if $page.url.pathname.includes('/sudoku/editor') || walkthrough.length > 0}
       <button
         title="Walkthrough"
         class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
@@ -269,9 +270,16 @@
 
 <ControllerHelpModal bind:isOpen={controllerHelpModalIsOpen} mode="game" />
 <ExportToFPuzzles bind:isOpen={exportToFPuzzlesModalIsOpen} />
-<WalkthroughEditorModal bind:isOpen={walkthroughEditorModalIsOpen} clues={$clues} />
+<WalkthroughEditorModal
+  bind:isOpen={walkthroughEditorModalIsOpen}
+  clues={$clues}
+  userInputs={$userInputs}
+  onClickStep={(step) => gameHistory.set(step)}
+  bind:walkthrough
+/>
 <WalkthroughViewerModal
+  onClickStep={(step) => gameHistory.set(step)}
   bind:isOpen={walkthroughViewerModalIsOpen}
   clues={$clues}
-  walkthrough={$walkthroughStore}
+  {walkthrough}
 />

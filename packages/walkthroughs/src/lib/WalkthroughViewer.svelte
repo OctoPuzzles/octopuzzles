@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { gameHistory } from '$stores/sudokuStore';
   import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import ArrowsCounterClockwise from 'phosphor-svelte/lib/ArrowsCounterClockwise/ArrowsCounterClockwise.svelte';
   import AppWindow from 'phosphor-svelte/lib/AppWindow/AppWindow.svelte';
@@ -8,23 +7,24 @@
   import { HTMLContent } from '@octopuzzles/ui';
   import { compressToBase64 } from '@octopuzzles/utils';
   import Play from 'phosphor-svelte/lib/Play/Play.svelte';
-  import type { EditorHistoryStep } from '@octopuzzles/models';
+  import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
   import type { WalkthroughStep } from '@octopuzzles/models';
 
-  const inModal = !$page.url.pathname.endsWith('/walkthrough');
+  // const inModal = !$page.url.pathname.endsWith('/walkthrough');
 
   export let clues: EditorHistoryStep;
   export let walkthrough: WalkthroughStep[];
+  export let onClickStep: ((step: GameHistoryStep) => void) | undefined = undefined;
 </script>
 
 <div class="h-full flex-1 overflow-y-hidden flex flex-col">
   <div
     class={classNames(
       'w-full flex-1 p-2 relative',
-      inModal && 'bg-gray-100 border-b border-gray-200'
+      onClickStep != null && 'bg-gray-100 border-b border-gray-200'
     )}
   >
-    {#if inModal}
+    {#if onClickStep != null}
       <a
         class="absolute right-1 top-1"
         href={`${$page.url.pathname}/walkthrough`}
@@ -43,25 +43,24 @@
       <div>
         <div class="flex space-x-4 items-center mb-2 mt-2">
           <h4 class="font-medium">Step {i + 1}</h4>
-          {#if inModal}
+          {#if onClickStep != null}
             <button
               class="w-6 h-6 rounded-full p-1 hover:bg-gray-100 hover:text-gray-600"
               on:click={() => {
-                gameHistory.set(step);
+                onClickStep?.(step);
               }}
               title="Reset to this step"><ArrowsCounterClockwise size={16} /></button
             >
           {:else}
             <a
               class="w-6 h-6 rounded-full p-1 hover:bg-gray-100 hover:text-gray-600"
-              href={`${$page.url.pathname.replace(
-                '/walkthrough',
-                '?data=' + compressToBase64(step)
-              )}`}
+              href={$page.url.pathname.replace('/walkthrough', '?data=' + compressToBase64(step))}
               target="_blank"
               rel="noopener noreferrer"
-              title="Open puzzle at this step in new tab"><Play size={16} /></a
+              title="Open puzzle at this step in new tab"
             >
+              <Play size={16} />
+            </a>
           {/if}
         </div>
       </div>
