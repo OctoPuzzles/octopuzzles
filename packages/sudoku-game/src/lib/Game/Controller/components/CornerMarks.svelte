@@ -1,17 +1,15 @@
 <script lang="ts">
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
-  import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
+  import { gameHistory, selectedCells } from '$lib/sudokuStore';
   import { get } from 'svelte/store';
   import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
   import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
   import classNames from 'classnames';
 
-  const { selectedCells } = highlights;
-
   function handleClick(newCornermark: string): void {
     let currentCornermarks = get(gameHistory.getValue('cornermarks'));
     let newCornermarks = deepCopy(currentCornermarks);
-    const givens = editorHistory.getClue('givens');
+    const { givens } = get(gameHistory.clues);
     let positions = deepCopy(get(selectedCells));
 
     positions = positions.filter((p) => givens[p.row][p.column] === '');

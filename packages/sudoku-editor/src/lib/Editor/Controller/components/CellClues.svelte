@@ -26,14 +26,21 @@
     Select,
     ColorSelect
   } from '@octopuzzles/ui';
-  import { editorHistory, handleArrows, highlights, setMargins } from '$lib/sudokuStore';
-  import { defaultHandleArrows } from '$stores/sudokuStore/interactionHandlers';
+  import {
+    editorHistory,
+    handleArrows,
+    selectedItemIndex,
+    selectedCells,
+    highlightedCells,
+    highlightedItemIndex,
+    setMargins
+  } from '$lib/sudokuStore';
+  import { defaultHandleArrows } from '$lib/sudokuStore/interactionHandlers';
   import { deepCopy, isDeleteKey, isArrowKey, moveArrayElement } from '@octopuzzles/utils';
   import { cellClueDefaults } from '@octopuzzles/sudoku-utils';
   import { onDestroy } from 'svelte';
+  import { addLabel } from '$lib/utils/addLabel';
 
-  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
-  const labels = editorHistory.labels;
   const sudokuClues = editorHistory.subscribeToClues();
 
   let type: CellClueType | 'CUSTOM' = $sudokuClues.cellclues[0]?.type ?? 'CUSTOM';
@@ -202,19 +209,10 @@
     });
     $selectedItemIndex = $sudokuClues.cellclues.length - 1;
 
-    addLabel();
-  };
-
-  function addLabel() {
     if (type !== 'CUSTOM') {
-      const label = $labels.find(
-        (l) => l.label.name === cellClueTypesToLabel[type as CellClueType]
-      );
-      if (label) {
-        label.selected = true;
-      }
+      addLabel(cellClueTypesToLabel[type as CellClueType]);
     }
-  }
+  };
 
   const updateSelectedClue = (): void => {
     if ($selectedItemIndex === -1) return;
@@ -226,8 +224,8 @@
       } else {
         newCellClues = [...newCellClues, newCellClue(cellClue.position)];
 
-        if (type !== cellClue.type) {
-          addLabel();
+        if (type !== cellClue.type && type !== 'CUSTOM') {
+          addLabel(cellClueTypesToLabel[type as CellClueType]);
         }
       }
     });

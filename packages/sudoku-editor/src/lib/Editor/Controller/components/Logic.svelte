@@ -3,9 +3,9 @@
   import { editorHistory } from '$lib/sudokuStore';
   import { logicFlagNames, logicFlagsToLabel } from '$lib/constants';
   import type { Logic, LogicFlag } from '@octopuzzles/models';
+  import { addLabel } from '$lib/utils/addLabel';
 
   const sudokuClues = editorHistory.subscribeToClues();
-  const labels = editorHistory.labels;
 
   let digits = $sudokuClues.logic.digits ?? '1-9';
   let flags = $sudokuClues.logic.flags ?? [];
@@ -46,10 +46,7 @@
 
     update();
 
-    const label = $labels.find((l) => l.label.name === logicFlagsToLabel[flag]);
-    if (label) {
-      label.selected = true;
-    }
+    addLabel(logicFlagsToLabel[flag]);
   }
 </script>
 

@@ -10,17 +10,23 @@
     ScaledSvg,
     ColorSelect
   } from '@octopuzzles/ui';
-  import { editorHistory, handleArrows, highlights } from '$lib/sudokuStore';
+  import {
+    editorHistory,
+    handleArrows,
+    selectedItemIndex,
+    selectedCells,
+    highlightedCells,
+    highlightedItemIndex
+  } from '$lib/sudokuStore';
   import { deepCopy, isArrowKey, moveArrayElement, isDeleteKey } from '@octopuzzles/utils';
   import { defaultHandleArrows } from '$lib/sudokuStore/interactionHandlers';
   import { borderClueDefaults } from '@octopuzzles/sudoku-utils';
   import type { Borderclue, BorderClueType, Position, Shape } from '@octopuzzles/models';
   import { Borderclue as BorderclueComponent } from '@octopuzzles/sudoku-display';
   import { borderClueTypesToLabel, borderClueTypeNames } from '$lib/constants';
+  import { addLabel } from '$lib/utils/addLabel';
 
-  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();
-  const labels = editorHistory.labels;
 
   let type: BorderClueType | 'CUSTOM' = $sudokuClues.borderclues[0]?.type ?? 'CUSTOM';
   let defaultSettings = borderClueDefaults(type);
@@ -131,19 +137,10 @@
     $selectedCells = positions;
     $selectedItemIndex = $sudokuClues.borderclues.length - 1;
 
-    addLabel();
-  };
-
-  function addLabel() {
     if (type !== 'CUSTOM') {
-      const label = $labels.find(
-        (l) => l.label.name === borderClueTypesToLabel[type as BorderClueType]
-      );
-      if (label) {
-        label.selected = true;
-      }
+      addLabel(borderClueTypesToLabel[type as BorderClueType]);
     }
-  }
+  };
 
   const updateSelectedClue = (): void => {
     if ($selectedItemIndex === -1) return;
@@ -158,8 +155,8 @@
           newBorderClue(borderClue.positions as [Position, Position])
         ];
 
-        if (type !== borderClue.type) {
-          addLabel();
+        if (type !== borderClue.type && type !== 'CUSTOM') {
+          addLabel(borderClueTypesToLabel[type as BorderClueType]);
         }
       }
     });

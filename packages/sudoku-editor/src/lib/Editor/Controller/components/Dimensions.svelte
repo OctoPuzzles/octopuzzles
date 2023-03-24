@@ -1,21 +1,17 @@
 <script lang="ts">
-  import { Button, Input } from '@octopuzzles/ui';
+  import { editorHistory, setMargins } from '$lib/sudokuStore';
+  import type { Dimensions } from '@octopuzzles/models';
   import {
     defaultBorderclues,
+    defaultCages,
     defaultCellclues,
     defaultCells,
-    defaultCentermarks,
-    defaultCornermarks,
     defaultEditorColors,
-    defaultGameColors,
     defaultGivens,
-    defaultCages,
     defaultPaths,
-    defaultValues,
     defaultRegions
   } from '@octopuzzles/sudoku-utils';
-  import { editorHistory, gameHistory, setMargins } from '$lib/sudokuStore';
-  import type { Dimensions } from '@octopuzzles/models';
+  import { Button, Input } from '@octopuzzles/ui';
 
   const sudokuClues = editorHistory.subscribeToClues();
 
@@ -73,12 +69,6 @@
               : 0)
         )
     ) {
-      gameHistory.set({
-        values: defaultValues(newDimensions),
-        centermarks: defaultCentermarks(newDimensions),
-        cornermarks: defaultCornermarks(newDimensions),
-        colors: defaultGameColors(newDimensions)
-      });
       editorHistory.set({
         dimensions: newDimensions,
         borderclues: defaultBorderclues(),

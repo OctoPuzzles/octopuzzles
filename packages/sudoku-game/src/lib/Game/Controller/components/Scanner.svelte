@@ -4,7 +4,7 @@
   import Pause from 'phosphor-svelte/lib/Pause/Pause.svelte';
   import { Step } from '@octopuzzles/icons';
   import Atom from 'phosphor-svelte/lib/Atom/Atom.svelte';
-  import { editorHistory } from '$stores/sudokuStore';
+  import { editorHistory } from '$lib/sudokuStore';
   import { cageDefaults, pathDefaults, regionDefaults } from '@octopuzzles/sudoku-utils';
   import type {
     ScannerHighlightMode,
@@ -13,7 +13,7 @@
     ScannerSpeed
   } from '@octopuzzles/models';
   import { me } from '$stores/meStore';
-  import { scanner } from '$stores/sudokuStore/scanner';
+  import { scanner } from '$lib/sudokuStore/scanner';
 
   let scannerSettings: ScannerSettings = me.getSettings().scanner ?? {};
   let highlightMode = scannerSettings.highlightMode ?? 'None';

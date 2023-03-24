@@ -1,10 +1,8 @@
 <script lang="ts">
   import type { Position } from '@octopuzzles/models';
-  import { gameHistory, highlights } from '$stores/sudokuStore';
+  import { gameHistory, selectedCells } from '$lib/sudokuStore';
   import { Button, Input } from '@octopuzzles/ui';
   import { deepCopy } from '@octopuzzles/utils';
-
-  const { selectedCells } = highlights;
 
   let notes = gameHistory.getValue('notes');
   let input: Input;

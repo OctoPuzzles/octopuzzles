@@ -14,7 +14,10 @@
     handleArrows,
     handleMouseDown,
     handleMouseEnter,
-    highlights
+    selectedItemIndex,
+    selectedCells,
+    highlightedCells,
+    highlightedItemIndex
   } from '$lib/sudokuStore';
   import { defaultHandleArrows } from '$lib/sudokuStore/interactionHandlers';
   import {
@@ -32,10 +35,9 @@
   import { cageDefaults } from '@octopuzzles/sudoku-utils';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
+  import { addLabel } from '$lib/utils/addLabel';
 
-  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();
-  const labels = editorHistory.labels;
 
   let type: CageType | 'CUSTOM' = 'Killer';
   let defaultSettings = cageDefaults(type);
@@ -94,8 +96,8 @@
       } else {
         newCages = [...newCages, newCage(cage.positions)];
 
-        if (type !== cage.type) {
-          addLabel();
+        if (type !== cage.type && type !== 'CUSTOM') {
+          addLabel(cageTypesToLabel[type as CageType]);
         }
       }
     });
@@ -109,15 +111,8 @@
       editorHistory.set({ extendedcages: newCages });
       $selectedItemIndex = newCages.length - 1;
 
-      addLabel();
-    }
-  }
-
-  function addLabel() {
-    if (type !== 'CUSTOM') {
-      const label = $labels.find((l) => l.label.name === cageTypesToLabel[type as CageType]);
-      if (label) {
-        label.selected = true;
+      if (type !== 'CUSTOM') {
+        addLabel(cageTypesToLabel[type as CageType]);
       }
     }
   }
@@ -193,7 +188,7 @@
       if ($selectedItemIndex > -1) {
         addCellToSelectedKillerCage(cell, false);
       } else {
-        selectedCells.addCell(cell);
+        selectedCells.add(cell);
       }
     }
   };
@@ -202,7 +197,7 @@
     if (!mouseDown) return;
 
     if ($selectedItemIndex === -1) {
-      selectedCells.addCell(cell);
+      selectedCells.add(cell);
     } else {
       if ($selectedCells.length > 0) {
         addCellToSelectedKillerCage(cell);
@@ -261,7 +256,7 @@
           if ($selectedItemIndex > -1) {
             addCellToSelectedKillerCage(newCell);
           } else {
-            selectedCells.addCell(newCell);
+            selectedCells.add(newCell);
           }
         } else {
           $selectedCells = [newCell];

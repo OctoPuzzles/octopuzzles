@@ -1,13 +1,11 @@
 <script lang="ts">
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
-  import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
+  import { gameHistory, selectedCells } from '$lib/sudokuStore';
   import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
   import { get } from 'svelte/store';
   import { hasOpenModals, SquareButton } from '@octopuzzles/ui';
   import { me } from '$stores/meStore';
-  import { scanner } from '$stores/sudokuStore/scanner';
-
-  const { selectedCells } = highlights;
+  import { scanner } from '$lib/sudokuStore/scanner';
 
   function handleClick(newValue: string): void {
     const positions = get(selectedCells);
@@ -17,7 +15,7 @@
     const newValues = deepCopy(currentValues);
     const newCentermarks = deepCopy(get(gameHistory.getValue('centermarks')));
     const newCornermarks = deepCopy(get(gameHistory.getValue('cornermarks')));
-    const givens = editorHistory.getClue('givens');
+    const { givens } = get(gameHistory.clues);
 
     // Check if we should clear all game cells
     const clearAllGameCells =

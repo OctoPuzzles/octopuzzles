@@ -13,7 +13,10 @@
     handleArrows,
     handleMouseDown,
     handleMouseEnter,
-    highlights
+    selectedItemIndex,
+    selectedCells,
+    highlightedCells,
+    highlightedItemIndex
   } from '$lib/sudokuStore';
   import { defaultHandleArrows } from '$lib/sudokuStore/interactionHandlers';
   import {
@@ -28,10 +31,9 @@
   import { regionDefaults } from '@octopuzzles/sudoku-utils';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
+  import { addLabel } from '$lib/utils/addLabel';
 
-  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();
-  const labels = editorHistory.labels;
 
   let type: RegionType | 'CUSTOM' = 'Normal';
   let defaultSettings = regionDefaults(type);
@@ -92,8 +94,8 @@
       } else {
         newRegions = [...newRegions, newRegion(region.positions)];
 
-        if (type !== region.type) {
-          addLabel();
+        if (type !== region.type && type !== 'CUSTOM') {
+          addLabel(regionTypesToLabel[type as RegionType]);
         }
       }
     });
@@ -138,15 +140,8 @@
       editorHistory.set({ regions: newRegions });
       $selectedItemIndex = newRegions.length - 1;
 
-      addLabel();
-    }
-  }
-
-  function addLabel() {
-    if (type !== 'CUSTOM') {
-      const label = $labels.find((l) => l.label.name === regionTypesToLabel[type as RegionType]);
-      if (label) {
-        label.selected = true;
+      if (type !== 'CUSTOM') {
+        addLabel(regionTypesToLabel[type as RegionType]);
       }
     }
   }
@@ -228,7 +223,7 @@
     }
 
     if (type === 'Normal') {
-      addLabel();
+      addLabel(regionTypesToLabel['Normal']);
     }
   }
 
@@ -239,7 +234,7 @@
       if ($selectedItemIndex > -1) {
         addCellToSelectedRegion(cell, false);
       } else {
-        selectedCells.addCell(cell);
+        selectedCells.add(cell);
       }
     }
   };
@@ -247,7 +242,7 @@
   const customHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
     if (!mouseDown) return;
     if ($selectedItemIndex === -1) {
-      selectedCells.addCell(cell);
+      selectedCells.add(cell);
     } else {
       if ($selectedCells.length > 0) {
         addCellToSelectedRegion(cell);
@@ -306,7 +301,7 @@
           if ($selectedItemIndex > -1) {
             addCellToSelectedRegion(newCell);
           } else {
-            selectedCells.addCell(newCell);
+            selectedCells.add(newCell);
           }
         } else {
           $selectedCells = [newCell];

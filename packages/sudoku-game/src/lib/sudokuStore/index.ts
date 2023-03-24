@@ -24,7 +24,6 @@ import {
   defaultHandleMouseDown,
   defaultHandleMouseEnter
 } from './interactionHandlers';
-import { scanner } from './scanner';
 
 // WRITABLES
 
@@ -43,6 +42,7 @@ function createGameHistoryStore() {
     }
   ]);
 
+  // TODO: Update the game everytime clues change
   const clues = writable<EditorHistoryStep>();
 
   /**
@@ -102,7 +102,6 @@ function createGameHistoryStore() {
 
   /** Reset the game */
   function reset(): void {
-    const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
     selectedItemIndex.set(-1);
     highlightedItemIndex.set(-1);
     selectedCells.set([]);
@@ -178,7 +177,6 @@ function createInputModeStore() {
   return {
     subscribe,
     set: (value: InputMode | null) => {
-      const { selectedItemIndex, highlightedItemIndex } = highlights;
       selectedItemIndex.set(-1);
       highlightedItemIndex.set(-1);
       handleArrows.set(defaultHandleArrows);
@@ -192,32 +190,29 @@ function createInputModeStore() {
 export const mode = writable<Mode>('game');
 export const inputMode = createInputModeStore();
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function createHighlightsStore() {
-  const selectedItemIndex = writable(-1);
-  const highlightedItemIndex = writable(-1);
-  /** Cells with wrong solutions */
-  const wrongCells = writable<Position[]>([]);
-  /**
-   * A list of selected cells.
-   * A selected cell is one that is pressed on with e.g. the mouse
-   */
-  const selectedCells = writable<Position[]>([]);
+export const selectedItemIndex = writable(-1);
+export const highlightedItemIndex = writable(-1);
+/** Cells with wrong solutions */
+export const wrongCells = writable<Position[]>([]);
+/**
+ * A list of highlighted cells.
+ * A highlighted cell is e.g. a hovered cell.
+ */
+export const highlightedCells = writable<Position[]>([]);
+
+function createSelectedCellsStore() {
+  const _selectedCells = writable<Position[]>([]);
 
   function setSelectedCells(newSelectedCells: Position[]): void {
     selectedItemIndex.set(-1);
     highlightedItemIndex.set(-1);
-    if (get(mode) === 'game') {
-      highlightedCells.set(scanner.getHighlightedCells(newSelectedCells));
-    } else {
-      highlightedCells.set([]);
-    }
-    selectedCells.set(newSelectedCells);
+    highlightedCells.set([]);
+    _selectedCells.set(newSelectedCells);
   }
 
   function addSelectedCell(cell: Position, keepIfAlreadySelected = true): void {
     let found = false;
-    selectedCells.update((oldSelectedCells) => {
+    _selectedCells.update((oldSelectedCells) => {
       let newSelectedCells = oldSelectedCells.filter((c) => {
         if (c.row === cell.row && c.column === cell.column) {
           found = true;
@@ -230,33 +225,22 @@ function createHighlightsStore() {
         newSelectedCells = [...newSelectedCells, cell];
       }
 
-      if (get(mode) === 'game') {
-        highlightedCells.set(scanner.getHighlightedCells(newSelectedCells));
-      }
-
       return newSelectedCells;
     });
   }
-  /**
-   * A list of highlighted cells.
-   * A highlighted cell is e.g. a hovered cell.
-   */
-  const highlightedCells = writable<Position[]>([]);
 
   return {
-    selectedItemIndex,
-    highlightedItemIndex,
-    wrongCells,
-    selectedCells: {
-      set: setSelectedCells,
-      addCell: addSelectedCell,
-      subscribe: selectedCells.subscribe
-    },
-    highlightedCells
+    subscribe: _selectedCells.subscribe,
+    set: setSelectedCells,
+    add: addSelectedCell
   };
 }
 
-export const highlights = createHighlightsStore();
+/**
+ * A list of selected cells.
+ * A selected cell is one that is pressed on with e.g. the mouse
+ */
+export const selectedCells = createSelectedCellsStore();
 
 /**
  * The controller components can augment the functionality and how user inputs should be handled by changing this function.
@@ -313,7 +297,6 @@ export function setMargins(margins?: Margins | null): void {
       notes: offsetMatrix(notes, offsets, '')
     });
 
-    const { selectedCells, highlightedCells, wrongCells } = highlights;
     selectedCells.set(offsetPositions(get(selectedCells), offsets).filter(isValidPosition));
     highlightedCells.set(offsetPositions(get(highlightedCells), offsets).filter(isValidPosition));
     wrongCells.set(offsetPositions(get(wrongCells), offsets).filter(isValidPosition));

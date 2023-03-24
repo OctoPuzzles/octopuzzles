@@ -1,11 +1,9 @@
 <script lang="ts">
   import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
-  import { editorHistory, highlights } from '$lib/sudokuStore';
+  import { editorHistory, selectedCells } from '$lib/sudokuStore';
   import { get } from 'svelte/store';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
-
-  const { selectedCells } = highlights;
 
   function handleClick(newGiven: string): void {
     const positions = get(selectedCells);

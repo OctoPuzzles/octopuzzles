@@ -1,13 +1,11 @@
 <script lang="ts">
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
-  import { editorHistory, highlights } from '$lib/sudokuStore';
+  import { editorHistory, selectedCells } from '$lib/sudokuStore';
   import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
   import { get } from 'svelte/store';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
   import type { Color } from '@octopuzzles/models';
   import { Colors } from '@octopuzzles/models';
-
-  const { selectedCells } = highlights;
 
   function handleKeyDown(k: KeyboardEvent): void {
     //do not accept keyboard input when any modal controls are open

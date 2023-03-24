@@ -2,15 +2,20 @@
   import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import Controller from './Controller/index.svelte';
   import {
-    highlights,
+    selectedCells,
+    highlightedCells,
+    wrongCells,
     inputMode,
     handleArrows,
     handleMouseDown,
     handleMouseEnter
-  } from '$stores/sudokuStore';
-  import type { EditorHistoryStep, GameHistoryStep, WalkthroughStep } from '@octopuzzles/models';
-
-  const { selectedCells, highlightedCells, wrongCells } = highlights;
+  } from '$lib/sudokuStore';
+  import type {
+    EditorHistoryStep,
+    GameHistoryStep,
+    ScannerSettings,
+    WalkthroughStep
+  } from '@octopuzzles/models';
 
   // SIZING
   let windowHeight: number;
@@ -26,6 +31,10 @@
   export let userInputs: GameHistoryStep;
 
   export let walkthrough: WalkthroughStep[];
+
+  export let scannerSettings: ScannerSettings;
+
+  export let onScannerSettingsChange: (newSettings: ScannerSettings) => void;
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />

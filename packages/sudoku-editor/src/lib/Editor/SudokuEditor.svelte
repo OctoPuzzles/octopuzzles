@@ -1,10 +1,14 @@
 <script lang="ts">
   import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import Controller from './Controller/index.svelte';
-  import { highlights, handleArrows, handleMouseDown, handleMouseEnter } from '$lib/sudokuStore';
+  import {
+    handleArrows,
+    handleMouseDown,
+    handleMouseEnter,
+    highlightedCells,
+    selectedCells
+  } from '$lib/sudokuStore';
   import type { EditorHistoryStep } from '@octopuzzles/models';
-
-  const { selectedCells, highlightedCells } = highlights;
 
   // SIZING
   let windowHeight: number;

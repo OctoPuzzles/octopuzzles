@@ -1,16 +1,14 @@
 <script lang="ts">
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
-  import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
+  import { gameHistory, selectedCells } from '$lib/sudokuStore';
   import { get } from 'svelte/store';
   import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
   import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
 
-  const { selectedCells } = highlights;
-
   const handleClick = (newCentermark: string): void => {
     let currentCentermarks = get(gameHistory.getValue('centermarks'));
     let newCentermarks = deepCopy(currentCentermarks);
-    const givens = editorHistory.getClue('givens');
+    const { givens } = get(gameHistory.clues);
     let positions = deepCopy(get(selectedCells));
 
     positions = positions.filter((p) => givens[p.row][p.column] === '');

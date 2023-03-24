@@ -1,9 +1,7 @@
 <script lang="ts">
   import { Button, hasOpenModals } from '@octopuzzles/ui';
-  import { editorHistory, highlights } from '$lib/sudokuStore';
+  import { editorHistory, selectedCells } from '$lib/sudokuStore';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
-
-  const { selectedCells } = highlights;
 
   function handleClick(b: boolean): void {
     const newCells = deepCopy(editorHistory.getClue('cells'));

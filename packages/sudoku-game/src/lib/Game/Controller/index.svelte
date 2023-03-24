@@ -12,8 +12,8 @@
     Numbers as NumbersIcon,
     Scanner as ScannerIcon
   } from '@octopuzzles/icons';
-  import { gameHistory, inputMode, highlights, editorHistory } from '$stores/sudokuStore';
-  import { scanner } from '$stores/sudokuStore/scanner';
+  import { gameHistory, inputMode, selectedCells, highlightedCells } from '$lib/sudokuStore';
+  import { scanner } from '$lib/sudokuStore/scanner';
   import type { InputMode, WalkthroughStep } from '@octopuzzles/models';
   import { SquareButton } from '@octopuzzles/ui';
   import { deepCopy, isCommandKey } from '@octopuzzles/utils';
@@ -32,7 +32,6 @@
   import Numbers from './components/Numbers.svelte';
   import Scanner from './components/Scanner.svelte';
 
-  const { selectedCells, highlightedCells } = highlights;
   const userInputs = gameHistory.subscribeToInputs();
   export let walkthrough: WalkthroughStep[];
 
@@ -186,7 +185,7 @@
   let walkthroughEditorModalIsOpen = false;
   let walkthroughViewerModalIsOpen = false;
 
-  let clues = editorHistory.subscribeToClues();
+  let clues = gameHistory.clues;
 
   function showWalkthroughEditorModal(): void {
     if ($page.url.pathname.includes('/sudoku/editor')) {

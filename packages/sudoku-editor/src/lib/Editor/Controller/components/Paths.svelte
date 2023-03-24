@@ -14,7 +14,10 @@
     handleArrows,
     handleMouseDown,
     handleMouseEnter,
-    highlights
+    selectedItemIndex,
+    selectedCells,
+    highlightedCells,
+    highlightedItemIndex
   } from '$lib/sudokuStore';
   import { defaultHandleArrows } from '$lib/sudokuStore/interactionHandlers';
   import {
@@ -34,10 +37,9 @@
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import { Path as PathComponent } from '@octopuzzles/sudoku-display';
+  import { addLabel } from '$lib/utils/addLabel';
 
-  const { selectedItemIndex, selectedCells, highlightedCells, highlightedItemIndex } = highlights;
   const sudokuClues = editorHistory.subscribeToClues();
-  const labels = editorHistory.labels;
 
   let type: PathType | 'CUSTOM' = $sudokuClues.paths[0]?.type ?? 'CUSTOM';
   let defaultSettings = pathDefaults(type);
@@ -125,8 +127,8 @@
       } else {
         newPaths = [...newPaths, newPath(path.positions)];
 
-        if (type !== path.type) {
-          addLabel();
+        if (type !== path.type && type !== 'CUSTOM') {
+          addLabel(pathTypesToLabel[type as PathType]);
         }
       }
     });
@@ -184,15 +186,8 @@
       });
       $selectedItemIndex = $sudokuClues.paths.length - 1;
 
-      addLabel();
-    }
-  }
-
-  function addLabel() {
-    if (type === 'CUSTOM') {
-      const label = $labels.find((l) => l.label.name === pathTypesToLabel[type as PathType]);
-      if (label) {
-        label.selected = true;
+      if (type !== 'CUSTOM') {
+        addLabel(pathTypesToLabel[type as PathType]);
       }
     }
   }
@@ -240,7 +235,7 @@
       if ($selectedItemIndex > -1) {
         addCellToSelectedPath(cell, false);
       } else {
-        selectedCells.addCell(cell);
+        selectedCells.add(cell);
       }
     }
   };
@@ -249,7 +244,7 @@
     if (!mouseDown) return;
 
     if ($selectedItemIndex === -1) {
-      selectedCells.addCell(cell);
+      selectedCells.add(cell);
     } else {
       if ($selectedCells.length > 0) {
         addCellToSelectedPath(cell);
@@ -308,7 +303,7 @@
           if ($selectedItemIndex > -1) {
             addCellToSelectedPath(newCell);
           } else {
-            selectedCells.addCell(newCell);
+            selectedCells.add(newCell);
           }
         } else {
           $selectedCells = [newCell];
