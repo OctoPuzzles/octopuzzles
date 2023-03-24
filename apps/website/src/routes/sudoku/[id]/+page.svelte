@@ -1,6 +1,6 @@
 <script lang="ts">
   import html2canvas from 'html2canvas';
-  import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
+  import { SudokuGame } from '@octopuzzles/sudoku-game';
   import SudokuInfo from '$components/Sudoku/SudokuInfo.svelte';
   import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
   import { onDestroy, onMount } from 'svelte';
@@ -163,7 +163,7 @@
   </div>
 </div>
 
-<SudokuGame bind:walkthrough clues={$sudokuClues} userInputs={$userInputs} />
+<SudokuGame bind:walkthrough clues={$sudokuClues} bind:userInputs={$userInputs} />
 
 <SudokuInfo sudoku={data.sudoku} {takeScreenshot} />
 

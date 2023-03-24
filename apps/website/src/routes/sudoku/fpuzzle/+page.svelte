@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { SudokuGame } from '@octopuzzles/sudoku-game';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
   import { editorHistory, gameHistory } from '$stores/sudokuStore';
   import { decompressFromBase64 } from '@octopuzzles/utils';
   import { defaultValues } from '@octopuzzles/sudoku-utils';
@@ -96,7 +96,7 @@
     </div>
   </div>
 
-  <SudokuGame clues={$sudokuClues} userInputs={$userInputs} />
+  <SudokuGame clues={$sudokuClues} bind:userInputs={$userInputs} />
 
   <div class="p-4 whitespace-pre-line">
     {$description}

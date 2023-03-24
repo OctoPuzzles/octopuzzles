@@ -25,16 +25,16 @@ export const DimensionsValidator = z.object({
 export type Dimensions = z.infer<typeof DimensionsValidator>;
 
 export const ColorValidator = z.enum([
-  'Black',
   'White',
   'LightGray',
   'Gray',
-  'Orange',
-  'Purple',
+  'Black',
   'Red',
   'Yellow',
   'Green',
-  'Blue'
+  'Blue',
+  'Orange',
+  'Purple'
 ]);
 export type Color = z.infer<typeof ColorValidator>;
 export const Colors = ColorValidator.options;

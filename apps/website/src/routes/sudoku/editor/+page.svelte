@@ -1,6 +1,6 @@
 <script lang="ts">
-  import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
-  import SudokuEditor from '$components/Sudoku/Editor/SudokuEditor.svelte';
+  import { SudokuGame } from '@octopuzzles/sudoku-game';
+  import { SudokuEditor } from '@octopuzzles/sudoku-editor';
   import { Button, Input, Label, PuzzleLabel, RichTextEditor } from '@octopuzzles/ui';
   import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
@@ -303,9 +303,9 @@
 </div>
 
 {#if tab === 'editor'}
-  <SudokuEditor clues={$sudokuClues} />
+  <SudokuEditor bind:clues={$sudokuClues} />
 {:else if tab === 'game'}
-  <SudokuGame bind:walkthrough clues={$sudokuClues} userInputs={$userInputs} />
+  <SudokuGame bind:walkthrough clues={$sudokuClues} bind:buserInputs={$userInputs} />
 {:else}
   <div class="m-auto container p-4">
     <form>
