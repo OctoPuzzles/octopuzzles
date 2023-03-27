@@ -2,6 +2,7 @@
   import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import Controller from './Controller/index.svelte';
   import {
+    editorHistory,
     handleArrows,
     handleMouseDown,
     handleMouseEnter,
@@ -9,6 +10,7 @@
     selectedCells
   } from '$lib/sudokuStore';
   import type { EditorHistoryStep } from '@octopuzzles/models';
+  import { onDestroy, onMount } from 'svelte';
 
   // SIZING
   let windowHeight: number;
@@ -20,6 +22,17 @@
   $: sudokuSize = Math.max(Math.min(windowHeight - 88, windowWidth), 300);
 
   export let clues: EditorHistoryStep;
+
+  onMount(() => {
+    editorHistory.reset(clues);
+    storeClues.subscribe((c) => (clues = c));
+  });
+
+  let storeClues = editorHistory.subscribeToClues();
+
+  onDestroy(() => {
+    editorHistory.reset();
+  });
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />

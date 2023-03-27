@@ -98,22 +98,14 @@ function createGameHistoryStore() {
   const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
 
   /** Reset the game */
-  function reset(): void {
+  function reset(startState?: GameHistoryStep): void {
     selectedItemIndex.set(-1);
     highlightedItemIndex.set(-1);
     selectedCells.set([]);
     highlightedCells.set([]);
     step.set(0);
     const dim = get(clues).dimensions;
-    history.set([
-      {
-        values: defaultValues(dim),
-        colors: defaultGameColors(dim),
-        cornermarks: defaultCornermarks(dim),
-        centermarks: defaultCentermarks(dim),
-        notes: defaultNotes(dim)
-      }
-    ]);
+    history.set([startState ?? defaultUserInputs(dim)]);
   }
 
   /** Clear every input-values, and colors from the specified cells in the editor */

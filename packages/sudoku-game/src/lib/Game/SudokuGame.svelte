@@ -18,9 +18,9 @@
     Solution,
     WalkthroughStep
   } from '@octopuzzles/models';
-  import { getUserSolution } from '@octopuzzles/sudoku-utils';
+  import { defaultClues, getUserSolution } from '@octopuzzles/sudoku-utils';
   import { scanner } from '$lib/sudokuStore/scanner';
-  import { onMount, setContext } from 'svelte';
+  import { onDestroy, onMount, setContext } from 'svelte';
 
   // SIZING
   let windowHeight: number;
@@ -48,6 +48,11 @@
 
   onMount(() => {
     gameHistory.clues.set(clues);
+    gameHistory.reset(userInputs);
+  });
+
+  onDestroy(() => {
+    gameHistory.clues.set(defaultClues());
     gameHistory.reset();
   });
 
