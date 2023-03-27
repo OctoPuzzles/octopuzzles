@@ -1,7 +1,6 @@
 import type {
   GameHistoryStep,
   InputMode,
-  Margins,
   Mode,
   Position,
   ArrowHandler,
@@ -24,6 +23,7 @@ import {
   defaultHandleMouseDown,
   defaultHandleMouseEnter
 } from './interactionHandlers';
+import { defaultUserInputs } from '@octopuzzles/sudoku-utils';
 
 // WRITABLES
 
@@ -32,18 +32,15 @@ function createGameHistoryStore() {
   // Step
   const step = writable(0);
   // History
-  const history = writable<GameHistoryStep[]>([
-    {
-      values: defaultValues(),
-      colors: defaultGameColors(),
-      cornermarks: defaultCornermarks(),
-      centermarks: defaultCentermarks(),
-      notes: defaultNotes()
-    }
-  ]);
+  const history = writable<GameHistoryStep[]>([deepCopy(defaultUserInputs())]);
 
-  // TODO: Update the game everytime clues change
   const clues = writable<EditorHistoryStep>();
+
+  function setClues(newClues: EditorHistoryStep): void {
+    clues.set(newClues);
+    step.set(0);
+    history.set([deepCopy(defaultUserInputs(newClues.dimensions))]);
+  }
 
   /**
    * Increase the editor step by one, and specify what changes have been made to the editor since last step. Will keep the state of the non-changed items
@@ -164,7 +161,10 @@ function createGameHistoryStore() {
     set,
     getValue,
     subscribeToInputs,
-    clues
+    clues: {
+      subscribe: clues.subscribe,
+      set: setClues
+    }
   };
 }
 
@@ -257,72 +257,3 @@ export const handleMouseEnter = writable<MouseEnterHandler>(defaultHandleMouseEn
  * This function specifies what to do when a user moves around the board with the arrow buttons.
  */
 export const handleArrows = writable<ArrowHandler>(defaultHandleArrows);
-
-// DERIVED STORES
-
-export function setMargins(margins?: Margins | null): void {
-  const dimensions = get(gameHistory.clues).dimensions;
-  const values = get(gameHistory.getValue('values'));
-  const gamecolors = get(gameHistory.getValue('colors'));
-  const cornermarks = get(gameHistory.getValue('cornermarks'));
-  const centermarks = get(gameHistory.getValue('centermarks'));
-  const notes = get(gameHistory.getValue('notes'));
-
-  const offsets: Margins = {
-    left: (margins?.left ?? 0) - (dimensions.margins?.left ?? 0),
-    right: (margins?.right ?? 0) - (dimensions.margins?.right ?? 0),
-    top: (margins?.top ?? 0) - (dimensions.margins?.top ?? 0),
-    bottom: (margins?.bottom ?? 0) - (dimensions.margins?.bottom ?? 0)
-  };
-  if (offsets.left !== 0 || offsets.right !== 0 || offsets.top !== 0 || offsets.bottom !== 0) {
-    const newDimensions = {
-      rows: dimensions.rows + offsets.top + offsets.bottom,
-      columns: dimensions.columns + offsets.left + offsets.right,
-      margins:
-        margins && (margins.left > 0 || margins.right > 0 || margins.top > 0 || margins.bottom > 0)
-          ? margins
-          : undefined
-    };
-    const isValidPosition = (p: Position, modifier = 0): boolean =>
-      p.row >= 0 &&
-      p.row < newDimensions.rows + modifier &&
-      p.column >= 0 &&
-      p.column < newDimensions.columns + modifier;
-
-    gameHistory.set({
-      values: offsetMatrix(values, offsets, ''),
-      colors: offsetMatrix(gamecolors, offsets, []),
-      cornermarks: offsetMatrix(cornermarks, offsets, ''),
-      centermarks: offsetMatrix(centermarks, offsets, ''),
-      notes: offsetMatrix(notes, offsets, '')
-    });
-
-    selectedCells.set(offsetPositions(get(selectedCells), offsets).filter(isValidPosition));
-    highlightedCells.set(offsetPositions(get(highlightedCells), offsets).filter(isValidPosition));
-    wrongCells.set(offsetPositions(get(wrongCells), offsets).filter(isValidPosition));
-  }
-}
-
-function offsetPositions(positions: Position[], offsets: Margins): Position[] {
-  return positions.map((position) => {
-    return { row: position.row + offsets.top, column: position.column + offsets.left };
-  });
-}
-
-function offsetMatrix<T>(clues: T[][], offsets: Margins, frameValue: T): T[][] {
-  const newClues = deepCopy(
-    Array(clues.length + offsets.top + offsets.bottom).fill(
-      Array(clues[0].length + offsets.left + offsets.right).fill(frameValue)
-    )
-  );
-  for (let i = 0; i < clues.length; ++i) {
-    if (i + offsets.top < 0) continue;
-    if (i + offsets.top >= newClues.length) break;
-    for (let j = 0; j < clues[0].length; ++j) {
-      if (j + offsets.left < 0) continue;
-      if (j + offsets.left >= newClues[i + offsets.top].length) break;
-      newClues[i + offsets.top][j + offsets.left] = clues[i][j];
-    }
-  }
-  return newClues;
-}

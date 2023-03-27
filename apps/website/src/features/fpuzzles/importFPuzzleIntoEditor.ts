@@ -1,4 +1,4 @@
-import { editorHistory, gameHistory } from '$stores/sudokuStore';
+// import { editorHistory, gameHistory } from '$stores/sudokuStore';
 import { closestColor } from './closestColor';
 import type { FPuzzlesJson, PositionString } from './types';
 import { deepCopy } from '@octopuzzles/utils';
@@ -143,7 +143,12 @@ function regionsForFPuzzle(dimensions: Dimensions, grid: FPuzzlesJson['grid']): 
   return regions;
 }
 
-export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): void {
+export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): {
+  newEditorHistory: EditorHistoryStep;
+  newGameHistory: GameHistoryStep;
+  newTitle: string;
+  newDescription: string;
+} {
   const dim = getDimensions(fpuzzle);
   const offsets = dim.margins ?? { left: 0, right: 0, top: 0, bottom: 0 };
   const positionFromStringPosition = (position: PositionString): Position => {
@@ -177,6 +182,8 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): void {
     centermarks: defaultCentermarks(dim),
     notes: defaultNotes(dim)
   };
+  let newTitle = '';
+  let newDescription = '';
 
   /* eslint-disable @typescript-eslint/no-empty-function */
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -212,10 +219,10 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): void {
       newEditorHistory.logic = { ...deepCopy(newEditorHistory.logic), flags: newFlags };
     },
     title: (title) => {
-      editorHistory.title.set(title);
+      newTitle = title;
     },
     ruleset: (newRuleset) => {
-      editorHistory.description.set(newRuleset);
+      newDescription = newRuleset;
     },
     killercage: (fpuzzlesKillerCages) => {
       const newCages = deepCopy(newEditorHistory.extendedcages);
@@ -779,6 +786,5 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): void {
     handler?.(value);
   }
 
-  gameHistory.set(newGameHistory);
-  editorHistory.set(newEditorHistory);
+  return { newEditorHistory, newGameHistory, newTitle, newDescription };
 }

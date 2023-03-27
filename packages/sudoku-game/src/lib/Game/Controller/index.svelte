@@ -1,9 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
-  import ControllerHelpModal from '$components/Modals/ControllerHelpModal.svelte';
-  import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
   import { WalkthroughEditorModal, WalkthroughViewerModal } from '@octopuzzles/walkthroughs';
-  import ControllerSkeleton from '$components/Sudoku/ControllerSkeleton.svelte';
   import {
     CenterMarks as CenterMarksIcon,
     ColorPicker,
@@ -15,14 +12,12 @@
   import { gameHistory, inputMode, selectedCells, highlightedCells } from '$lib/sudokuStore';
   import { scanner } from '$lib/sudokuStore/scanner';
   import type { InputMode, WalkthroughStep } from '@octopuzzles/models';
-  import { SquareButton } from '@octopuzzles/ui';
+  import { SquareButton, ControllerSkeleton } from '@octopuzzles/ui';
   import { deepCopy, isCommandKey } from '@octopuzzles/utils';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
   import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';
-  import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
   import PersonSimpleWalk from 'phosphor-svelte/lib/PersonSimpleWalk/PersonSimpleWalk.svelte';
-  import Question from 'phosphor-svelte/lib/Question/Question.svelte';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import CenterMarks from './components/CenterMarks.svelte';
@@ -31,6 +26,7 @@
   import Notes from './components/Notes.svelte';
   import Numbers from './components/Numbers.svelte';
   import Scanner from './components/Scanner.svelte';
+  import Help from '../Help.svelte';
 
   const userInputs = gameHistory.subscribeToInputs();
   export let walkthrough: WalkthroughStep[];
@@ -180,8 +176,6 @@
     }
   }
 
-  let controllerHelpModalIsOpen = false;
-  let exportToFPuzzlesModalIsOpen = false;
   let walkthroughEditorModalIsOpen = false;
   let walkthroughViewerModalIsOpen = false;
 
@@ -239,14 +233,6 @@
   </svelte:fragment>
 
   <svelte:fragment slot="aux">
-    <button
-      on:click={() => (controllerHelpModalIsOpen = true)}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
-      title="help"
-    >
-      <Question size={32} />
-    </button>
-
     {#if $page.url.pathname.includes('/sudoku/editor') || walkthrough.length > 0}
       <button
         title="Walkthrough"
@@ -257,18 +243,11 @@
       </button>
     {/if}
 
-    <button
-      on:click={() => (exportToFPuzzlesModalIsOpen = true)}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-      title="Export"
-    >
-      <FileArrowUp size={32} />
-    </button>
+    <slot />
   </svelte:fragment>
+  <Help slot="helpModalContent" />
 </ControllerSkeleton>
 
-<ControllerHelpModal bind:isOpen={controllerHelpModalIsOpen} mode="game" />
-<ExportToFPuzzles bind:isOpen={exportToFPuzzlesModalIsOpen} />
 <WalkthroughEditorModal
   bind:isOpen={walkthroughEditorModalIsOpen}
   clues={$clues}

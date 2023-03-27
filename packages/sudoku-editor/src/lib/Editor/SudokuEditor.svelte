@@ -37,6 +37,8 @@
     />
   </div>
   <div class="my-auto">
-    <Controller />
+    <Controller>
+      <slot />
+    </Controller>
   </div>
 </div>

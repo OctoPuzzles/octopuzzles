@@ -7,13 +7,12 @@ import type {
 import { hasOpenModals } from '@octopuzzles/ui';
 import { isCommandKey } from '@octopuzzles/utils';
 import { get } from 'svelte/store';
-import { editorHistory, highlights } from '.';
+import { editorHistory, selectedCells } from '.';
 
 /**
  * Default action to do when user clicks on a cell
  */
 export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
-  const { selectedCells } = highlights;
   if (!metaButtonClicked) {
     const currentSelectedCells = get(selectedCells);
     const firstSelectedCell = currentSelectedCells[0];
@@ -27,7 +26,7 @@ export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClick
       selectedCells.set([cell]);
     }
   } else {
-    selectedCells.addCell(cell, false);
+    selectedCells.add(cell, false);
   }
 };
 
@@ -36,9 +35,8 @@ export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClick
  */
 export const defaultHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
   if (mouseDown) {
-    const { selectedCells } = highlights;
     if (get(selectedCells).length > 0) {
-      selectedCells.addCell(cell);
+      selectedCells.add(cell);
     }
   }
 };
@@ -47,8 +45,6 @@ export const defaultHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) 
 export const defaultHandleArrows: ArrowHandler = ({ k }) => {
   //do not accept keyboard input when any modal controls are open
   if (hasOpenModals()) return;
-
-  const { selectedCells } = highlights;
 
   const cells = get(selectedCells);
   const dim = editorHistory.getClue('dimensions');
@@ -91,7 +87,7 @@ export const defaultHandleArrows: ArrowHandler = ({ k }) => {
   if (newCell) {
     k.preventDefault();
     if (isCommandKey(k)) {
-      selectedCells.addCell(newCell);
+      selectedCells.add(newCell);
     } else {
       selectedCells.set([newCell]);
     }

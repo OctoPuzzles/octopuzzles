@@ -29,6 +29,7 @@ import {
   defaultHandleMouseDown,
   defaultHandleMouseEnter
 } from './interactionHandlers';
+import { defaultClues } from '@octopuzzles/sudoku-utils';
 
 // WRITABLES
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -36,20 +37,7 @@ function createEditorHistoryStore() {
   // Step
   const step = writable(0);
   // History
-  const history = writable<EditorHistoryStepWithNumbers[]>([
-    {
-      givens: defaultGivens(),
-      extendedcages: defaultCages(),
-      colors: defaultEditorColors(),
-      paths: defaultPaths(),
-      borderclues: defaultBorderclues(),
-      cellclues: defaultCellclues(),
-      dimensions: { rows: 9, columns: 9, margins: undefined },
-      cells: defaultCells(),
-      regions: defaultRegions(),
-      logic: defaultLogic()
-    }
-  ]);
+  const history = writable<EditorHistoryStepWithNumbers[]>([deepCopy(defaultClues())]);
 
   // TODO: Move these out of this package
   const labels = writable<{ label: Label; selected: boolean }[]>([]);

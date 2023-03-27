@@ -3,7 +3,7 @@ import { deepCopy } from '@octopuzzles/utils';
 import { defaultRegionSize } from '@octopuzzles/sudoku-utils';
 import type { Position } from '@octopuzzles/models';
 import type { ScannerSettings } from '@octopuzzles/models';
-import { gameHistory, mode, highlights } from '.';
+import { gameHistory, mode, highlightedCells, selectedCells } from '.';
 import { cageDefaults, pathDefaults, regionDefaults } from '@octopuzzles/sudoku-utils';
 
 function getValuesFromRange(range: string): string[] {
@@ -82,7 +82,6 @@ function createScannerStore() {
       scanNonConsecutive: settings?.scanNonConsecutive ?? true
     });
 
-    const { highlightedCells, selectedCells } = highlights;
     if (get(mode) === 'game') highlightedCells.set(getHighlightedCells(get(selectedCells)));
   }
 
@@ -800,8 +799,6 @@ function createScannerStore() {
           cornermarks: newCornermarks
         });
 
-        const { highlightedCells, selectedCells } = highlights;
-
         if (settings.scannerSpeed !== 'Instant') {
           selectedCells.set([cell]);
           highlightedCells.set(context.highlightedCells);
@@ -931,7 +928,8 @@ function createScannerStore() {
     isScanning,
     getHighlightedCells,
     toggleSeen,
-    toggleTuples
+    toggleTuples,
+    scannerSettings
   };
 }
 /**

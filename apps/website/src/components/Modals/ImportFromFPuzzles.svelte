@@ -3,8 +3,15 @@
   import { decompressFromBase64 } from '@octopuzzles/utils';
   import type { FPuzzlesJson } from '$features/fpuzzles/types';
   import { importFPuzzleIntoEditorHistory } from '$features/fpuzzles/importFPuzzleIntoEditor';
+  import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
 
   export let isOpen: boolean;
+  export let onImport: (params: {
+    newEditorHistory: EditorHistoryStep;
+    newGameHistory: GameHistoryStep;
+    newTitle: string;
+    newDescription: string;
+  }) => void;
 
   let url = '';
   let loading = false;
@@ -27,7 +34,8 @@
       return;
     }
 
-    importFPuzzleIntoEditorHistory(jsonString);
+    const newState = importFPuzzleIntoEditorHistory(jsonString);
+    onImport(newState);
 
     closeModal();
   }

@@ -1,8 +1,4 @@
 <script lang="ts">
-  import ControllerHelpModal from '$components/Modals/ControllerHelpModal.svelte';
-  import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
-  import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
-  import ControllerSkeleton from '$components/Sudoku/ControllerSkeleton.svelte';
   import {
     BorderClues as BorderCluesIcon,
     CellClues as CellCluesIcon,
@@ -17,13 +13,10 @@
   } from '@octopuzzles/icons';
   import { editorHistory, inputMode } from '$lib/sudokuStore';
   import type { InputMode } from '@octopuzzles/models';
-  import { SquareButton } from '@octopuzzles/ui';
+  import { SquareButton, ControllerSkeleton } from '@octopuzzles/ui';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
   import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';
-  import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
-  import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
-  import Question from 'phosphor-svelte/lib/Question/Question.svelte';
   import { onMount } from 'svelte';
   import BorderClues from './components/BorderClues.svelte';
   import CellClues from './components/CellClues.svelte';
@@ -35,6 +28,7 @@
   import Logic from './components/Logic.svelte';
   import Paths from './components/Paths.svelte';
   import Regions from './components/Regions.svelte';
+  import Help from '../Help.svelte';
 
   const controls: Record<
     string,
@@ -62,10 +56,6 @@
   onMount(() => {
     $inputMode = 'givens';
   });
-
-  let showHelpModal = false;
-  let showImportFromFPuzzlesModal = false;
-  let showExportToFPuzzlesModal = false;
 </script>
 
 <ControllerSkeleton
@@ -106,30 +96,7 @@
     </SquareButton>
   </svelte:fragment>
   <svelte:fragment slot="aux">
-    <button
-      on:click={() => (showHelpModal = true)}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
-      title="help"
-    >
-      <Question size={32} />
-    </button>
-    <button
-      on:click={() => (showExportToFPuzzlesModal = true)}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-      title="Export"
-    >
-      <FileArrowUp size={32} />
-    </button>
-    <button
-      on:click={() => (showImportFromFPuzzlesModal = true)}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-      title="Import from f-puzzles"
-    >
-      <FileArrowDown size={32} />
-    </button>
+    <slot />
   </svelte:fragment>
+  <Help slot="helpModalContent" />
 </ControllerSkeleton>
-
-<ControllerHelpModal bind:isOpen={showHelpModal} mode="editor" />
-<ImportFromFPuzzles bind:isOpen={showImportFromFPuzzlesModal} />
-<ExportToFPuzzles bind:isOpen={showExportToFPuzzlesModal} />

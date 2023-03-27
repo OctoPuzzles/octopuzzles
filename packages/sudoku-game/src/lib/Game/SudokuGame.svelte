@@ -8,14 +8,19 @@
     inputMode,
     handleArrows,
     handleMouseDown,
-    handleMouseEnter
+    handleMouseEnter,
+    gameHistory
   } from '$lib/sudokuStore';
   import type {
     EditorHistoryStep,
     GameHistoryStep,
     ScannerSettings,
+    Solution,
     WalkthroughStep
   } from '@octopuzzles/models';
+  import { getUserSolution } from '@octopuzzles/sudoku-utils';
+  import { scanner } from '$lib/sudokuStore/scanner';
+  import { onMount, setContext } from 'svelte';
 
   // SIZING
   let windowHeight: number;
@@ -32,9 +37,64 @@
 
   export let walkthrough: WalkthroughStep[];
 
-  export let scannerSettings: ScannerSettings;
+  export let solution: Solution | undefined = undefined;
+
+  export let scannerSettings: ScannerSettings | undefined;
 
   export let onScannerSettingsChange: (newSettings: ScannerSettings) => void;
+  setContext('updateScannerSettings', onScannerSettingsChange);
+
+  export let onDone: (() => void) | undefined = undefined;
+
+  onMount(() => {
+    gameHistory.clues.set(clues);
+    gameHistory.reset();
+  });
+
+  let storeUserInputs = gameHistory.subscribeToInputs();
+
+  $: userInputs = $storeUserInputs;
+
+  $: gameHistory.clues.set(clues);
+
+  $: scanner.configure(scannerSettings);
+
+  $: if (solution != null && onDone != null) {
+    if (checkSolution(userInputs.values)) {
+      onDone();
+    }
+  }
+
+  function checkSolution(numbers: string[][]): boolean {
+    $wrongCells = [];
+    if (solution?.numbers == null) return false;
+
+    if (
+      solution.numbers.length !== numbers.length ||
+      solution.numbers[0].length !== numbers[0].length
+    ) {
+      return false;
+    }
+
+    let userSolution = getUserSolution({
+      givens: clues.givens,
+      values: numbers
+    });
+
+    let isDone = true;
+
+    userSolution.forEach((row, rowIndex) => {
+      row.forEach((cell, columnIndex) => {
+        if (solution && solution.numbers[rowIndex][columnIndex] !== cell) {
+          if (cell.length > 0) {
+            $wrongCells = [...$wrongCells, { row: rowIndex, column: columnIndex }];
+          }
+          isDone = false;
+        }
+      });
+    });
+    return isDone;
+  }
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
@@ -57,6 +117,8 @@
     />
   </div>
   <div class="my-auto">
-    <Controller bind:walkthrough />
+    <Controller bind:walkthrough>
+      <slot />
+    </Controller>
   </div>
 </div>

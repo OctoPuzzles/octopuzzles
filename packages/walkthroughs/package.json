@@ -19,13 +19,13 @@
     "dist"
   ],
   "peerDependencies": {
+    "@sveltejs/kit": "^1.5.0",
     "svelte": "^3.54.0"
   },
   "devDependencies": {
     "@octopuzzles/models": "*",
     "@octopuzzles/utils": "*",
     "@sveltejs/adapter-auto": "^2.0.0",
-    "@sveltejs/kit": "^1.5.0",
     "@sveltejs/package": "^2.0.0",
     "classnames": "^2.3.1",
     "eslint-config-octopuzzles-svelte": "*",

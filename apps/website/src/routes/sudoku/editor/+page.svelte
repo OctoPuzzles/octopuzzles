@@ -2,33 +2,54 @@
   import { SudokuGame } from '@octopuzzles/sudoku-game';
   import { SudokuEditor } from '@octopuzzles/sudoku-editor';
   import { Button, Input, Label, PuzzleLabel, RichTextEditor } from '@octopuzzles/ui';
-  import { onDestroy, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import {
-    defaultCentermarks,
-    defaultCornermarks,
-    defaultGameColors,
-    defaultValues
-  } from '@octopuzzles/sudoku-utils';
+  import { defaultClues, defaultUserInputs, defaultValues } from '@octopuzzles/sudoku-utils';
   import { page } from '$app/stores';
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
-  import { getUserSolution } from '$utils/getSolution';
-  import { editorHistory, gameHistory, mode } from '$stores/sudokuStore';
+  import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
+  import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
+  import { getUserSolution } from '@octopuzzles/sudoku-utils';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
   import type { PageData } from './$types';
   import trpc, { type InferMutationInput } from '$lib/client/trpc';
-  import { resetAllSudokuStores } from '$utils/resetAllStores';
+  import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
+  import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
+  import { me } from '$stores/meStore';
+  import type { GameHistoryStep } from '@octopuzzles/models';
+  import { deepCopy } from '@octopuzzles/utils';
 
   export let data: PageData;
 
-  const sudokuTitle = editorHistory.title;
-  const description = editorHistory.description;
-  const labels = editorHistory.labels;
+  let sudokuTitle = data.sudoku?.title ?? '';
+  let description = data.sudoku?.description ?? '';
+  let labels =
+    data.labels
+      .sort((a, b) => (a.name > b.name ? 1 : -1))
+      .map((l) => ({
+        label: l,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        selected: data.sudoku?.labels?.some((label) => label.id === l.id) ?? false
+      })) ?? [];
   let walkthrough = data.walkthrough?.steps ?? [];
+  let clues = fillCluesWithDefaults(data.sudoku ?? defaultClues());
+  let userInputs: GameHistoryStep = {
+    ...defaultUserInputs(data.sudoku?.dimensions),
+    values: data.sudoku?.solution?.numbers ?? defaultValues(data.sudoku?.dimensions)
+  };
+  let scannerSettings = me.settings;
+
+  let id = data.sudoku?.id;
+  let isPublic = data.sudoku?.publicSince != null;
+  let provideSolution = data.sudoku?.solution != null;
+
+  let errors: Record<string, string> = {};
+  let loading = false;
 
   let showImportFromFPuzzlesModal = false;
+  let showExportToFPuzzlesModal = false;
   let showCommonDescriptionsModal = false;
 
   async function changeUpdateStatus(make_public: boolean): Promise<void> {
@@ -53,20 +74,21 @@
     let solution: InferMutationInput<'sudokus:provideSolutionToPuzzle'>['solution'] = undefined;
     // create solution
     if (provideSolution) {
+      let values = userInputs.values;
       if (walkthrough.length) {
         const finalStep = walkthrough[walkthrough.length - 1].step;
         if (
-          $userInputs.values.some((row, i) => {
+          userInputs.values.some((row, i) => {
             return row.some((value, j) => {
               return value === '' && finalStep.values[i][j] !== '';
             });
           })
         ) {
-          gameHistory.set(finalStep);
+          values = finalStep.values;
         }
       }
       solution = {
-        numbers: getUserSolution({ givens: $sudokuClues.givens, values: $userInputs.values })
+        numbers: getUserSolution({ givens: clues.givens, values })
       };
     }
     await trpc().mutation('sudokus:provideSolutionToPuzzle', {
@@ -76,78 +98,13 @@
   }
 
   onMount(async () => {
-    let sud = data.sudoku;
-
-    gameHistory.reset();
-    $labels =
-      data.labels
-        .sort((a, b) => (a.name > b.name ? 1 : -1))
-        .map((l) => ({
-          label: l,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          selected: sud?.labels?.some((label) => label.id === l.id) ?? false
-        })) ?? [];
-    if (sud != null) {
-      $sudokuTitle = sud.title;
-      $description = sud.description;
-      id = sud.id;
-      provideSolution = sud.solution != null;
-      isPublic = sud.publicSince != null;
-      gameHistory.set({
-        values: defaultValues(sud.dimensions),
-        centermarks: defaultCentermarks(sud.dimensions),
-        cornermarks: defaultCornermarks(sud.dimensions),
-        colors: defaultGameColors(sud.dimensions)
-      });
-      editorHistory.reset({
-        borderclues: sud.borderclues ?? undefined,
-        cellclues: sud.cellclues ?? undefined,
-        regions: sud.regions ?? undefined,
-        givens: sud.givens ?? undefined,
-        cells: sud.cells ?? undefined,
-        colors: sud.colors ?? undefined,
-        extendedcages: sud.extendedcages ?? undefined,
-        paths: sud.paths ?? undefined,
-        dimensions: sud.dimensions,
-        logic: sud.logic ?? undefined
-      });
-      if (sud.solution) {
-        gameHistory.set({
-          values: sud.solution.numbers
-        });
-      }
-    } else {
-      $sudokuTitle = '';
-      $description = '';
-
-      editorHistory.reset();
-    }
-
     if ($page.url.searchParams.get('import')) {
       showImportFromFPuzzlesModal = true;
     }
   });
 
-  onDestroy(() => {
-    resetAllSudokuStores();
-  });
-
   type Tabs = 'editor' | 'game' | 'form';
   let tab: Tabs = 'editor';
-  $: if (tab === 'editor') {
-    $mode = 'editor';
-  } else {
-    $mode = 'game';
-  }
-
-  let id: number | undefined = undefined;
-  let isPublic = false;
-  let errors: Record<string, string> = {};
-  let loading = false;
-  let provideSolution = false;
-
-  const sudokuClues = editorHistory.subscribeToClues();
-  const userInputs = gameHistory.subscribeToInputs();
 
   async function save(): Promise<void> {
     loading = true;
@@ -155,20 +112,20 @@
     try {
       const createdSudoku = await trpc().mutation('sudokus:create', {
         sudoku: {
-          title: $sudokuTitle,
-          description: $description,
-          dimensions: $sudokuClues.dimensions,
-          borderclues: $sudokuClues.borderclues,
-          cellclues: $sudokuClues.cellclues,
-          regions: $sudokuClues.regions,
-          cells: $sudokuClues.cells,
-          colors: $sudokuClues.colors,
-          givens: $sudokuClues.givens,
-          extendedcages: $sudokuClues.extendedcages,
-          paths: $sudokuClues.paths,
-          logic: $sudokuClues.logic
+          title: sudokuTitle,
+          description: description,
+          dimensions: clues.dimensions,
+          borderclues: clues.borderclues,
+          cellclues: clues.cellclues,
+          regions: clues.regions,
+          cells: clues.cells,
+          colors: clues.colors,
+          givens: clues.givens,
+          extendedcages: clues.extendedcages,
+          paths: clues.paths,
+          logic: clues.logic
         },
-        labels: $labels.filter((l) => l.selected).map((l) => l.label.id)
+        labels: labels.filter((l) => l.selected).map((l) => l.label.id)
       });
 
       if (createdSudoku != null) {
@@ -202,20 +159,20 @@
       const updatedSudoku = await trpc().mutation('sudokus:update', {
         id,
         sudokuUpdates: {
-          title: $sudokuTitle,
-          description: $description,
-          dimensions: $sudokuClues.dimensions,
-          borderclues: $sudokuClues.borderclues,
-          cellclues: $sudokuClues.cellclues,
-          regions: $sudokuClues.regions,
-          cells: $sudokuClues.cells,
-          colors: $sudokuClues.colors,
-          givens: $sudokuClues.givens,
-          extendedcages: $sudokuClues.extendedcages,
-          paths: $sudokuClues.paths,
-          logic: $sudokuClues.logic
+          title: sudokuTitle,
+          description: description,
+          dimensions: clues.dimensions,
+          borderclues: clues.borderclues,
+          cellclues: clues.cellclues,
+          regions: clues.regions,
+          cells: clues.cells,
+          colors: clues.colors,
+          givens: clues.givens,
+          extendedcages: clues.extendedcages,
+          paths: clues.paths,
+          logic: clues.logic
         },
-        labels: $labels.filter((l) => l.selected).map((l) => l.label.id)
+        labels: labels.filter((l) => l.selected).map((l) => l.label.id)
       });
 
       if (updatedSudoku != null) {
@@ -252,9 +209,9 @@
   }
 
   function doesSolutionHaveHoles(): boolean {
-    if (!$sudokuClues.givens || !$userInputs.values) return false;
+    if (!clues.givens || !userInputs.values) return false;
 
-    let userSolution = getUserSolution({ givens: $sudokuClues.givens, values: $userInputs.values });
+    let userSolution = getUserSolution({ givens: clues.givens, values: userInputs.values });
 
     for (const row of userSolution) {
       for (const cell of row) {
@@ -268,7 +225,7 @@
   }
 
   let solutionHasHoles = false;
-  $: if ($userInputs.values && $sudokuClues.givens) {
+  $: if (userInputs.values && clues.givens) {
     solutionHasHoles = doesSolutionHaveHoles();
   }
 </script>
@@ -303,9 +260,38 @@
 </div>
 
 {#if tab === 'editor'}
-  <SudokuEditor bind:clues={$sudokuClues} />
+  <SudokuEditor bind:clues>
+    <button
+      on:click={() => (showExportToFPuzzlesModal = true)}
+      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+      title="Export"
+    >
+      <FileArrowUp size={32} />
+    </button>
+    <button
+      on:click={() => (showImportFromFPuzzlesModal = true)}
+      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+      title="Import from f-puzzles"
+    >
+      <FileArrowDown size={32} />
+    </button>
+  </SudokuEditor>
 {:else if tab === 'game'}
-  <SudokuGame bind:walkthrough clues={$sudokuClues} bind:buserInputs={$userInputs} />
+  <SudokuGame
+    scannerSettings={$scannerSettings.scanner}
+    onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
+    bind:walkthrough
+    {clues}
+    bind:userInputs
+  >
+    <button
+      on:click={() => (showExportToFPuzzlesModal = true)}
+      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+      title="Export"
+    >
+      <FileArrowUp size={32} />
+    </button>
+  </SudokuGame>
 {:else}
   <div class="m-auto container p-4">
     <form>
@@ -323,7 +309,7 @@
         </ul>
       {/if}
 
-      <Input label="Title" bind:value={$sudokuTitle} placeholder="My sudoku">
+      <Input label="Title" bind:value={sudokuTitle} placeholder="My sudoku">
         <p slot="error">{errors.title ? errors.title : ''}</p>
       </Input>
       <Label>Description</Label>
@@ -338,7 +324,7 @@
         <div class="rounded-lg border mt-2 p-1 min-h-[10rem]">
           <RichTextEditor
             bind:this={descriptionEditor}
-            bind:content={$description}
+            bind:content={description}
             placeholder="Normal sudoku rules apply..."
           />
           {#if errors.description}
@@ -365,7 +351,7 @@
       <h1 class="font-semibold mt-8">Labels</h1>
       <p class="mb-2">Pick the labels that match your puzzle</p>
       <div class="flex flex-wrap gap-3">
-        {#each $labels as label}
+        {#each labels as label}
           <Label>
             <PuzzleLabel label={label.label} selected={label.selected} />
             <input
@@ -409,13 +395,14 @@
   </div>
   <CommonDescriptionsModal
     bind:isOpen={showCommonDescriptionsModal}
+    {labels}
     addLabel={(l) => {
       let newDescription = `<p><strong>${l.name}</strong>: ${l.description}</p>`;
-      if ($description.length !== 0) {
-        newDescription = `${$description}${newDescription}`;
+      if (description.length !== 0) {
+        newDescription = `${description}${newDescription}`;
       }
       descriptionEditor.setRichEditorContent(newDescription);
-      let newLabels = $labels;
+      let newLabels = deepCopy(labels);
       newLabels.map((label) => {
         if (l.id === label.label.id) {
           label.selected = true;
@@ -424,11 +411,26 @@
           return label;
         }
       });
-      $labels = newLabels;
-      return $description;
+      labels = newLabels;
+      return description;
     }}
-    currentDescription={$description}
+    currentDescription={description}
   />
 {/if}
 
-<ImportFromFPuzzles bind:isOpen={showImportFromFPuzzlesModal} />
+<ImportFromFPuzzles
+  bind:isOpen={showImportFromFPuzzlesModal}
+  onImport={({ newEditorHistory, newGameHistory, newTitle, newDescription }) => {
+    clues = newEditorHistory;
+    userInputs = newGameHistory;
+    sudokuTitle = newTitle;
+    description = newDescription;
+  }}
+/>
+<ExportToFPuzzles
+  bind:isOpen={showExportToFPuzzlesModal}
+  {clues}
+  {userInputs}
+  title={sudokuTitle}
+  {description}
+/>

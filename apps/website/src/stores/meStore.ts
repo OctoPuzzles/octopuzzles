@@ -1,7 +1,6 @@
 import trpc from '$lib/client/trpc';
 import type { User, UserSettings } from '@octopuzzles/models';
 import { get, writable } from 'svelte/store';
-import { scanner } from './sudokuStore/scanner';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createMeStore() {
@@ -14,8 +13,6 @@ function createMeStore() {
   ) {
     user.set(newUser);
     settings.set(newSettings ?? {});
-
-    scanner.configure(newSettings?.scanner);
   }
 
   function getSettings(): Partial<UserSettings> {
@@ -35,6 +32,7 @@ function createMeStore() {
   return {
     subscribe: user.subscribe,
     set,
+    settings,
     getSettings,
     saveSettings
   };

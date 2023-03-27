@@ -4,7 +4,6 @@
   import Pause from 'phosphor-svelte/lib/Pause/Pause.svelte';
   import { Step } from '@octopuzzles/icons';
   import Atom from 'phosphor-svelte/lib/Atom/Atom.svelte';
-  import { editorHistory } from '$lib/sudokuStore';
   import { cageDefaults, pathDefaults, regionDefaults } from '@octopuzzles/sudoku-utils';
   import type {
     ScannerHighlightMode,
@@ -12,28 +11,32 @@
     ScannerSettings,
     ScannerSpeed
   } from '@octopuzzles/models';
-  import { me } from '$stores/meStore';
   import { scanner } from '$lib/sudokuStore/scanner';
+  import { gameHistory } from '$lib/sudokuStore';
+  import { getContext } from 'svelte';
 
-  let scannerSettings: ScannerSettings = me.getSettings().scanner ?? {};
-  let highlightMode = scannerSettings.highlightMode ?? 'None';
-  let mode = scannerSettings.mode ?? 'Basic';
-  let autoScan = scannerSettings.autoScan ?? false;
-  let scannerSpeed = scannerSettings.scannerSpeed ?? 'Slow';
-  let useCentreMarks = scannerSettings.useCentreMarks ?? true;
-  let useCornerMarks = scannerSettings.useCornerMarks ?? true;
-  let scanDiagonals = scannerSettings.scanDiagonals ?? true;
-  let scanAntiKnight = scannerSettings.scanAntiKnight ?? true;
-  let scanAntiKing = scannerSettings.scanAntiKing ?? true;
-  let scanDisjointSets = scannerSettings.scanDisjointSets ?? true;
-  let scanCages = scannerSettings.scanCages ?? true;
-  let scanPaths = scannerSettings.scanPaths ?? true;
-  let scanExtraRegions = scannerSettings.scanExtraRegions ?? true;
-  let scanNegativeXV = scannerSettings.scanNegativeXV ?? true;
-  let scanNegativeKropki = scannerSettings.scanNegativeKropki ?? true;
-  let scanNonConsecutive = scannerSettings.scanNonConsecutive ?? true;
+  let onScannerSettingsChange: (newSettings: ScannerSettings) => void =
+    getContext('updateScannerSettings');
 
-  const sudokuClues = editorHistory.subscribeToClues();
+  let scannerSettings = scanner.scannerSettings;
+  let highlightMode = $scannerSettings.highlightMode ?? 'None';
+  let mode = $scannerSettings.mode ?? 'Basic';
+  let autoScan = $scannerSettings.autoScan ?? false;
+  let scannerSpeed = $scannerSettings.scannerSpeed ?? 'Slow';
+  let useCentreMarks = $scannerSettings.useCentreMarks ?? true;
+  let useCornerMarks = $scannerSettings.useCornerMarks ?? true;
+  let scanDiagonals = $scannerSettings.scanDiagonals ?? true;
+  let scanAntiKnight = $scannerSettings.scanAntiKnight ?? true;
+  let scanAntiKing = $scannerSettings.scanAntiKing ?? true;
+  let scanDisjointSets = $scannerSettings.scanDisjointSets ?? true;
+  let scanCages = $scannerSettings.scanCages ?? true;
+  let scanPaths = $scannerSettings.scanPaths ?? true;
+  let scanExtraRegions = $scannerSettings.scanExtraRegions ?? true;
+  let scanNegativeXV = $scannerSettings.scanNegativeXV ?? true;
+  let scanNegativeKropki = $scannerSettings.scanNegativeKropki ?? true;
+  let scanNonConsecutive = $scannerSettings.scanNonConsecutive ?? true;
+
+  const sudokuClues = gameHistory.clues;
 
   let flags = $sudokuClues.logic.flags ?? [];
   let diagonalPos = flags.indexOf('DiagonalPos') !== -1;
@@ -49,7 +52,7 @@
   let negativeWhite = flags.indexOf('NegativeWhite') !== -1;
 
   function updateSettings(): void {
-    scannerSettings = {
+    const newScannerSettings: ScannerSettings = {
       highlightMode: highlightMode as ScannerHighlightMode,
       mode: mode as ScannerMode,
       scannerSpeed: scannerSpeed as ScannerSpeed,
@@ -67,9 +70,9 @@
       scanNegativeKropki,
       scanNonConsecutive
     };
-    me.saveSettings({ scanner: scannerSettings });
+    onScannerSettingsChange(newScannerSettings);
 
-    scanner.configure(scannerSettings);
+    scanner.configure(newScannerSettings);
   }
 
   function handleKeyboardShortcuts(k: KeyboardEvent): void {

@@ -4,7 +4,6 @@
   import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
   import { get } from 'svelte/store';
   import { hasOpenModals, SquareButton } from '@octopuzzles/ui';
-  import { me } from '$stores/meStore';
   import { scanner } from '$lib/sudokuStore/scanner';
 
   function handleClick(newValue: string): void {
@@ -53,7 +52,7 @@
             newCentermarks[position.row][position.column] = '';
             newCornermarks[position.row][position.column] = '';
             anyChanges = true;
-            runScan = me.getSettings().scanner?.autoScan ?? false;
+            runScan = get(scanner.scannerSettings).autoScan ?? false;
           }
         }
       }
@@ -70,7 +69,7 @@
   }
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
+    // do not accept keyboard input when any modal controls are open
     if (hasOpenModals()) return;
 
     if (isDeleteKey(k)) {
