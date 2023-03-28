@@ -48,12 +48,10 @@
 
   onMount(() => {
     gameHistory.clues.set(clues);
-    gameHistory.reset(userInputs);
   });
 
   onDestroy(() => {
     gameHistory.clues.set(defaultClues());
-    gameHistory.reset();
   });
 
   let storeUserInputs = gameHistory.subscribeToInputs();

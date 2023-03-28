@@ -8,13 +8,6 @@ import type {
   MouseEnterHandler,
   EditorHistoryStep
 } from '@octopuzzles/models';
-import {
-  defaultCentermarks,
-  defaultCornermarks,
-  defaultGameColors,
-  defaultNotes,
-  defaultValues
-} from '@octopuzzles/sudoku-utils';
 import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
 import { derived, get, writable } from 'svelte/store';
@@ -38,8 +31,7 @@ function createGameHistoryStore() {
 
   function setClues(newClues: EditorHistoryStep): void {
     clues.set(newClues);
-    step.set(0);
-    history.set([deepCopy(defaultUserInputs(newClues.dimensions))]);
+    reset(deepCopy(defaultUserInputs(newClues.dimensions)));
   }
 
   /**
