@@ -22,11 +22,14 @@
   $: sudokuSize = Math.max(Math.min(windowHeight - 88, windowWidth), 300);
 
   export let clues: EditorHistoryStep;
+  export let initialClues: EditorHistoryStep;
 
   onMount(() => {
-    editorHistory.reset(clues);
+    editorHistory.reset(initialClues);
     storeClues.subscribe((c) => (clues = c));
   });
+
+  $: editorHistory.reset(initialClues);
 
   let storeClues = editorHistory.subscribeToClues();
 

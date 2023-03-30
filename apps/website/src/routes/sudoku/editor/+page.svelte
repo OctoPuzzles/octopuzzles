@@ -35,6 +35,7 @@
       })) ?? [];
   let walkthrough = data.walkthrough?.steps ?? [];
   let clues = fillCluesWithDefaults(data.sudoku ?? defaultClues());
+  let initialClues = clues;
   let userInputs: GameHistoryStep = {
     ...defaultUserInputs(data.sudoku?.dimensions),
     values: data.sudoku?.solution?.numbers ?? defaultValues(data.sudoku?.dimensions)
@@ -260,7 +261,7 @@
 </div>
 
 {#if tab === 'editor'}
-  <SudokuEditor bind:clues>
+  <SudokuEditor bind:clues {initialClues}>
     <button
       on:click={() => (showExportToFPuzzlesModal = true)}
       class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
@@ -421,7 +422,7 @@
 <ImportFromFPuzzles
   bind:isOpen={showImportFromFPuzzlesModal}
   onImport={({ newEditorHistory, newGameHistory, newTitle, newDescription }) => {
-    clues = newEditorHistory;
+    initialClues = newEditorHistory;
     userInputs = newGameHistory;
     sudokuTitle = newTitle;
     description = newDescription;
