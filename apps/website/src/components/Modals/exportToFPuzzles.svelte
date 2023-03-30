@@ -9,15 +9,19 @@
   export let userInputs: GameHistoryStep;
   export let title: string;
   export let description: string;
-
-  let puzzleData = compressToBase64(exportAsFPuzzlesJson(clues, userInputs, title, description));
 </script>
 
 <Modal bind:isOpen>
-  <div class="p-4">
-    Export to FPuzzles
-    <FPuzzlesLink class="w-6 h-6 block" {puzzleData} />
-    Export to Cracking the Cryptic
-    <CtCLink class="w-6 h-6 block" {puzzleData} />
-  </div>
+  {#if isOpen}
+    <!-- Only compute the puzzle data if the modal is open -->
+    {@const puzzleData = compressToBase64(
+      exportAsFPuzzlesJson(clues, userInputs, title, description)
+    )}
+    <div class="p-4">
+      Export to FPuzzles
+      <FPuzzlesLink class="w-6 h-6 block" {puzzleData} />
+      Export to Cracking the Cryptic
+      <CtCLink class="w-6 h-6 block" {puzzleData} />
+    </div>
+  {/if}
 </Modal>

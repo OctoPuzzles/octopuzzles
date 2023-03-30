@@ -16,7 +16,6 @@
   let url = '';
   let loading = false;
   let error = '';
-  let closeModal: () => void;
 
   function importPuzzle(): void {
     const beginnings = ['https://www.f-puzzles.com/?load=', 'https://f-puzzles.com/?load='];
@@ -36,12 +35,10 @@
 
     const newState = importFPuzzleIntoEditorHistory(jsonString);
     onImport(newState);
-
-    closeModal();
   }
 </script>
 
-<Modal bind:isOpen let:close={closeModal}>
+<Modal bind:isOpen let:close>
   <div class="w-96 p-4">
     <h2>Import puzzle from f-puzzles.com</h2>
     {#if error.length > 0}
@@ -51,8 +48,15 @@
     <Input class="mt-4" placeholder="https://www.f-puzzles.com/?load=abcdef..." bind:value={url} />
 
     <div class="w-full mt-8 gap-2 flex flex-col">
-      <Button {loading} variant="default" on:click={closeModal}>Cancel</Button>
-      <Button {loading} variant="primary" on:click={importPuzzle}>Import</Button>
+      <Button {loading} variant="default" on:click={close}>Cancel</Button>
+      <Button
+        {loading}
+        variant="primary"
+        on:click={() => {
+          importPuzzle();
+          close();
+        }}>Import</Button
+      >
     </div>
   </div>
 </Modal>
