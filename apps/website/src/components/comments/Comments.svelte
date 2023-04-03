@@ -1,15 +1,16 @@
 <script lang="ts">
-  import type { InferQueryOutput } from '$lib/client/trpc';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
+  import type { RouterOutputs } from '$lib/trpc/router';
   import { Button, RichTextEditor } from '@octopuzzles/ui';
   import { onMount } from 'svelte';
   import Comment from './Comment.svelte';
+  import { page } from '$app/stores';
 
   export let sudokuId: number;
 
-  let me: InferQueryOutput<'users:me'>;
+  let me: RouterOutputs['users']['me'];
   async function getMe() {
-    me = await trpc().query('users:me');
+    me = await trpc($page).users.me.query();
   }
 
   onMount(() => {
@@ -22,7 +23,7 @@
 
   async function postComment() {
     savingComment = true;
-    await trpc().mutation('comments:create', {
+    await trpc($page).comments.create.mutate({
       body: commentContent,
       sudokuId: sudokuId
     });
@@ -32,10 +33,10 @@
   }
 
   let currentCursor: Date | null | undefined = undefined;
-  let comments: InferQueryOutput<'comments:onSudoku'>['comments'] = [];
+  let comments: RouterOutputs['comments']['onSudoku']['comments'] = [];
   const limit = 20;
   async function getComments() {
-    const c = await trpc().query('comments:onSudoku', {
+    const c = await trpc($page).comments.onSudoku.query({
       sudokuId: sudokuId,
       limit,
       cursor: currentCursor ?? undefined

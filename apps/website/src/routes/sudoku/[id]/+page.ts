@@ -1,16 +1,16 @@
-import trpc from '$lib/client/trpc';
+import { trpc } from '$lib/trpc/client';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { decompressFromBase64 } from '@octopuzzles/utils';
 import type { SolutionStep } from '@octopuzzles/models';
 
-export const load: PageLoad = async ({ fetch, params, url }) => {
-  const trpcClient = trpc(fetch);
-  const sudokuId = parseInt(params.id);
-  const dataParam = url.searchParams.get('data');
+export const load: PageLoad = async (event) => {
+  const trpcClient = trpc(event);
+  const sudokuId = parseInt(event.params.id);
+  const dataParam = event.url.searchParams.get('data');
   const [sudoku, walkthrough] = await Promise.all([
-    trpcClient.query('sudokus:get', { id: sudokuId }),
-    trpcClient.query('walkthroughs:get', { sudokuId })
+    trpcClient.sudokus.get.query({ id: sudokuId }),
+    trpcClient.walkthroughs.get.query({ sudokuId })
   ]);
   if (sudoku == null) {
     throw error(404, 'Not found');

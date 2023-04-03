@@ -2,9 +2,10 @@
   import { Button, Input } from '@octopuzzles/ui';
   import { Logo } from '@octopuzzles/icons';
   import { authMode } from '$stores/authStore';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
   import { me } from '$stores/meStore';
   import type { TRPCError } from '@trpc/server';
+  import { page } from '$app/stores';
 
   let usernameOrEmail = '';
   let password = '';
@@ -16,7 +17,7 @@
     errors = undefined;
     try {
       loading = true;
-      const res = await trpc().mutation('users:login', { usernameOrEmail, password });
+      const res = await trpc($page).users.login.mutate({ usernameOrEmail, password });
       me.set(res);
       authMode.setAuthMode();
       usernameOrEmail = '';

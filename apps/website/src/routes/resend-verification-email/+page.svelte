@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Input, Button } from '@octopuzzles/ui';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
+  import { page } from '$app/stores';
 
   let email = '';
 
@@ -9,7 +10,7 @@
   let successful = false;
 
   async function resendVerificationEmail() {
-    return await trpc().mutation('users:resend-verification', { email });
+    return await trpc($page).users.resendVerification.mutate({ email });
   }
 
   async function requestNewVerificationToken(): Promise<void> {

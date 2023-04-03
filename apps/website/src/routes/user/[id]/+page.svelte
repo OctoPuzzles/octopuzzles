@@ -1,8 +1,9 @@
 <script lang="ts">
   import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
   import SudokuList from '$components/Sudoku/SudokuList.svelte';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
   import type { PageData } from './$types';
+  import { page } from '$app/stores';
 
   export let data: PageData;
 
@@ -13,7 +14,7 @@
 
   async function loadNextPage() {
     loading = true;
-    let sudokuData = await trpc().query('sudokus:search', {
+    let sudokuData = await trpc($page).sudokus.search.query({
       labels: [],
       limit: 24,
       userId: data.user.id,
@@ -58,7 +59,7 @@
   bind:isOpen={showDeleteSudokuModal}
   onAccept={async () => {
     if (sudokuToDelete == null) return;
-    await trpc().mutation('sudokus:delete', { id: sudokuToDelete });
+    await trpc($page).sudokus.delete.mutate({ id: sudokuToDelete });
     showDeleteSudokuModal = false;
   }}
 />

@@ -5,13 +5,14 @@
   import { authMode } from '$stores/authStore';
   import { Button } from '@octopuzzles/ui';
   import AuthDrawer from '$components/Drawer/AuthDrawer/index.svelte';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
   import { me } from '$stores/meStore';
   import { onMount } from 'svelte';
+  import { page } from '$app/stores';
 
   async function getMe() {
-    const res = await trpc().query('users:me');
-    const settings = await trpc().query('users:getSettings');
+    const res = await trpc($page).users.me.query();
+    const settings = await trpc($page).users.getSettings.query();
     me.set(res, settings);
   }
 
@@ -20,7 +21,7 @@
   });
 
   const handleLogout = async (): Promise<void> => {
-    await trpc().mutation('users:logout');
+    await trpc($page).users.logout.mutate();
     await getMe();
     await goto('/');
   };
