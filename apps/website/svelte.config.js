@@ -11,7 +11,6 @@ const config = {
   kit: {
     adapter: adapter(),
     alias: {
-      $constants: 'src/constants.ts',
       $utils: 'src/utils',
       $components: 'src/components',
       $features: 'src/features',

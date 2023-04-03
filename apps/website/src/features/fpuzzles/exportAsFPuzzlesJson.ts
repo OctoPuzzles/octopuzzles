@@ -1,6 +1,4 @@
-import { editorHistory, gameHistory } from '$stores/sudokuStore';
 import type { FPuzzlesJson, HexColor, PositionString } from './types';
-import { get } from 'svelte/store';
 import { deepCopy } from '@octopuzzles/utils';
 import { defaultRegions } from '@octopuzzles/sudoku-utils';
 import { topLeftPosition } from '@octopuzzles/sudoku-utils';
@@ -10,26 +8,28 @@ import {
   getPathsToDraw,
   getRegionsToDraw
 } from '@octopuzzles/sudoku-utils';
-import type { Color, Position } from '@octopuzzles/models';
+import type { Color, EditorHistoryStep, GameHistoryStep, Position } from '@octopuzzles/models';
 
-export function exportAsFPuzzlesJson(): FPuzzlesJson {
-  const givens = editorHistory.getClue('givens');
-  const borderClues = editorHistory.getClue('borderclues');
-  const cellClues = editorHistory.getClue('cellclues');
-  const regions = editorHistory.getClue('regions');
-  //const cells = editorHistory.getClue('cells');
-  const editorColors = editorHistory.getClue('colors');
-  const cages = editorHistory.getClue('extendedcages');
-  const paths = editorHistory.getClue('paths');
-  const dimensions = editorHistory.getClue('dimensions');
-  const logic = editorHistory.getClue('logic');
+export function exportAsFPuzzlesJson(
+  clues: EditorHistoryStep,
+  userInputs: GameHistoryStep,
+  title: string,
+  description: string
+): FPuzzlesJson {
+  const {
+    givens,
+    borderclues,
+    cellclues,
+    regions,
+    colors: editorColors,
+    extendedcages,
+    paths,
+    dimensions,
+    logic
+  } = clues;
   const flags = logic.flags ?? [];
 
-  const values = get(gameHistory.getValue('values'));
-  const gameColors = get(gameHistory.getValue('colors'));
-  const cornermarks = get(gameHistory.getValue('cornermarks'));
-  const centermarks = get(gameHistory.getValue('centermarks'));
-  //const notes = get(gameHistory.getValue('notes');
+  const { values, colors: gameColors, cornermarks, centermarks } = userInputs;
 
   const getPositionString = (position: Position): PositionString => {
     return `R${position.row + 1 - (dimensions.margins?.top ?? 0)}C${
@@ -79,10 +79,10 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
     nonconsecutive: flags.some((f) => f === 'Nonconsecutive' || f === 'NegativeWhite')
       ? true
       : undefined,
-    ruleset: get(editorHistory.description),
+    ruleset: description,
     size,
     'sumdot(intersection)': [],
-    title: get(editorHistory.title)
+    title
   };
 
   for (
@@ -314,7 +314,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
     });
   });
 
-  borderClues.forEach((c) => {
+  borderclues.forEach((c) => {
     const minRow = Math.min(c.positions[0].row, c.positions[1].row);
     const maxRow = Math.max(c.positions[0].row, c.positions[1].row);
     const minColumn = Math.min(c.positions[0].column, c.positions[1].column);
@@ -440,7 +440,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
     });
   });
 
-  cellClues.forEach((c) => {
+  cellclues.forEach((c) => {
     switch (c.type) {
       case 'Maximum': {
         const maximum = fPuzzle.maximum ?? (fPuzzle.maximum = []);
@@ -523,7 +523,7 @@ export function exportAsFPuzzlesJson(): FPuzzlesJson {
     });
   });
 
-  cages.forEach((c) => {
+  extendedcages.forEach((c) => {
     switch (c.type) {
       case 'Killer': {
         const killercage = fPuzzle.killercage ?? (fPuzzle.killercage = []);

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { WalkthroughViewer } from '@octopuzzles/walkthroughs';
-  import { fillSudokuWithDefaults } from '$utils/fillSudokuWithDefaults';
+  import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
 
   export let data: PageData;
 </script>
@@ -18,7 +18,7 @@
 
 <div class="mx-auto max-w-[100vh] min-w-[50vw]">
   <WalkthroughViewer
-    clues={fillSudokuWithDefaults(data.sudoku)}
+    clues={fillCluesWithDefaults(data.sudoku)}
     walkthrough={data.walkthrough?.steps ?? []}
   />
 </div>

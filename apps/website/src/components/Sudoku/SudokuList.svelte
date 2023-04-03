@@ -7,7 +7,7 @@
   import type { Sudoku } from '@octopuzzles/models';
   import type { User } from '@octopuzzles/models';
   import type { Label } from '@octopuzzles/models';
-  import { fillSudokuWithDefaults } from '$utils/fillSudokuWithDefaults';
+  import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
 
   export let sudokus:
     | (Sudoku & { user?: Pick<User, 'id' | 'username' | 'role'>; labels: Label[] })[]
@@ -35,7 +35,7 @@
           data-sveltekit-preload-data
         >
           <div class="h-96 w-full p-4 justify-center">
-            <SudokuDisplay clues={fillSudokuWithDefaults(sudoku)} />
+            <SudokuDisplay clues={fillCluesWithDefaults(sudoku)} />
           </div>
           <div class="h-32 bg-gray-100 w-full border-t p-2">
             <div class="flex justify-between h-20">

@@ -5,14 +5,13 @@
   import { Button } from '@octopuzzles/ui';
   import classNames from 'classnames';
   import type { Label } from '@octopuzzles/models';
-  import { editorHistory } from '$stores/sudokuStore';
 
   export let isOpen: boolean;
   export let currentDescription: string;
   export let addLabel: (label: Label) => string;
+  export let labels: { label: Label; selected: boolean }[];
 
-  const labels = editorHistory.labels;
-  let previewedDescription = $labels[0].label.description;
+  let previewedDescription = labels[0].label.description;
 </script>
 
 <Modal let:close bind:isOpen>
@@ -21,7 +20,8 @@
   </div>
   <div class="flex h-80">
     <ul class="flex flex-col gap-px border-r border-gray-300 overflow-y-auto w-96 h-full">
-      {#each $labels as item, i}
+      {#each labels as item, i}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <li
           class={classNames(
             'py-2 px-4 w-full flex justify-between items-center cursor-pointer bg-white',

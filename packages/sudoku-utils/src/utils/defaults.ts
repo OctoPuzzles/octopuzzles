@@ -2,7 +2,9 @@ import type {
   Borderclues,
   Cellclues,
   Dimensions,
+  EditorHistoryStep,
   Extendedcages,
+  GameHistoryStep,
   Logic,
   Paths,
   Position,
@@ -163,4 +165,29 @@ export const defaultPaths = (): Paths => [];
 
 export const defaultLogic = (): Logic => {
   return { digits: undefined, flags: undefined };
+};
+
+export const defaultClues = (): EditorHistoryStep => {
+  return {
+    givens: defaultGivens(),
+    extendedcages: defaultCages(),
+    colors: defaultEditorColors(),
+    paths: defaultPaths(),
+    borderclues: defaultBorderclues(),
+    cellclues: defaultCellclues(),
+    dimensions: { rows: 9, columns: 9, margins: undefined },
+    cells: defaultCells(),
+    regions: defaultRegions(),
+    logic: defaultLogic()
+  };
+};
+
+export const defaultUserInputs = (dimensions?: Dimensions): GameHistoryStep => {
+  return {
+    values: defaultValues(dimensions),
+    colors: defaultGameColors(dimensions),
+    cornermarks: defaultCornermarks(dimensions),
+    centermarks: defaultCentermarks(dimensions),
+    notes: defaultNotes(dimensions)
+  };
 };

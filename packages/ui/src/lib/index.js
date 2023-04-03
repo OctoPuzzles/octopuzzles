@@ -2,6 +2,7 @@ export { default as Button } from './ui/Button.svelte';
 export { default as Checkbox } from './ui/Checkbox.svelte';
 export { default as ColorSelect } from './ui/ColorSelect.svelte';
 export { default as ControllerButton } from './ui/ControllerButton.svelte';
+export { default as ControllerSkeleton } from './ui/ControllerSkeleton.svelte';
 export { default as ExternalLink } from './ui/ExternalLink.svelte';
 export { default as HTMLContent } from './ui/HTMLContent.svelte';
 export { default as Input } from './ui/Input.svelte';

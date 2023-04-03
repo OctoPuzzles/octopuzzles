@@ -1,23 +1,24 @@
 <script lang="ts">
   import html2canvas from 'html2canvas';
-  import SudokuGame from '$components/Sudoku/Game/SudokuGame.svelte';
+  import { SudokuGame } from '@octopuzzles/sudoku-game';
   import SudokuInfo from '$components/Sudoku/SudokuInfo.svelte';
-  import { editorHistory, gameHistory, highlights } from '$stores/sudokuStore';
-  import { onDestroy, onMount } from 'svelte';
-  import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
-  import { getUserSolution } from '$utils/getSolution';
   import type { PageData } from './$types';
-  import { resetAllSudokuStores } from '$utils/resetAllStores';
-  import type { GameValues } from '@octopuzzles/models';
+  import { me } from '$stores/meStore';
+  import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
+  import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
+  import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
+  import { defaultUserInputs } from '@octopuzzles/sudoku-utils';
 
   export let data: PageData;
 
-  const { wrongCells } = highlights;
-
-  const sudokuTitle = editorHistory.title;
-  const description = editorHistory.description;
+  let sudokuTitle = data.sudoku.title;
+  let description = data.sudoku.description;
   let walkthrough = data.walkthrough?.steps ?? [];
+  let clues = fillCluesWithDefaults(data.sudoku);
+  let userInputs = data.gameData ?? defaultUserInputs(data.sudoku.dimensions);
+  let scannerSettings = me.settings;
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
   let now = Date.now();
@@ -48,83 +49,6 @@
     document.addEventListener('visibilitychange', handleVisibilityChange);
   });
 
-  onDestroy(() => {
-    resetAllSudokuStores();
-  });
-
-  onMount(async () => {
-    let sud = data.sudoku;
-    if (!sud) {
-      await goto('/');
-      return;
-    }
-
-    $sudokuTitle = sud.title;
-    $description = sud.description;
-
-    editorHistory.reset({
-      borderclues: sud.borderclues ?? undefined,
-      cellclues: sud.cellclues ?? undefined,
-      regions: sud.regions ?? undefined,
-      givens: sud.givens ?? undefined,
-      cells: sud.cells ?? undefined,
-      colors: sud.colors ?? undefined,
-      extendedcages: sud.extendedcages ?? undefined,
-      paths: sud.paths ?? undefined,
-      dimensions: sud.dimensions,
-      logic: sud.logic ?? undefined
-    });
-    if (data.gameData) {
-      gameHistory.set(data.gameData);
-    } else {
-      gameHistory.reset();
-    }
-  });
-
-  const sudokuClues = editorHistory.subscribeToClues();
-  const userInputs = gameHistory.subscribeToInputs();
-
-  function checkSolution(numbers: string[][]): boolean {
-    $wrongCells = [];
-    let solution = data.sudoku?.solution;
-    if (solution?.numbers == null) return false;
-
-    if (
-      solution.numbers.length !== numbers.length ||
-      solution.numbers[0].length !== numbers[0].length
-    ) {
-      return false;
-    }
-
-    let userSolution = getUserSolution({
-      givens: $sudokuClues.givens,
-      values: numbers
-    });
-
-    let isDone = true;
-
-    userSolution.forEach((row, rowIndex) => {
-      row.forEach((cell, columnIndex) => {
-        if (solution && solution.numbers[rowIndex][columnIndex] !== cell) {
-          if (cell.length > 0) {
-            $wrongCells = [...$wrongCells, { row: rowIndex, column: columnIndex }];
-          }
-          isDone = false;
-        }
-      });
-    });
-    return isDone;
-  }
-
-  $: checkFinished($userInputs.values);
-
-  function checkFinished(values: GameValues) {
-    if (checkSolution(values)) {
-      clearInterval(timer);
-      showFinishedSudokuModal = true;
-    }
-  }
-
   function takeScreenshot(): void {
     const sudokuDisplay = document.querySelector<HTMLElement>('#sudoku-display');
     if (sudokuDisplay == null) return;
@@ -136,6 +60,7 @@
   }
 
   let showFinishedSudokuModal = false;
+  let exportToFPuzzlesModalIsOpen = false;
 </script>
 
 <svelte:head>
@@ -163,7 +88,33 @@
   </div>
 </div>
 
-<SudokuGame bind:walkthrough clues={$sudokuClues} userInputs={$userInputs} />
+<SudokuGame
+  scannerSettings={$scannerSettings.scanner}
+  onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
+  onDone={() => {
+    clearInterval(timer);
+    showFinishedSudokuModal = true;
+  }}
+  solution={data.sudoku.solution ?? undefined}
+  bind:walkthrough
+  {clues}
+  bind:userInputs
+>
+  <button
+    on:click={() => (exportToFPuzzlesModalIsOpen = true)}
+    class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+    title="Export"
+  >
+    <FileArrowUp size={32} />
+  </button>
+</SudokuGame>
+<ExportToFPuzzles
+  bind:isOpen={exportToFPuzzlesModalIsOpen}
+  {clues}
+  {userInputs}
+  title={sudokuTitle}
+  {description}
+/>
 
 <SudokuInfo sudoku={data.sudoku} {takeScreenshot} />
 

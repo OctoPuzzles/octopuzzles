@@ -57,6 +57,8 @@
     "@octopuzzles/models": "*",
     "@octopuzzles/sudoku-utils": "*",
     "@octopuzzles/sudoku-display": "*",
+    "@octopuzzles/sudoku-editor": "*",
+    "@octopuzzles/sudoku-game": "*",
     "@octopuzzles/utils": "*",
     "@octopuzzles/ui": "*",
     "@octopuzzles/walkthroughs": "*",

@@ -12,7 +12,7 @@ import {
   defaultRegions
 } from '@octopuzzles/sudoku-utils';
 
-export function fillSudokuWithDefaults(sudoku: SudokuClues): EditorHistoryStep {
+export function fillCluesWithDefaults(sudoku: SudokuClues): EditorHistoryStep {
   return {
     cells: sudoku.cells ?? defaultCells(sudoku.dimensions),
     regions: sudoku.regions ?? defaultRegions(sudoku.dimensions),
