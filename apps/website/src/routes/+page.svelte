@@ -4,7 +4,7 @@
   import { Filters } from '@octopuzzles/icons';
   import { page } from '$app/stores';
   import type { PageData } from './$types';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
 
   export let data: PageData;
   let sudokus = data.sudokuData;
@@ -18,7 +18,7 @@
   async function loadNextPage() {
     loading = true;
     currentCursor = nextCursor;
-    let sudokuData = await trpc().query('sudokus:search', {
+    let sudokuData = await trpc($page).sudokus.search.query({
       labels: [],
       limit: 24,
       cursor: nextCursor ?? undefined
@@ -30,7 +30,7 @@
 
   async function refetch(labels: number[]) {
     loading = true;
-    const sudokuData = await trpc().query('sudokus:search', {
+    const sudokuData = await trpc($page).sudokus.search.query({
       labels,
       limit: 24,
       cursor: currentCursor ?? undefined

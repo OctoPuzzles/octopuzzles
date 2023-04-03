@@ -14,12 +14,13 @@
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
   import type { PageData } from './$types';
-  import trpc, { type InferMutationInput } from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
   import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
   import { me } from '$stores/meStore';
   import type { GameHistoryStep } from '@octopuzzles/models';
   import { deepCopy } from '@octopuzzles/utils';
+  import type { RouterInputs } from '$lib/trpc/router';
 
   export let data: PageData;
 
@@ -56,7 +57,7 @@
   async function changeUpdateStatus(make_public: boolean): Promise<void> {
     loading = true;
     if (id) {
-      const res = await trpc().mutation('sudokus:changePublicStatus', {
+      const res = await trpc($page).sudokus.changePublicStatus.mutate({
         id,
         public: make_public
       });
@@ -65,14 +66,12 @@
     loading = false;
   }
 
-  async function createOrUpdateWalkthrough(
-    data: InferMutationInput<'walkthroughs:createOrUpdate'>
-  ) {
-    return await trpc().mutation('walkthroughs:createOrUpdate', data);
+  async function createOrUpdateWalkthrough(data: RouterInputs['walkthroughs']['createOrUpdate']) {
+    return await trpc($page).walkthroughs.createOrUpdate.mutate(data);
   }
 
   async function saveSolution(id: number): Promise<void> {
-    let solution: InferMutationInput<'sudokus:provideSolutionToPuzzle'>['solution'] = undefined;
+    let solution: RouterInputs['sudokus']['provideSolutionToPuzzle']['solution'] = undefined;
     // create solution
     if (provideSolution) {
       let values = userInputs.values;
@@ -92,7 +91,7 @@
         numbers: getUserSolution({ givens: clues.givens, values })
       };
     }
-    await trpc().mutation('sudokus:provideSolutionToPuzzle', {
+    await trpc($page).sudokus.provideSolutionToPuzzle.mutate({
       sudokuId: id,
       solution
     });
@@ -111,7 +110,7 @@
     loading = true;
     errors = {};
     try {
-      const createdSudoku = await trpc().mutation('sudokus:create', {
+      const createdSudoku = await trpc($page).sudokus.create.mutate({
         sudoku: {
           title: sudokuTitle,
           description: description,
@@ -157,7 +156,7 @@
     if (!id) return;
     errors = {};
     try {
-      const updatedSudoku = await trpc().mutation('sudokus:update', {
+      const updatedSudoku = await trpc($page).sudokus.update.mutate({
         id,
         sudokuUpdates: {
           title: sudokuTitle,
@@ -186,7 +185,7 @@
             steps: walkthrough
           });
         } else {
-          await trpc().mutation('walkthroughs:delete', {
+          await trpc($page).walkthroughs.delete.mutate({
             sudokuId: updatedSudoku.id
           });
         }
@@ -203,7 +202,7 @@
   async function deleteSudoku(): Promise<void> {
     loading = true;
     if (id) {
-      await trpc().mutation('sudokus:delete', { id });
+      await trpc($page).sudokus.delete.mutate({ id });
       await goto('/');
     }
     loading = false;

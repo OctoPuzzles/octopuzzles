@@ -1,12 +1,13 @@
 <script lang="ts">
   import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
-  import type { InferQueryOutput } from '$lib/client/trpc';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
+  import type { RouterOutputs } from '$lib/trpc/router';
   import { Button, RichTextEditor, HTMLContent } from '@octopuzzles/ui';
   import { formatDistanceToNowStrict } from 'date-fns';
+  import { page } from '$app/stores';
 
-  export let comment: InferQueryOutput<'comments:onSudoku'>['comments'][0];
-  export let me: InferQueryOutput<'users:me'>;
+  export let comment: RouterOutputs['comments']['onSudoku']['comments'][0];
+  export let me: RouterOutputs['users']['me'];
   export let getComments: () => Promise<void>;
 
   let updatedContent: string | undefined = undefined;
@@ -15,7 +16,7 @@
 
   async function updateComment() {
     if (updatedContent != null) {
-      await trpc().mutation('comments:update', {
+      await trpc($page).comments.update.mutate({
         id: comment.id,
         body: updatedContent
       });
@@ -57,7 +58,7 @@
 <DangerActionModal
   bind:isOpen={showDeleteCommentModal}
   onAccept={async () => {
-    await trpc().mutation('comments:delete', {
+    await trpc($page).comments.delete.mutate({
       id: comment.id
     });
     await getComments();

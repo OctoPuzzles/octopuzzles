@@ -1,33 +1,31 @@
-import * as trpc from '@trpc/server';
-import { z } from 'zod';
-
+import { t } from '$lib/trpc/t';
 import {
+  validateCorrectDimension,
+  validateCorrectDimensionsOfSudokuClues
+} from '$utils/validation';
+import {
+  FrontendUserValidator,
+  LabelValidator,
   NewSudokuValidator,
   SolutionValidator,
   SudokuValidator,
   UpdateSudokuValidator
 } from '@octopuzzles/models';
-import type { TRPCContext } from '.';
-import { TRPCError } from '@trpc/server';
-
-import {
-  validateCorrectDimension,
-  validateCorrectDimensionsOfSudokuClues
-} from '$utils/validation';
 import type { Sudoku } from '@prisma/client';
-import { LabelValidator } from '@octopuzzles/models';
-import { FrontendUserValidator } from '@octopuzzles/models';
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
-export default trpc
-  .router<TRPCContext>()
-  .query('search', {
-    input: z.object({
-      labels: z.array(z.number().int()),
-      limit: z.number().min(1).max(100).optional(),
-      cursor: z.date().optional(),
-      userId: z.number().int().optional()
-    }),
-    resolve: async ({ input, ctx }) => {
+export const sudokus = t.router({
+  search: t.procedure
+    .input(
+      z.object({
+        labels: z.array(z.number().int()),
+        limit: z.number().min(1).max(100).optional(),
+        cursor: z.date().optional(),
+        userId: z.number().int().optional()
+      })
+    )
+    .query(async ({ input, ctx }) => {
       const limit = input.limit ?? 24;
 
       const rawSudokus = await ctx.prisma.sudoku.findMany({
@@ -69,13 +67,14 @@ export default trpc
       }
 
       return { sudokus, nextCursor };
-    }
-  })
-  .query('get', {
-    input: z.object({
-      id: z.number().int()
     }),
-    resolve: async ({ input, ctx }) => {
+  get: t.procedure
+    .input(
+      z.object({
+        id: z.number().int()
+      })
+    )
+    .query(async ({ input, ctx }) => {
       const userId = ctx.token?.id;
       const sudokuRaw = await ctx.prisma.sudoku.findUnique({
         where: { id: input.id },
@@ -99,13 +98,14 @@ export default trpc
           : null;
 
       return sudoku != null ? { ...sudoku, userVote } : null;
-    }
-  })
-  .mutation('delete', {
-    input: z.object({
-      id: z.number().int()
     }),
-    resolve: async ({ input, ctx }) => {
+  delete: t.procedure
+    .input(
+      z.object({
+        id: z.number().int()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       if (ctx.token == null) {
         throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
       }
@@ -122,14 +122,15 @@ export default trpc
       ]);
 
       return sudoku;
-    }
-  })
-  .mutation('changePublicStatus', {
-    input: z.object({
-      id: z.number().int(),
-      public: z.boolean()
     }),
-    resolve: async ({ input, ctx }) => {
+  changePublicStatus: t.procedure
+    .input(
+      z.object({
+        id: z.number().int(),
+        public: z.boolean()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       if (ctx.token == null) {
         throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
       }
@@ -175,14 +176,15 @@ export default trpc
       });
 
       return input.public;
-    }
-  })
-  .mutation('provideSolutionToPuzzle', {
-    input: z.object({
-      sudokuId: z.number().int(),
-      solution: SolutionValidator.optional()
     }),
-    resolve: async ({ input, ctx }) => {
+  provideSolutionToPuzzle: t.procedure
+    .input(
+      z.object({
+        sudokuId: z.number().int(),
+        solution: SolutionValidator.optional()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       if (ctx.token == null) {
         throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
       }
@@ -219,14 +221,15 @@ export default trpc
 
         return updatedSudoku;
       }
-    }
-  })
-  .mutation('create', {
-    input: z.object({
-      sudoku: NewSudokuValidator,
-      labels: z.array(z.number().int()).optional()
     }),
-    resolve: async ({ input, ctx }) => {
+  create: t.procedure
+    .input(
+      z.object({
+        sudoku: NewSudokuValidator,
+        labels: z.array(z.number().int()).optional()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       if (ctx.token == null) {
         throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
       }
@@ -271,15 +274,16 @@ export default trpc
       });
 
       return newSudoku;
-    }
-  })
-  .mutation('update', {
-    input: z.object({
-      id: z.number().int(),
-      sudokuUpdates: UpdateSudokuValidator,
-      labels: z.array(z.number().int()).optional()
     }),
-    resolve: async ({ input, ctx }) => {
+  update: t.procedure
+    .input(
+      z.object({
+        id: z.number().int(),
+        sudokuUpdates: UpdateSudokuValidator,
+        labels: z.array(z.number().int()).optional()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       if (ctx.token == null) {
         throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
       }
@@ -342,5 +346,5 @@ export default trpc
       });
 
       return updatedSudoku;
-    }
-  });
+    })
+});

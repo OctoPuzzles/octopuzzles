@@ -1,17 +1,17 @@
-import trpc from '$lib/client/trpc';
+import { trpc } from '$lib/trpc/client';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ fetch, url }) => {
-  const sudokuIdParam = url.searchParams.get('id');
+export const load: PageLoad = async (event) => {
+  const sudokuIdParam = event.url.searchParams.get('id');
   const sudokuId = sudokuIdParam ? parseInt(sudokuIdParam) : undefined;
-  const trpcClient = trpc(fetch);
+  const trpcClient = trpc(event);
   const [sudoku, walkthrough] =
     sudokuId != null
       ? await Promise.all([
-          trpcClient.query('sudokus:get', { id: sudokuId }),
-          trpcClient.query('walkthroughs:get', { sudokuId })
+          trpcClient.sudokus.get.query({ id: sudokuId }),
+          trpcClient.walkthroughs.get.query({ sudokuId })
         ])
       : [null, null];
-  const labels = await trpcClient.query('labels:getAll');
+  const labels = await trpcClient.labels.getAll.query();
   return { sudoku, labels, walkthrough };
 };

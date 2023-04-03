@@ -2,12 +2,12 @@
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import { me } from '$stores/meStore';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
 
   const token = $page.url.searchParams.get('token');
 
   async function verifyAccount(token: string) {
-    return await trpc().mutation('users:verify', token);
+    return await trpc($page).users.verify.mutate(token);
   }
 
   let errors = false;

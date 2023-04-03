@@ -1,33 +1,34 @@
+import { t } from '$lib/trpc/t';
 import {
   WalkthroughStepValidator,
   WalkthroughValidator,
   type Walkthrough
 } from '@octopuzzles/models';
-import * as trpc from '@trpc/server';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import type { TRPCContext } from '.';
 
-export default trpc
-  .router<TRPCContext>()
-  .query('get', {
-    input: z.object({
-      sudokuId: z.number().int()
-    }),
-    resolve: async ({ input, ctx }) => {
+export const walkthroughs = t.router({
+  get: t.procedure
+    .input(
+      z.object({
+        sudokuId: z.number().int()
+      })
+    )
+    .query(async ({ input, ctx }) => {
       const walkthroughRaw = await ctx.prisma.walkthrough.findFirst({
         where: { sudokuId: input.sudokuId }
       });
       const walkthrough: Walkthrough | null =
         walkthroughRaw !== null ? WalkthroughValidator.parse(walkthroughRaw) : null;
       return walkthrough;
-    }
-  })
-  .mutation('delete', {
-    input: z.object({
-      sudokuId: z.number().int()
     }),
-    resolve: async ({ input, ctx }) => {
+  delete: t.procedure
+    .input(
+      z.object({
+        sudokuId: z.number().int()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       if (ctx.token == null) {
         throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
       }
@@ -51,11 +52,10 @@ export default trpc
           where: { id: walkthrough.id }
         });
       }
-    }
-  })
-  .mutation('createOrUpdate', {
-    input: z.object({ sudokuId: z.number().int(), steps: z.array(WalkthroughStepValidator) }),
-    resolve: async ({ input, ctx }) => {
+    }),
+  createOrUpdate: t.procedure
+    .input(z.object({ sudokuId: z.number().int(), steps: z.array(WalkthroughStepValidator) }))
+    .mutation(async ({ input, ctx }) => {
       if (ctx.token == null) {
         throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
       }
@@ -85,5 +85,5 @@ export default trpc
       });
 
       return walkthrough;
-    }
-  });
+    })
+});

@@ -57,7 +57,7 @@
                   </p>
                   <span class="mx-1">•</span>
                   {#if sudoku.publicSince}
-                    <p>{formatDistanceToNowStrict(sudoku.publicSince)} ago</p>
+                    <p>{formatDistanceToNowStrict(new Date(sudoku.publicSince))} ago</p>
                   {:else}
                     <p class="text-orange-500">Not public</p>
                   {/if}

@@ -2,9 +2,10 @@
   import { Button, Input } from '@octopuzzles/ui';
   import { Logo } from '@octopuzzles/icons';
   import { authMode } from '$stores/authStore';
-  import type { InferMutationInput } from '$lib/client/trpc';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
   import type { TRPCError } from '@trpc/server';
+  import type { RouterInputs } from '$lib/trpc/router';
+  import { page } from '$app/stores';
 
   let username = '';
   let email = '';
@@ -17,8 +18,8 @@
   /** If the signup was successful */
   let registerCompleted = false;
 
-  async function register(data: InferMutationInput<'users:register'>) {
-    return await trpc().mutation('users:register', data);
+  async function register(data: RouterInputs['users']['register']) {
+    return await trpc($page).users.register.mutate(data);
   }
 
   const handleRegister = async (): Promise<void> => {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import Comments from '$components/comments/Comments.svelte';
   import { FacebookLink, RedditLink, TwitterLink, WhatsAppLink } from '@octopuzzles/ui';
-  import trpc from '$lib/client/trpc';
+  import { trpc } from '$lib/trpc/client';
   import type { Label } from '@octopuzzles/models';
   import type { Sudoku } from '@octopuzzles/models';
   import type { User } from '@octopuzzles/models';
@@ -12,6 +12,7 @@
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
   import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
+  import { page } from '$app/stores';
 
   export let sudoku: Sudoku & {
     user?: Pick<User, 'id' | 'username' | 'role'> | null;
@@ -21,7 +22,7 @@
   export let takeScreenshot: () => void;
 
   async function vote(value: number) {
-    return await trpc().mutation('votes:vote', { sudokuId: sudoku.id, value });
+    return await trpc($page).votes.vote.mutate({ sudokuId: sudoku.id, value });
   }
 
   $: pointsWithoutUserVote = (sudoku.points ?? 0) - (sudoku.userVote?.value ?? 0);
