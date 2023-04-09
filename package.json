@@ -12,6 +12,7 @@
     "build": "turbo run build",
     "preview": "turbo run preview",
     "dev": "turbo run dev",
+    "isolate": "turbo run isolate",
     "lint": "turbo run lint",
     "check": "turbo run check",
     "format": "prettier --write .",

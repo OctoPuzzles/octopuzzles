@@ -1,0 +1,13 @@
+@tailwind base;
+
+/* Write your global styles here, in PostCSS syntax */
+.linecap-square {
+  stroke-linecap: square;
+}
+
+.textanchor-middle {
+  text-anchor: middle;
+}
+
+@tailwind components;
+@tailwind utilities;

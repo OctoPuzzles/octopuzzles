@@ -2,6 +2,7 @@
   "name": "@octopuzzles/sudoku-game",
   "version": "0.0.1",
   "scripts": {
+    "isolate": "vite dev",
     "build": "vite build && npm run package",
     "preview": "vite preview",
     "package": "svelte-kit sync && svelte-package && publint",
@@ -23,6 +24,7 @@
     "svelte": "^3.54.0"
   },
   "devDependencies": {
+    "@octopuzzles/icons": "*",
     "@octopuzzles/models": "*",
     "@octopuzzles/utils": "*",
     "@octopuzzles/sudoku-utils": "*",
