@@ -9,13 +9,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "lint": "prettier --check --ignore-path=../../.prettierignore . && eslint \"src\"",
     "test:e2e": "playwright test",
-    "test:unit": "vitest run",
-    "db:migrate:deploy": "prisma migrate deploy",
-    "db:migrate:reset": "prisma migrate reset",
-    "db:migrate:dev": "prisma migrate dev",
-    "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts",
-    "generate": "prisma generate"
+    "test:unit": "vitest run"
   },
   "devDependencies": {
     "@playwright/test": "^1.28.0",
@@ -38,7 +32,6 @@
     "postcss-load-config": "^3.1.4",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.1",
-    "prisma": "^4.7.1",
     "svelte": "^3.50.1",
     "svelte-check": "^2.9.1",
     "svelte-preprocess": "^4.10.7",
@@ -62,7 +55,6 @@
     "@octopuzzles/ui": "*",
     "@octopuzzles/utils": "*",
     "@octopuzzles/walkthroughs": "*",
-    "@prisma/client": "^4.7.1",
     "@tiptap/core": "^2.0.0-beta.205",
     "@tiptap/extension-placeholder": "^2.0.0-beta.205",
     "@tiptap/starter-kit": "^2.0.0-beta.205",
@@ -76,8 +68,5 @@
     "superjson": "^1.12.2",
     "trpc-sveltekit": "^3.5.3",
     "zod": "^3.19.1"
-  },
-  "prisma": {
-    "seed": "node --loader ts-node/esm prisma/seed.ts"
   }
 }

@@ -29,15 +29,13 @@
       "inputs": ["apps/website/prisma/schema.prisma"],
       "cache": false
     },
-    "db:migrate:deploy": {},
-    "db:migrate:reset": {
-      "dependsOn": ["^generate"]
-    },
-    "db:push": {
-      "inputs": ["apps/website/prisma/schema.prisma"],
+    "db:migrate": {
+      "inputs": ["packages/database/migrations/*"],
       "cache": false
     },
-    "db:seed": {},
+    "db:reset": {
+      "cache": false
+    },
     "test:unit": {
       "dependsOn": ["^build"]
     },

@@ -1,6 +1,6 @@
 import { t } from '$lib/trpc/t';
 import * as argon2 from 'argon2';
-import { sendVerifyUserMail } from '$server/email';
+import { sendVerifyUserMail } from '$lib/email';
 import {
   UpdateUserSettingsValidator,
   UserSettingsValidator,

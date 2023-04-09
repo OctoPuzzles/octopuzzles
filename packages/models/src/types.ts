@@ -1,5 +1,3 @@
-import type { SudokuClues, SolutionStep, Position } from '.';
-
 export type Mode = 'editor' | 'game';
 
 type NonNullableFields<T> = {

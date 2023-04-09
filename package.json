@@ -16,11 +16,9 @@
     "check": "turbo run check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "db:migrate:deploy": "turbo run db:migrate:deploy",
-    "db:migrate:reset": "turbo run db:migrate:reset",
-    "db:push": "turbo run db:push",
-    "db:seed": "turbo run db:seed",
     "generate": "turbo run generate",
+    "db:migrate": "turbo run db:migrate",
+    "db:reset": "turbo run db:reset",
     "test:unit": "turbo run test:unit",
     "test:e2e": "turbo run test:e2e"
   },
