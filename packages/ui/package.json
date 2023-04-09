@@ -25,7 +25,7 @@
     "@octopuzzles/models": "*",
     "@octopuzzles/utils": "*",
     "@sveltejs/adapter-auto": "^2.0.0",
-    "@sveltejs/kit": "^1.5.0",
+    "@sveltejs/kit": "^1.15.1",
     "@sveltejs/package": "^2.0.0",
     "classnames": "^2.3.1",
     "eslint-config-octopuzzles-svelte": "*",
