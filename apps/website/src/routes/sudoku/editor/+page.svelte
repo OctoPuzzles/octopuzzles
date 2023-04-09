@@ -259,7 +259,7 @@
   </div>
 </div>
 
-{#if tab === 'editor'}
+<div class:hidden={tab !== 'editor'}>
   <SudokuEditor bind:clues {initialClues}>
     <button
       on:click={() => (showExportToFPuzzlesModal = true)}
@@ -276,7 +276,8 @@
       <FileArrowDown size={32} />
     </button>
   </SudokuEditor>
-{:else if tab === 'game'}
+</div>
+<div class:hidden={tab !== 'game'}>
   <SudokuGame
     scannerSettings={$scannerSettings.scanner}
     onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
@@ -292,7 +293,8 @@
       <FileArrowUp size={32} />
     </button>
   </SudokuGame>
-{:else}
+</div>
+<div class:hidden={tab !== 'form'}>
   <div class="m-auto container p-4">
     <form>
       <h1 class="text-3xl mb-2">Details</h1>
@@ -416,7 +418,7 @@
     }}
     currentDescription={description}
   />
-{/if}
+</div>
 
 <ImportFromFPuzzles
   bind:isOpen={showImportFromFPuzzlesModal}
