@@ -127,9 +127,6 @@
   };
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (!isArrowKey(k)) {
       input.focus();
     }

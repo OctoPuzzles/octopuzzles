@@ -21,6 +21,7 @@
   import { defaultClues, getUserSolution } from '@octopuzzles/sudoku-utils';
   import { scanner } from '$lib/sudokuStore/scanner';
   import { onDestroy, onMount, setContext } from 'svelte';
+  import { handleWindowClick } from '$lib/gameAction';
 
   // SIZING
   let windowHeight: number;
@@ -100,7 +101,11 @@
   }
 </script>
 
-<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
+<svelte:window
+  bind:innerHeight={windowHeight}
+  bind:innerWidth={windowWidth}
+  on:click={handleWindowClick}
+/>
 
 <div class="flex flex-wrap w-full justify-around" id="sudoku-game">
   <div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
@@ -110,7 +115,7 @@
       highlightedCells={$highlightedCells}
       selectedCells={$selectedCells}
       wrongCells={$wrongCells}
-      onClickNote={(note, position) => {
+      onClickNote={(_, position) => {
         $inputMode = 'notes';
         $selectedCells = [position];
       }}

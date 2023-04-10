@@ -3,7 +3,7 @@
   import { gameHistory, selectedCells } from '$lib/sudokuStore';
   import { get } from 'svelte/store';
   import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
-  import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
+  import { SquareButton } from '@octopuzzles/ui';
   import { gameAction } from '$lib/gameAction';
 
   const handleClick = (newCentermark: string): void => {
@@ -58,9 +58,6 @@
   };
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (isDeleteKey(k)) {
       k.preventDefault();
       handleClick('');

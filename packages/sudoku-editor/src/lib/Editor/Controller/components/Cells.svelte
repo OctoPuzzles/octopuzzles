@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, hasOpenModals } from '@octopuzzles/ui';
+  import { Button } from '@octopuzzles/ui';
   import { editorHistory, selectedCells } from '$lib/sudokuStore';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
   import { editorAction } from '$lib/editorAction';
@@ -17,9 +17,6 @@
   }
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (isDeleteKey(k)) {
       handleClick(false);
     } else if (k.key === 'Enter') {

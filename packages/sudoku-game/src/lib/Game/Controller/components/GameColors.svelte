@@ -5,13 +5,10 @@
   import { get } from 'svelte/store';
   import type { Color } from '@octopuzzles/models';
   import { Colors } from '@octopuzzles/models';
-  import { hasOpenModals, SquareButton } from '@octopuzzles/ui';
+  import { SquareButton } from '@octopuzzles/ui';
   import { gameAction } from '$lib/gameAction';
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (isDeleteKey(k)) {
       k.preventDefault();
       handleClick();

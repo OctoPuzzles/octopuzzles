@@ -6,7 +6,6 @@
     RadioGroup,
     ControllerButton,
     Select,
-    hasOpenModals,
     ScaledSvg,
     ColorSelect
   } from '@octopuzzles/ui';
@@ -173,9 +172,6 @@
   };
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (!isArrowKey(k)) {
       input.focus();
     }

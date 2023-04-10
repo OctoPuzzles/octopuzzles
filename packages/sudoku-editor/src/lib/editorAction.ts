@@ -34,7 +34,7 @@ type EditorActionParams = {
  */
 export function editorAction(node: HTMLElement, { onKeyDown }: EditorActionParams) {
   if (onKeyDown != null) {
-    window.addEventListener('keydown', (k) => {
+    node.addEventListener('keydown', (k) => {
       if (listenForEvents()) {
         onKeyDown(k);
       }
@@ -44,7 +44,7 @@ export function editorAction(node: HTMLElement, { onKeyDown }: EditorActionParam
   return {
     destroy() {
       if (onKeyDown != null) {
-        window.removeEventListener('keydown', (k) => {
+        node.removeEventListener('keydown', (k) => {
           if (listenForEvents()) {
             onKeyDown(k);
           }

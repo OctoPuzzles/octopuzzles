@@ -156,9 +156,6 @@
   };
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (isDeleteKey(k)) {
       if ($selectedItemIndex !== undefined) {
         deleteRegionAtIndex($selectedItemIndex);

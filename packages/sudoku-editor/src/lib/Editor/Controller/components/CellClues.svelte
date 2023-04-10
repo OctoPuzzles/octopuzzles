@@ -17,15 +17,7 @@
     Rotation,
     SymbolType
   } from '@octopuzzles/models';
-  import {
-    hasOpenModals,
-    Button,
-    ControllerButton,
-    Input,
-    Label,
-    Select,
-    ColorSelect
-  } from '@octopuzzles/ui';
+  import { Button, ControllerButton, Input, Label, Select, ColorSelect } from '@octopuzzles/ui';
   import {
     editorHistory,
     handleArrows,
@@ -242,9 +234,6 @@
   };
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (!isArrowKey(k)) {
       input.focus();
     }

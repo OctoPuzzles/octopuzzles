@@ -35,14 +35,14 @@ type GameActionParams = {
  */
 export function gameAction(node: HTMLElement, { onKeyDown, onKeyUp }: GameActionParams) {
   if (onKeyDown != null) {
-    window.addEventListener('keydown', (k) => {
+    node.addEventListener('keydown', (k) => {
       if (listenForEvents()) {
         onKeyDown(k);
       }
     });
   }
   if (onKeyUp != null) {
-    window.addEventListener('keyup', (k) => {
+    node.addEventListener('keyup', (k) => {
       if (listenForEvents()) {
         onKeyUp(k);
       }
@@ -52,14 +52,14 @@ export function gameAction(node: HTMLElement, { onKeyDown, onKeyUp }: GameAction
   return {
     destroy() {
       if (onKeyDown != null) {
-        window.removeEventListener('keydown', (k) => {
+        node.removeEventListener('keydown', (k) => {
           if (listenForEvents()) {
             onKeyDown(k);
           }
         });
       }
       if (onKeyUp != null) {
-        window.removeEventListener('keyup', (k) => {
+        node.removeEventListener('keyup', (k) => {
           if (listenForEvents()) {
             onKeyUp(k);
           }

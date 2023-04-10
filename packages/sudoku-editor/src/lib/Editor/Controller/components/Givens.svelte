@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
+  import { SquareButton } from '@octopuzzles/ui';
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { editorHistory, selectedCells } from '$lib/sudokuStore';
   import { get } from 'svelte/store';
@@ -52,10 +52,6 @@
   }
 
   function handleKeyDown(k: KeyboardEvent): void {
-    console.log({ k });
-    // do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (isDeleteKey(k)) {
       handleClick('');
     } else if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(k.key)) {
