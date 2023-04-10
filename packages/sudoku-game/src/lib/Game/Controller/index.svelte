@@ -27,6 +27,7 @@
   import Numbers from './components/Numbers.svelte';
   import Scanner from './components/Scanner.svelte';
   import Help from '../Help.svelte';
+  import { gameAction } from '$lib/gameAction';
 
   const userInputs = gameHistory.subscribeToInputs();
   export let walkthrough: WalkthroughStep[];
@@ -190,7 +191,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyboardShortcuts} on:keyup={handleKeyUp} />
+<svelte:window use:gameAction={{ onKeyDown: handleKeyboardShortcuts, onKeyUp: handleKeyUp }} />
 
 <ControllerSkeleton
   menuItems={Object.entries(controls).map(([im, info]) => ({

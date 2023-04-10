@@ -4,6 +4,7 @@
   import { editorHistory, selectedCells } from '$lib/sudokuStore';
   import { get } from 'svelte/store';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
+  import { editorAction } from '$lib/editorAction';
 
   function handleClick(newGiven: string): void {
     const positions = get(selectedCells);
@@ -51,7 +52,8 @@
   }
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
+    console.log({ k });
+    // do not accept keyboard input when any modal controls are open
     if (hasOpenModals()) return;
 
     if (isDeleteKey(k)) {
@@ -62,14 +64,14 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window use:editorAction={{ onKeyDown: handleKeyDown }} />
 
 <div class="w-full h-full flex justify-center items-center">
   <div class="grid grid-cols-3 grid-rows-4 h-max w-max m-auto p-4 gap-4">
     {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] as i}
       <div>
         <SquareButton variant="secondary" class="text-3xl" on:click={() => handleClick(String(i))}>
-          {String(i)}
+          {i}
         </SquareButton>
       </div>
     {/each}

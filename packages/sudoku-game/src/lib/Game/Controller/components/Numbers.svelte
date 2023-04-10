@@ -5,6 +5,7 @@
   import { get } from 'svelte/store';
   import { hasOpenModals, SquareButton } from '@octopuzzles/ui';
   import { scanner } from '$lib/sudokuStore/scanner';
+  import { gameAction } from '$lib/gameAction';
 
   function handleClick(newValue: string): void {
     const positions = get(selectedCells);
@@ -80,7 +81,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window use:gameAction={{ onKeyDown: handleKeyDown }} />
 
 <div class="w-full h-full flex justify-center items-center">
   <div class="grid grid-cols-3 grid-rows-4 h-max w-max m-auto p-4 gap-4">

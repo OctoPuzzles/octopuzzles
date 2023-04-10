@@ -98,31 +98,12 @@
     });
     return isDone;
   }
-
-  let element: HTMLDivElement;
-  let intersecting = true;
-
-  $: if (element) {
-    let observer = new IntersectionObserver(
-      (entries) => {
-        intersecting = entries[0].isIntersecting ?? false;
-      },
-      { root: document }
-    );
-
-    observer.observe(element);
-  }
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
-<div class="flex flex-wrap w-full justify-around">
-  <div
-    bind:this={element}
-    class="p-2 mb-2"
-    style="height: {sudokuSize}px; width: {sudokuSize}px"
-    id="sudoku-display"
-  >
+<div class="flex flex-wrap w-full justify-around" id="sudoku-game">
+  <div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
     <SudokuDisplay
       {clues}
       {userInputs}
@@ -139,10 +120,8 @@
     />
   </div>
   <div class="my-auto">
-    {#if intersecting}
-      <Controller bind:walkthrough>
-        <slot />
-      </Controller>
-    {/if}
+    <Controller bind:walkthrough>
+      <slot />
+    </Controller>
   </div>
 </div>

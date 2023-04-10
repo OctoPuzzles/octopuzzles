@@ -11,6 +11,7 @@
   } from '$lib/sudokuStore';
   import type { EditorHistoryStep } from '@octopuzzles/models';
   import { onDestroy, onMount } from 'svelte';
+  import { handleWindowClick } from '$lib/editorAction';
 
   // SIZING
   let windowHeight: number;
@@ -36,31 +37,16 @@
   onDestroy(() => {
     editorHistory.reset();
   });
-
-  let element: HTMLDivElement;
-  let intersecting = true;
-
-  $: if (element) {
-    let observer = new IntersectionObserver(
-      (entries) => {
-        intersecting = entries[0].isIntersecting ?? false;
-      },
-      { root: document }
-    );
-
-    observer.observe(element);
-  }
 </script>
 
-<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
+<svelte:window
+  bind:innerHeight={windowHeight}
+  bind:innerWidth={windowWidth}
+  on:click={handleWindowClick}
+/>
 
-<div class="flex flex-wrap w-full justify-around">
-  <div
-    bind:this={element}
-    class="p-2 mb-2"
-    style="height: {sudokuSize}px; width: {sudokuSize}px"
-    id="sudoku-display"
-  >
+<div class="flex flex-wrap w-full justify-around" id="sudoku-editor">
+  <div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
     <SudokuDisplay
       {clues}
       highlightedCells={$highlightedCells}
@@ -72,10 +58,8 @@
     />
   </div>
   <div class="my-auto">
-    {#if intersecting}
-      <Controller>
-        <slot />
-      </Controller>
-    {/if}
+    <Controller>
+      <slot />
+    </Controller>
   </div>
 </div>

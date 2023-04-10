@@ -32,6 +32,7 @@
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import { addLabel } from '$lib/utils/addLabel';
+  import { editorAction } from '$lib/editorAction';
 
   const sudokuClues = editorHistory.subscribeToClues();
 
@@ -340,7 +341,14 @@
   });
 </script>
 
-<svelte:window on:keydown|preventDefault={handleKeyDown} />
+<svelte:window
+  use:editorAction={{
+    onKeyDown: (k) => {
+      k.preventDefault();
+      handleKeyDown(k);
+    }
+  }}
+/>
 
 <div class="grid grid-cols-2 w-full h-full p-2">
   <div class="px-2 flex flex-col overflow-hidden justify-between">

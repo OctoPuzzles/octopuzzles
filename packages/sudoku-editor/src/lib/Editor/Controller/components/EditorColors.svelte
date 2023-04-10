@@ -6,6 +6,7 @@
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
   import type { Color } from '@octopuzzles/models';
   import { Colors } from '@octopuzzles/models';
+  import { editorAction } from '$lib/editorAction';
 
   function handleKeyDown(k: KeyboardEvent): void {
     //do not accept keyboard input when any modal controls are open
@@ -72,7 +73,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window use:editorAction={{ onKeyDown: handleKeyDown }} />
 
 <div class="w-full h-full flex justify-center items-center">
   <div class="grid grid-cols-3 grid-rows-4 h-max w-max m-auto p-4 gap-4">

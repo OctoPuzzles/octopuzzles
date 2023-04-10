@@ -14,6 +14,7 @@
   import { scanner } from '$lib/sudokuStore/scanner';
   import { gameHistory } from '$lib/sudokuStore';
   import { getContext } from 'svelte';
+  import { gameAction } from '$lib/gameAction';
 
   let onScannerSettingsChange: (newSettings: ScannerSettings) => void =
     getContext('updateScannerSettings');
@@ -100,7 +101,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyboardShortcuts} />
+<svelte:window use:gameAction={{ onKeyDown: handleKeyboardShortcuts }} />
 
 <div class="grid grid-cols-1 w-full h-full p-2">
   <div class="px-2 flex flex-col overflow-hidden justify-between">

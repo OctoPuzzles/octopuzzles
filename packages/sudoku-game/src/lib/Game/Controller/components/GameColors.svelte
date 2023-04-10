@@ -6,6 +6,7 @@
   import type { Color } from '@octopuzzles/models';
   import { Colors } from '@octopuzzles/models';
   import { hasOpenModals, SquareButton } from '@octopuzzles/ui';
+  import { gameAction } from '$lib/gameAction';
 
   function handleKeyDown(k: KeyboardEvent): void {
     //do not accept keyboard input when any modal controls are open
@@ -77,7 +78,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window use:gameAction={{ onKeyDown: handleKeyDown }} />
 
 <div class="w-full h-full flex justify-center items-center">
   <div class="grid grid-cols-3 grid-rows-4 h-max w-max m-auto p-4 gap-4">
