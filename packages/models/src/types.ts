@@ -38,10 +38,3 @@ export type MouseEnterHandler = ({
   metaButtonClicked: boolean;
   mouseDown: boolean;
 }) => void;
-export type ArrowHandler = ({
-  k,
-  metaButtonClicked
-}: {
-  k: KeyboardEvent;
-  metaButtonClicked: boolean;
-}) => void;

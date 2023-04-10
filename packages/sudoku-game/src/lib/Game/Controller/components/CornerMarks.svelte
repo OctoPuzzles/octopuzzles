@@ -3,8 +3,9 @@
   import { gameHistory, selectedCells } from '$lib/sudokuStore';
   import { get } from 'svelte/store';
   import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
-  import { SquareButton, hasOpenModals } from '@octopuzzles/ui';
+  import { SquareButton } from '@octopuzzles/ui';
   import classNames from 'classnames';
+  import { gameAction } from '$lib/gameAction';
 
   function handleClick(newCornermark: string): void {
     let currentCornermarks = get(gameHistory.getValue('cornermarks'));
@@ -58,9 +59,6 @@
   }
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (isDeleteKey(k)) {
       k.preventDefault();
       handleClick('');
@@ -72,7 +70,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window use:gameAction={{ onKeyDown: handleKeyDown }} />
 
 <div class="w-full h-full flex justify-center items-center">
   <div class="grid grid-cols-3 grid-rows-4 h-max w-max m-auto p-4 gap-4">

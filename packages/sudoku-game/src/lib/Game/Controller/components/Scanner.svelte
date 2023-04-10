@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SquareButton, Label, RadioGroup, Checkbox, hasOpenModals } from '@octopuzzles/ui';
+  import { SquareButton, Label, RadioGroup, Checkbox } from '@octopuzzles/ui';
   import Play from 'phosphor-svelte/lib/Play/Play.svelte';
   import Pause from 'phosphor-svelte/lib/Pause/Pause.svelte';
   import { Step } from '@octopuzzles/icons';
@@ -14,6 +14,7 @@
   import { scanner } from '$lib/sudokuStore/scanner';
   import { gameHistory } from '$lib/sudokuStore';
   import { getContext } from 'svelte';
+  import { gameAction } from '$lib/gameAction';
 
   let onScannerSettingsChange: (newSettings: ScannerSettings) => void =
     getContext('updateScannerSettings');
@@ -76,8 +77,6 @@
   }
 
   function handleKeyboardShortcuts(k: KeyboardEvent): void {
-    if (hasOpenModals()) return;
-
     //ensure settings controls are in sync with the scanner configuration
     switch (k.key) {
       case 'h': {
@@ -100,7 +99,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyboardShortcuts} />
+<svelte:window use:gameAction={{ onKeyDown: handleKeyboardShortcuts }} />
 
 <div class="grid grid-cols-1 w-full h-full p-2">
   <div class="px-2 flex flex-col overflow-hidden justify-between">

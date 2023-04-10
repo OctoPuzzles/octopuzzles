@@ -9,6 +9,7 @@ const test = base.extend({
 
 test.describe('6x6 sudoku', () => {
   test('Shortcuts for selecting control works', async ({ page }) => {
+    await page.getByRole('button', { name: 'Numbers' }).click();
     // Shortcut for corner marks work
     await page.keyboard.press('KeyX');
     expect(await page.getByRole('button', { name: 'Corner marks' }).getAttribute('class')).toMatch(

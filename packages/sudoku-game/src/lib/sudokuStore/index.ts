@@ -3,7 +3,6 @@ import type {
   InputMode,
   Mode,
   Position,
-  ArrowHandler,
   MouseDownHandler,
   MouseEnterHandler,
   EditorHistoryStep
@@ -11,11 +10,7 @@ import type {
 import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
 import { derived, get, writable } from 'svelte/store';
-import {
-  defaultHandleArrows,
-  defaultHandleMouseDown,
-  defaultHandleMouseEnter
-} from './interactionHandlers';
+import { defaultHandleMouseDown, defaultHandleMouseEnter } from './interactionHandlers';
 import { defaultUserInputs } from '@octopuzzles/sudoku-utils';
 
 // WRITABLES
@@ -163,7 +158,6 @@ function createInputModeStore() {
     set: (value: InputMode | null) => {
       selectedItemIndex.set(-1);
       highlightedItemIndex.set(-1);
-      handleArrows.set(defaultHandleArrows);
       handleMouseDown.set(defaultHandleMouseDown);
       handleMouseEnter.set(defaultHandleMouseEnter);
       set(value);
@@ -236,8 +230,3 @@ export const handleMouseDown = writable<MouseDownHandler>(defaultHandleMouseDown
  * This function specifies what to do when a user enters a cell with their mouse and the meta button is clicked.
  */
 export const handleMouseEnter = writable<MouseEnterHandler>(defaultHandleMouseEnter);
-/**
- * The controller components can augment the functionality and how user inputs should be handled by changing this function.
- * This function specifies what to do when a user moves around the board with the arrow buttons.
- */
-export const handleArrows = writable<ArrowHandler>(defaultHandleArrows);

@@ -5,7 +5,6 @@
     Path,
     PathType,
     Position,
-    ArrowHandler,
     MouseDownHandler,
     MouseEnterHandler
   } from '@octopuzzles/models';
@@ -28,16 +27,22 @@
     RadioGroup,
     Range,
     Select,
-    hasOpenModals,
     ColorSelect,
     ScaledSvg
   } from '@octopuzzles/ui';
-  import { isCommandKey, deepCopy, isDeleteKey, moveArrayElement } from '@octopuzzles/utils';
+  import {
+    isCommandKey,
+    deepCopy,
+    isDeleteKey,
+    moveArrayElement,
+    type ArrowDirection
+  } from '@octopuzzles/utils';
   import { pathDefaults } from '@octopuzzles/sudoku-utils';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import { Path as PathComponent } from '@octopuzzles/sudoku-display';
   import { addLabel } from '$lib/utils/addLabel';
+  import { editorAction } from '$lib/editorAction';
 
   const sudokuClues = editorHistory.subscribeToClues();
 
@@ -252,12 +257,9 @@
     }
   };
 
-  const customHandleArrows: ArrowHandler = ({ k, metaButtonClicked }) => {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
-    if (!metaButtonClicked) {
-      defaultHandleArrows({ k, metaButtonClicked });
+  const customHandleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
+    if (!isCommandKey(k)) {
+      defaultHandleArrows(direction, k);
       return;
     }
     const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
@@ -265,29 +267,29 @@
       const { row, column } = lastSelectedCell;
       let dim = editorHistory.getClue('dimensions');
       let newCell: Position | undefined = undefined;
-      switch (k.key) {
-        case 'ArrowUp':
+      switch (direction) {
+        case 'up':
           if (row !== 0) {
             newCell = { row: row - 1, column };
           } else {
             newCell = { row: 8, column };
           }
           break;
-        case 'ArrowRight':
+        case 'right':
           if (column !== dim.columns - 1) {
             newCell = { row, column: column + 1 };
           } else {
             newCell = { row, column: 0 };
           }
           break;
-        case 'ArrowDown':
+        case 'down':
           if (row !== dim.rows - 1) {
             newCell = { row: row + 1, column };
           } else {
             newCell = { row: 0, column };
           }
           break;
-        case 'ArrowLeft':
+        case 'left':
           if (column !== 0) {
             newCell = { row, column: column - 1 };
           } else {
@@ -322,9 +324,6 @@
   });
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (isDeleteKey(k)) {
       if ($selectedItemIndex !== undefined) {
         deletePathAtIndex($selectedItemIndex);
@@ -337,7 +336,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window use:editorAction={{ onKeyDown: handleKeyDown }} />
 
 <div class="grid grid-cols-2 w-full h-full p-2">
   <div class="px-2 flex flex-col overflow-hidden justify-between">

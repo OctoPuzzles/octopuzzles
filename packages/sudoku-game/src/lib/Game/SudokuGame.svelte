@@ -6,7 +6,6 @@
     highlightedCells,
     wrongCells,
     inputMode,
-    handleArrows,
     handleMouseDown,
     handleMouseEnter,
     gameHistory
@@ -21,6 +20,8 @@
   import { defaultClues, getUserSolution } from '@octopuzzles/sudoku-utils';
   import { scanner } from '$lib/sudokuStore/scanner';
   import { onDestroy, onMount, setContext } from 'svelte';
+  import { gameAction, handleWindowClick } from '$lib/gameAction';
+  import { defaultHandleArrows } from '$lib/sudokuStore/interactionHandlers';
 
   // SIZING
   let windowHeight: number;
@@ -98,51 +99,34 @@
     });
     return isDone;
   }
-
-  let element: HTMLDivElement;
-  let intersecting = true;
-
-  $: if (element) {
-    let observer = new IntersectionObserver(
-      (entries) => {
-        intersecting = entries[0].isIntersecting ?? false;
-      },
-      { root: document }
-    );
-
-    observer.observe(element);
-  }
 </script>
 
-<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
+<svelte:window
+  bind:innerHeight={windowHeight}
+  bind:innerWidth={windowWidth}
+  on:click={handleWindowClick}
+  use:gameAction={{ onArrowKeyDown: defaultHandleArrows }}
+/>
 
-<div class="flex flex-wrap w-full justify-around">
-  <div
-    bind:this={element}
-    class="p-2 mb-2"
-    style="height: {sudokuSize}px; width: {sudokuSize}px"
-    id="sudoku-display"
-  >
+<div class="flex flex-wrap w-full justify-around" id="sudoku-game">
+  <div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
     <SudokuDisplay
       {clues}
       {userInputs}
       highlightedCells={$highlightedCells}
       selectedCells={$selectedCells}
       wrongCells={$wrongCells}
-      onClickNote={(note, position) => {
+      onClickNote={(_, position) => {
         $inputMode = 'notes';
         $selectedCells = [position];
       }}
-      handleArrows={$handleArrows}
       handleMouseDown={$handleMouseDown}
       handleMouseEnter={$handleMouseEnter}
     />
   </div>
   <div class="my-auto">
-    {#if intersecting}
-      <Controller bind:walkthrough>
-        <slot />
-      </Controller>
-    {/if}
+    <Controller bind:walkthrough>
+      <slot />
+    </Controller>
   </div>
 </div>

@@ -34,3 +34,5 @@ yarn-error.log*
 .vercel
 dist
 build
+
+storageState.json

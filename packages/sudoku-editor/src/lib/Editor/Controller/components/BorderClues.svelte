@@ -6,7 +6,6 @@
     RadioGroup,
     ControllerButton,
     Select,
-    hasOpenModals,
     ScaledSvg,
     ColorSelect
   } from '@octopuzzles/ui';
@@ -25,6 +24,7 @@
   import { Borderclue as BorderclueComponent } from '@octopuzzles/sudoku-display';
   import { borderClueTypesToLabel, borderClueTypeNames } from '$lib/constants';
   import { addLabel } from '$lib/utils/addLabel';
+  import { editorAction } from '$lib/editorAction';
 
   const sudokuClues = editorHistory.subscribeToClues();
 
@@ -172,9 +172,6 @@
   };
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (!isArrowKey(k)) {
       input.focus();
     }
@@ -212,7 +209,7 @@
   };
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window use:editorAction={{ onKeyDown: handleKeyDown }} />
 
 <div class="grid grid-cols-2 w-full h-full p-2">
   <div class="px-2 flex flex-col overflow-hidden justify-between">

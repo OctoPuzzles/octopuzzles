@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { Button, hasOpenModals } from '@octopuzzles/ui';
+  import { Button } from '@octopuzzles/ui';
   import { editorHistory, selectedCells } from '$lib/sudokuStore';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
+  import { editorAction } from '$lib/editorAction';
 
   function handleClick(b: boolean): void {
     const newCells = deepCopy(editorHistory.getClue('cells'));
@@ -16,9 +17,6 @@
   }
 
   function handleKeyDown(k: KeyboardEvent): void {
-    //do not accept keyboard input when any modal controls are open
-    if (hasOpenModals()) return;
-
     if (isDeleteKey(k)) {
       handleClick(false);
     } else if (k.key === 'Enter') {
@@ -27,7 +25,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window use:editorAction={{ onKeyDown: handleKeyDown }} />
 
 <div class="flex flex-col gap-2 justify-center h-full w-full p-2">
   <Button color="blue" on:click={() => handleClick(false)}>Remove selected cells</Button>

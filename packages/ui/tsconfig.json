@@ -11,6 +11,7 @@
     "moduleResolution": "node",
     "module": "es2020",
     "declarationMap": true,
+    "declaration": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,

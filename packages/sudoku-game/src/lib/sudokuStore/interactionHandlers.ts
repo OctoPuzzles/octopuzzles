@@ -1,11 +1,5 @@
-import type {
-  ArrowHandler,
-  MouseDownHandler,
-  MouseEnterHandler,
-  Position
-} from '@octopuzzles/models';
-import { hasOpenModals } from '@octopuzzles/ui';
-import { isCommandKey } from '@octopuzzles/utils';
+import type { MouseDownHandler, MouseEnterHandler, Position } from '@octopuzzles/models';
+import { isCommandKey, type ArrowDirection } from '@octopuzzles/utils';
 import { get } from 'svelte/store';
 import { gameHistory, selectedCells } from '.';
 
@@ -42,39 +36,37 @@ export const defaultHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) 
 };
 
 /** Default action to run when user moves around with the arrow buttons */
-export const defaultHandleArrows: ArrowHandler = ({ k }) => {
-  //do not accept keyboard input when any modal controls are open
-  if (hasOpenModals()) return;
-
+export const defaultHandleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
   const cells = get(selectedCells);
   const dim = get(gameHistory.clues).dimensions;
+  console.log({ dim });
   const lastCell = cells[cells.length - 1];
   if (lastCell == null) return;
   const { row, column } = lastCell;
   let newCell: Position | null = null;
-  switch (k.key) {
-    case 'ArrowUp':
+  switch (direction) {
+    case 'up':
       if (row !== 0) {
         newCell = { row: row - 1, column };
       } else {
         newCell = { row: dim.rows - 1, column };
       }
       break;
-    case 'ArrowRight':
+    case 'right':
       if (column !== dim.columns - 1) {
         newCell = { row, column: column + 1 };
       } else {
         newCell = { row, column: 0 };
       }
       break;
-    case 'ArrowDown':
+    case 'down':
       if (row !== dim.rows - 1) {
         newCell = { row: row + 1, column };
       } else {
         newCell = { row: 0, column };
       }
       break;
-    case 'ArrowLeft':
+    case 'left':
       if (column !== 0) {
         newCell = { row, column: column - 1 };
       } else {
