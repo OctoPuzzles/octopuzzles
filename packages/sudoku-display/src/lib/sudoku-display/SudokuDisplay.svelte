@@ -4,7 +4,6 @@
     EditorHistoryStep,
     GameHistoryStep,
     Position,
-    ArrowHandler,
     MouseDownHandler,
     MouseEnterHandler
   } from '@octopuzzles/models';
@@ -29,17 +28,12 @@
   export let wrongCells: Position[] | undefined = undefined;
 
   export let onClickNote: ((note: string, position: Position) => void) | undefined = undefined;
-  export let handleArrows: ArrowHandler | undefined = undefined;
   export let handleMouseDown: MouseDownHandler | undefined = undefined;
   export let handleMouseEnter: MouseEnterHandler | undefined = undefined;
 
   export let isEditor = false;
 
-  $: interactive =
-    onClickNote != null ||
-    handleArrows != null ||
-    handleMouseDown != null ||
-    handleMouseEnter != null;
+  $: interactive = onClickNote != null || handleMouseDown != null || handleMouseEnter != null;
 </script>
 
 <svg
@@ -95,7 +89,6 @@
       cells={clues.cells}
       dimensions={clues.dimensions}
       {isEditor}
-      {handleArrows}
       {handleMouseDown}
       {handleMouseEnter}
     />

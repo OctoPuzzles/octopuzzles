@@ -11,7 +11,7 @@
   } from '$lib/sudokuStore';
   import type { EditorHistoryStep } from '@octopuzzles/models';
   import { onDestroy, onMount } from 'svelte';
-  import { handleWindowClick } from '$lib/editorAction';
+  import { editorAction, handleWindowClick } from '$lib/editorAction';
 
   // SIZING
   let windowHeight: number;
@@ -43,6 +43,7 @@
   bind:innerHeight={windowHeight}
   bind:innerWidth={windowWidth}
   on:click={handleWindowClick}
+  use:editorAction={{ onArrowKeyDown: $handleArrows }}
 />
 
 <div class="flex flex-wrap w-full justify-around" id="sudoku-editor">
@@ -51,7 +52,6 @@
       {clues}
       highlightedCells={$highlightedCells}
       selectedCells={$selectedCells}
-      handleArrows={$handleArrows}
       handleMouseDown={$handleMouseDown}
       handleMouseEnter={$handleMouseEnter}
       isEditor

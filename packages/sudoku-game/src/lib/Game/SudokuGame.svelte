@@ -6,7 +6,6 @@
     highlightedCells,
     wrongCells,
     inputMode,
-    handleArrows,
     handleMouseDown,
     handleMouseEnter,
     gameHistory
@@ -21,7 +20,8 @@
   import { defaultClues, getUserSolution } from '@octopuzzles/sudoku-utils';
   import { scanner } from '$lib/sudokuStore/scanner';
   import { onDestroy, onMount, setContext } from 'svelte';
-  import { handleWindowClick } from '$lib/gameAction';
+  import { gameAction, handleWindowClick } from '$lib/gameAction';
+  import { defaultHandleArrows } from '$lib/sudokuStore/interactionHandlers';
 
   // SIZING
   let windowHeight: number;
@@ -105,6 +105,7 @@
   bind:innerHeight={windowHeight}
   bind:innerWidth={windowWidth}
   on:click={handleWindowClick}
+  use:gameAction={{ onArrowKeyDown: defaultHandleArrows }}
 />
 
 <div class="flex flex-wrap w-full justify-around" id="sudoku-game">
@@ -119,7 +120,6 @@
         $inputMode = 'notes';
         $selectedCells = [position];
       }}
-      handleArrows={$handleArrows}
       handleMouseDown={$handleMouseDown}
       handleMouseEnter={$handleMouseEnter}
     />

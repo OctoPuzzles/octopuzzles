@@ -1,4 +1,5 @@
 import { hasOpenModals } from '@octopuzzles/ui';
+import { arrowKeyDirection, type ArrowDirection } from '@octopuzzles/utils';
 
 let gameInFocus = false;
 const listenForEvents = () => !hasOpenModals() && gameInFocus;
@@ -21,6 +22,7 @@ export function handleWindowClick(e: MouseEvent) {
 type GameActionParams = {
   onKeyDown?: (k: KeyboardEvent) => void;
   onKeyUp?: (k: KeyboardEvent) => void;
+  onArrowKeyDown?: (direction: ArrowDirection, k: KeyboardEvent) => void;
 };
 
 /**
@@ -33,37 +35,48 @@ type GameActionParams = {
  * }} />
  * ```
  */
-export function gameAction(node: HTMLElement, { onKeyDown, onKeyUp }: GameActionParams) {
+export function gameAction(
+  node: HTMLElement,
+  { onKeyDown, onKeyUp, onArrowKeyDown }: GameActionParams
+) {
+  const handleKeyDown = (k: KeyboardEvent) => {
+    if (listenForEvents()) {
+      onKeyDown?.(k);
+    }
+  };
+  const handleArrowKeyDown = (k: KeyboardEvent) => {
+    const direction = arrowKeyDirection(k);
+    if (listenForEvents() && direction != null) {
+      onArrowKeyDown?.(direction, k);
+    }
+  };
+  const handleKeyUp = (k: KeyboardEvent) => {
+    if (listenForEvents()) {
+      onKeyUp?.(k);
+    }
+  };
   if (onKeyDown != null) {
-    node.addEventListener('keydown', (k) => {
-      if (listenForEvents()) {
-        onKeyDown(k);
-      }
-    });
+    node.addEventListener('keydown', handleKeyDown);
   }
+
+  if (onArrowKeyDown != null) {
+    node.addEventListener('keydown', handleArrowKeyDown);
+  }
+
   if (onKeyUp != null) {
-    node.addEventListener('keyup', (k) => {
-      if (listenForEvents()) {
-        onKeyUp(k);
-      }
-    });
+    node.addEventListener('keyup', handleKeyUp);
   }
 
   return {
     destroy() {
       if (onKeyDown != null) {
-        node.removeEventListener('keydown', (k) => {
-          if (listenForEvents()) {
-            onKeyDown(k);
-          }
-        });
+        node.removeEventListener('keydown', handleKeyDown);
+      }
+      if (onArrowKeyDown != null) {
+        node.removeEventListener('keydown', handleArrowKeyDown);
       }
       if (onKeyUp != null) {
-        node.removeEventListener('keyup', (k) => {
-          if (listenForEvents()) {
-            onKeyUp(k);
-          }
-        });
+        node.removeEventListener('keyup', handleKeyUp);
       }
     }
   };

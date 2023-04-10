@@ -27,6 +27,7 @@
     "@octopuzzles/icons": "*",
     "@octopuzzles/models": "*",
     "@octopuzzles/utils": "*",
+    "@octopuzzles/ui": "*",
     "@octopuzzles/sudoku-utils": "*",
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/package": "^2.0.0",

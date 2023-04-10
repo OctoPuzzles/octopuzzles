@@ -4,7 +4,6 @@
     Cells,
     Dimensions,
     Position,
-    ArrowHandler,
     MouseDownHandler,
     MouseEnterHandler
   } from '@octopuzzles/models';
@@ -14,7 +13,6 @@
   export let cells: Cells;
   export let dimensions: Dimensions;
   export let isEditor = false;
-  export let handleArrows: ArrowHandler | undefined = undefined;
   export let handleMouseDown: MouseDownHandler | undefined = undefined;
   export let handleMouseEnter: MouseEnterHandler | undefined = undefined;
 
@@ -39,13 +37,8 @@
   const realHandleMouseDown = (position: Position, e: MouseEvent): void => {
     handleMouseDown?.({ cell: position, metaButtonClicked: isCommandKey(e) });
   };
-
-  const realHandleArrows = (k: KeyboardEvent): void => {
-    handleArrows?.({ k, metaButtonClicked: isCommandKey(k) });
-  };
 </script>
 
-<svelte:window on:keydown={(k) => realHandleArrows(k)} />
 <svelte:body on:mousedown={() => (mouseDown = true)} on:mouseup={() => (mouseDown = false)} />
 
 <g id="interface" on:touchmove|preventDefault>

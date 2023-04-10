@@ -1,4 +1,5 @@
 import { hasOpenModals } from '@octopuzzles/ui';
+import { arrowKeyDirection, type ArrowDirection } from '@octopuzzles/utils';
 
 let editorInFocus = false;
 const listenForEvents = () => !hasOpenModals() && editorInFocus;
@@ -20,6 +21,7 @@ export function handleWindowClick(e: MouseEvent) {
 
 type EditorActionParams = {
   onKeyDown?: (k: KeyboardEvent) => void;
+  onArrowKeyDown?: (direction: ArrowDirection, k: KeyboardEvent) => void;
 };
 
 /**
@@ -32,23 +34,35 @@ type EditorActionParams = {
  * }} />
  * ```
  */
-export function editorAction(node: HTMLElement, { onKeyDown }: EditorActionParams) {
+export function editorAction(node: HTMLElement, { onKeyDown, onArrowKeyDown }: EditorActionParams) {
+  const handleKeyDown = (k: KeyboardEvent) => {
+    if (listenForEvents()) {
+      onKeyDown?.(k);
+    }
+  };
+  const handleArrowKeyDown = (k: KeyboardEvent) => {
+    const direction = arrowKeyDirection(k);
+    if (listenForEvents() && direction != null) {
+      onArrowKeyDown?.(direction, k);
+    }
+  };
+
   if (onKeyDown != null) {
-    node.addEventListener('keydown', (k) => {
-      if (listenForEvents()) {
-        onKeyDown(k);
-      }
-    });
+    node.addEventListener('keydown', handleKeyDown);
+  }
+
+  if (onArrowKeyDown != null) {
+    node.addEventListener('keydown', handleArrowKeyDown);
   }
 
   return {
     destroy() {
       if (onKeyDown != null) {
-        node.removeEventListener('keydown', (k) => {
-          if (listenForEvents()) {
-            onKeyDown(k);
-          }
-        });
+        node.removeEventListener('keydown', handleKeyDown);
+      }
+
+      if (onArrowKeyDown != null) {
+        node.removeEventListener('keydown', handleArrowKeyDown);
       }
     }
   };
