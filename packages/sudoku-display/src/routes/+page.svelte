@@ -1,11 +1,26 @@
 <script lang="ts">
-  // import { SudokuDisplay } from '$lib';
+  import { SudokuDisplay } from '$lib';
+
+  let actions: string[] = [];
+
+  function addAction(action: string) {
+    actions = [...actions, action];
+  }
+
+  let showHitboxes = false;
 </script>
 
-Hello
-
-<!-- <div class="h-screen">
+<div
+  class="h-screen p-8 flex gap-8"
+  style={showHitboxes
+    ? '--corner-color: rgb(255,0,0, 0.2); --border-color: rgb(0,255,0,0.2); --center-color: rgb(0,0,255,0.2);'
+    : '--corner-color: transparent; --border-color: transparent; --center-color: transparent;'}
+>
   <SudokuDisplay
+    onClickNote={(note, { row, column }) =>
+      addAction(`NOTE CLICKED: Position (${row}, ${column}), "${note}"`)}
+    onClickCell={({ cell, metaButtonClicked }) =>
+      addAction(`CELL CLICKED: Position (${cell.row}, ${cell.column}), META: ${metaButtonClicked}`)}
     clues={{
       givens: [
         ['', '', '', '', '', '', '', '', ''],
@@ -794,4 +809,36 @@ Hello
       logic: {}
     }}
   />
-</div> -->
+
+  <div class="flex-1">
+    <p>
+      Normally all the cell gets hit detected, but in the pen tool, we want to detect corner and
+      border hits, and these hitboxes can be seen by checking the below box
+    </p>
+    <label class="flex items-center gap-2">
+      <input type="checkbox" bind:checked={showHitboxes} />
+      Show hitboxes
+    </label>
+
+    <h2 class="mt-4 font-bold">Actions</h2>
+    <div class="border p-2 w-full">
+      {#each actions as action}
+        <p>{action}</p>
+      {/each}
+    </div>
+  </div>
+</div>
+
+<style>
+  :global(#interface-corner) {
+    fill: var(--corner-color);
+  }
+
+  :global(#interface-border) {
+    fill: var(--border-color);
+  }
+
+  :global(#interface-center) {
+    fill: var(--center-color);
+  }
+</style>

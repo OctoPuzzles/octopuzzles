@@ -1,4 +1,4 @@
-import type { MouseDownHandler, MouseEnterHandler, Position } from '@octopuzzles/models';
+import type { OnClickCellHandler, OnEnterCellHandler, Position } from '@octopuzzles/models';
 import { isCommandKey, type ArrowDirection } from '@octopuzzles/utils';
 import { get } from 'svelte/store';
 import { editorHistory, selectedCells } from '.';
@@ -6,7 +6,7 @@ import { editorHistory, selectedCells } from '.';
 /**
  * Default action to do when user clicks on a cell
  */
-export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
+export const defaultHandleMouseDown: OnClickCellHandler = (cell, metaButtonClicked) => {
   if (!metaButtonClicked) {
     const currentSelectedCells = get(selectedCells);
     const firstSelectedCell = currentSelectedCells[0];
@@ -27,11 +27,9 @@ export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClick
 /**
  * Default action to do when users mouse enters a cell and meta button is down
  */
-export const defaultHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
-  if (mouseDown) {
-    if (get(selectedCells).length > 0) {
-      selectedCells.add(cell);
-    }
+export const defaultHandleMouseEnter: OnEnterCellHandler = (cell) => {
+  if (get(selectedCells).length > 0) {
+    selectedCells.add(cell);
   }
 };
 

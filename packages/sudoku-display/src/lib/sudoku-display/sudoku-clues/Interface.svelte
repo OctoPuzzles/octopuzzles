@@ -1,20 +1,29 @@
 <script lang="ts">
-  import { CELL_SIZE } from '@octopuzzles/models';
+  import { CELL_SIZE, type Position } from '@octopuzzles/models';
   import type {
     Cells,
     Dimensions,
-    Position,
-    MouseDownHandler,
-    MouseEnterHandler
+    OnClickCellHandler,
+    OnEnterCellHandler
   } from '@octopuzzles/models';
   import { defaultCells } from '@octopuzzles/sudoku-utils';
-  import { isCommandKey } from '@octopuzzles/utils';
+  import { arrayfrom0ToN, isCommandKey } from '@octopuzzles/utils';
 
   export let cells: Cells;
   export let dimensions: Dimensions;
   export let isEditor = false;
-  export let handleMouseDown: MouseDownHandler | undefined = undefined;
-  export let handleMouseEnter: MouseEnterHandler | undefined = undefined;
+  export let onClickCell: OnClickCellHandler | undefined = undefined;
+  export let onEnterCell: OnEnterCellHandler | undefined = undefined;
+  export let onClickCellCenter: ((cell: Position) => void) | undefined = undefined;
+  export let onEnterCellCenter: ((cell: Position) => void) | undefined = undefined;
+  export let onClickBorder: ((cell: Position) => void) | undefined = undefined;
+  export let onEnterBorder: ((cell: Position) => void) | undefined = undefined;
+  export let onClickCorner: ((cell: Position) => void) | undefined = undefined;
+  export let onEnterCorner: ((cell: Position) => void) | undefined = undefined;
+
+  const CELL_CENTER_WIDTH_PERCENTAGE = 80;
+  const CELL_CENTER_WIDTH = (CELL_SIZE * CELL_CENTER_WIDTH_PERCENTAGE) / 100;
+  const BORDER_WIDTH = CELL_SIZE - CELL_CENTER_WIDTH;
 
   $: cells = !isEditor
     ? cells
@@ -29,25 +38,20 @@
       );
 
   let mouseDown = false;
-
-  const realHandleMouseEnter = (position: Position, e: MouseEvent): void => {
-    handleMouseEnter?.({ cell: position, metaButtonClicked: isCommandKey(e), mouseDown });
-  };
-
-  const realHandleMouseDown = (position: Position, e: MouseEvent): void => {
-    handleMouseDown?.({ cell: position, metaButtonClicked: isCommandKey(e) });
-  };
 </script>
 
 <svelte:body on:mousedown={() => (mouseDown = true)} on:mouseup={() => (mouseDown = false)} />
 
 <g id="interface" on:touchmove|preventDefault>
+  <!-- Cells -->
   {#each cells as row, rowIndex}
     {#each row as cell, columnIndex}
       {#if cell}
         <rect
-          on:mousedown={(e) => realHandleMouseDown({ row: rowIndex, column: columnIndex }, e)}
-          on:mouseenter={(e) => realHandleMouseEnter({ row: rowIndex, column: columnIndex }, e)}
+          on:mousedown={(e) =>
+            onClickCell?.({ row: rowIndex, column: columnIndex }, isCommandKey(e))}
+          on:mouseenter={(e) =>
+            mouseDown && onEnterCell?.({ row: rowIndex, column: columnIndex }, isCommandKey(e))}
           class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
           x={CELL_SIZE * columnIndex}
           y={CELL_SIZE * rowIndex}
@@ -58,6 +62,56 @@
           data-column={columnIndex}
         />
       {/if}
+    {/each}
+  {/each}
+
+  <!-- Corners, borders, and cell centers -->
+  {#each arrayfrom0ToN(dimensions.rows + 1) as rowIndex}
+    {#each arrayfrom0ToN(dimensions.columns + 1) as columnIndex}
+      <!-- Corners -->
+      <rect
+        x={CELL_SIZE * columnIndex - BORDER_WIDTH / 2}
+        y={CELL_SIZE * rowIndex - BORDER_WIDTH / 2}
+        width={BORDER_WIDTH}
+        height={BORDER_WIDTH}
+        vector-effect="non-scaling-size"
+        class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
+        id="interface-corner"
+      />
+
+      <!-- Cell centers -->
+      <rect
+        on:mousedown={() => console.log('Click center')}
+        x={CELL_SIZE * columnIndex + BORDER_WIDTH / 2}
+        y={CELL_SIZE * rowIndex + BORDER_WIDTH / 2}
+        width={CELL_CENTER_WIDTH}
+        height={CELL_CENTER_WIDTH}
+        vector-effect="non-scaling-size"
+        class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
+        id="interface-center"
+      />
+
+      <!-- Vertical border -->
+      <rect
+        x={CELL_SIZE * columnIndex - BORDER_WIDTH / 2}
+        y={CELL_SIZE * rowIndex + BORDER_WIDTH / 2}
+        width={BORDER_WIDTH}
+        height={CELL_CENTER_WIDTH}
+        vector-effect="non-scaling-size"
+        class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
+        id="interface-border"
+      />
+
+      <!-- Horizontal border -->
+      <rect
+        x={CELL_SIZE * columnIndex + BORDER_WIDTH / 2}
+        y={CELL_SIZE * rowIndex - BORDER_WIDTH / 2}
+        width={CELL_CENTER_WIDTH}
+        height={BORDER_WIDTH}
+        vector-effect="non-scaling-size"
+        class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
+        id="interface-border"
+      />
     {/each}
   {/each}
 </g>

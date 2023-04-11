@@ -4,8 +4,8 @@
     EditorHistoryStep,
     GameHistoryStep,
     Position,
-    MouseDownHandler,
-    MouseEnterHandler
+    OnClickCellHandler,
+    OnEnterCellHandler
   } from '@octopuzzles/models';
   import BorderClues from './sudoku-clues/borderclues/BorderClues.svelte';
   import CellClues from './sudoku-clues/CellClues.svelte';
@@ -27,13 +27,22 @@
   export let highlightedCells: Position[] | undefined = undefined;
   export let wrongCells: Position[] | undefined = undefined;
 
+  /** Function that is called whenever a note is clicked. The position corresponds to the cell that is clicked */
   export let onClickNote: ((note: string, position: Position) => void) | undefined = undefined;
-  export let handleMouseDown: MouseDownHandler | undefined = undefined;
-  export let handleMouseEnter: MouseEnterHandler | undefined = undefined;
+  /**
+   * Function that should be called when a user clicks on a cell.
+   * This detects clicks in the whole cell, rather than only the center, like the `onClickCellCenter`
+   */
+  export let onClickCell: OnClickCellHandler | undefined = undefined;
+  /**
+   * Function that should be called when a users mouse enters a cell.
+   * This detects a mouse that enters the cell AND when the mouse is held down
+   */
+  export let onEnterCell: OnEnterCellHandler | undefined = undefined;
 
   export let isEditor = false;
 
-  $: interactive = onClickNote != null || handleMouseDown != null || handleMouseEnter != null;
+  $: interactive = onClickNote != null || onClickCell != null || onEnterCell != null;
 </script>
 
 <svg
@@ -89,8 +98,8 @@
       cells={clues.cells}
       dimensions={clues.dimensions}
       {isEditor}
-      {handleMouseDown}
-      {handleMouseEnter}
+      {onClickCell}
+      {onEnterCell}
     />
   {/if}
   <Paths paths={clues.paths} />

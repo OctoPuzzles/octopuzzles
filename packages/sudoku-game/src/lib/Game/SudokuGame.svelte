@@ -6,8 +6,6 @@
     highlightedCells,
     wrongCells,
     inputMode,
-    handleMouseDown,
-    handleMouseEnter,
     gameHistory
   } from '$lib/sudokuStore';
   import type {
@@ -21,7 +19,11 @@
   import { scanner } from '$lib/sudokuStore/scanner';
   import { onDestroy, onMount, setContext } from 'svelte';
   import { gameAction, handleWindowClick } from '$lib/gameAction';
-  import { defaultHandleArrows } from '$lib/sudokuStore/interactionHandlers';
+  import {
+    handleArrows,
+    handleClickCell,
+    handleEnterCell
+  } from '$lib/sudokuStore/interactionHandlers';
 
   // SIZING
   let windowHeight: number;
@@ -105,7 +107,7 @@
   bind:innerHeight={windowHeight}
   bind:innerWidth={windowWidth}
   on:click={handleWindowClick}
-  use:gameAction={{ onArrowKeyDown: defaultHandleArrows }}
+  use:gameAction={{ onArrowKeyDown: handleArrows }}
 />
 
 <div class="flex flex-wrap w-full justify-around" id="sudoku-game">
@@ -120,8 +122,8 @@
         $inputMode = 'notes';
         $selectedCells = [position];
       }}
-      handleMouseDown={$handleMouseDown}
-      handleMouseEnter={$handleMouseEnter}
+      onClickCell={handleClickCell}
+      onEnterCell={handleEnterCell}
     />
   </div>
   <div class="my-auto">

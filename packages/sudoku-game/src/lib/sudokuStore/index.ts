@@ -3,14 +3,11 @@ import type {
   InputMode,
   Mode,
   Position,
-  MouseDownHandler,
-  MouseEnterHandler,
   EditorHistoryStep
 } from '@octopuzzles/models';
 import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
 import { derived, get, writable } from 'svelte/store';
-import { defaultHandleMouseDown, defaultHandleMouseEnter } from './interactionHandlers';
 import { defaultUserInputs } from '@octopuzzles/sudoku-utils';
 
 // WRITABLES
@@ -158,8 +155,6 @@ function createInputModeStore() {
     set: (value: InputMode | null) => {
       selectedItemIndex.set(-1);
       highlightedItemIndex.set(-1);
-      handleMouseDown.set(defaultHandleMouseDown);
-      handleMouseEnter.set(defaultHandleMouseEnter);
       set(value);
     }
   };
@@ -219,14 +214,3 @@ function createSelectedCellsStore() {
  * A selected cell is one that is pressed on with e.g. the mouse
  */
 export const selectedCells = createSelectedCellsStore();
-
-/**
- * The controller components can augment the functionality and how user inputs should be handled by changing this function.
- * This function specifies what to do when a user clicks a cell.
- */
-export const handleMouseDown = writable<MouseDownHandler>(defaultHandleMouseDown);
-/**
- * The controller components can augment the functionality and how user inputs should be handled by changing this function.
- * This function specifies what to do when a user enters a cell with their mouse and the meta button is clicked.
- */
-export const handleMouseEnter = writable<MouseEnterHandler>(defaultHandleMouseEnter);

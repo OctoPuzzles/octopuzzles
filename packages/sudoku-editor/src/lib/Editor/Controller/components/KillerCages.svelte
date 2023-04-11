@@ -5,8 +5,8 @@
     CageType,
     Extendedcage,
     Position,
-    MouseDownHandler,
-    MouseEnterHandler
+    OnClickCellHandler,
+    OnEnterCellHandler
   } from '@octopuzzles/models';
   import {
     editorHistory,
@@ -183,7 +183,7 @@
     }
   }
 
-  const customHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
+  const customHandleMouseDown: OnClickCellHandler = (cell, metaButtonClicked) => {
     if (!metaButtonClicked) {
       selectedCells.set([cell]);
     } else {
@@ -195,9 +195,7 @@
     }
   };
 
-  const customHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
-    if (!mouseDown) return;
-
+  const customHandleMouseEnter: OnEnterCellHandler = (cell) => {
     if ($selectedItemIndex === -1) {
       selectedCells.add(cell);
     } else {
