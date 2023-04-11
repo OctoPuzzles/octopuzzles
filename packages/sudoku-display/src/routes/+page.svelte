@@ -21,8 +21,8 @@
       addAction(`NOTE CLICKED: Position (${row}, ${column}), "${note}"`)}
     onClickCell={(cell, metaButtonClicked) =>
       addAction(`CELL CLICKED: Position (${cell.row}, ${cell.column}), META: ${metaButtonClicked}`)}
-    onEnterCell={(cell, metaButtonClicked) =>
-      addAction(`CELL ENTERED: Position (${cell.row}, ${cell.column}), META: ${metaButtonClicked}`)}
+    onEnterCell={({ row, column }, metaButtonClicked) =>
+      addAction(`CELL ENTERED: Position (${row}, ${column}), META: ${metaButtonClicked}`)}
     onClickCellCenter={showHitboxes
       ? ({ row, column }) => addAction(`CELL CENTER CLICKED: Position (${row}, ${column})`)
       : undefined}
