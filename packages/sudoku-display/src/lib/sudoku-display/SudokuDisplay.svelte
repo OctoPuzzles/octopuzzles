@@ -39,6 +39,50 @@
    * This detects a mouse that enters the cell AND when the mouse is held down
    */
   export let onEnterCell: OnEnterCellHandler | undefined = undefined;
+  /**
+   * Function that should be called when a user clicks the center of a cell.
+   * This does NOT detect clicks in the whole cell, as the borders has a buffer aorund them, to more easily detect interaction
+   *
+   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
+   */
+  export let onClickCellCenter: ((cell: Position) => void) | undefined = undefined;
+  /**
+   * Function that should be called when a user enters the center of a cell AND the mouse is held down.
+   * This does NOT detect the whole cell, as the borders has a buffer aorund them, to more easily detect interaction.
+   *
+   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
+   */
+  export let onEnterCellCenter: ((cell: Position) => void) | undefined = undefined;
+  /**
+   * Function that should be called when a user clicks on the border of a cell.
+   * This detects clicking around a small buffer of the border, to make it easier to hit.
+   *
+   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
+   */
+  export let onClickBorder: ((cell: Position) => void) | undefined = undefined;
+  /**
+   * Function that should be called when a users mouse enters the border of a cell.
+   * This detects around a small buffer of the border, to make it easier to hit.
+   *
+   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
+   */
+  export let onEnterBorder: ((cell: Position) => void) | undefined = undefined;
+  /**
+   * Function that should be called when a user clicks the top left corner of a cell.
+   * This includes "imaginary" cells that do not exist, so the cell can just be thought of lying on an infinite grid.
+   * This detects around a small buffer of the corner, to make it easier to hit.
+   *
+   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
+   */
+  export let onClickCorner: ((cell: Position) => void) | undefined = undefined;
+  /**
+   * Function that should be called when a users mouse enters the top left corner of a cell.
+   * This includes "imaginary" cells that do not exist, so the cell can just be thought of lying on an infinite grid.
+   * This detects around a small buffer of the corner, to make it easier to hit.
+   *
+   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
+   */
+  export let onEnterCorner: ((cell: Position) => void) | undefined = undefined;
 
   export let isEditor = false;
 
@@ -100,6 +144,12 @@
       {isEditor}
       {onClickCell}
       {onEnterCell}
+      {onClickCellCenter}
+      {onEnterCellCenter}
+      {onClickBorder}
+      {onEnterBorder}
+      {onClickCorner}
+      {onEnterCorner}
     />
   {/if}
   <Paths paths={clues.paths} />

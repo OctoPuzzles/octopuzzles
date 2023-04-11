@@ -10,7 +10,7 @@
   function cy(bc: Borderclue): number {
     let maxRow = 0;
     let minRow = 1000;
-    for (var position of bc.positions) {
+    for (const position of bc.positions) {
       if (position.row > maxRow) {
         maxRow = position.row;
       }
@@ -24,7 +24,7 @@
   function cx(bc: Borderclue): number {
     let maxCol = 0;
     let minCol = 1000;
-    for (var position of bc.positions) {
+    for (const position of bc.positions) {
       if (position.column > maxCol) {
         maxCol = position.column;
       }

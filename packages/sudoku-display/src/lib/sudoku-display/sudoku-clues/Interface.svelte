@@ -21,6 +21,15 @@
   export let onClickCorner: ((cell: Position) => void) | undefined = undefined;
   export let onEnterCorner: ((cell: Position) => void) | undefined = undefined;
 
+  $: detectPenToolHits =
+    onClickCellCenter != null ||
+    onEnterCellCenter != null ||
+    onClickBorder != null ||
+    onEnterBorder != null ||
+    onClickCorner != null ||
+    onEnterCorner != null;
+  $: detectCellHits = (!detectPenToolHits && onClickCell != null) || onEnterCell != null;
+
   const CELL_CENTER_WIDTH_PERCENTAGE = 80;
   const CELL_CENTER_WIDTH = (CELL_SIZE * CELL_CENTER_WIDTH_PERCENTAGE) / 100;
   const BORDER_WIDTH = CELL_SIZE - CELL_CENTER_WIDTH;
@@ -44,74 +53,86 @@
 
 <g id="interface" on:touchmove|preventDefault>
   <!-- Cells -->
-  {#each cells as row, rowIndex}
-    {#each row as cell, columnIndex}
-      {#if cell}
+  {#if detectCellHits}
+    {#each cells as row, rowIndex}
+      {#each row as cell, columnIndex}
+        {#if cell}
+          <rect
+            on:mousedown={(e) =>
+              onClickCell?.({ row: rowIndex, column: columnIndex }, isCommandKey(e))}
+            on:mouseenter={(e) =>
+              mouseDown && onEnterCell?.({ row: rowIndex, column: columnIndex }, isCommandKey(e))}
+            class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
+            x={CELL_SIZE * columnIndex}
+            y={CELL_SIZE * rowIndex}
+            width={CELL_SIZE}
+            height={CELL_SIZE}
+            vector-effect="non-scaling-size"
+            data-row={rowIndex}
+            data-column={columnIndex}
+          />
+        {/if}
+      {/each}
+    {/each}
+  {/if}
+
+  {#if detectPenToolHits}
+    <!-- Corners, borders, and cell centers -->
+    {#each arrayfrom0ToN(dimensions.rows + 1) as rowIndex}
+      {#each arrayfrom0ToN(dimensions.columns + 1) as columnIndex}
+        {@const cell = { row: rowIndex, column: columnIndex }}
+        <!-- Corners -->
         <rect
-          on:mousedown={(e) =>
-            onClickCell?.({ row: rowIndex, column: columnIndex }, isCommandKey(e))}
-          on:mouseenter={(e) =>
-            mouseDown && onEnterCell?.({ row: rowIndex, column: columnIndex }, isCommandKey(e))}
-          class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
-          x={CELL_SIZE * columnIndex}
-          y={CELL_SIZE * rowIndex}
-          width={CELL_SIZE}
-          height={CELL_SIZE}
+          on:mousedown={() => onClickCorner?.(cell)}
+          on:mouseenter={() => mouseDown && onEnterCorner?.(cell)}
+          x={CELL_SIZE * columnIndex - BORDER_WIDTH / 2}
+          y={CELL_SIZE * rowIndex - BORDER_WIDTH / 2}
+          width={BORDER_WIDTH}
+          height={BORDER_WIDTH}
           vector-effect="non-scaling-size"
-          data-row={rowIndex}
-          data-column={columnIndex}
+          class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
+          id="interface-corner"
         />
-      {/if}
+
+        <!-- Cell centers -->
+        <rect
+          on:mousedown={() => onClickCellCenter?.(cell)}
+          on:mouseenter={() => mouseDown && onEnterCellCenter?.(cell)}
+          x={CELL_SIZE * columnIndex + BORDER_WIDTH / 2}
+          y={CELL_SIZE * rowIndex + BORDER_WIDTH / 2}
+          width={CELL_CENTER_WIDTH}
+          height={CELL_CENTER_WIDTH}
+          vector-effect="non-scaling-size"
+          class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
+          id="interface-center"
+        />
+
+        <!-- Vertical border -->
+        <rect
+          on:mousedown={() => onClickBorder?.(cell)}
+          on:mouseenter={() => mouseDown && onEnterBorder?.(cell)}
+          x={CELL_SIZE * columnIndex - BORDER_WIDTH / 2}
+          y={CELL_SIZE * rowIndex + BORDER_WIDTH / 2}
+          width={BORDER_WIDTH}
+          height={CELL_CENTER_WIDTH}
+          vector-effect="non-scaling-size"
+          class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
+          id="interface-border"
+        />
+
+        <!-- Horizontal border -->
+        <rect
+          on:mousedown={() => onClickBorder?.(cell)}
+          on:mouseenter={() => mouseDown && onEnterBorder?.(cell)}
+          x={CELL_SIZE * columnIndex + BORDER_WIDTH / 2}
+          y={CELL_SIZE * rowIndex - BORDER_WIDTH / 2}
+          width={CELL_CENTER_WIDTH}
+          height={BORDER_WIDTH}
+          vector-effect="non-scaling-size"
+          class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
+          id="interface-border"
+        />
+      {/each}
     {/each}
-  {/each}
-
-  <!-- Corners, borders, and cell centers -->
-  {#each arrayfrom0ToN(dimensions.rows + 1) as rowIndex}
-    {#each arrayfrom0ToN(dimensions.columns + 1) as columnIndex}
-      <!-- Corners -->
-      <rect
-        x={CELL_SIZE * columnIndex - BORDER_WIDTH / 2}
-        y={CELL_SIZE * rowIndex - BORDER_WIDTH / 2}
-        width={BORDER_WIDTH}
-        height={BORDER_WIDTH}
-        vector-effect="non-scaling-size"
-        class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
-        id="interface-corner"
-      />
-
-      <!-- Cell centers -->
-      <rect
-        on:mousedown={() => console.log('Click center')}
-        x={CELL_SIZE * columnIndex + BORDER_WIDTH / 2}
-        y={CELL_SIZE * rowIndex + BORDER_WIDTH / 2}
-        width={CELL_CENTER_WIDTH}
-        height={CELL_CENTER_WIDTH}
-        vector-effect="non-scaling-size"
-        class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
-        id="interface-center"
-      />
-
-      <!-- Vertical border -->
-      <rect
-        x={CELL_SIZE * columnIndex - BORDER_WIDTH / 2}
-        y={CELL_SIZE * rowIndex + BORDER_WIDTH / 2}
-        width={BORDER_WIDTH}
-        height={CELL_CENTER_WIDTH}
-        vector-effect="non-scaling-size"
-        class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
-        id="interface-border"
-      />
-
-      <!-- Horizontal border -->
-      <rect
-        x={CELL_SIZE * columnIndex + BORDER_WIDTH / 2}
-        y={CELL_SIZE * rowIndex - BORDER_WIDTH / 2}
-        width={CELL_CENTER_WIDTH}
-        height={BORDER_WIDTH}
-        vector-effect="non-scaling-size"
-        class="fill-current cursor-pointer text-transparent hover:text-opacity-40"
-        id="interface-border"
-      />
-    {/each}
-  {/each}
+  {/if}
 </g>
