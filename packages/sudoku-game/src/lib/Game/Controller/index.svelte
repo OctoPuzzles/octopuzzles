@@ -7,7 +7,8 @@
     CornerMarks as CornerMarksIcon,
     Notes as NotesIcon,
     Numbers as NumbersIcon,
-    Scanner as ScannerIcon
+    Scanner as ScannerIcon,
+    PenTool as PenToolIcon
   } from '@octopuzzles/icons';
   import { gameHistory, inputMode, selectedCells, highlightedCells } from '$lib/sudokuStore';
   import { scanner } from '$lib/sudokuStore/scanner';
@@ -28,6 +29,7 @@
   import Scanner from './components/Scanner.svelte';
   import Help from '../Help.svelte';
   import { gameAction } from '$lib/gameAction';
+  import PenTool from './components/PenTool.svelte';
 
   const userInputs = gameHistory.subscribeToInputs();
   export let walkthrough: WalkthroughStep[];
@@ -51,7 +53,8 @@
     },
     colors: { icon: ColorPicker, controller: GameColors, label: 'Colors', shortcut: 'V' },
     notes: { icon: NotesIcon, controller: Notes, label: 'Notes' },
-    scanner: { icon: ScannerIcon, controller: Scanner, label: 'Scanner', shortcut: 'B' }
+    scanner: { icon: ScannerIcon, controller: Scanner, label: 'Scanner', shortcut: 'B' },
+    pentool: { icon: PenToolIcon, controller: PenTool, label: 'Pen Tool', shortcut: 'N' }
   };
 
   $: controller = $inputMode && controls[$inputMode] ? controls[$inputMode]?.controller : Numbers;
@@ -68,12 +71,6 @@
   let gameInputModePreShortcut = get(inputMode);
 
   function handleKeyboardShortcuts(k: KeyboardEvent): void {
-    // Check whether any targets have explicitly stated that shortcuts should be ignored
-    if (
-      (k.target as HTMLElement)?.dataset?.ignoreshortcuts != null ||
-      (k.target as HTMLElement).parentElement?.dataset.ignoreshortcuts != null
-    )
-      return;
     if (isCommandKey(k) && $inputMode !== 'notes') {
       switch (k.key) {
         case 'z':
@@ -118,6 +115,11 @@
       case 'b':
         k.preventDefault();
         $inputMode = 'notes';
+        gameInputModePreShortcut = $inputMode;
+        break;
+      case 'n':
+        k.preventDefault();
+        $inputMode = 'pentool';
         gameInputModePreShortcut = $inputMode;
         break;
       case 'Shift':

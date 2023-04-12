@@ -9,6 +9,10 @@ import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
 import { derived, get, writable } from 'svelte/store';
 import { defaultUserInputs } from '@octopuzzles/sudoku-utils';
+import type {
+  OnMouseDownHitboxHandler,
+  OnMouseEnterHitboxHandler
+} from '@octopuzzles/sudoku-display';
 
 // WRITABLES
 
@@ -214,3 +218,6 @@ function createSelectedCellsStore() {
  * A selected cell is one that is pressed on with e.g. the mouse
  */
 export const selectedCells = createSelectedCellsStore();
+
+export const handleMouseDownHitbox = writable<OnMouseDownHitboxHandler | undefined>(undefined);
+export const handleMouseEnterHitbox = writable<OnMouseEnterHitboxHandler | undefined>(undefined);

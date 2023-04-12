@@ -1,4 +1,4 @@
-import type { SudokuClues, SolutionStep, Position } from '.';
+import type { SudokuClues, SolutionStep } from '.';
 
 export type Mode = 'editor' | 'game';
 

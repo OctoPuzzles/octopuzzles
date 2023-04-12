@@ -20,6 +20,7 @@
     OnMouseDownHitboxHandler,
     OnMouseEnterHitboxHandler
   } from '$lib/types';
+  import PenTools from './sudoku-clues/pentools/PenTools.svelte';
 
   export let clues: EditorHistoryStep;
   export let userInputs: GameHistoryStep | undefined = undefined;
@@ -135,6 +136,7 @@
   <Paths paths={clues.paths} />
   <KillerCages cages={clues.extendedcages} dimensions={clues.dimensions} />
   <Cells cells={clues.cells} />
+  <PenTools pentools={userInputs?.pentool} />
   <Notes notes={userInputs?.notes} {onClickNote} />
   <Regions regions={clues.regions} dimensions={clues.dimensions} />
   <BorderClues borderClues={clues.borderclues} />

@@ -818,6 +818,63 @@
       ],
       logic: {}
     }}
+    userInputs={{
+      centermarks: [],
+      colors: [],
+      cornermarks: [],
+      notes: [],
+      values: [],
+      pentool: [
+        {
+          positions: [{ row: 4.5, column: 4.5 }],
+          type: 'circle',
+          color: 'Red'
+        },
+        {
+          positions: [{ row: 4.5, column: 5.5 }],
+          type: 'cross',
+          color: 'Blue'
+        },
+        {
+          positions: [{ row: 5.5, column: 4 }],
+          type: 'circle',
+          color: 'Red'
+        },
+        {
+          positions: [{ row: 5.5, column: 5 }],
+          type: 'cross',
+          color: 'Blue'
+        },
+        {
+          positions: [{ row: 6, column: 4 }],
+          type: 'circle',
+          color: 'Red'
+        },
+        {
+          positions: [{ row: 6, column: 5 }],
+          type: 'cross',
+          color: 'Blue'
+        },
+        {
+          positions: [
+            { row: 0.5, column: 0.5 },
+            { row: 0.5, column: 1.5 },
+            { row: 1.5, column: 2.5 }
+          ],
+          type: 'line',
+          color: 'Orange'
+        },
+        {
+          positions: [
+            { row: 7, column: 0 },
+            { row: 7, column: 1 },
+            { row: 8, column: 1 }
+          ],
+          type: 'line',
+          color: 'Orange'
+        }
+      ]
+    }}
   />
 
   <div class="flex-1">

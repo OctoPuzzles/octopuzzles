@@ -12,8 +12,10 @@ import type {
 } from '@octopuzzles/models';
 import { deepCopy } from '@octopuzzles/utils';
 
+export const defaultDimensions = { rows: 9, columns: 9, margins: undefined };
+
 export const defaultRegionSize = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
+  dimensions: Dimensions = defaultDimensions
 ): { width: number; height: number } => {
   const offsets = dimensions.margins ?? { left: 0, right: 0, top: 0, bottom: 0 };
   const rows = dimensions.rows - offsets.top - offsets.bottom;
@@ -75,9 +77,7 @@ export const defaultRegionSize = (
   return { width, height };
 };
 
-export const defaultRegions = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-): Regions => {
+export const defaultRegions = (dimensions: Dimensions = defaultDimensions): Regions => {
   const offsets = dimensions.margins ?? { left: 0, right: 0, top: 0, bottom: 0 };
   const rows = dimensions.rows - offsets.top - offsets.bottom;
   const columns = dimensions.columns - offsets.left - offsets.right;
@@ -111,23 +111,16 @@ export const defaultRegions = (
   return regions;
 };
 
-function defaultItem<T>(
-  value: T,
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-): T[][] {
+function defaultItem<T>(value: T, dimensions: Dimensions = defaultDimensions): T[][] {
   return Array(dimensions.rows).fill(Array(dimensions.columns).fill(value));
 }
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-export const defaultEditorColors = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem(null, dimensions);
-export const defaultGameColors = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem([], dimensions);
-export const defaultCells = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => {
+export const defaultEditorColors = (dimensions: Dimensions = defaultDimensions) =>
+  defaultItem(null, dimensions);
+export const defaultGameColors = (dimensions: Dimensions = defaultDimensions) =>
+  defaultItem([], dimensions);
+export const defaultCells = (dimensions: Dimensions = defaultDimensions) => {
   let defaults = defaultItem((dimensions.margins ?? 0) == 0, dimensions);
   if (dimensions.margins) {
     defaults = deepCopy(defaults);
@@ -143,21 +136,17 @@ export const defaultCells = (
   }
   return defaults;
 };
-export const defaultGivens = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem('', dimensions);
-export const defaultCornermarks = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem('', dimensions);
-export const defaultCentermarks = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem('', dimensions);
-export const defaultValues = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem('', dimensions);
-export const defaultNotes = (
-  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
-) => defaultItem('', dimensions);
+export const defaultGivens = (dimensions: Dimensions = defaultDimensions) =>
+  defaultItem('', dimensions);
+export const defaultCornermarks = (dimensions: Dimensions = defaultDimensions) =>
+  defaultItem('', dimensions);
+export const defaultCentermarks = (dimensions: Dimensions = defaultDimensions) =>
+  defaultItem('', dimensions);
+export const defaultValues = (dimensions: Dimensions = defaultDimensions) =>
+  defaultItem('', dimensions);
+export const defaultNotes = (dimensions: Dimensions = defaultDimensions) =>
+  defaultItem('', dimensions);
+export const defaultPenTool = () => [];
 export const defaultCages = (): Extendedcages => [];
 export const defaultBorderclues = (): Borderclues => [];
 export const defaultCellclues = (): Cellclues => [];
@@ -175,7 +164,7 @@ export const defaultClues = (): EditorHistoryStep => {
     paths: defaultPaths(),
     borderclues: defaultBorderclues(),
     cellclues: defaultCellclues(),
-    dimensions: { rows: 9, columns: 9, margins: undefined },
+    dimensions: defaultDimensions,
     cells: defaultCells(),
     regions: defaultRegions(),
     logic: defaultLogic()
@@ -188,6 +177,7 @@ export const defaultUserInputs = (dimensions?: Dimensions): GameHistoryStep => {
     colors: defaultGameColors(dimensions),
     cornermarks: defaultCornermarks(dimensions),
     centermarks: defaultCentermarks(dimensions),
-    notes: defaultNotes(dimensions)
+    notes: defaultNotes(dimensions),
+    pentool: defaultPenTool()
   };
 };

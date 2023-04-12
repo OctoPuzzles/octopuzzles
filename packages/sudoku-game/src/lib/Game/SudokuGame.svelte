@@ -6,7 +6,9 @@
     highlightedCells,
     wrongCells,
     inputMode,
-    gameHistory
+    gameHistory,
+    handleMouseDownHitbox,
+    handleMouseEnterHitbox
   } from '$lib/sudokuStore';
   import type {
     EditorHistoryStep,
@@ -124,6 +126,8 @@
       }}
       onClickCell={handleClickCell}
       onEnterCell={handleEnterCell}
+      onMouseDownHitbox={$handleMouseDownHitbox}
+      onMouseEnterHitbox={$handleMouseEnterHitbox}
     />
   </div>
   <div class="my-auto">
