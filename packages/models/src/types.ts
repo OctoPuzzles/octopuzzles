@@ -21,6 +21,3 @@ type WithNumbers<Type> = {
 
 export type EditorHistoryStepWithNumbers = WithNumbers<EditorHistoryStep>;
 export type GameHistoryStepWithNumbers = WithNumbers<GameHistoryStep>;
-
-export type OnClickCellHandler = (cell: Position, metaButtonClicked: boolean) => void;
-export type OnEnterCellHandler = (cell: Position, metaButtonClicked: boolean) => void;

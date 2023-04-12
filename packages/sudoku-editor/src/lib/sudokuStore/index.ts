@@ -5,10 +5,9 @@ import type {
   InputMode,
   Label,
   Margins,
-  OnClickCellHandler,
-  OnEnterCellHandler,
   Position
 } from '@octopuzzles/models';
+import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
 import {
   defaultBorderclues,
   defaultCages,

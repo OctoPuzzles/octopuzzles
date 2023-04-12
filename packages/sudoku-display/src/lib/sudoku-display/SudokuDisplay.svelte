@@ -1,12 +1,6 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type {
-    EditorHistoryStep,
-    GameHistoryStep,
-    Position,
-    OnClickCellHandler,
-    OnEnterCellHandler
-  } from '@octopuzzles/models';
+  import type { EditorHistoryStep, GameHistoryStep, Position } from '@octopuzzles/models';
   import BorderClues from './sudoku-clues/borderclues/BorderClues.svelte';
   import CellClues from './sudoku-clues/CellClues.svelte';
   import Cells from './sudoku-clues/Cells.svelte';
@@ -20,6 +14,12 @@
   import Logic from './sudoku-clues/Logic.svelte';
   import Regions from './sudoku-clues/Regions.svelte';
   import Interface from './sudoku-clues/Interface.svelte';
+  import type {
+    OnClickCellHandler,
+    OnEnterCellHandler,
+    OnMouseDownHitboxHandler,
+    OnMouseEnterHitboxHandler
+  } from '$lib/types';
 
   export let clues: EditorHistoryStep;
   export let userInputs: GameHistoryStep | undefined = undefined;
@@ -40,49 +40,33 @@
    */
   export let onEnterCell: OnEnterCellHandler | undefined = undefined;
   /**
-   * Function that should be called when a user clicks the center of a cell.
-   * This does NOT detect clicks in the whole cell, as the borders has a buffer aorund them, to more easily detect interaction
+   * Function that gets called when a user presses down on either a cell center, border or corner.
+   * This detects clicks on a small buffer around each object, so it is easier to hit the border and corners.
+   * Hence "center" clicks are not detected on the whole cell.
    *
-   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
+   * The position is adjusted, so the
+   * - top left cell has a corner of { row: 0, column: 0 }
+   * - a center of { row: 0.5, column: 0.5 }
+   * - a vertical border of { row: 0.5, column: 0 }  and
+   * - horizontal border of { row: 0, column: 0.5 }
+   *
+   * If this is defined, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling.
    */
-  export let onClickCellCenter: ((cell: Position) => void) | undefined = undefined;
+  export let onMouseDownHitbox: OnMouseDownHitboxHandler | undefined = undefined;
   /**
-   * Function that should be called when a user enters the center of a cell AND the mouse is held down.
-   * This does NOT detect the whole cell, as the borders has a buffer aorund them, to more easily detect interaction.
+   * Function that gets called when a users mouse enters either a cell center, border or corner AND their mouse is held down.
+   * This detects a small buffer around each object, so it is easier to hit the border and corners.
+   * Hence "center" clicks are not detected on the whole cell.
    *
-   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
-   */
-  export let onEnterCellCenter: ((cell: Position) => void) | undefined = undefined;
-  /**
-   * Function that should be called when a user clicks on the border of a cell.
-   * This detects clicking around a small buffer of the border, to make it easier to hit.
+   * The position is adjusted, so the
+   * - top left cell has a corner of { row: 0, column: 0 }
+   * - a center of { row: 0.5, column: 0.5 }
+   * - a vertical border of { row: 0.5, column: 0 }  and
+   * - horizontal border of { row: 0, column: 0.5 }
    *
-   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
+   * If this is defined, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling.
    */
-  export let onClickBorder: ((cell: Position) => void) | undefined = undefined;
-  /**
-   * Function that should be called when a users mouse enters the border of a cell.
-   * This detects around a small buffer of the border, to make it easier to hit.
-   *
-   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
-   */
-  export let onEnterBorder: ((cell: Position) => void) | undefined = undefined;
-  /**
-   * Function that should be called when a user clicks the top left corner of a cell.
-   * This includes "imaginary" cells that do not exist, so the cell can just be thought of lying on an infinite grid.
-   * This detects around a small buffer of the corner, to make it easier to hit.
-   *
-   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
-   */
-  export let onClickCorner: ((cell: Position) => void) | undefined = undefined;
-  /**
-   * Function that should be called when a users mouse enters the top left corner of a cell.
-   * This includes "imaginary" cells that do not exist, so the cell can just be thought of lying on an infinite grid.
-   * This detects around a small buffer of the corner, to make it easier to hit.
-   *
-   * If this is specified, the `onClickCell` and `onEnterCell` no longer fire because of SVG not bubbling
-   */
-  export let onEnterCorner: ((cell: Position) => void) | undefined = undefined;
+  export let onMouseEnterHitbox: OnMouseEnterHitboxHandler | undefined = undefined;
 
   export let isEditor = false;
 
@@ -144,12 +128,8 @@
       {isEditor}
       {onClickCell}
       {onEnterCell}
-      {onClickCellCenter}
-      {onEnterCellCenter}
-      {onClickBorder}
-      {onEnterBorder}
-      {onClickCorner}
-      {onEnterCorner}
+      {onMouseDownHitbox}
+      {onMouseEnterHitbox}
     />
   {/if}
   <Paths paths={clues.paths} />

@@ -1,12 +1,7 @@
 <script lang="ts">
   import { regionTypeNames, regionTypesToLabel } from '$lib/constants';
-  import type {
-    Position,
-    Region,
-    RegionType,
-    OnClickCellHandler,
-    OnEnterCellHandler
-  } from '@octopuzzles/models';
+  import type { Position, Region, RegionType } from '@octopuzzles/models';
+  import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
   import {
     editorHistory,
     handleArrows,

@@ -1,13 +1,8 @@
 <script lang="ts">
   import { Killercage } from '@octopuzzles/sudoku-display';
+  import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
   import { cageTypeNames, cageTypesToLabel } from '$lib/constants';
-  import type {
-    CageType,
-    Extendedcage,
-    Position,
-    OnClickCellHandler,
-    OnEnterCellHandler
-  } from '@octopuzzles/models';
+  import type { CageType, Extendedcage, Position } from '@octopuzzles/models';
   import {
     editorHistory,
     handleArrows,

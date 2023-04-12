@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { CELL_SIZE, type Position } from '@octopuzzles/models';
   import type {
-    Cells,
-    Dimensions,
     OnClickCellHandler,
-    OnEnterCellHandler
-  } from '@octopuzzles/models';
+    OnEnterCellHandler,
+    OnMouseDownHitboxHandler,
+    OnMouseEnterHitboxHandler
+  } from '$lib/types';
+  import { CELL_SIZE } from '@octopuzzles/models';
+  import type { Cells, Dimensions } from '@octopuzzles/models';
   import { defaultCells } from '@octopuzzles/sudoku-utils';
   import { arrayfrom0ToN, isCommandKey } from '@octopuzzles/utils';
 
@@ -14,20 +15,10 @@
   export let isEditor = false;
   export let onClickCell: OnClickCellHandler | undefined = undefined;
   export let onEnterCell: OnEnterCellHandler | undefined = undefined;
-  export let onClickCellCenter: ((cell: Position) => void) | undefined = undefined;
-  export let onEnterCellCenter: ((cell: Position) => void) | undefined = undefined;
-  export let onClickBorder: ((cell: Position) => void) | undefined = undefined;
-  export let onEnterBorder: ((cell: Position) => void) | undefined = undefined;
-  export let onClickCorner: ((cell: Position) => void) | undefined = undefined;
-  export let onEnterCorner: ((cell: Position) => void) | undefined = undefined;
+  export let onMouseDownHitbox: OnMouseDownHitboxHandler | undefined = undefined;
+  export let onMouseEnterHitbox: OnMouseEnterHitboxHandler | undefined = undefined;
 
-  $: detectPenToolHits =
-    onClickCellCenter != null ||
-    onEnterCellCenter != null ||
-    onClickBorder != null ||
-    onEnterBorder != null ||
-    onClickCorner != null ||
-    onEnterCorner != null;
+  $: detectPenToolHits = onMouseDownHitbox != null || onMouseEnterHitbox != null;
   $: detectCellHits = (!detectPenToolHits && onClickCell != null) || onEnterCell != null;
 
   const CELL_CENTER_WIDTH_PERCENTAGE = 80;
@@ -83,8 +74,8 @@
         {@const cell = { row: rowIndex, column: columnIndex }}
         <!-- Corners -->
         <rect
-          on:mousedown={() => onClickCorner?.(cell)}
-          on:mouseenter={() => mouseDown && onEnterCorner?.(cell)}
+          on:mousedown={() => onMouseDownHitbox?.('corner', cell)}
+          on:mouseenter={() => mouseDown && onMouseEnterHitbox?.('corner', cell)}
           x={CELL_SIZE * columnIndex - BORDER_WIDTH / 2}
           y={CELL_SIZE * rowIndex - BORDER_WIDTH / 2}
           width={BORDER_WIDTH}
@@ -96,8 +87,11 @@
 
         <!-- Cell centers -->
         <rect
-          on:mousedown={() => onClickCellCenter?.(cell)}
-          on:mouseenter={() => mouseDown && onEnterCellCenter?.(cell)}
+          on:mousedown={() =>
+            onMouseDownHitbox?.('center', { row: rowIndex + 0.5, column: columnIndex + 0.5 })}
+          on:mouseenter={() =>
+            mouseDown &&
+            onMouseEnterHitbox?.('center', { row: rowIndex + 0.5, column: columnIndex + 0.5 })}
           x={CELL_SIZE * columnIndex + BORDER_WIDTH / 2}
           y={CELL_SIZE * rowIndex + BORDER_WIDTH / 2}
           width={CELL_CENTER_WIDTH}
@@ -109,8 +103,11 @@
 
         <!-- Vertical border -->
         <rect
-          on:mousedown={() => onClickBorder?.(cell)}
-          on:mouseenter={() => mouseDown && onEnterBorder?.(cell)}
+          on:mousedown={() =>
+            onMouseDownHitbox?.('border', { row: rowIndex + 0.5, column: columnIndex })}
+          on:mouseenter={() =>
+            mouseDown &&
+            onMouseEnterHitbox?.('border', { row: rowIndex + 0.5, column: columnIndex })}
           x={CELL_SIZE * columnIndex - BORDER_WIDTH / 2}
           y={CELL_SIZE * rowIndex + BORDER_WIDTH / 2}
           width={BORDER_WIDTH}
@@ -122,8 +119,11 @@
 
         <!-- Horizontal border -->
         <rect
-          on:mousedown={() => onClickBorder?.(cell)}
-          on:mouseenter={() => mouseDown && onEnterBorder?.(cell)}
+          on:mousedown={() =>
+            onMouseDownHitbox?.('border', { row: rowIndex, column: columnIndex + 0.5 })}
+          on:mouseenter={() =>
+            mouseDown &&
+            onMouseEnterHitbox?.('border', { row: rowIndex, column: columnIndex + 0.5 })}
           x={CELL_SIZE * columnIndex + BORDER_WIDTH / 2}
           y={CELL_SIZE * rowIndex - BORDER_WIDTH / 2}
           width={CELL_CENTER_WIDTH}

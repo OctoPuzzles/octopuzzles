@@ -1,4 +1,5 @@
-import type { OnClickCellHandler, OnEnterCellHandler, Position } from '@octopuzzles/models';
+import type { Position } from '@octopuzzles/models';
+import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
 import { isCommandKey, type ArrowDirection } from '@octopuzzles/utils';
 import { get } from 'svelte/store';
 import { editorHistory, selectedCells } from '.';

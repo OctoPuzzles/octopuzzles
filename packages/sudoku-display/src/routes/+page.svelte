@@ -4,7 +4,7 @@
   let actions: string[] = [];
 
   function addAction(action: string) {
-    actions = [...actions, action];
+    actions = [...actions, `${Date.now()} ${action}`];
   }
 
   let showHitboxes = false;
@@ -23,23 +23,13 @@
       addAction(`CELL CLICKED: Position (${cell.row}, ${cell.column}), META: ${metaButtonClicked}`)}
     onEnterCell={({ row, column }, metaButtonClicked) =>
       addAction(`CELL ENTERED: Position (${row}, ${column}), META: ${metaButtonClicked}`)}
-    onClickCellCenter={showHitboxes
-      ? ({ row, column }) => addAction(`CELL CENTER CLICKED: Position (${row}, ${column})`)
+    onMouseDownHitbox={showHitboxes
+      ? (type, { row, column }) =>
+          addAction(`${type.toUpperCase()} CLICKED: Position (${row}, ${column})`)
       : undefined}
-    onEnterCellCenter={showHitboxes
-      ? ({ row, column }) => addAction(`CELL CENTER ENTERED: Position (${row}, ${column})`)
-      : undefined}
-    onClickBorder={showHitboxes
-      ? ({ row, column }) => addAction(`BORDER CLICKED: Position (${row}, ${column})`)
-      : undefined}
-    onEnterBorder={showHitboxes
-      ? ({ row, column }) => addAction(`BORDER ENTERED: Position (${row}, ${column})`)
-      : undefined}
-    onClickCorner={showHitboxes
-      ? ({ row, column }) => addAction(`CORNER CLICKED: Position (${row}, ${column})`)
-      : undefined}
-    onEnterCorner={showHitboxes
-      ? ({ row, column }) => addAction(`CORNER ENTERED: Position (${row}, ${column})`)
+    onMouseEnterHitbox={showHitboxes
+      ? (type, { row, column }) =>
+          addAction(`${type.toUpperCase()} ENTERED: Position (${row}, ${column})`)
       : undefined}
     clues={{
       givens: [
@@ -841,7 +831,7 @@
     </label>
 
     <h2 class="mt-4 font-bold">Actions</h2>
-    <div class="border p-2 w-full h-96 overflow-y-auto flex flex-col-reverse justify-end">
+    <div class="border p-2 w-full h-96 overflow-y-auto flex flex-col-reverse justify-end font-mono">
       {#each actions as action}
         <p>{action}</p>
       {/each}

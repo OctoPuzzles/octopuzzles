@@ -1,13 +1,7 @@
 <script lang="ts">
   import { pathTypeNames, pathTypesToLabel } from '$lib/constants';
-  import type {
-    Form,
-    Path,
-    PathType,
-    Position,
-    OnClickCellHandler,
-    OnEnterCellHandler
-  } from '@octopuzzles/models';
+  import type { Form, Path, PathType, Position } from '@octopuzzles/models';
+  import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
   import {
     editorHistory,
     handleArrows,
