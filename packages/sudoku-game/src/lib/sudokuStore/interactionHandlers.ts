@@ -38,7 +38,6 @@ export const handleEnterCell: OnEnterCellHandler = (cell) => {
 export const handleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
   const cells = get(selectedCells);
   const dim = get(gameHistory.clues).dimensions;
-  console.log({ dim });
   const lastCell = cells[cells.length - 1];
   if (lastCell == null) return;
   const { row, column } = lastCell;

@@ -1,11 +1,18 @@
 <script lang="ts">
-  import { gameHistory, handleMouseDownHitbox, handleMouseEnterHitbox } from '$lib/sudokuStore';
+  import {
+    gameHistory,
+    handleMouseDownHitbox,
+    handleMouseEnterHitbox,
+    highlightedCells,
+    selectedCells
+  } from '$lib/sudokuStore';
   import type { PenTool, PenToolType } from '@octopuzzles/models';
   import { Colors } from '@octopuzzles/models';
   import { SquareButton } from '@octopuzzles/ui';
   import { gameAction } from '$lib/gameAction';
   import { onDestroy, onMount } from 'svelte';
   import type {
+    HitboxType,
     OnMouseDownHitboxHandler,
     OnMouseEnterHitboxHandler
   } from '@octopuzzles/sudoku-display';
@@ -20,6 +27,8 @@
   };
 
   onMount(() => {
+    $selectedCells = [];
+    $highlightedCells = [];
     const penTools = $userInputs.pentool;
     if (penTools && penTools[penTools.length - 1]) {
       const lastPenTool = penTools[penTools.length - 1];
@@ -74,10 +83,24 @@
     currentPenTool.positions = [position];
   };
   const onMouseEnterHitbox: OnMouseEnterHitboxHandler = (type, position) => {
-    currentPenTool.positions.push(position);
+    const previousPenPosition = currentPenTool.positions[currentPenTool.positions.length - 1];
+    let previousPenPositionType: HitboxType = 'center';
+    if (Math.round(previousPenPosition.row) === previousPenPosition.row) {
+      if (Math.round(previousPenPosition.column) === previousPenPosition.column) {
+        previousPenPositionType = 'corner';
+      } else {
+        previousPenPositionType = 'border';
+      }
+    } else if (Math.round(previousPenPosition.column) === previousPenPosition.column) {
+      previousPenPositionType = 'border';
+    }
+
+    if (previousPenPositionType === type) {
+      currentPenTool.positions.push(position);
+    }
   };
 
-  $: console.log({ pentool: $userInputs.pentool });
+  // $: console.log({ pentool: $userInputs.pentool });
 
   onMount(() => {
     $handleMouseDownHitbox = onMouseDownHitbox;
