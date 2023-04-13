@@ -24,6 +24,8 @@
   },
   "devDependencies": {
     "@octopuzzles/models": "*",
+    "@octopuzzles/sudoku-display": "*",
+    "@octopuzzles/ui": "*",
     "@octopuzzles/utils": "*",
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/package": "^2.0.0",
