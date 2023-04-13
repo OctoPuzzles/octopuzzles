@@ -67,6 +67,21 @@
           : 'stroke-current text-white-500'
       )}
     />
+  {:else}
+    <circle
+      cx={x * CELL_SIZE}
+      cy={y * CELL_SIZE}
+      r={2}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width={4 * scale}
+      class={classNames(
+        `fill-none`,
+        pentool.color != null
+          ? `stroke-current text-${pentool.color.toLowerCase()}`
+          : 'stroke-current text-white-500'
+      )}
+    />
   {/if}
 {:else}
   <path

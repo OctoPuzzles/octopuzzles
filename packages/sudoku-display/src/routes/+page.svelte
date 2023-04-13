@@ -827,7 +827,7 @@
       pentool: [
         {
           positions: [{ row: 4.5, column: 4.5 }],
-          type: 'circle',
+          type: 'line',
           color: 'Red'
         },
         {

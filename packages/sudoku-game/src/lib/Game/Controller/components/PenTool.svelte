@@ -6,7 +6,7 @@
     highlightedCells,
     selectedCells
   } from '$lib/sudokuStore';
-  import type { PenTool, PenToolType } from '@octopuzzles/models';
+  import type { Color, PenTool, PenToolType } from '@octopuzzles/models';
   import { Colors } from '@octopuzzles/models';
   import { SquareButton } from '@octopuzzles/ui';
   import { gameAction } from '$lib/gameAction';
@@ -20,11 +20,7 @@
 
   const userInputs = gameHistory.subscribeToInputs();
 
-  let currentPenTool: PenTool = {
-    color: 'Black',
-    type: 'line',
-    positions: []
-  };
+  let penColor: Color = 'Black';
 
   onMount(() => {
     $selectedCells = [];
@@ -33,57 +29,67 @@
     if (penTools && penTools[penTools.length - 1]) {
       const lastPenTool = penTools[penTools.length - 1];
       if (lastPenTool.color) {
-        currentPenTool.color = lastPenTool.color;
+        penColor = lastPenTool.color;
       }
     }
   });
 
   const onMouseUp = () => {
     const currentPenTools = deepCopy($userInputs.pentool) ?? [];
-    if (currentPenTool.positions.length === 0) return;
-    if (currentPenTool.positions.length === 1) {
-      const currentPenToolPosition = currentPenTool.positions[0];
-      // Check if there are any previous pen tools that are just in that cell. If so, toggle it around.
+    const lastPenTool = currentPenTools[currentPenTools.length - 1];
+    if (lastPenTool == null) return;
+    if (lastPenTool.positions.length === 1) {
+      // We are in the middle of toggling the last pen tool
+      currentPenTools.pop();
+      // First, check if a previous pen tool lies exactly on top. Then toggle that instead and remove this
       const otherPenToolIndex = currentPenTools.findIndex(
         (pt) =>
           pt.positions.length === 1 &&
-          pt.positions[0].row === currentPenToolPosition.row &&
-          pt.positions[0].column === currentPenToolPosition.column
+          pt.positions[0].row === lastPenTool.positions[0].row &&
+          pt.positions[0].column === lastPenTool.positions[0].column
       );
-      if (otherPenToolIndex < 0) {
-        // No other pen tool was just that cell. So just as the new pen tool
-        gameHistory.set({ pentool: [...currentPenTools, { ...currentPenTool, type: 'circle' }] });
-      } else {
+      if (otherPenToolIndex > -1) {
+        // Another pen tool lies exactly the same place, toggle that
         const newPenTools: PenTool[] = [];
         currentPenTools.forEach((pt, i) => {
           if (i === otherPenToolIndex) {
             if (pt.type === 'circle') {
-              newPenTools.push({ ...pt, type: 'cross' as PenToolType });
-              return;
-            } else {
+              newPenTools.push({ ...pt, type: 'cross' });
               return;
             }
+          } else {
+            newPenTools.push(pt);
           }
-          newPenTools.push(pt);
         });
         gameHistory.set({ pentool: newPenTools });
+      } else {
+        // No other pen tool lied there, so just toggle this one
+        if (lastPenTool.type === 'line') {
+          currentPenTools.push({ ...lastPenTool, type: 'circle' });
+        } else if (lastPenTool.type === 'circle') {
+          currentPenTools.push({ ...lastPenTool, type: 'cross' });
+        } else {
+          // The pen tool will be removed
+        }
+        gameHistory.set({ pentool: currentPenTools });
       }
     } else {
-      const newPenTools = [...currentPenTools, currentPenTool];
-      gameHistory.set({ pentool: newPenTools });
+      // The last pen tool is a long path. Do nothing
     }
-
-    currentPenTool = {
-      positions: [],
-      type: 'line',
-      color: 'Black'
-    };
   };
   const onMouseDownHitbox: OnMouseDownHitboxHandler = (type, position) => {
-    currentPenTool.positions = [position];
+    const currentPenTools = deepCopy($userInputs.pentool) ?? [];
+    gameHistory.set({
+      pentool: [...currentPenTools, { positions: [position], type: 'line', color: penColor }]
+    });
   };
   const onMouseEnterHitbox: OnMouseEnterHitboxHandler = (type, position) => {
-    const previousPenPosition = currentPenTool.positions[currentPenTool.positions.length - 1];
+    const currentPenTools = deepCopy($userInputs.pentool) ?? [];
+    const lastPenTool = currentPenTools[currentPenTools.length - 1];
+    if (lastPenTool == null || lastPenTool.positions.length === 0) return;
+    // TODO: If the user drags the mouse in from outside
+
+    const previousPenPosition = lastPenTool.positions[lastPenTool.positions.length - 1];
     let previousPenPositionType: HitboxType = 'center';
     if (Math.round(previousPenPosition.row) === previousPenPosition.row) {
       if (Math.round(previousPenPosition.column) === previousPenPosition.column) {
@@ -96,11 +102,11 @@
     }
 
     if (previousPenPositionType === type) {
-      currentPenTool.positions.push(position);
+      currentPenTools.pop();
+      currentPenTools.push({ ...lastPenTool, positions: [...lastPenTool.positions, position] });
+      gameHistory.set({ pentool: currentPenTools });
     }
   };
-
-  // $: console.log({ pentool: $userInputs.pentool });
 
   onMount(() => {
     $handleMouseDownHitbox = onMouseDownHitbox;
@@ -114,7 +120,7 @@
 
   function handleKeyDown(k: KeyboardEvent): void {
     if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(k.key)) {
-      currentPenTool.color = Colors[Number(k.key)];
+      penColor = Colors[Number(k.key)];
     }
   }
 </script>
@@ -129,7 +135,7 @@
         <SquareButton
           variant="customColor"
           class="text-{color.toLowerCase()}-500 bg-{color.toLowerCase()}-500"
-          on:click={() => (currentPenTool.color = color)}
+          on:click={() => (penColor = color)}
           title={number}
         />
       </div>
