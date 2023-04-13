@@ -30,13 +30,25 @@ npx prisma migrate dev
 npx prisma generate
 ```
 
-After that is done, you can now start the website locally by running
+After that is done, you should build the packages with
+
+```bash
+npm run build
+```
+
+you can now start the website locally by running
 
 ```bash
 npm run dev
 ```
 
 This should get everything up and running, and you can view it by going to http://localhost:5173.
+
+## Testing packages in isolation
+
+It can become quite annoying to have to rebuild everything everytime you make a small change to a package, to then just test one thing in the website. Hence we have made `isolate` commands for some of the packages to develop them in isolation.
+
+We have isolate for the sudoku-display, sudoku-game and sudoku-editor packages. To run one of them in isolation, just run `npm run isolate -- --filter=@octopuzzles/sudoku-display`.
 
 ## Database workflow
 
