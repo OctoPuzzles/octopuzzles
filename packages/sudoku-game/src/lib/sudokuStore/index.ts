@@ -22,6 +22,8 @@ function createGameHistoryStore() {
   const step = writable(0);
   // History
   const history = writable<GameHistoryStep[]>([deepCopy(defaultUserInputs())]);
+  history.subscribe((h) => console.log(h));
+  step.subscribe((s) => console.log({ s }));
 
   const clues = writable<EditorHistoryStep>();
 
@@ -42,6 +44,19 @@ function createGameHistoryStore() {
     Object.assign(newStep, newValues);
     history.set([...newHistory, newStep]);
     step.update((s) => s + 1);
+  }
+
+  /**
+   * Increase the editor step by one, and specify what changes have been made to the editor since last step. Will keep the state of the non-changed items
+   */
+  function replaceCurrentStep(newValues: Partial<GameHistoryStep>): void {
+    const localHistory = deepCopy(get(history));
+    const localStep = deepCopy(get(step));
+    const newHistory = deepCopy(localHistory.slice(0, localStep + 1));
+    const newStep = newHistory.pop();
+    if (newHistory == null || newStep == null) return;
+    Object.assign(newStep, newValues);
+    history.set([...newHistory, newStep]);
   }
 
   /**
@@ -80,7 +95,7 @@ function createGameHistoryStore() {
   const canUndo = derived(step, ($step) => $step > 0);
 
   function redo(): void {
-    step.update((step) => Math.min(get(history).length, step + 1));
+    step.update((step) => Math.min(get(history).length - 1, step + 1));
   }
 
   const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
@@ -139,6 +154,7 @@ function createGameHistoryStore() {
     reset,
     clearCells,
     set,
+    replaceCurrentStep,
     getValue,
     subscribeToInputs,
     clues: {

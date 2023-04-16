@@ -62,7 +62,7 @@
             newPenTools.push(pt);
           }
         });
-        gameHistory.set({ pentool: newPenTools });
+        gameHistory.replaceCurrentStep({ pentool: newPenTools });
       } else {
         // No other pen tool lied there, so just toggle this one
         if (lastPenTool.type === 'line') {
@@ -72,7 +72,7 @@
         } else {
           // The pen tool will be removed
         }
-        gameHistory.set({ pentool: currentPenTools });
+        gameHistory.replaceCurrentStep({ pentool: currentPenTools });
       }
     } else {
       currentPenTools.pop();
@@ -85,9 +85,9 @@
             newPenTools.push(...newLines.map((l) => ({ ...p, positions: l })));
           }
         });
-        gameHistory.set({ pentool: newPenTools });
+        gameHistory.replaceCurrentStep({ pentool: newPenTools });
       } else {
-        gameHistory.set({ pentool: [...currentPenTools, lastPenTool] });
+        gameHistory.replaceCurrentStep({ pentool: [...currentPenTools, lastPenTool] });
       }
     }
   };
@@ -124,7 +124,7 @@
 
     if (previousPenPositionType === 'border') {
       // Start a new line with the new type
-      gameHistory.set({
+      gameHistory.replaceCurrentStep({
         pentool: [...currentPenTools, { positions: [position], type: 'line', color: penColor }]
       });
       return;
@@ -133,7 +133,7 @@
     if (previousPenPositionType === type) {
       currentPenTools.pop();
       currentPenTools.push({ ...lastPenTool, positions: [...lastPenTool.positions, position] });
-      gameHistory.set({ pentool: currentPenTools });
+      gameHistory.replaceCurrentStep({ pentool: currentPenTools });
     }
   };
 

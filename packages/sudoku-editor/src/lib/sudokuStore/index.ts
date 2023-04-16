@@ -122,7 +122,7 @@ function createEditorHistoryStore() {
   const canUndo = derived(step, ($step) => $step > 0);
 
   function redo(): void {
-    step.update((step) => Math.min(get(history).length, step + 1));
+    step.update((step) => Math.min(get(history).length - 1, step + 1));
   }
 
   const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
