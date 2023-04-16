@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ColorValidator } from './Sudoku';
+import { ColorValidator, PositionValidator } from './Sudoku';
 
 export const GameValuesValidator = z.array(z.array(z.string()));
 export type GameValues = z.infer<typeof GameValuesValidator>;
@@ -16,6 +16,16 @@ export type Notes = z.infer<typeof NotesValidator>;
 export const GameColorsValidator = z.array(z.array(z.array(ColorValidator)));
 export type GameColors = z.infer<typeof GameColorsValidator>;
 
+export const PenToolTypeValidator = z.enum(['cross', 'circle', 'line']);
+export type PenToolType = z.infer<typeof PenToolTypeValidator>;
+export const PenToolValidator = z.object({
+  positions: z.array(PositionValidator),
+  type: PenToolTypeValidator,
+  color: ColorValidator.nullish()
+});
+export type PenTool = z.infer<typeof PenToolValidator>;
+export const PenToolsValidator = z.array(PenToolValidator);
+
 /** A single step on the way to a solution */
 export const SolutionStepValidator = z.object({
   /** Values on the solution step */
@@ -27,7 +37,8 @@ export const SolutionStepValidator = z.object({
   /** Notes on the solution step */
   notes: NotesValidator,
   /** A list of colors on each cell */
-  colors: GameColorsValidator
+  colors: GameColorsValidator,
+  pentool: PenToolsValidator.nullish()
 });
 export type SolutionStep = z.infer<typeof SolutionStepValidator>;
 

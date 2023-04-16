@@ -1,12 +1,7 @@
 <script lang="ts">
   import { regionTypeNames, regionTypesToLabel } from '$lib/constants';
-  import type {
-    Position,
-    Region,
-    RegionType,
-    MouseDownHandler,
-    MouseEnterHandler
-  } from '@octopuzzles/models';
+  import type { Position, Region, RegionType } from '@octopuzzles/models';
+  import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
   import {
     editorHistory,
     handleArrows,
@@ -223,7 +218,7 @@
     }
   }
 
-  const customHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
+  const customHandleMouseDown: OnClickCellHandler = (cell, metaButtonClicked) => {
     if (!metaButtonClicked) {
       selectedCells.set([cell]);
     } else {
@@ -235,8 +230,7 @@
     }
   };
 
-  const customHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
-    if (!mouseDown) return;
+  const customHandleMouseEnter: OnEnterCellHandler = (cell) => {
     if ($selectedItemIndex === -1) {
       selectedCells.add(cell);
     } else {

@@ -52,8 +52,8 @@
       {clues}
       highlightedCells={$highlightedCells}
       selectedCells={$selectedCells}
-      handleMouseDown={$handleMouseDown}
-      handleMouseEnter={$handleMouseEnter}
+      onClickCell={$handleMouseDown}
+      onEnterCell={$handleMouseEnter}
       isEditor
     />
   </div>

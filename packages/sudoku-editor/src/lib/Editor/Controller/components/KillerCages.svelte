@@ -1,13 +1,8 @@
 <script lang="ts">
   import { Killercage } from '@octopuzzles/sudoku-display';
+  import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
   import { cageTypeNames, cageTypesToLabel } from '$lib/constants';
-  import type {
-    CageType,
-    Extendedcage,
-    Position,
-    MouseDownHandler,
-    MouseEnterHandler
-  } from '@octopuzzles/models';
+  import type { CageType, Extendedcage, Position } from '@octopuzzles/models';
   import {
     editorHistory,
     handleArrows,
@@ -183,7 +178,7 @@
     }
   }
 
-  const customHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
+  const customHandleMouseDown: OnClickCellHandler = (cell, metaButtonClicked) => {
     if (!metaButtonClicked) {
       selectedCells.set([cell]);
     } else {
@@ -195,9 +190,7 @@
     }
   };
 
-  const customHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
-    if (!mouseDown) return;
-
+  const customHandleMouseEnter: OnEnterCellHandler = (cell) => {
     if ($selectedItemIndex === -1) {
       selectedCells.add(cell);
     } else {

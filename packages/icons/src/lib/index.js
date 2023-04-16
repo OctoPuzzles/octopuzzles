@@ -18,6 +18,7 @@ export { default as Logo } from './icons/Logo.svelte';
 export { default as Notes } from './icons/Notes.svelte';
 export { default as Numbers } from './icons/Numbers.svelte';
 export { default as Paths } from './icons/Paths.svelte';
+export { default as PenTool } from './icons/PenTool.svelte';
 export { default as Regions } from './icons/Regions.svelte';
 export { default as Scanner } from './icons/Scanner.svelte';
 export { default as Step } from './icons/Step.svelte';

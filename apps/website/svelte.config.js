@@ -16,6 +16,9 @@ const config = {
       $features: 'src/features',
       $stores: 'src/stores',
       $server: 'src/server'
+    },
+    env: {
+      dir: '../..'
     }
   }
 };

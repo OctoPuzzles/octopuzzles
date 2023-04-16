@@ -1,6 +1,8 @@
 .DS_Store
 .svelte-kit
+.vercel
 node_modules
+dist
 /build
 /package
 .env

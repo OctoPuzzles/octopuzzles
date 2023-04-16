@@ -1,4 +1,5 @@
-import type { MouseDownHandler, MouseEnterHandler, Position } from '@octopuzzles/models';
+import type { Position } from '@octopuzzles/models';
+import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
 import { isCommandKey, type ArrowDirection } from '@octopuzzles/utils';
 import { get } from 'svelte/store';
 import { gameHistory, selectedCells } from '.';
@@ -6,7 +7,7 @@ import { gameHistory, selectedCells } from '.';
 /**
  * Default action to do when user clicks on a cell
  */
-export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
+export const handleClickCell: OnClickCellHandler = (cell, metaButtonClicked) => {
   if (!metaButtonClicked) {
     const currentSelectedCells = get(selectedCells);
     const firstSelectedCell = currentSelectedCells[0];
@@ -27,19 +28,16 @@ export const defaultHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClick
 /**
  * Default action to do when users mouse enters a cell and meta button is down
  */
-export const defaultHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
-  if (mouseDown) {
-    if (get(selectedCells).length > 0) {
-      selectedCells.add(cell);
-    }
+export const handleEnterCell: OnEnterCellHandler = (cell) => {
+  if (get(selectedCells).length > 0) {
+    selectedCells.add(cell);
   }
 };
 
 /** Default action to run when user moves around with the arrow buttons */
-export const defaultHandleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
+export const handleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
   const cells = get(selectedCells);
   const dim = get(gameHistory.clues).dimensions;
-  console.log({ dim });
   const lastCell = cells[cells.length - 1];
   if (lastCell == null) return;
   const { row, column } = lastCell;

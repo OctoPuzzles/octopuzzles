@@ -17,12 +17,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install modules
         run: npm ci
+      - name: Build packages
+        run: npm run build
       - name: Run prisma generate
         run: npx prisma generate
       - name: Run Prettier
         run: npm run format:check
       - name: Run ESLint
         run: npm run lint
-      # TODO: Reenable when figuring out why trpc complains
-      # - name: Run check
-      #   run: npm run check
+      - name: Run check
+        run: npm run check

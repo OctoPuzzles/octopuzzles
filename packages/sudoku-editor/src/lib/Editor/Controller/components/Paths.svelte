@@ -1,13 +1,7 @@
 <script lang="ts">
   import { pathTypeNames, pathTypesToLabel } from '$lib/constants';
-  import type {
-    Form,
-    Path,
-    PathType,
-    Position,
-    MouseDownHandler,
-    MouseEnterHandler
-  } from '@octopuzzles/models';
+  import type { Form, Path, PathType, Position } from '@octopuzzles/models';
+  import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
   import {
     editorHistory,
     handleArrows,
@@ -233,7 +227,7 @@
     }
   }
 
-  const customHandleMouseDown: MouseDownHandler = ({ cell, metaButtonClicked }) => {
+  const customHandleMouseDown: OnClickCellHandler = (cell, metaButtonClicked) => {
     if (!metaButtonClicked) {
       selectedCells.set([cell]);
     } else {
@@ -245,9 +239,7 @@
     }
   };
 
-  const customHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) => {
-    if (!mouseDown) return;
-
+  const customHandleMouseEnter: OnEnterCellHandler = (cell) => {
     if ($selectedItemIndex === -1) {
       selectedCells.add(cell);
     } else {

@@ -525,7 +525,7 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): {
       if (!hasNonconsecutive) return;
 
       const newFlags = [...(newEditorHistory.logic.flags ?? [])];
-      if (newFlags.indexOf('NegativeBlack')) {
+      if (newFlags.includes('NegativeBlack')) {
         newFlags.push('NegativeWhite');
       } else {
         newFlags.push('Nonconsecutive');

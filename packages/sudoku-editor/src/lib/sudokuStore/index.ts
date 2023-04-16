@@ -5,10 +5,9 @@ import type {
   InputMode,
   Label,
   Margins,
-  MouseDownHandler,
-  MouseEnterHandler,
   Position
 } from '@octopuzzles/models';
+import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
 import {
   defaultBorderclues,
   defaultCages,
@@ -123,7 +122,7 @@ function createEditorHistoryStore() {
   const canUndo = derived(step, ($step) => $step > 0);
 
   function redo(): void {
-    step.update((step) => Math.min(get(history).length, step + 1));
+    step.update((step) => Math.min(get(history).length - 1, step + 1));
   }
 
   const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
@@ -268,12 +267,12 @@ export const selectedCells = createSelectedCellsStore();
  * The controller components can augment the functionality and how user inputs should be handled by changing this function.
  * This function specifies what to do when a user clicks a cell.
  */
-export const handleMouseDown = writable<MouseDownHandler>(defaultHandleMouseDown);
+export const handleMouseDown = writable<OnClickCellHandler>(defaultHandleMouseDown);
 /**
  * The controller components can augment the functionality and how user inputs should be handled by changing this function.
  * This function specifies what to do when a user enters a cell with their mouse and the meta button is clicked.
  */
-export const handleMouseEnter = writable<MouseEnterHandler>(defaultHandleMouseEnter);
+export const handleMouseEnter = writable<OnEnterCellHandler>(defaultHandleMouseEnter);
 /**
  * The controller components can augment the functionality and how user inputs should be handled by changing this function.
  * This function specifies what to do when a user moves around the board with the arrow buttons.

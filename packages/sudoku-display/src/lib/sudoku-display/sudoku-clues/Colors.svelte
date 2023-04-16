@@ -13,7 +13,7 @@
     radius: number,
     angleInDegrees: number
   ): { x: number; y: number } {
-    var angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
 
     return {
       x: centerX + radius * Math.cos(angleInRadians),
@@ -27,30 +27,12 @@
     const radius = 64;
     const startAngle = (360 / numColors) * i;
     const endAngle = (360 / numColors) * (i + 1) - (numColors === 1 ? 0.0001 : 0);
-    var start = polarToCartesian(x, y, radius, endAngle);
-    var end = polarToCartesian(x, y, radius, startAngle);
+    const start = polarToCartesian(x, y, radius, endAngle);
+    const end = polarToCartesian(x, y, radius, startAngle);
 
-    var largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+    const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
 
-    var d = [
-      'M',
-      x,
-      y,
-      'L',
-      start.x,
-      start.y,
-      'A',
-      radius,
-      radius,
-      0,
-      largeArcFlag,
-      0,
-      end.x,
-      end.y,
-      'Z'
-    ].join(' ');
-
-    return d;
+    return `M ${x} ${y} L ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y} Z`;
   }
 </script>
 

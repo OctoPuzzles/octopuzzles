@@ -3,15 +3,16 @@ import type {
   InputMode,
   Mode,
   Position,
-  MouseDownHandler,
-  MouseEnterHandler,
   EditorHistoryStep
 } from '@octopuzzles/models';
 import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
 import { derived, get, writable } from 'svelte/store';
-import { defaultHandleMouseDown, defaultHandleMouseEnter } from './interactionHandlers';
 import { defaultUserInputs } from '@octopuzzles/sudoku-utils';
+import type {
+  OnMouseDownHitboxHandler,
+  OnMouseEnterHitboxHandler
+} from '@octopuzzles/sudoku-display';
 
 // WRITABLES
 
@@ -21,6 +22,8 @@ function createGameHistoryStore() {
   const step = writable(0);
   // History
   const history = writable<GameHistoryStep[]>([deepCopy(defaultUserInputs())]);
+  history.subscribe((h) => console.log(h));
+  step.subscribe((s) => console.log({ s }));
 
   const clues = writable<EditorHistoryStep>();
 
@@ -41,6 +44,19 @@ function createGameHistoryStore() {
     Object.assign(newStep, newValues);
     history.set([...newHistory, newStep]);
     step.update((s) => s + 1);
+  }
+
+  /**
+   * Increase the editor step by one, and specify what changes have been made to the editor since last step. Will keep the state of the non-changed items
+   */
+  function replaceCurrentStep(newValues: Partial<GameHistoryStep>): void {
+    const localHistory = deepCopy(get(history));
+    const localStep = deepCopy(get(step));
+    const newHistory = deepCopy(localHistory.slice(0, localStep + 1));
+    const newStep = newHistory.pop();
+    if (newHistory == null || newStep == null) return;
+    Object.assign(newStep, newValues);
+    history.set([...newHistory, newStep]);
   }
 
   /**
@@ -79,7 +95,7 @@ function createGameHistoryStore() {
   const canUndo = derived(step, ($step) => $step > 0);
 
   function redo(): void {
-    step.update((step) => Math.min(get(history).length, step + 1));
+    step.update((step) => Math.min(get(history).length - 1, step + 1));
   }
 
   const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
@@ -138,6 +154,7 @@ function createGameHistoryStore() {
     reset,
     clearCells,
     set,
+    replaceCurrentStep,
     getValue,
     subscribeToInputs,
     clues: {
@@ -158,8 +175,6 @@ function createInputModeStore() {
     set: (value: InputMode | null) => {
       selectedItemIndex.set(-1);
       highlightedItemIndex.set(-1);
-      handleMouseDown.set(defaultHandleMouseDown);
-      handleMouseEnter.set(defaultHandleMouseEnter);
       set(value);
     }
   };
@@ -220,13 +235,5 @@ function createSelectedCellsStore() {
  */
 export const selectedCells = createSelectedCellsStore();
 
-/**
- * The controller components can augment the functionality and how user inputs should be handled by changing this function.
- * This function specifies what to do when a user clicks a cell.
- */
-export const handleMouseDown = writable<MouseDownHandler>(defaultHandleMouseDown);
-/**
- * The controller components can augment the functionality and how user inputs should be handled by changing this function.
- * This function specifies what to do when a user enters a cell with their mouse and the meta button is clicked.
- */
-export const handleMouseEnter = writable<MouseEnterHandler>(defaultHandleMouseEnter);
+export const handleMouseDownHitbox = writable<OnMouseDownHitboxHandler | undefined>(undefined);
+export const handleMouseEnterHitbox = writable<OnMouseEnterHitboxHandler | undefined>(undefined);
