@@ -6,7 +6,7 @@
     highlightedCells,
     selectedCells
   } from '$lib/sudokuStore';
-  import type { Color, PenTool, PenToolType } from '@octopuzzles/models';
+  import type { Color, PenTool } from '@octopuzzles/models';
   import { Colors } from '@octopuzzles/models';
   import { SquareButton } from '@octopuzzles/ui';
   import { gameAction } from '$lib/gameAction';
@@ -17,6 +17,7 @@
     OnMouseEnterHitboxHandler
   } from '@octopuzzles/sudoku-display';
   import { deepCopy } from '@octopuzzles/utils';
+  import { splitLineOnOverlap, startsInsideOtherLine } from '$lib/utils';
 
   const userInputs = gameHistory.subscribeToInputs();
 
@@ -74,9 +75,23 @@
         gameHistory.set({ pentool: currentPenTools });
       }
     } else {
-      // The last pen tool is a long path. Do nothing
+      currentPenTools.pop();
+      if (currentPenTools.some((p) => startsInsideOtherLine(lastPenTool.positions, p.positions))) {
+        // This new line is meant for deletion.
+        const newPenTools: PenTool[] = [];
+        currentPenTools.forEach((p) => {
+          const newLines = splitLineOnOverlap(lastPenTool.positions, p.positions);
+          if (newLines.length > 0) {
+            newPenTools.push(...newLines.map((l) => ({ ...p, positions: l })));
+          }
+        });
+        gameHistory.set({ pentool: newPenTools });
+      } else {
+        gameHistory.set({ pentool: [...currentPenTools, lastPenTool] });
+      }
     }
   };
+
   const onMouseDownHitbox: OnMouseDownHitboxHandler = (type, position) => {
     const currentPenTools = deepCopy($userInputs.pentool) ?? [];
     gameHistory.set({
