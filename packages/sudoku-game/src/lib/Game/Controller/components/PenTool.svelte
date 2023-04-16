@@ -94,9 +94,15 @@
 
   const onMouseDownHitbox: OnMouseDownHitboxHandler = (type, position) => {
     const currentPenTools = deepCopy($userInputs.pentool) ?? [];
-    gameHistory.set({
-      pentool: [...currentPenTools, { positions: [position], type: 'line', color: penColor }]
-    });
+    if (type === 'border') {
+      gameHistory.set({
+        pentool: [...currentPenTools, { positions: [position], type: 'circle', color: penColor }]
+      });
+    } else {
+      gameHistory.set({
+        pentool: [...currentPenTools, { positions: [position], type: 'line', color: penColor }]
+      });
+    }
   };
   const onMouseEnterHitbox: OnMouseEnterHitboxHandler = (type, position) => {
     const currentPenTools = deepCopy($userInputs.pentool) ?? [];
@@ -114,6 +120,14 @@
       }
     } else if (Math.round(previousPenPosition.column) === previousPenPosition.column) {
       previousPenPositionType = 'border';
+    }
+
+    if (previousPenPositionType === 'border') {
+      // Start a new line with the new type
+      gameHistory.set({
+        pentool: [...currentPenTools, { positions: [position], type: 'line', color: penColor }]
+      });
+      return;
     }
 
     if (previousPenPositionType === type) {
