@@ -58,7 +58,7 @@ export const splitLineOnOverlap = (
     }
   });
 
-  if (tempLine.length > 0) {
+  if (tempLine.length > 1) {
     newLines.push(tempLine);
   }
 
@@ -224,6 +224,56 @@ if (import.meta.vitest) {
           { row: 7, column: 0 },
           { row: 8, column: 0 },
           { row: 9, column: 0 }
+        ]
+      ]);
+    });
+
+    it('It does not leave dots', () => {
+      const splitLines = splitLineOnOverlap(
+        [
+          {
+            row: 2.5,
+            column: 4.5
+          },
+          {
+            row: 3.5,
+            column: 4.5
+          },
+          {
+            row: 4.5,
+            column: 4.5
+          }
+        ],
+        [
+          {
+            row: 2.5,
+            column: 3.5
+          },
+          {
+            row: 2.5,
+            column: 4.5
+          },
+          {
+            row: 3.5,
+            column: 4.5
+          },
+          {
+            row: 4.5,
+            column: 4.5
+          }
+        ]
+      );
+
+      expect(splitLines).toStrictEqual([
+        [
+          {
+            row: 2.5,
+            column: 3.5
+          },
+          {
+            row: 2.5,
+            column: 4.5
+          }
         ]
       ]);
     });
