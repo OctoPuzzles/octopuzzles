@@ -2,13 +2,13 @@ import { hasOpenModals } from '@octopuzzles/ui';
 import { arrowKeyDirection, type ArrowDirection } from '@octopuzzles/utils';
 
 let editorInFocus = false;
-const listenForEvents = () => !hasOpenModals() && editorInFocus;
+const listenForEvents = (): boolean => !hasOpenModals() && editorInFocus;
 
-export function handleWindowClick(e: MouseEvent) {
+export function handleWindowClick(e: MouseEvent): void {
   let isInFocus = false;
   if (e.target instanceof Element) {
     let target: Element | null = e.target;
-    while (target !== null && target.id !== 'sudoku-editor' && target.nodeName !== 'body') {
+    while (target != null && target.id !== 'sudoku-editor' && target.nodeName !== 'body') {
       target = target.parentElement;
     }
 
@@ -34,13 +34,14 @@ type EditorActionParams = {
  * }} />
  * ```
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function editorAction(node: HTMLElement, { onKeyDown, onArrowKeyDown }: EditorActionParams) {
-  const handleKeyDown = (k: KeyboardEvent) => {
+  const handleKeyDown = (k: KeyboardEvent): void => {
     if (listenForEvents()) {
       onKeyDown?.(k);
     }
   };
-  const handleArrowKeyDown = (k: KeyboardEvent) => {
+  const handleArrowKeyDown = (k: KeyboardEvent): void => {
     const direction = arrowKeyDirection(k);
     if (listenForEvents() && direction != null) {
       onArrowKeyDown?.(direction, k);

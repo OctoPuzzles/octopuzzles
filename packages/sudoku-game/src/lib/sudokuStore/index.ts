@@ -191,6 +191,7 @@ export const wrongCells = writable<Position[]>([]);
  */
 export const highlightedCells = writable<Position[]>([]);
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createSelectedCellsStore() {
   const _selectedCells = writable<Position[]>([]);
 

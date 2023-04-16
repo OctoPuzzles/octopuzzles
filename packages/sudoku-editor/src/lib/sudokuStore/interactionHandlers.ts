@@ -12,7 +12,7 @@ export const defaultHandleMouseDown: OnClickCellHandler = (cell, metaButtonClick
     const currentSelectedCells = get(selectedCells);
     const firstSelectedCell = currentSelectedCells[0];
     if (
-      firstSelectedCell &&
+      firstSelectedCell != null &&
       firstSelectedCell.row === cell.row &&
       firstSelectedCell.column === cell.column
     ) {
@@ -35,7 +35,7 @@ export const defaultHandleMouseEnter: OnEnterCellHandler = (cell) => {
 };
 
 /** Default action to run when user moves around with the arrow buttons */
-export const defaultHandleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
+export const defaultHandleArrows = (direction: ArrowDirection, k: KeyboardEvent): void => {
   const cells = get(selectedCells);
   const dim = editorHistory.getClue('dimensions');
   const lastCell = cells[cells.length - 1];

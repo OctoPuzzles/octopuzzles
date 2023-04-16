@@ -1,7 +1,6 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
   extends: ['octopuzzles-basic'],
-  plugins: ['svelte3', '@typescript-eslint'],
+  plugins: ['svelte3'],
   ignorePatterns: ['*.cjs'],
   overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
   settings: {
