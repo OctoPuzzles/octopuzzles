@@ -1,4 +1,4 @@
-import { Position, PathType, Path, Color, Form, Fill } from '@octopuzzles/models';
+import type { Position, PathType, Path, Color, Form, Fill } from '@octopuzzles/models';
 
 export function emptyPath(positions: Position[], type?: PathType): Path {
   return {
@@ -198,14 +198,18 @@ export function getPathsToDraw(path: Path): Path[] {
       const lastPosition = path.positions[path.positions.length - 1];
 
       for (const bulbPosition of [firstPosition, lastPosition]) {
+        let alternateForm: Form = 'Square';
+        if (path.type === 'Between') {
+          alternateForm = 'Round';
+        } else if (path.type === 'Lockout') {
+          alternateForm = 'Diamond';
+        }
         drawPaths.push({
           type: undefined,
           arrow: false,
           color: path.color ?? defaultSettings.color,
           fill: 'Hollow',
-          form:
-            path.form ??
-            (path.type === 'Between' ? 'Round' : path.type === 'Lockout' ? 'Diamond' : 'Square'),
+          form: path.form ?? alternateForm,
           positions: [bulbPosition],
           width: path.type === 'ProductSum' ? 70 : 81,
           uniqueDigits: undefined

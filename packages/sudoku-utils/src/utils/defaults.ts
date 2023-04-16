@@ -121,7 +121,7 @@ export const defaultEditorColors = (dimensions: Dimensions = defaultDimensions) 
 export const defaultGameColors = (dimensions: Dimensions = defaultDimensions) =>
   defaultItem([], dimensions);
 export const defaultCells = (dimensions: Dimensions = defaultDimensions) => {
-  let defaults = defaultItem((dimensions.margins ?? 0) == 0, dimensions);
+  let defaults = defaultItem((dimensions.margins ?? 0) === 0, dimensions);
   if (dimensions.margins) {
     defaults = deepCopy(defaults);
     for (let i = dimensions.margins.top; i < dimensions.rows - dimensions.margins.bottom; ++i) {

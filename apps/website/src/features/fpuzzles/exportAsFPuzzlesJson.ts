@@ -1,12 +1,12 @@
 import type { FPuzzlesJson, HexColor, PositionString } from './types';
 import { deepCopy } from '@octopuzzles/utils';
-import { defaultRegions } from '@octopuzzles/sudoku-utils';
-import { topLeftPosition } from '@octopuzzles/sudoku-utils';
 import {
   getBorderCluesToDraw,
   getCellCluesToDraw,
   getPathsToDraw,
-  getRegionsToDraw
+  getRegionsToDraw,
+  defaultRegions,
+  topLeftPosition
 } from '@octopuzzles/sudoku-utils';
 import type { Color, EditorHistoryStep, GameHistoryStep, Position } from '@octopuzzles/models';
 
@@ -104,7 +104,7 @@ export function exportAsFPuzzlesJson(
       if (flags.some((f) => f === 'Indexed159') && (j === 0 || j === 4 || j === 8)) {
         fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor.Red;
       }
-      if (editorColors[i][j] !== null) {
+      if (editorColors[i][j] != null) {
         fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor[editorColors[i][j] as Color];
       }
       if (values[i][j] !== '') {
@@ -370,7 +370,7 @@ export function exportAsFPuzzlesJson(
           const quadruple = fPuzzle.quadruple ?? (fPuzzle.quadruple = []);
           quadruple.push({
             cells: cells as [PositionString, PositionString, PositionString, PositionString],
-            values: c.text ? c.text.split(',').map((v) => parseFloat(v)) : []
+            values: c.text != null ? c.text.split(',').map((v) => parseFloat(v)) : []
           });
           return;
         }
@@ -399,7 +399,7 @@ export function exportAsFPuzzlesJson(
           cells
           //angle:
         });
-        if (d.text) {
+        if (d.text != null) {
           text.push({
             fontC: colorToHexColor.Black,
             size: (d.radius ?? 10) / 50,
@@ -426,10 +426,18 @@ export function exportAsFPuzzlesJson(
           }
         }
 
+        let outlineColor: Color = 'White';
+        if (d.color != null) {
+          if (d.shape === 'Line') {
+            outlineColor = d.color;
+          } else {
+            outlineColor = 'Black';
+          }
+        }
         rectangle.push({
           baseC: colorToHexColor[d.color ?? 'White'],
           fontC: colorToHexColor.Black,
-          outlineC: colorToHexColor[d.color ? (d.shape === 'Line' ? d.color : 'Black') : 'White'],
+          outlineC: colorToHexColor[outlineColor],
           height: d.shape === 'Line' ? 0.05 : (d.radius ?? 10) / 50,
           width: (d.radius ?? 10) / 50,
           cells,
@@ -493,7 +501,7 @@ export function exportAsFPuzzlesJson(
     }
 
     getCellCluesToDraw(c).forEach((d) => {
-      if (d.text) {
+      if (d.text != null) {
         const text = fPuzzle.text ?? (fPuzzle.text = []);
 
         let size: number;

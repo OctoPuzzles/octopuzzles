@@ -2,7 +2,11 @@ import nodemailer from 'nodemailer';
 import { SMTP_SERVER, SMTP_PORT, SMTP_LOGIN, SMTP_PASSWORD, BASE_URL } from '$env/static/private';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 
-export async function sendVerifyUserMail(name: string, email: string, token: string) {
+export async function sendVerifyUserMail(
+  name: string,
+  email: string,
+  token: string
+): Promise<void> {
   const options: SMTPTransport.Options = {
     host: SMTP_SERVER,
     port: parseInt(SMTP_PORT),

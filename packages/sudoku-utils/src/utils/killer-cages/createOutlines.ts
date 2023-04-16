@@ -38,7 +38,7 @@ function findOutlinePoints(
     }
     for (let columnIndex = 0; columnIndex < dimensions.columns; columnIndex++) {
       const cell = row[columnIndex];
-      if (!cell) {
+      if (cell == null) {
         continue;
       }
 

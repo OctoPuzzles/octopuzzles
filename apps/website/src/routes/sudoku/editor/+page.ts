@@ -3,7 +3,7 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async (event) => {
   const sudokuIdParam = event.url.searchParams.get('id');
-  const sudokuId = sudokuIdParam ? parseInt(sudokuIdParam) : undefined;
+  const sudokuId = sudokuIdParam != null ? parseInt(sudokuIdParam) : undefined;
   const trpcClient = trpc(event);
   const [sudoku, walkthrough] =
     sudokuId != null

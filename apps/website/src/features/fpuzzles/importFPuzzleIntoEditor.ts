@@ -18,9 +18,7 @@ import {
   defaultPaths,
   defaultRegions,
   defaultRegionSize,
-  defaultValues
-} from '@octopuzzles/sudoku-utils';
-import {
+  defaultValues,
   emptyBorderClue,
   emptyCage,
   emptyCellClue,
@@ -33,9 +31,10 @@ import type {
   CellClueType,
   Dimensions,
   Position,
-  Region
+  Region,
+  EditorHistoryStep,
+  GameHistoryStep
 } from '@octopuzzles/models';
-import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
 
 type Handlers<T> = {
   [Property in keyof T]-?: (object: NonNullable<T[Property]>) => void;
@@ -348,7 +347,7 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): {
             });
           }
 
-          if (circle.value && circle.value !== '') {
+          if (circle.value != null && circle.value !== '') {
             let size: CellClueSize = 'Medium';
             if (circle.width < 0.25) size = 'XSmall';
             else if (circle.width < 0.5) size = 'Small';
@@ -420,10 +419,10 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): {
 
       fpuzzleGrid.forEach((row, rowIndex) => {
         row.forEach((cell, columnIndex) => {
-          if (cell.given && cell.value) {
+          if (cell.given != null && cell.value != null) {
             newGivens[rowIndex + offsets.top][columnIndex + offsets.left] = String(cell.value);
           }
-          if (cell.c) {
+          if (cell.c != null) {
             newEditorColors[rowIndex + offsets.top][columnIndex + offsets.left] = closestColor(
               cell.c
             );
@@ -638,7 +637,7 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): {
             });
           }
 
-          if (rectangle.value && rectangle.value !== '') {
+          if (rectangle.value != null && rectangle.value !== '') {
             let size: CellClueSize = 'Medium';
             if (rectangle.width < 0.25) size = 'XSmall';
             else if (rectangle.width < 0.5) size = 'Small';

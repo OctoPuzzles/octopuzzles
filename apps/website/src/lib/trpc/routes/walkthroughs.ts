@@ -19,7 +19,7 @@ export const walkthroughs = t.router({
         where: { sudokuId: input.sudokuId }
       });
       const walkthrough: Walkthrough | null =
-        walkthroughRaw !== null ? WalkthroughValidator.parse(walkthroughRaw) : null;
+        walkthroughRaw != null ? WalkthroughValidator.parse(walkthroughRaw) : null;
       return walkthrough;
     }),
   delete: t.procedure
