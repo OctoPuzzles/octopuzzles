@@ -13,8 +13,6 @@
   let nextCursor: Date | null = null;
   $: nextCursor = sudokus.nextCursor;
 
-  if (currentCursor) console.log('Hello');
-
   let loading = false;
 
   async function loadNextPage() {

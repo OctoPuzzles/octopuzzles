@@ -1,6 +1,6 @@
 import { chromium } from '@playwright/test';
 
-async function authedSetup() {
+async function authedSetup(): Promise<void> {
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' });
