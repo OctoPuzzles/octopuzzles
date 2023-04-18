@@ -13,7 +13,7 @@
   {#each arrayfrom0ToN(dimensions.rows) as row}
     {#each arrayfrom0ToN(dimensions.columns) as column}
       {@const cornermark = cornermarks?.[row]?.[column]}
-      {#if cornermark && cornermark.length > 0 && !givens[row][column] && values?.[row]?.[column] == null}
+      {#if cornermark && cornermark.length > 0 && !givens[row][column] && (values?.[row]?.[column] == null || !values?.[row]?.[column])}
         {#each cornermark.split('') as cornerMark, i}
           <text
             x={CELL_SIZE * (column + 0.18 + 0.3 * (i % 3))}
