@@ -1,4 +1,4 @@
-import { Position, BorderClueType, Borderclue, Shape, Color } from '@octopuzzles/models';
+import type { Position, BorderClueType, Borderclue, Shape, Color } from '@octopuzzles/models';
 
 export function emptyBorderClue(
   positions: [Position, Position],

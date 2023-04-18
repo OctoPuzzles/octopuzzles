@@ -13,7 +13,7 @@
   {#each arrayfrom0ToN(dimensions.rows) as row}
     {#each arrayfrom0ToN(dimensions.columns) as column}
       {@const centermark = centermarks?.[row]?.[column]}
-      {#if centermark && centermark.length > 0 && !givens[row][column] && !values?.[row]?.[column]}
+      {#if centermark && centermark.length > 0 && !givens[row][column] && (values?.[row]?.[column] == null || !values?.[row]?.[column])}
         <text
           x={CELL_SIZE * (column + 0.5)}
           y={CELL_SIZE * (row + 0.55)}

@@ -4,7 +4,6 @@
   import { authMode } from '$stores/authStore';
   import { trpc } from '$lib/trpc/client';
   import type { TRPCError } from '@trpc/server';
-  import type { RouterInputs } from '$lib/trpc/router';
   import { page } from '$app/stores';
 
   let username = '';
@@ -18,15 +17,11 @@
   /** If the signup was successful */
   let registerCompleted = false;
 
-  async function register(data: RouterInputs['users']['register']) {
-    return await trpc($page).users.register.mutate(data);
-  }
-
   const handleRegister = async (): Promise<void> => {
     errors = undefined;
     try {
       loading = true;
-      await register({ username, email, password });
+      await trpc($page).users.register.mutate({ username, email, password });
       registerCompleted = true;
       username = '';
       email = '';

@@ -17,7 +17,8 @@ import {
   defaultGivens,
   defaultLogic,
   defaultPaths,
-  defaultRegions
+  defaultRegions,
+  defaultClues
 } from '@octopuzzles/sudoku-utils';
 import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
@@ -27,7 +28,6 @@ import {
   defaultHandleMouseDown,
   defaultHandleMouseEnter
 } from './interactionHandlers';
-import { defaultClues } from '@octopuzzles/sudoku-utils';
 
 // WRITABLES
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -55,7 +55,7 @@ function createEditorHistoryStore() {
         newStep[k] = localStep;
       }
     }
-    newClues = Object.fromEntries(Object.entries(newClues).filter(([, value]) => !!value));
+    newClues = Object.fromEntries(Object.entries(newClues).filter(([, value]) => Boolean(value)));
     Object.assign(newStep, newClues);
     history.set([...newHistory, newStep]);
     step.update((step) => step + 1);
@@ -221,6 +221,7 @@ export const wrongCells = writable<Position[]>([]);
  */
 export const highlightedCells = writable<Position[]>([]);
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createSelectedCellsStore() {
   const _selectedCells = writable<Position[]>([]);
 

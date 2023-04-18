@@ -53,7 +53,7 @@
     updateSettings(region);
   }
 
-  function updateSettings(region: Partial<Region>) {
+  function updateSettings(region: Partial<Region>): void {
     type = region.type ?? 'CUSTOM';
     defaultSettings = regionDefaults(type);
     borders = region.borders ?? defaultSettings.borders;
@@ -61,7 +61,7 @@
     uniqueDigits = region.uniqueDigits ?? defaultSettings.uniqueDigits;
   }
 
-  function changeType(type: RegionType | 'CUSTOM') {
+  function changeType(type: RegionType | 'CUSTOM'): void {
     updateSettings(type !== 'CUSTOM' ? { type } : {});
     updateSelectedRegion();
   }
@@ -100,12 +100,12 @@
     return {
       positions,
       type: type !== 'CUSTOM' ? type : undefined,
-      borders: borders != defaultSettings.borders ? borders : undefined,
+      borders: borders !== defaultSettings.borders ? borders : undefined,
       color:
-        (type === 'CUSTOM' || color != defaultSettings.color) && color !== 'NONE'
+        (type === 'CUSTOM' || color !== defaultSettings.color) && color !== 'NONE'
           ? color
           : undefined,
-      uniqueDigits: uniqueDigits != defaultSettings.uniqueDigits ? uniqueDigits : undefined
+      uniqueDigits: uniqueDigits !== defaultSettings.uniqueDigits ? uniqueDigits : undefined
     };
   }
 
@@ -115,7 +115,7 @@
       if (type === 'Normal') {
         $sudokuClues.regions.forEach((region) => {
           if (region.type === 'Normal') {
-            let newRegion = {
+            const newRegion = {
               ...region,
               positions: region.positions.filter(
                 (c) => !$selectedCells.some((s) => s.row === c.row && s.column === c.column)
@@ -168,7 +168,7 @@
     $sudokuClues.regions.forEach((region, i) => {
       if (i === $selectedItemIndex) {
         let found = false;
-        let newRegion = {
+        const newRegion = {
           ...region,
           positions: region.positions.filter((c) => {
             if (c.row === cell.row && c.column === cell.column) {
@@ -187,7 +187,7 @@
           removed = true;
         }
       } else if (type === 'Normal' && region.type === 'Normal') {
-        let newRegion = {
+        const newRegion = {
           ...region,
           positions: region.positions.filter((c) => {
             if (c.row === cell.row && c.column === cell.column) {
@@ -240,15 +240,15 @@
     }
   };
 
-  const customHandleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
+  const customHandleArrows = (direction: ArrowDirection, k: KeyboardEvent): void => {
     if (!isCommandKey(k)) {
       defaultHandleArrows(direction, k);
       return;
     }
-    let lastSelectedCell = $selectedCells[$selectedCells.length - 1];
-    if (lastSelectedCell) {
+    const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
+    if (lastSelectedCell != null) {
       const { row, column } = lastSelectedCell;
-      let dim = editorHistory.getClue('dimensions');
+      const dim = editorHistory.getClue('dimensions');
       let newCell: Position | undefined = undefined;
       switch (direction) {
         case 'up':
@@ -361,14 +361,13 @@
             onMoveUp={() => reorderRegion(index, 'up')}
             onMoveDown={() => reorderRegion(index, 'down')}
           >
-            {region.type !== 'Normal'
-              ? region.type
-                ? regionTypeNames[region.type]
-                : 'Custom'
-              : `Region ${index + 1}`}: <br /> ({region.positions.length}-cell{region.positions
-              .length > 1
-              ? 's'
-              : ''})
+            {#if region.type === 'Normal'}
+              Region {index + 1}: <br /> ({region.positions.length}-cell{region.positions.length > 1
+                ? 's'
+                : ''})
+            {:else}
+              {region.type != null ? regionTypeNames[region.type] : 'Custom'}
+            {/if}
           </ControllerButton>
         {/each}
       </div>

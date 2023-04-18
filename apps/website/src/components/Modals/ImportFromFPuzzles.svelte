@@ -14,7 +14,6 @@
   }) => void;
 
   let url = '';
-  let loading = false;
   let error = '';
 
   function importPuzzle(): void {
@@ -48,9 +47,8 @@
     <Input class="mt-4" placeholder="https://www.f-puzzles.com/?load=abcdef..." bind:value={url} />
 
     <div class="w-full mt-8 gap-2 flex flex-col">
-      <Button {loading} variant="default" on:click={close}>Cancel</Button>
+      <Button variant="default" on:click={close}>Cancel</Button>
       <Button
-        {loading}
         variant="primary"
         on:click={() => {
           importPuzzle();

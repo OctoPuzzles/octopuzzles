@@ -6,9 +6,9 @@
   export let onClickNote: ((note: string, position: Position) => void) | undefined = undefined;
 
   function createPolygonPoints(row: number, column: number): string {
-    let firstPoint = `${CELL_SIZE * column + 0.8 * CELL_SIZE},${CELL_SIZE * row}`;
-    let secondPoint = `${CELL_SIZE * (column + 1)},${CELL_SIZE * row}`;
-    let thirdPoint = `${CELL_SIZE * (column + 1)},${CELL_SIZE * row + 0.2 * CELL_SIZE}`;
+    const firstPoint = `${CELL_SIZE * column + 0.8 * CELL_SIZE},${CELL_SIZE * row}`;
+    const secondPoint = `${CELL_SIZE * (column + 1)},${CELL_SIZE * row}`;
+    const thirdPoint = `${CELL_SIZE * (column + 1)},${CELL_SIZE * row + 0.2 * CELL_SIZE}`;
 
     return `${firstPoint} ${secondPoint} ${thirdPoint}`;
   }

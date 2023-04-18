@@ -57,7 +57,7 @@
     updateSettings($sudokuClues.extendedcages[selectedItemIndex]);
   }
 
-  function updateSettings(cage: Partial<Extendedcage>) {
+  function updateSettings(cage: Partial<Extendedcage>): void {
     type = cage.type ?? 'CUSTOM';
     defaultSettings = cageDefaults(type);
     text = cage.text ?? defaultSettings.text;
@@ -65,7 +65,7 @@
     uniqueDigits = cage.uniqueDigits ?? defaultSettings.uniqueDigits;
   }
 
-  function changeType(type: CageType | 'CUSTOM') {
+  function changeType(type: CageType | 'CUSTOM'): void {
     updateSettings(type !== 'CUSTOM' ? { type } : {});
     updateSelectedCage();
   }
@@ -80,9 +80,9 @@
     return {
       positions,
       type: type !== 'CUSTOM' ? type : undefined,
-      text: text != defaultSettings.text ? text : undefined,
-      color: color != defaultSettings.color ? color : undefined,
-      uniqueDigits: uniqueDigits != defaultSettings.uniqueDigits ? uniqueDigits : undefined
+      text: text !== defaultSettings.text ? text : undefined,
+      color: color !== defaultSettings.color ? color : undefined,
+      uniqueDigits: uniqueDigits !== defaultSettings.uniqueDigits ? uniqueDigits : undefined
     };
   }
 
@@ -200,15 +200,15 @@
     }
   };
 
-  const customHandleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
+  const customHandleArrows = (direction: ArrowDirection, k: KeyboardEvent): void => {
     if (!isCommandKey(k)) {
       defaultHandleArrows(direction, k);
       return;
     }
-    let lastSelectedCell = $selectedCells[$selectedCells.length - 1];
-    if (lastSelectedCell) {
+    const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
+    if (lastSelectedCell != null) {
       const { row, column } = lastSelectedCell;
-      let dim = editorHistory.getClue('dimensions');
+      const dim = editorHistory.getClue('dimensions');
       let newCell: Position | undefined = undefined;
       switch (direction) {
         case 'up':

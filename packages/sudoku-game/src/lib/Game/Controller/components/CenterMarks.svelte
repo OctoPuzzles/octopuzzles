@@ -7,8 +7,8 @@
   import { gameAction } from '$lib/gameAction';
 
   const handleClick = (newCentermark: string): void => {
-    let currentCentermarks = get(gameHistory.getValue('centermarks'));
-    let newCentermarks = deepCopy(currentCentermarks);
+    const currentCentermarks = get(gameHistory.getValue('centermarks'));
+    const newCentermarks = deepCopy(currentCentermarks);
     const { givens } = get(gameHistory.clues);
     let positions = deepCopy(get(selectedCells));
 
@@ -28,7 +28,7 @@
         });
       }
     } else {
-      let allCellsHasCenterMark = positions.every((p) =>
+      const allCellsHasCenterMark = positions.every((p) =>
         currentCentermarks[p.row][p.column].includes(newCentermark)
       );
 

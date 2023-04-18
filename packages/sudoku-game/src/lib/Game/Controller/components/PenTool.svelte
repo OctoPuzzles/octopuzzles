@@ -27,7 +27,7 @@
     $selectedCells = [];
     $highlightedCells = [];
     const penTools = $userInputs.pentool;
-    if (penTools && penTools[penTools.length - 1]) {
+    if (penTools && penTools[penTools.length - 1] != null) {
       const lastPenTool = penTools[penTools.length - 1];
       if (lastPenTool.color) {
         penColor = lastPenTool.color;
@@ -35,7 +35,7 @@
     }
   });
 
-  const onMouseUp = () => {
+  const onMouseUp = (): void => {
     const currentPenTools = deepCopy($userInputs.pentool) ?? [];
     const lastPenTool = currentPenTools[currentPenTools.length - 1];
     if (lastPenTool == null) return;

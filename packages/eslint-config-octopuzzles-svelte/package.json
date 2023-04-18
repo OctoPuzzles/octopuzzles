@@ -6,9 +6,13 @@
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
+    "eslint-config-octopuzzles-basic": "*",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-turbo": "latest",
-    "eslint-plugin-svelte3": "^4.0.0"
+    "eslint": "^8.38.0",
+    "eslint-plugin-svelte3": "^4.0.0",
+    "svelte": "^3.58.0",
+    "typescript": "^4.8.4"
   },
   "publishConfig": {
     "access": "public"

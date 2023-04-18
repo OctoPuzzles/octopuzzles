@@ -22,8 +22,6 @@ function createGameHistoryStore() {
   const step = writable(0);
   // History
   const history = writable<GameHistoryStep[]>([deepCopy(defaultUserInputs())]);
-  history.subscribe((h) => console.log(h));
-  step.subscribe((s) => console.log({ s }));
 
   const clues = writable<EditorHistoryStep>();
 
@@ -193,6 +191,7 @@ export const wrongCells = writable<Position[]>([]);
  */
 export const highlightedCells = writable<Position[]>([]);
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createSelectedCellsStore() {
   const _selectedCells = writable<Position[]>([]);
 

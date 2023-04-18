@@ -39,7 +39,7 @@
   );
 
   function update(): void {
-    let newDimensions: Dimensions = {
+    const newDimensions: Dimensions = {
       rows: parseInt(rows) + parseInt(marginTop) + parseInt(marginBottom),
       columns: parseInt(columns) + parseInt(marginLeft) + parseInt(marginRight),
       margins:
@@ -61,7 +61,7 @@
               ? $sudokuClues.dimensions.margins.top + $sudokuClues.dimensions.margins.bottom
               : 0)
         ) ||
-      columns !=
+      columns !==
         String(
           $sudokuClues.dimensions.columns -
             ($sudokuClues.dimensions.margins
@@ -83,8 +83,8 @@
     } else {
       let frameChanged = false;
       if ($sudokuClues.dimensions.margins == null) {
-        frameChanged = newDimensions.margins !== null;
-      } else if (newDimensions.margins !== null) {
+        frameChanged = newDimensions.margins != null;
+      } else if (newDimensions.margins != null) {
         frameChanged =
           newDimensions.margins?.left !== $sudokuClues.dimensions.margins?.left ||
           newDimensions.margins?.right !== $sudokuClues.dimensions.margins?.right ||

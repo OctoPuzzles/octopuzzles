@@ -7,7 +7,7 @@
 
   export let cellClues: Cellclues;
 
-  const horizontalOffset = (l?: CellClueLocation | null) => {
+  const horizontalOffset = (l?: CellClueLocation | null): number => {
     switch (l) {
       case 'Top':
       case 'Center':
@@ -25,7 +25,7 @@
     }
   };
 
-  const verticalOffset = (l?: CellClueLocation | null) => {
+  const verticalOffset = (l?: CellClueLocation | null): number => {
     switch (l) {
       case 'Left':
       case 'Center':
@@ -82,7 +82,7 @@
     {#each cellClues as editorClue}
       {#each getCellCluesToDraw(editorClue) as cellClue, index}
         <g class="pointer-events-none">
-          {#if cellClue.text && cellClue.text.length > 0}
+          {#if cellClue.text != null && cellClue.text.length > 0}
             <text
               x={CELL_SIZE * (cellClue.position.column + horizontalOffset(cellClue.location))}
               y={CELL_SIZE * (cellClue.position.row + verticalOffset(cellClue.location))}
@@ -96,7 +96,7 @@
               {cellClue.text}
             </text>
           {/if}
-          {#if cellClue.symbol && cellClue.color}
+          {#if cellClue.symbol != null && cellClue.color}
             <svelte:component
               this={symbolsMap[cellClue.symbol]}
               x={cellClue.position.column * CELL_SIZE}

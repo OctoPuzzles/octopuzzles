@@ -31,7 +31,7 @@ export const sudokus = t.router({
       const rawSudokus = await ctx.prisma.sudoku.findMany({
         where: {
           publicSince:
-            ctx.token !== null && input.userId === ctx.token.id
+            ctx.token != null && input.userId === ctx.token.id
               ? { lt: input.cursor }
               : { not: null, lt: input.cursor },
           userId: input.userId,
@@ -118,7 +118,7 @@ export const sudokus = t.router({
       }
       await ctx.prisma.$transaction([
         ctx.prisma.sudoku.delete({ where: { id: input.id } }),
-        ctx.prisma.vote.deleteMany({ where: { sudokuId: sudoku.id } })
+        ctx.prisma.vote.deleteMany({ where: { sudokuId: sudoku?.id } })
       ]);
 
       return sudoku;

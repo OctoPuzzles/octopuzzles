@@ -2,13 +2,13 @@ import { hasOpenModals } from '@octopuzzles/ui';
 import { arrowKeyDirection, type ArrowDirection } from '@octopuzzles/utils';
 
 let gameInFocus = false;
-const listenForEvents = () => !hasOpenModals() && gameInFocus;
+const listenForEvents = (): boolean => !hasOpenModals() && gameInFocus;
 
-export function handleWindowClick(e: MouseEvent) {
+export function handleWindowClick(e: MouseEvent): void {
   let isInFocus = false;
   if (e.target instanceof Element) {
     let target: Element | null = e.target;
-    while (target !== null && target.id !== 'sudoku-game' && target.nodeName !== 'body') {
+    while (target != null && target.id !== 'sudoku-game' && target.nodeName !== 'body') {
       target = target.parentElement;
     }
 
@@ -35,22 +35,23 @@ type GameActionParams = {
  * }} />
  * ```
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function gameAction(
   node: HTMLElement,
   { onKeyDown, onKeyUp, onArrowKeyDown }: GameActionParams
 ) {
-  const handleKeyDown = (k: KeyboardEvent) => {
+  const handleKeyDown = (k: KeyboardEvent): void => {
     if (listenForEvents()) {
       onKeyDown?.(k);
     }
   };
-  const handleArrowKeyDown = (k: KeyboardEvent) => {
+  const handleArrowKeyDown = (k: KeyboardEvent): void => {
     const direction = arrowKeyDirection(k);
     if (listenForEvents() && direction != null) {
       onArrowKeyDown?.(direction, k);
     }
   };
-  const handleKeyUp = (k: KeyboardEvent) => {
+  const handleKeyUp = (k: KeyboardEvent): void => {
     if (listenForEvents()) {
       onKeyUp?.(k);
     }

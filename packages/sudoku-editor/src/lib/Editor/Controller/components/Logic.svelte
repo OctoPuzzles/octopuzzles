@@ -8,7 +8,7 @@
   const sudokuClues = editorHistory.subscribeToClues();
 
   let digits = $sudokuClues.logic.digits ?? '1-9';
-  let flags = $sudokuClues.logic.flags ?? [];
+  $: flags = $sudokuClues.logic.flags ?? [];
   $: nonstandard = flags.includes('NonStandard');
   $: diagonalPos = flags.includes('DiagonalPos');
   $: diagonalNeg = flags.includes('DiagonalNeg');
@@ -34,10 +34,10 @@
     editorHistory.set({ logic: newLogic });
   }
 
-  function toggleFlag(flagName: LogicFlag) {
+  function toggleFlag(flagName: LogicFlag): void {
     const flag = flagName;
 
-    let index = flags.indexOf(flag);
+    const index = flags.indexOf(flag);
     if (index === -1) {
       flags.push(flag);
     } else {

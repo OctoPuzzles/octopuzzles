@@ -1,4 +1,4 @@
-import { CageType, Color, Extendedcage, Position } from '@octopuzzles/models';
+import type { CageType, Color, Extendedcage, Position } from '@octopuzzles/models';
 
 export function emptyCage(positions: Position[], type?: CageType): Extendedcage {
   return { type, positions, text: undefined, color: undefined, uniqueDigits: undefined };

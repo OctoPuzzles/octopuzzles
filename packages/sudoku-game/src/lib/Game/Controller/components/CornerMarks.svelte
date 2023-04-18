@@ -8,8 +8,8 @@
   import { gameAction } from '$lib/gameAction';
 
   function handleClick(newCornermark: string): void {
-    let currentCornermarks = get(gameHistory.getValue('cornermarks'));
-    let newCornermarks = deepCopy(currentCornermarks);
+    const currentCornermarks = get(gameHistory.getValue('cornermarks'));
+    const newCornermarks = deepCopy(currentCornermarks);
     const { givens } = get(gameHistory.clues);
     let positions = deepCopy(get(selectedCells));
 
@@ -29,7 +29,7 @@
         });
       }
     } else {
-      let allCellsHasCornerMark = positions.every((p) =>
+      const allCellsHasCornerMark = positions.every((p) =>
         currentCornermarks[p.row][p.column].includes(newCornermark)
       );
 

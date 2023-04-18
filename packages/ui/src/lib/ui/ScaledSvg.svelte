@@ -7,14 +7,14 @@
     const children = svgInstance.querySelectorAll(
       'text, line, polyline, rect, circle, path, polygon'
     );
-    let bounds: { xMin?: number; yMin?: number; xMax?: number; yMax?: number } = {};
+    const bounds: { xMin?: number; yMin?: number; xMax?: number; yMax?: number } = {};
     children.forEach((child) => {
       const { x, y, width, height } = (child as SVGGraphicsElement).getBBox();
       if (x === 0 && y === 0 && width === 0 && height === 0) return;
-      if (!bounds.xMin || x < bounds.xMin) bounds.xMin = x;
-      if (!bounds.xMax || x + width > bounds.xMax) bounds.xMax = x + width;
-      if (!bounds.yMin || y < bounds.yMin) bounds.yMin = y;
-      if (!bounds.yMax || y + height > bounds.yMax) bounds.yMax = y + height;
+      if (bounds.xMin == null || x < bounds.xMin) bounds.xMin = x;
+      if (bounds.xMax == null || x + width > bounds.xMax) bounds.xMax = x + width;
+      if (bounds.yMin == null || y < bounds.yMin) bounds.yMin = y;
+      if (bounds.yMax == null || y + height > bounds.yMax) bounds.yMax = y + height;
     });
 
     const xMin = (bounds.xMin ?? 0) - 5;

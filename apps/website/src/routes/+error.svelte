@@ -8,8 +8,8 @@
   $: thirdNumber = $page.status - firstNumber * 100 - secondNumber * 10;
 
   const positionsForNumber = (number: number, index: number): Position[] => {
-    let offsetRow = index * 2;
-    let offsetCol = index * 3;
+    const offsetRow = index * 2;
+    const offsetCol = index * 3;
     switch (number as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
       case 0:
         return [
@@ -196,7 +196,7 @@
     </div>
 
     <h1 class="text-3xl font-medium">
-      {$page.status} : {$page.error?.message || 'Something went wrong'}
+      {$page.status} : {$page.error?.message ?? 'Something went wrong'}
     </h1>
   </div>
 </div>

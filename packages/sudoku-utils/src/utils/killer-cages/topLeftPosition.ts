@@ -10,7 +10,7 @@ export function topLeftPosition(positions: Position[]): Position {
   for (const position of positions) {
     if (position.row < topLeft.row) {
       topLeft = position;
-    } else if (position.row == topLeft.row && position.column < topLeft.column) {
+    } else if (position.row === topLeft.row && position.column < topLeft.column) {
       topLeft = position;
     }
   }

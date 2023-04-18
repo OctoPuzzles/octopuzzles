@@ -15,10 +15,10 @@
 
   let loading = false;
 
-  async function loadNextPage() {
+  async function loadNextPage(): Promise<void> {
     loading = true;
     currentCursor = nextCursor;
-    let sudokuData = await trpc($page).sudokus.search.query({
+    const sudokuData = await trpc($page).sudokus.search.query({
       labels: [],
       limit: 24,
       cursor: nextCursor ?? undefined
@@ -28,7 +28,7 @@
     loading = false;
   }
 
-  async function refetch(labels: number[]) {
+  async function refetch(labels: number[]): Promise<void> {
     loading = true;
     const sudokuData = await trpc($page).sudokus.search.query({
       labels,

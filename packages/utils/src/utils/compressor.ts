@@ -1,9 +1,10 @@
+/* eslint-disable eqeqeq */
 const f = String.fromCharCode;
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
 function getBaseValue(character: string): number {
   const baseReverseDic: Record<string, Record<string, number>> = {};
-  if (!baseReverseDic[ALPHABET]) {
+  if (baseReverseDic[ALPHABET] == null) {
     baseReverseDic[ALPHABET] = {};
     for (let i = 0; i < ALPHABET.length; i++) {
       baseReverseDic[ALPHABET][ALPHABET.charAt(i)] = i;
@@ -160,7 +161,7 @@ function _decompress(
       numBits++;
     }
 
-    if (dictionary[c]) {
+    if (dictionary[c] != null) {
       entry = dictionary[c];
     } else {
       if (c === dictSize) {

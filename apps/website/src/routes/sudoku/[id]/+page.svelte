@@ -13,12 +13,12 @@
 
   export let data: PageData;
 
-  let sudokuTitle = data.sudoku.title;
-  let description = data.sudoku.description;
+  const sudokuTitle = data.sudoku.title;
+  const description = data.sudoku.description;
   let walkthrough = data.walkthrough?.steps ?? [];
-  let clues = fillCluesWithDefaults(data.sudoku);
+  const clues = fillCluesWithDefaults(data.sudoku);
   let userInputs = data.gameData ?? defaultUserInputs(data.sudoku.dimensions);
-  let scannerSettings = me.settings;
+  const scannerSettings = me.settings;
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
   let now = Date.now();

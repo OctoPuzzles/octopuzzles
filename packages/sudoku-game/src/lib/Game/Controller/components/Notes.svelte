@@ -4,7 +4,7 @@
   import { Button, Input } from '@octopuzzles/ui';
   import { deepCopy } from '@octopuzzles/utils';
 
-  let notes = gameHistory.getValue('notes');
+  const notes = gameHistory.getValue('notes');
   let input: Input;
   $: firstSelectedCell = $selectedCells.length === 1 ? $selectedCells[0] : undefined;
 
@@ -25,7 +25,7 @@
   function handleInput(newValue: string): void {
     if (firstSelectedCell == null) return;
 
-    let newNotes = deepCopy($notes);
+    const newNotes = deepCopy($notes);
     newNotes[firstSelectedCell.row][firstSelectedCell.column] = newValue;
 
     gameHistory.set({ notes: newNotes });

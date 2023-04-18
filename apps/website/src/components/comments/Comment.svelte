@@ -14,7 +14,7 @@
 
   let showDeleteCommentModal = false;
 
-  async function updateComment() {
+  async function updateComment(): Promise<void> {
     if (updatedContent != null) {
       await trpc($page).comments.update.mutate({
         id: comment.id,

@@ -57,7 +57,7 @@
     updateSettings($sudokuClues.borderclues[selectedItemIndex]);
   }
 
-  function updateSettings(clue: Partial<Borderclue>) {
+  function updateSettings(clue: Partial<Borderclue>): void {
     type = clue.type ?? 'CUSTOM';
     defaultSettings = borderClueDefaults(clue.type ?? undefined);
     shape = clue.shape ?? defaultSettings.shape;
@@ -66,7 +66,7 @@
     text = clue.text ?? defaultSettings.text;
   }
 
-  function changeType(type: BorderClueType | 'CUSTOM') {
+  function changeType(type: BorderClueType | 'CUSTOM'): void {
     updateSettings(type !== 'CUSTOM' ? { type } : {});
 
     updateSelectedClue();
@@ -102,18 +102,18 @@
     return {
       positions,
       type: type !== 'CUSTOM' ? type : undefined,
-      shape: type === 'CUSTOM' || shape != defaultSettings.shape ? shape : undefined,
-      text: type === 'CUSTOM' || text != defaultSettings.text ? text : undefined,
-      radius: type === 'CUSTOM' || radius != defaultSettings.radius ? radius : undefined,
+      shape: type === 'CUSTOM' || shape !== defaultSettings.shape ? shape : undefined,
+      text: type === 'CUSTOM' || text !== defaultSettings.text ? text : undefined,
+      radius: type === 'CUSTOM' || radius !== defaultSettings.radius ? radius : undefined,
       color:
-        (type === 'CUSTOM' || color != defaultSettings.color) && color !== 'NONE'
+        (type === 'CUSTOM' || color !== defaultSettings.color) && color !== 'NONE'
           ? color
           : undefined
     };
   }
 
   const createNewBorderClue = (): void => {
-    if (!canMakeNewBorderClue) return;
+    if (canMakeNewBorderClue === false) return;
 
     let positions = $selectedCells;
     if (positions.length > 2) {

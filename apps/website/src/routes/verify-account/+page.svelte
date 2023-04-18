@@ -6,20 +6,16 @@
 
   const token = $page.url.searchParams.get('token');
 
-  async function verifyAccount(token: string) {
-    return await trpc($page).users.verify.mutate(token);
-  }
-
   let errors = false;
 
   onMount(async () => {
-    if (!token) {
+    if (token == null) {
       errors = true;
       return;
     }
 
     try {
-      let res = await verifyAccount(token);
+      const res = await trpc($page).users.verify.mutate(token);
       me.set(res);
     } catch (e) {
       errors = true;

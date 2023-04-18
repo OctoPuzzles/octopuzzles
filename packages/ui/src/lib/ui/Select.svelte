@@ -20,7 +20,7 @@
   export { className as class };
   export let onChange: ((option: T) => void) | undefined = undefined;
 
-  let id = useId();
+  const id = useId();
   let focused = false;
   let button: HTMLButtonElement;
   let list: HTMLUListElement;
@@ -32,7 +32,7 @@
     }
   }
 
-  $: if (button && list) {
+  $: if (button != null && list != null) {
     // The list should have the same width as the button.
     // We do this with js, as I don't know how with css
     list.style.width = button.clientWidth + 'px';
@@ -54,9 +54,9 @@
           selected = options.length - 1;
         }
         await tick();
-        if (list) {
+        if (list != null) {
           const active = list.querySelector('[data-selected="true"]') as HTMLLIElement;
-          if (active) {
+          if (active != null) {
             if (selected === options.length - 1) {
               list.scrollTop = active.offsetTop;
               return;
@@ -76,9 +76,9 @@
           selected = 0;
         }
         await tick();
-        if (list) {
+        if (list != null) {
           const active = list.querySelector('[data-selected="true"]') as HTMLLIElement;
-          if (active) {
+          if (active != null) {
             if (selected === 0) {
               list.scrollTop = 0;
               return;

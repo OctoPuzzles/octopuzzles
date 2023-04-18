@@ -76,7 +76,7 @@
     updateSettings(path);
   }
 
-  function updateSettings(path: Partial<Path>) {
+  function updateSettings(path: Partial<Path>): void {
     type = path.type ?? 'CUSTOM';
     defaultSettings = pathDefaults(type);
     color = path.color ?? defaultSettings.color;
@@ -88,7 +88,7 @@
     uniqueDigits = path.uniqueDigits ?? defaultSettings.uniqueDigits;
   }
 
-  function onChangeType() {
+  function onChangeType(): void {
     updateSettings(type !== 'CUSTOM' ? { type } : {});
 
     updateSelectedPath();
@@ -168,13 +168,15 @@
     return {
       positions,
       type: type !== 'CUSTOM' ? type : undefined,
-      color: type === 'CUSTOM' || color != defaultSettings.color ? color : undefined,
-      width: type === 'CUSTOM' || width != defaultSettings.width ? width : undefined,
-      form: type === 'CUSTOM' || form != defaultSettings.form ? form : undefined,
-      fill: type === 'CUSTOM' || fill != defaultSettings.fill ? fill : undefined,
-      arrow: type === 'CUSTOM' || arrow != defaultSettings.arrow ? arrow : undefined,
+      color: type === 'CUSTOM' || color !== defaultSettings.color ? color : undefined,
+      width: type === 'CUSTOM' || width !== defaultSettings.width ? width : undefined,
+      form: type === 'CUSTOM' || form !== defaultSettings.form ? form : undefined,
+      fill: type === 'CUSTOM' || fill !== defaultSettings.fill ? fill : undefined,
+      arrow: type === 'CUSTOM' || arrow !== defaultSettings.arrow ? arrow : undefined,
       uniqueDigits:
-        type === 'CUSTOM' || uniqueDigits != defaultSettings.uniqueDigits ? uniqueDigits : undefined
+        type === 'CUSTOM' || uniqueDigits !== defaultSettings.uniqueDigits
+          ? uniqueDigits
+          : undefined
     };
   }
 
@@ -249,15 +251,15 @@
     }
   };
 
-  const customHandleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
+  const customHandleArrows = (direction: ArrowDirection, k: KeyboardEvent): void => {
     if (!isCommandKey(k)) {
       defaultHandleArrows(direction, k);
       return;
     }
     const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
-    if (lastSelectedCell) {
+    if (lastSelectedCell != null) {
       const { row, column } = lastSelectedCell;
-      let dim = editorHistory.getClue('dimensions');
+      const dim = editorHistory.getClue('dimensions');
       let newCell: Position | undefined = undefined;
       switch (direction) {
         case 'up':
