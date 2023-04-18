@@ -21,7 +21,7 @@
     errors = undefined;
     try {
       loading = true;
-      await await trpc($page).users.register.mutate({ username, email, password });
+      await trpc($page).users.register.mutate({ username, email, password });
       registerCompleted = true;
       username = '';
       email = '';
