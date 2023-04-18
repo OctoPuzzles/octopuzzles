@@ -59,7 +59,7 @@
     gameHistory.clues.set(defaultClues());
   });
 
-  let storeUserInputs = gameHistory.subscribeToInputs();
+  const storeUserInputs = gameHistory.subscribeToInputs();
 
   $: userInputs = $storeUserInputs;
 
@@ -84,7 +84,7 @@
       return false;
     }
 
-    let userSolution = getUserSolution({
+    const userSolution = getUserSolution({
       givens: clues.givens,
       values: numbers
     });

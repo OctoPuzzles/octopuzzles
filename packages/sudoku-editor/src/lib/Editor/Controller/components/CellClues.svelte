@@ -100,7 +100,7 @@
     updateSettings($sudokuClues.cellclues[selectedItemIndex]);
   }
 
-  function updateSettings(clue: Partial<Cellclue>) {
+  function updateSettings(clue: Partial<Cellclue>): void {
     type = clue.type ?? 'CUSTOM';
     defaultSettings = cellClueDefaults(type);
     text = clue.text ?? defaultSettings.text;
@@ -111,7 +111,7 @@
     color = clue.color ?? defaultSettings.color;
   }
 
-  function changeType(type: CellClueType | 'CUSTOM') {
+  function changeType(type: CellClueType | 'CUSTOM'): void {
     if (type !== 'CUSTOM' && isFrameCellClue[type]) {
       setMargins({
         left: Math.max(1, $sudokuClues.dimensions.margins?.left ?? 0),
@@ -128,7 +128,7 @@
     updateSelectedClue();
   }
 
-  function resetMargins() {
+  function resetMargins(): void {
     setMargins({
       left: Math.max(
         $sudokuClues.cellclues.some(
@@ -176,15 +176,19 @@
       position,
       type: type !== 'CUSTOM' ? type : undefined,
       text:
-        symbol === 'NONE' && (type === 'CUSTOM' || text != defaultSettings.text) ? text : undefined,
+        symbol === 'NONE' && (type === 'CUSTOM' || text !== defaultSettings.text)
+          ? text
+          : undefined,
       location:
         symbol === 'NONE' && (type === 'CUSTOM' || location !== defaultSettings.location)
           ? location
           : undefined,
       size:
-        symbol === 'NONE' && (type === 'CUSTOM' || size != defaultSettings.size) ? size : undefined,
+        symbol === 'NONE' && (type === 'CUSTOM' || size !== defaultSettings.size)
+          ? size
+          : undefined,
       symbol:
-        (type === 'CUSTOM' || symbol !== defaultSettings.symbol) && symbol != 'NONE'
+        (type === 'CUSTOM' || symbol !== defaultSettings.symbol) && symbol !== 'NONE'
           ? symbol
           : undefined,
       rotation:
@@ -302,7 +306,7 @@
             onMoveDown={() => reorderCellClue(index, 'down')}
             onMoveUp={() => reorderCellClue(index, 'up')}
           >
-            {cellClue.type ? cellClueTypeNames[cellClue.type] : 'Custom'}
+            {cellClue.type != null ? cellClueTypeNames[cellClue.type] : 'Custom'}
           </ControllerButton>
         {/each}
       </div>
@@ -338,7 +342,7 @@
         </div>
       </Select>
     </div>
-    {#if symbol.toString() == 'NONE'}
+    {#if symbol.toString() === 'NONE'}
       <div>
         <Label id="value">Value</Label>
         <Input
@@ -380,7 +384,7 @@
         </Select>
       </div>
     {/if}
-    {#if symbol.toString() != 'NONE'}
+    {#if symbol.toString() !== 'NONE'}
       <div>
         <Select
           onChange={() => updateSelectedClue()}

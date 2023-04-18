@@ -16,10 +16,10 @@
   import { getContext } from 'svelte';
   import { gameAction } from '$lib/gameAction';
 
-  let onScannerSettingsChange: (newSettings: ScannerSettings) => void =
+  const onScannerSettingsChange: (newSettings: ScannerSettings) => void =
     getContext('updateScannerSettings');
 
-  let scannerSettings = scanner.scannerSettings;
+  const scannerSettings = scanner.scannerSettings;
   let highlightMode = $scannerSettings.highlightMode ?? 'None';
   let mode = $scannerSettings.mode ?? 'Basic';
   let autoScan = $scannerSettings.autoScan ?? false;
@@ -39,18 +39,18 @@
 
   const sudokuClues = gameHistory.clues;
 
-  let flags = $sudokuClues.logic.flags ?? [];
-  let diagonalPos = flags.includes('DiagonalPos');
-  let diagonalNeg = flags.includes('DiagonalNeg');
-  let antiknight = flags.includes('Antiknight');
-  let antiking = flags.includes('Antiking');
-  let disjointsets = flags.includes('DisjointSets');
-  let nonconsecutive = flags.includes('Nonconsecutive');
-  //let entropy = flags.includes('Entropy');
-  let negativeX = flags.includes('NegativeX');
-  let negativeV = flags.includes('NegativeV');
-  let negativeBlack = flags.includes('NegativeBlack');
-  let negativeWhite = flags.includes('NegativeWhite');
+  $: flags = $sudokuClues.logic.flags ?? [];
+  $: diagonalPos = flags.includes('DiagonalPos');
+  $: diagonalNeg = flags.includes('DiagonalNeg');
+  $: antiknight = flags.includes('Antiknight');
+  $: antiking = flags.includes('Antiking');
+  $: disjointsets = flags.includes('DisjointSets');
+  $: nonconsecutive = flags.includes('Nonconsecutive');
+  // $: entropy = flags.includes('Entropy');
+  $: negativeX = flags.includes('NegativeX');
+  $: negativeV = flags.includes('NegativeV');
+  $: negativeBlack = flags.includes('NegativeBlack');
+  $: negativeWhite = flags.includes('NegativeWhite');
 
   function updateSettings(): void {
     const newScannerSettings: ScannerSettings = {

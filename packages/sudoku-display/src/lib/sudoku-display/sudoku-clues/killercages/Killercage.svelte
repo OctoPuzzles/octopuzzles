@@ -20,7 +20,7 @@
     )}
   />
 {/each}
-{#if cage.text && cage.text.length > 0}
+{#if cage.text != null && cage.text.length > 0}
   <text
     class={classNames('stroke-current', cage.color != null && `text-${cage.color?.toLowerCase()}`)}
     x={CELL_SIZE * topLeft.column + 2}

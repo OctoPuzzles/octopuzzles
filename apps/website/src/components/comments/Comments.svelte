@@ -9,7 +9,7 @@
   export let sudokuId: number;
 
   let me: RouterOutputs['users']['me'];
-  async function getMe() {
+  async function getMe(): void {
     me = await trpc($page).users.me.query();
   }
 
@@ -21,7 +21,7 @@
   let savingComment = false;
   let commentContent = '';
 
-  async function postComment() {
+  async function postComment(): void {
     savingComment = true;
     await trpc($page).comments.create.mutate({
       body: commentContent,
@@ -35,7 +35,7 @@
   let currentCursor: Date | null | undefined = undefined;
   let comments: RouterOutputs['comments']['onSudoku']['comments'] = [];
   const limit = 20;
-  async function getComments() {
+  async function getComments(): void {
     const c = await trpc($page).comments.onSudoku.query({
       sudokuId: sudokuId,
       limit,

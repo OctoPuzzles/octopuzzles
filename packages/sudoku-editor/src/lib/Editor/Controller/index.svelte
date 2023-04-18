@@ -46,8 +46,10 @@
     colors: { icon: ColorPicker, controller: EditorColors, label: 'Colors' }
   };
 
-  $: controller = $inputMode && controls[$inputMode] ? controls[$inputMode]?.controller : Givens;
-  $: openControl = $inputMode && controls[$inputMode] ? controls[$inputMode]?.label : 'Givens';
+  $: controller =
+    $inputMode && controls[$inputMode] != null ? controls[$inputMode]?.controller : Givens;
+  $: openControl =
+    $inputMode && controls[$inputMode] != null ? controls[$inputMode]?.label : 'Givens';
 
   function setInputMode(newInputMode: string): void {
     $inputMode = newInputMode as InputMode;
@@ -56,6 +58,9 @@
   onMount(() => {
     $inputMode = 'givens';
   });
+
+  const canUndo = editorHistory.canUndo;
+  const canRedo = editorHistory.canRedo;
 </script>
 
 <ControllerSkeleton
@@ -70,7 +75,7 @@
   <svelte:fragment slot="bottom">
     <SquareButton
       text="Undo"
-      disabled={!editorHistory.canUndo}
+      disabled={!$canUndo}
       on:click={() => {
         editorHistory.undo();
       }}
@@ -79,7 +84,7 @@
     </SquareButton>
     <SquareButton
       text="Redo"
-      disabled={!editorHistory.canRedo}
+      disabled={!$canRedo}
       on:click={() => {
         editorHistory.redo();
       }}

@@ -9,13 +9,9 @@
 
   let successful = false;
 
-  async function resendVerificationEmail() {
-    return await trpc($page).users.resendVerification.mutate({ email });
-  }
-
   async function requestNewVerificationToken(): Promise<void> {
     try {
-      await resendVerificationEmail();
+      await trpc($page).users.resendVerification.mutate({ email });
 
       successful = true;
     } catch (_) {

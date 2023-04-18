@@ -32,7 +32,7 @@
 
   $: editorHistory.reset(initialClues);
 
-  let storeClues = editorHistory.subscribeToClues();
+  const storeClues = editorHistory.subscribeToClues();
 
   onDestroy(() => {
     editorHistory.reset();

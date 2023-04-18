@@ -1,12 +1,15 @@
 <script lang="ts">
   import Comments from '$components/comments/Comments.svelte';
-  import { FacebookLink, RedditLink, TwitterLink, WhatsAppLink } from '@octopuzzles/ui';
+  import {
+    FacebookLink,
+    RedditLink,
+    TwitterLink,
+    WhatsAppLink,
+    PuzzleLabel,
+    HTMLContent
+  } from '@octopuzzles/ui';
   import { trpc } from '$lib/trpc/client';
-  import type { Label } from '@octopuzzles/models';
-  import type { Sudoku } from '@octopuzzles/models';
-  import type { User } from '@octopuzzles/models';
-  import type { Vote } from '@octopuzzles/models';
-  import { PuzzleLabel, HTMLContent } from '@octopuzzles/ui';
+  import type { Label, Vote, User, Sudoku } from '@octopuzzles/models';
   import classNames from 'classnames';
   import { formatDistanceToNowStrict } from 'date-fns';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
@@ -21,19 +24,15 @@
   };
   export let takeScreenshot: () => void;
 
-  async function vote(value: number) {
-    return await trpc($page).votes.vote.mutate({ sudokuId: sudoku.id, value });
-  }
-
   $: pointsWithoutUserVote = (sudoku.points ?? 0) - (sudoku.userVote?.value ?? 0);
 
   let userVote = sudoku.userVote == null || sudoku.userVote.value === 0 ? 0 : sudoku.userVote.value;
 
   async function handleVote(value: 1 | -1): Promise<void> {
     if (sudoku.publicSince) {
-      let newValue = userVote === value ? 0 : value;
+      const newValue = userVote === value ? 0 : value;
       userVote = newValue; // optimistic
-      const res = await vote(newValue);
+      const res = await trpc($page).votes.vote.mutate({ sudokuId: sudoku.id, value: newValue });
 
       if (res) {
         userVote = res.value;

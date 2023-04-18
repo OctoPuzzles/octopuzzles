@@ -4,9 +4,7 @@
   import { Button, Spinner, PuzzleLabel } from '@octopuzzles/ui';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
   import NotePencil from 'phosphor-svelte/lib/NotePencil/NotePencil.svelte';
-  import type { Sudoku } from '@octopuzzles/models';
-  import type { User } from '@octopuzzles/models';
-  import type { Label } from '@octopuzzles/models';
+  import type { User, Sudoku, Label } from '@octopuzzles/models';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
 
   export let sudokus:

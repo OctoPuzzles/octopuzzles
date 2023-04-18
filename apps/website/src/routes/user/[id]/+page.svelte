@@ -12,9 +12,9 @@
 
   let loading = false;
 
-  async function loadNextPage() {
+  async function loadNextPage(): Promise<void> {
     loading = true;
-    let sudokuData = await trpc($page).sudokus.search.query({
+    const sudokuData = await trpc($page).sudokus.search.query({
       labels: [],
       limit: 24,
       userId: data.user.id,
@@ -39,7 +39,7 @@
 
 {#if data}
   <h1 class="text-center text-4xl font-bold mb-4">
-    Sudokus by {data.user.username == data.me?.username ? 'you' : data.user.username}
+    Sudokus by {data.user.username === data.me?.username ? 'you' : data.user.username}
   </h1>
 {/if}
 <SudokuList

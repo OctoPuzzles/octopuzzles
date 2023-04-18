@@ -1,6 +1,6 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { Path, Position } from '@octopuzzles/models';
+  import type { Path, Position, Form } from '@octopuzzles/models';
   import { getPathsToDraw } from '@octopuzzles/sudoku-utils';
   import classNames from 'classnames';
 
@@ -20,12 +20,11 @@
   }
 
   function createArrow({ row, column }: Position): string {
-    let d = `
+    return `
 			M${(column + 0.5) * CELL_SIZE + 10} ${(row + 0.5) * CELL_SIZE + 10}
 			L${(column + 0.5) * CELL_SIZE} ${(row + 0.5) * CELL_SIZE}
 			L${(column + 0.5) * CELL_SIZE + 10} ${(row + 0.5) * CELL_SIZE - 10}
 		`;
-    return d;
   }
 
   function rotate(positions: Position[], offset = 0, reverse = false): string | undefined {
@@ -53,23 +52,29 @@
     return (CELL_SIZE * width) / 100;
   }
 
-  function pathHasArrow(p: Path) {
+  function pathHasArrow(p: Path): boolean {
     const lastPosition = p.positions[p.positions.length - 1];
     return (
       p.arrow === true &&
       p.positions.length > 1 &&
-      lastPosition &&
+      lastPosition != null &&
       (p.width ?? 10) <= MAX_WIDTH_FOR_ARROW
     );
   }
 
-  function getSizeOfPathAtStep(p: Path, step: number) {
+  function getSizeOfPathAtStep(p: Path, step: number): number {
     return step === 2 ? Math.max(getSize(p.width ?? 10) - 3, 0) : getSize(p.width ?? 10);
   }
 
-  function getColorOfPathAtStep(p: Path, step: number) {
+  function getColorOfPathAtStep(p: Path, step: number): string {
     return step === 2 ? 'white' : p.color?.toLowerCase() ?? 'black';
   }
+
+  const formToLinecap: Record<Form, 'butt' | 'inherit' | 'square' | 'round'> = {
+    Diamond: 'butt',
+    Square: 'square',
+    Round: 'round'
+  };
 </script>
 
 {#each getPathsToDraw(path) as p}
@@ -112,15 +117,14 @@
       {/if}
     {/if}
     {#if p.positions.length > 1}
+      {@const linecap = p.form === 'Square' ? 'square' : 'round'}
       <path
         d={createPaths(p.positions)}
         class={`stroke-current text-${color}`}
         stroke-width={size + 1}
         stroke-linecap={p.form === 'Diamond' || (p.form === 'Square' && hasArrow)
           ? 'butt'
-          : p.form === 'Square'
-          ? 'square'
-          : 'round'}
+          : linecap}
         stroke-linejoin={p.form !== 'Round' ? 'miter' : 'round'}
         stroke-miterlimit="5"
         fill="none"
@@ -130,7 +134,7 @@
           d={createArrow(lastPosition)}
           class={`stroke-current text-${color}`}
           stroke-width={size + 1}
-          stroke-linecap={p.form === 'Diamond' ? 'butt' : p.form === 'Square' ? 'square' : 'round'}
+          stroke-linecap={p.form != null ? formToLinecap[p.form] : 'round'}
           stroke-linejoin={p.form !== 'Round' ? 'miter' : 'round'}
           fill="none"
           transform={rotate(p.positions)}

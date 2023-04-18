@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { navigating } from '$app/stores';
+  import { navigating, page } from '$app/stores';
   import { goto } from '$app/navigation';
   import UserCircle from 'phosphor-svelte/lib/UserCircle/UserCircle.svelte';
   import { authMode } from '$stores/authStore';
@@ -8,9 +8,8 @@
   import { trpc } from '$lib/trpc/client';
   import { me } from '$stores/meStore';
   import { onMount } from 'svelte';
-  import { page } from '$app/stores';
 
-  async function getMe() {
+  async function getMe(): Promise<void> {
     const res = await trpc($page).users.me.query();
     const settings = await trpc($page).users.getSettings.query();
     me.set(res, settings);
@@ -28,7 +27,7 @@
 
   let details: HTMLDetailsElement;
 
-  $: if ($navigating && details) details.open = false;
+  $: if ($navigating && details != null) details.open = false;
 </script>
 
 {#if $me}

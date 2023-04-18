@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { Modal } from '@octopuzzles/ui';
+  import { Modal, Button } from '@octopuzzles/ui';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import Check from 'phosphor-svelte/lib/Check/Check.svelte';
-  import { Button } from '@octopuzzles/ui';
   import classNames from 'classnames';
   import type { Label } from '@octopuzzles/models';
 
@@ -34,12 +33,12 @@
           <button
             class={classNames(
               'p-1 w-6 h-6 rounded-full flex items-center justify-center',
-              item.selected
+              item.selected === true
                 ? 'bg-green-200 text-green-500'
                 : 'transition-colors bg-gray-100 hover:bg-gray-200 '
             )}
             on:click={() => {
-              if (item.selected) return;
+              if (item.selected === true) return;
               currentDescription = addLabel(item.label);
             }}
           >

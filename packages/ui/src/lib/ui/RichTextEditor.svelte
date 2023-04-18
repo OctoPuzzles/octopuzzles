@@ -38,7 +38,7 @@
   });
 
   onDestroy(() => {
-    if (editor) {
+    if (editor != null) {
       editor.destroy();
     }
   });

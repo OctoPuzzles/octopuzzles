@@ -1,11 +1,11 @@
 <script context="module" lang="ts">
   const openModals = new Set();
 
-  function count() {
+  function count(): number {
     return [...openModals].length;
   }
 
-  export function hasOpenModals() {
+  export function hasOpenModals(): boolean {
     return count() > 0;
   }
 </script>
@@ -18,7 +18,7 @@
 
   let dialog: HTMLDialogElement;
 
-  $: if (dialog && isOpen) {
+  $: if (dialog != null && isOpen) {
     openModals.add(dialog);
     dialog.showModal();
   } else {

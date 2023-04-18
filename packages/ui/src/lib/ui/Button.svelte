@@ -23,7 +23,7 @@
 
   // Force removal of loading spinner
   let spinner: LoadingIndicator;
-  $: loading === false && spinner && spinner.$destroy();
+  $: loading === false && spinner != null && spinner.$destroy();
 
   $: baseClasses = classNames(
     'group inline-flex items-center justify-center border focus:outline-none transition ease-in-out duration-150 leading-5 px-4 py-2 rounded-md',

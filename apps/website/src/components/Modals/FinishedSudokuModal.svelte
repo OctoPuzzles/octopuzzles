@@ -1,7 +1,13 @@
 <script lang="ts">
-  import { FacebookLink, RedditLink, TwitterLink, WhatsAppLink } from '@octopuzzles/ui';
+  import {
+    FacebookLink,
+    RedditLink,
+    TwitterLink,
+    WhatsAppLink,
+    Button,
+    Modal
+  } from '@octopuzzles/ui';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
-  import { Button, Modal } from '@octopuzzles/ui';
 
   export let isOpen: boolean;
   export let sudokuId: number;

@@ -4,13 +4,17 @@
   import { Button, Input, Label, PuzzleLabel, RichTextEditor } from '@octopuzzles/ui';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { defaultClues, defaultUserInputs, defaultValues } from '@octopuzzles/sudoku-utils';
+  import {
+    defaultClues,
+    defaultUserInputs,
+    defaultValues,
+    getUserSolution
+  } from '@octopuzzles/sudoku-utils';
   import { page } from '$app/stores';
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
   import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
-  import { getUserSolution } from '@octopuzzles/sudoku-utils';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
   import type { PageData } from './$types';
@@ -41,7 +45,7 @@
     ...defaultUserInputs(data.sudoku?.dimensions),
     values: data.sudoku?.solution?.numbers ?? defaultValues(data.sudoku?.dimensions)
   };
-  let scannerSettings = me.settings;
+  const scannerSettings = me.settings;
 
   let id = data.sudoku?.id;
   let isPublic = data.sudoku?.publicSince != null;
@@ -56,7 +60,7 @@
 
   async function changeUpdateStatus(make_public: boolean): Promise<void> {
     loading = true;
-    if (id) {
+    if (id != null) {
       const res = await trpc($page).sudokus.changePublicStatus.mutate({
         id,
         public: make_public
@@ -64,10 +68,6 @@
       isPublic = res;
     }
     loading = false;
-  }
-
-  async function createOrUpdateWalkthrough(data: RouterInputs['walkthroughs']['createOrUpdate']) {
-    return await trpc($page).walkthroughs.createOrUpdate.mutate(data);
   }
 
   async function saveSolution(id: number): Promise<void> {
@@ -98,7 +98,7 @@
   }
 
   onMount(async () => {
-    if ($page.url.searchParams.get('import')) {
+    if ($page.url.searchParams.get('import') != null) {
       showImportFromFPuzzlesModal = true;
     }
   });
@@ -136,7 +136,7 @@
         }
 
         if (walkthrough.length > 0) {
-          await createOrUpdateWalkthrough({
+          await trpc($page).walkthroughs.createOrUpdate.mutate({
             sudokuId: createdSudoku.id,
             steps: walkthrough
           });
@@ -153,7 +153,7 @@
 
   async function update(): Promise<void> {
     loading = true;
-    if (!id) return;
+    if (id == null) return;
     errors = {};
     try {
       const updatedSudoku = await trpc($page).sudokus.update.mutate({
@@ -180,7 +180,7 @@
         await saveSolution(updatedSudoku.id);
 
         if (walkthrough.length > 0) {
-          await createOrUpdateWalkthrough({
+          await trpc($page).walkthroughs.createOrUpdate.mutate({
             sudokuId: updatedSudoku.id,
             steps: walkthrough
           });
@@ -201,7 +201,7 @@
 
   async function deleteSudoku(): Promise<void> {
     loading = true;
-    if (id) {
+    if (id != null) {
       await trpc($page).sudokus.delete.mutate({ id });
       await goto('/');
     }
@@ -209,9 +209,9 @@
   }
 
   function doesSolutionHaveHoles(): boolean {
-    if (!clues.givens || !userInputs.values) return false;
+    if (clues.givens == null || userInputs.values == null) return false;
 
-    let userSolution = getUserSolution({ givens: clues.givens, values: userInputs.values });
+    const userSolution = getUserSolution({ givens: clues.givens, values: userInputs.values });
 
     for (const row of userSolution) {
       for (const cell of row) {
@@ -225,7 +225,7 @@
   }
 
   let solutionHasHoles = false;
-  $: if (userInputs.values && clues.givens) {
+  $: if (userInputs.values != null && clues.givens != null) {
     solutionHasHoles = doesSolutionHaveHoles();
   }
 </script>
@@ -404,7 +404,7 @@
         newDescription = `${description}${newDescription}`;
       }
       descriptionEditor.setRichEditorContent(newDescription);
-      let newLabels = deepCopy(labels);
+      const newLabels = deepCopy(labels);
       newLabels.map((label) => {
         if (l.id === label.label.id) {
           label.selected = true;

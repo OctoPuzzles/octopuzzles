@@ -57,8 +57,10 @@
     pentool: { icon: PenToolIcon, controller: PenTool, label: 'Pen Tool', shortcut: 'N' }
   };
 
-  $: controller = $inputMode && controls[$inputMode] ? controls[$inputMode]?.controller : Numbers;
-  $: openControl = $inputMode && controls[$inputMode] ? controls[$inputMode]?.label : 'Numbers';
+  $: controller =
+    $inputMode && controls[$inputMode] != null ? controls[$inputMode]?.controller : Numbers;
+  $: openControl =
+    $inputMode && controls[$inputMode] != null ? controls[$inputMode]?.label : 'Numbers';
 
   function setInputMode(newInputMode: string): void {
     $inputMode = newInputMode as InputMode;
@@ -182,7 +184,7 @@
   let walkthroughEditorModalIsOpen = false;
   let walkthroughViewerModalIsOpen = false;
 
-  let clues = gameHistory.clues;
+  const clues = gameHistory.clues;
 
   function showWalkthroughEditorModal(): void {
     if ($page.url.pathname.includes('/sudoku/editor')) {
@@ -191,6 +193,9 @@
       walkthroughViewerModalIsOpen = true;
     }
   }
+
+  const canUndo = gameHistory.canUndo;
+  const canRedo = gameHistory.canRedo;
 </script>
 
 <svelte:window use:gameAction={{ onKeyDown: handleKeyboardShortcuts, onKeyUp: handleKeyUp }} />
@@ -209,7 +214,7 @@
   <svelte:fragment slot="bottom">
     <SquareButton
       text="Undo"
-      disabled={!gameHistory.canUndo}
+      disabled={!$canUndo}
       on:click={() => {
         gameHistory.undo();
       }}
@@ -218,7 +223,7 @@
     </SquareButton>
     <SquareButton
       text="Redo"
-      disabled={!gameHistory.canRedo}
+      disabled={!$canRedo}
       on:click={() => {
         gameHistory.redo();
       }}
