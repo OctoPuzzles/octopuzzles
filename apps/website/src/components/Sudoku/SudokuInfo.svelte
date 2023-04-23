@@ -78,7 +78,7 @@
 
       <div class="ml-4">
         <h1 class="text-3xl">{sudoku.title}</h1>
-        <div class="text-gray-600 text-sm flex">
+        <div class="text-gray-600 text-sm flex gap-1">
           <p>
             {#if sudoku.publicSince}
               Created {formatDistanceToNowStrict(sudoku.publicSince)} ago
@@ -95,6 +95,14 @@
             {#if sudoku.publicSince == null}
               -
               <span class="text-orange-500">NOT PUBLIC</span>
+            {/if}
+          </p>
+          <p>
+            -
+            {#if sudoku.difficulty != null}
+              Difficulty: {sudoku.difficulty} / 5
+            {:else}
+              No difficulty
             {/if}
           </p>
         </div>

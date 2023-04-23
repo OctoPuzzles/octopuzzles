@@ -67,6 +67,7 @@ model Sudoku {
   description   String
   points        Int
   rank          Float
+  difficulty    Int?
   rows          Int
   columns       Int
   marginTop     Int?

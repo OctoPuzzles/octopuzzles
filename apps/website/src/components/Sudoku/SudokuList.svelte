@@ -50,14 +50,18 @@
                     <p class="text-sm text-gray-500">[deleted]</p>
                   {/if}
                   <span class="mx-1">•</span>
-                  <p class="">
-                    {sudoku.points ?? 0} upvote{Math.abs(sudoku.points) !== 1 ? 's' : ''}
-                  </p>
-                  <span class="mx-1">•</span>
                   {#if sudoku.publicSince}
                     <p>{formatDistanceToNowStrict(sudoku.publicSince)} ago</p>
                   {:else}
                     <p class="text-orange-500">Not public</p>
+                  {/if}
+                  <span class="mx-1">•</span>
+                  <p class="">
+                    {sudoku.points ?? 0} upvote{Math.abs(sudoku.points) !== 1 ? 's' : ''}
+                  </p>
+                  {#if sudoku.difficulty != null}
+                    <span class="mx-1">•</span>
+                    <p title="{sudoku.difficulty}/5 difficulty">{sudoku.difficulty} / 5</p>
                   {/if}
                 </div>
               </div>
