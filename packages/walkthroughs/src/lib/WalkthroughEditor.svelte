@@ -54,7 +54,7 @@
 
     const newStep = {
       description: stepIndex >= 0 && replace ? currentSteps[stepIndex].description : '',
-      step: deepCopy(gameData),
+      gameData: deepCopy(gameData),
       key: new Date().toString()
     };
 

@@ -38,7 +38,7 @@ export const defaultHandleMouseEnter: MouseEnterHandler = ({ cell, mouseDown }) 
 /** Default action to run when user moves around with the arrow buttons */
 export const defaultHandleArrows = (direction: ArrowDirection, k: KeyboardEvent) => {
   const cells = get(selectedCells);
-  const dim = editorHistory.getClue('dimensions');
+  const dim = get(editorHistory.getClue('dimensions'));
   const lastCell = cells[cells.length - 1];
   if (lastCell == null) return;
   const { row, column } = lastCell;
