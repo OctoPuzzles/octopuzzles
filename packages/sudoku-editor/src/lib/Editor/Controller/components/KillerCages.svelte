@@ -46,11 +46,11 @@
 
   let type: CageType | 'CUSTOM' = 'Killer';
   let defaultSettings = cageDefaults(type);
-  let { text, color, uniqueDigits } = defaultSettings;
+  let { text, color, uniqueDigits, nonStandard } = defaultSettings;
 
   $: color, updateSelectedCage();
 
-  const cageTypes: (CageType | 'CUSTOM')[] = ['Killer', 'CUSTOM'];
+  const cageTypes: (CageType | 'CUSTOM')[] = ['Killer', 'LookAndSay', 'CUSTOM'];
 
   let input: Input;
 
@@ -68,6 +68,7 @@
     text = cage.text ?? defaultSettings.text;
     color = cage.color ?? defaultSettings.color;
     uniqueDigits = cage.uniqueDigits ?? defaultSettings.uniqueDigits;
+    nonStandard = cage.nonStandard ?? defaultSettings.nonStandard;
   }
 
   function changeType(type: CageType | 'CUSTOM') {
@@ -78,6 +79,11 @@
   function toggleUniqueDigits(): void {
     uniqueDigits = !uniqueDigits;
 
+    updateSelectedCage();
+  }
+
+  function toggleNonStandard(): void {
+    nonStandard = !nonStandard;
     updateSelectedCage();
   }
 
@@ -215,7 +221,7 @@
     let lastSelectedCell = $selectedCells[$selectedCells.length - 1];
     if (lastSelectedCell) {
       const { row, column } = lastSelectedCell;
-      let dim = editorHistory.getClue('dimensions');
+      let dim = $sudokuClues.dimensions;
       let newCell: Position | undefined = undefined;
       switch (direction) {
         case 'up':
@@ -381,5 +387,15 @@
         on:change={() => toggleUniqueDigits()}
       />
     </div>
+
+    {#if type !== 'CUSTOM'}
+      <div>
+        <Checkbox
+          bind:checked={nonStandard}
+          label="Non-Standard logic"
+          on:change={() => toggleNonStandard()}
+        />
+      </div>
+    {/if}
   </div>
 </div>

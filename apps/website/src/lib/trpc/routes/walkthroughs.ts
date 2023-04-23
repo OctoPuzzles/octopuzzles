@@ -2,7 +2,8 @@ import { t } from '$lib/trpc/t';
 import {
   WalkthroughStepValidator,
   WalkthroughValidator,
-  type Walkthrough
+  type Walkthrough,
+  type Digit
 } from '@octopuzzles/models';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -20,6 +21,30 @@ export const walkthroughs = t.router({
       });
       const walkthrough: Walkthrough | null =
         walkthroughRaw !== null ? WalkthroughValidator.parse(walkthroughRaw) : null;
+      walkthrough?.steps?.forEach((s) => {
+        //migrate old style game data
+        if (s.step) {
+          s.gameData = {
+            cellValues: s.step.values.map((row, i) => {
+              return row.map((digit, j) => {
+                const centermarks = s.step?.centermarks[i][j] ?? '';
+                const cornermarks = s.step?.cornermarks[i][j] ?? '';
+                const colors = s.step?.colors[i][j] ?? [];
+                return {
+                  digits: digit !== '' ? [digit as Digit] : undefined,
+                  cornermarks:
+                    cornermarks !== '' ? cornermarks.split('').map((d) => d as Digit) : undefined,
+                  centermarks:
+                    centermarks !== '' ? centermarks.split('').map((d) => d as Digit) : undefined,
+                  colors: colors.length > 0 ? colors : undefined
+                };
+              });
+            }),
+            notes: s.step.notes
+          };
+          delete s.step;
+        }
+      });
       return walkthrough;
     }),
   delete: t.procedure

@@ -10,9 +10,9 @@
   import { deepCopy } from '@octopuzzles/utils';
 
   export let clues: EditorHistoryStep;
-  export let userInputs: GameHistoryStep;
+  export let gameData: GameHistoryStep;
   export let walkthrough: WalkthroughStep[];
-  export let onClickStep: (step: GameHistoryStep) => void;
+  export let onClickStep: (gameData: GameHistoryStep) => void;
 
   $: if (walkthrough.length > steps.length) {
     steps = walkthrough.map((w, i) => ({ ...w, key: String(i) }));
@@ -51,17 +51,10 @@
 
   function addStep(stepIndex = -1, replace = false): void {
     const currentSteps = deepCopy(steps);
-    const { values, cornermarks, centermarks, notes, colors } = deepCopy(userInputs);
 
     const newStep = {
       description: stepIndex >= 0 && replace ? currentSteps[stepIndex].description : '',
-      step: {
-        values,
-        cornermarks,
-        centermarks,
-        notes,
-        colors
-      },
+      step: deepCopy(gameData),
       key: new Date().toString()
     };
 
@@ -86,7 +79,7 @@
     {#if steps.length === 0}
       <p class="text-gray-700">No steps added yet</p>
     {/if}
-    {#each steps as { step, description, key }, i (key)}
+    {#each steps as { gameData, description, key }, i (key)}
       <div id={'step' + i}>
         <div>
           <div class="flex space-x-4 items-center mb-2 mt-2">
@@ -94,7 +87,7 @@
             <button
               class="w-6 h-6 rounded-full p-1 hover:bg-gray-100 hover:text-gray-600"
               on:click={() => {
-                onClickStep(step);
+                onClickStep(gameData);
               }}
               title="Reset to this step"><ArrowsCounterClockwise size={16} /></button
             >
@@ -124,7 +117,7 @@
         </div>
         <div class="grid gap-2 grid-cols-2">
           <div>
-            <SudokuDisplay {clues} userInputs={step} />
+            <SudokuDisplay {clues} {gameData} />
           </div>
           <div>
             <div

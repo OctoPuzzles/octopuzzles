@@ -6,6 +6,7 @@ export { default as ControllerSkeleton } from './ui/ControllerSkeleton.svelte';
 export { default as ExternalLink } from './ui/ExternalLink.svelte';
 export { default as HTMLContent } from './ui/HTMLContent.svelte';
 export { default as Input } from './ui/Input.svelte';
+export { default as Keypad } from './ui/Keypad.svelte';
 export { default as Label } from './ui/Label.svelte';
 export { default as Modal, hasOpenModals } from './ui/Modal.svelte';
 export { default as PuzzleLabel } from './ui/PuzzleLabel.svelte';
@@ -17,9 +18,7 @@ export { default as Select } from './ui/Select.svelte';
 export { default as Spinner } from './ui/Spinner.svelte';
 export { default as SquareButton } from './ui/SquareButton.svelte';
 
-export { default as CtCLink } from './shareButtons/CtCLink.svelte';
 export { default as FacebookLink } from './shareButtons/FacebookLink.svelte';
-export { default as FPuzzlesLink } from './shareButtons/FPuzzlesLink.svelte';
 export { default as RedditLink } from './shareButtons/RedditLink.svelte';
 export { default as TwitterLink } from './shareButtons/TwitterLink.svelte';
 export { default as WhatsAppLink } from './shareButtons/WhatsAppLink.svelte';

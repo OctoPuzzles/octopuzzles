@@ -1,7 +1,7 @@
 <script lang="ts">
   import classNames from 'classnames';
 
-  type ButtonVariant = 'default' | 'primary' | 'secondary';
+  type ButtonVariant = 'default' | 'primary' | 'secondary' | 'custom';
 
   // PROPS //
   /** Class override */
@@ -18,24 +18,24 @@
   /**
    * What version to use, e.g. primary/secondary/...
    */
-  export let variant: ButtonVariant | 'customColor' = 'default';
+  export let variant: ButtonVariant = 'default';
 
   $: faded = disabled || loading;
 
   $: variantClasses = {
-    primary: classNames('border-transparent', {
-      'bg-orange-500 hover:bg-orange-400 active:bg-orange-600': !faded,
-      'bg-gray-300': faded
+    primary: classNames({
+      'border-transparent bg-orange-500 hover:bg-orange-400 active:bg-orange-600': !faded,
+      'border-gray-300 bg-gray-300': faded
     }),
-    secondary: classNames('border-transparent', {
-      'bg-blue-500 hover:bg-blue-400 active:bg-blue-800 text-white': !faded,
-      'bg-gray-100 text-gray-500': faded
+    secondary: classNames({
+      'border-transparent bg-blue-500 hover:bg-blue-400 active:bg-blue-800 text-white': !faded,
+      'border-gray-300 bg-gray-100 text-gray-500': faded
     }),
     default: classNames('border-gray-300', {
       'text-gray-700 bg-white hover:bg-gray-100 active:text-gray-700 active:bg-gray-100': !faded,
       'bg-gray-100 text-gray-500': faded
     }),
-    customColor: 'hover:border-current hover:ring hover:ring-current'
+    custom: classNames({ 'hover:border-current hover:ring hover:ring-current': !faded })
   };
 </script>
 

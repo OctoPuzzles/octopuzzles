@@ -36,7 +36,7 @@
 
   let type: RegionType | 'CUSTOM' = 'Normal';
   let defaultSettings = regionDefaults(type);
-  let { borders, color, uniqueDigits } = defaultSettings;
+  let { borders, color, uniqueDigits, nonStandard } = defaultSettings;
 
   $: color, updateSelectedRegion();
 
@@ -64,6 +64,7 @@
     borders = region.borders ?? defaultSettings.borders;
     color = region.color ?? defaultSettings.color;
     uniqueDigits = region.uniqueDigits ?? defaultSettings.uniqueDigits;
+    nonStandard = region.nonStandard ?? defaultSettings.nonStandard;
   }
 
   function changeType(type: RegionType | 'CUSTOM') {
@@ -80,6 +81,11 @@
   function toggleUniqueDigits(): void {
     uniqueDigits = !uniqueDigits;
 
+    updateSelectedRegion();
+  }
+
+  function toggleNonStandard(): void {
+    nonStandard = !nonStandard;
     updateSelectedRegion();
   }
 
@@ -254,7 +260,7 @@
     let lastSelectedCell = $selectedCells[$selectedCells.length - 1];
     if (lastSelectedCell) {
       const { row, column } = lastSelectedCell;
-      let dim = editorHistory.getClue('dimensions');
+      let dim = $sudokuClues.dimensions;
       let newCell: Position | undefined = undefined;
       switch (direction) {
         case 'up':
@@ -414,5 +420,15 @@
         on:change={() => toggleUniqueDigits()}
       />
     </div>
+
+    {#if type !== 'CUSTOM'}
+      <div>
+        <Checkbox
+          bind:checked={nonStandard}
+          label="Non-Standard logic"
+          on:change={() => toggleNonStandard()}
+        />
+      </div>
+    {/if}
   </div>
 </div>

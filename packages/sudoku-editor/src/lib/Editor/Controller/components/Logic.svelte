@@ -1,34 +1,59 @@
 <script lang="ts">
-  import { Input, Checkbox, Label } from '@octopuzzles/ui';
+  import { Input, Checkbox, Label, Select } from '@octopuzzles/ui';
   import { editorHistory } from '$lib/sudokuStore';
   import { logicFlagNames, logicFlagsToLabel } from '$lib/constants';
-  import type { Logic, LogicFlag } from '@octopuzzles/models';
+  import type { DoublerType, Logic, LogicFlag, SCellType } from '@octopuzzles/models';
   import { addLabel } from '$lib/utils/addLabel';
+  import { defaultDigits } from '@octopuzzles/sudoku-utils';
 
   const sudokuClues = editorHistory.subscribeToClues();
 
-  let digits = $sudokuClues.logic.digits ?? '1-9';
   let flags = $sudokuClues.logic.flags ?? [];
-  $: nonstandard = flags.indexOf('NonStandard') !== -1;
-  $: diagonalPos = flags.indexOf('DiagonalPos') !== -1;
-  $: diagonalNeg = flags.indexOf('DiagonalNeg') !== -1;
-  $: antiknight = flags.indexOf('Antiknight') !== -1;
-  $: antiking = flags.indexOf('Antiking') !== -1;
-  $: nonconsecutive = flags.indexOf('Nonconsecutive') !== -1;
-  $: disjointsets = flags.indexOf('DisjointSets') !== -1;
-  $: sCells = flags.indexOf('SCells') !== -1;
-  $: entropy = flags.indexOf('Entropy') !== -1;
-  $: indexed159 = flags.indexOf('Indexed159') !== -1;
-  $: negativeX = flags.indexOf('NegativeX') !== -1;
-  $: negativeV = flags.indexOf('NegativeV') !== -1;
-  $: negativeBlack = flags.indexOf('NegativeBlack') !== -1;
-  $: negativeWhite = flags.indexOf('NegativeWhite') !== -1;
+  $: nonstandard = flags.includes('NonStandard')!;
+  $: diagonalPos = flags.includes('DiagonalPos');
+  $: diagonalNeg = flags.includes('DiagonalNeg');
+  $: antiknight = flags.includes('Antiknight');
+  $: antiking = flags.includes('Antiking');
+  $: nonconsecutive = flags.includes('Nonconsecutive');
+  $: disjointsets = flags.includes('DisjointSets');
+  $: sCells = flags.includes('SCells');
+  $: doublers = flags.includes('Doublers');
+  $: entropy = flags.includes('Entropy');
+  $: indexed159 = flags.includes('Indexed159');
+  $: negativeX = flags.includes('NegativeX');
+  $: negativeV = flags.includes('NegativeV');
+  $: negativeBlack = flags.includes('NegativeBlack');
+  $: negativeWhite = flags.includes('NegativeWhite');
+
+  let digits = defaultDigits($sudokuClues.logic, $sudokuClues.dimensions);
+
+  $: sCellType = $sudokuClues.logic.sCellType ?? 'Sum';
+  $: doublerType = $sudokuClues.logic.doublerType ?? 'Unique';
+
+  const sCellTypes: SCellType[] = ['Sum', 'Average', 'NonStandard'];
+
+  const sCellTypeLabels: Record<SCellType, string> = {
+    Sum: 'Cell value is treated as the sum of the digits',
+    Average: 'Cell value is treated as the average of the digits',
+    NonStandard: 'SCells do not exhibit standard behaviour'
+  };
+
+  const doublerTypes: DoublerType[] = ['Unique', 'NonUnique', 'NonStandard'];
+
+  const doublerTypeLabels: Record<DoublerType, string> = {
+    Unique: 'Each digit must be doubled exactly once',
+    NonUnique: 'Digits may be doubled more than once',
+    NonStandard: 'Doublers do not exhibit standard behaviour'
+  };
 
   function update(): void {
     //TODO: validate number of digits against grid dimensions, prompt for s-cells, or update digits when s-cells are selected
     const newLogic: Logic = {
-      digits: digits !== '' ? digits : undefined,
-      flags: flags.length > 0 ? flags : undefined
+      digits:
+        digits !== defaultDigits($sudokuClues.logic, $sudokuClues.dimensions) ? digits : undefined,
+      flags: flags.length > 0 ? flags : undefined,
+      sCellType: flags.includes('SCells') ? sCellType : undefined,
+      doublerType: flags.includes('Doublers') ? doublerType : undefined
     };
 
     editorHistory.set({ logic: newLogic });
@@ -44,6 +69,10 @@
       flags.splice(index, 1);
     }
 
+    if (flagName === 'SCells') {
+      digits = defaultDigits($sudokuClues.logic, $sudokuClues.dimensions);
+    }
+
     update();
 
     addLabel(logicFlagsToLabel[flag]);
@@ -52,7 +81,7 @@
 
 <div class="grid grid-cols-1 w-full h-full p-2">
   <div class="px-2 flex flex-col overflow-hidden justify-between">
-    <Input label="Digits" bind:value={digits} placeholder="1-9" />
+    <Input label="Digits" bind:value={digits} placeholder="1-9" on:input={() => update()} />
     <Label>Flags</Label>
     <div
       class="bg-gray-200 rounded-md shadow-inner flex flex-col items-center p-2 overflow-hidden h-full"
@@ -151,6 +180,13 @@
         </div>
         <div>
           <Checkbox
+            bind:checked={doublers}
+            label={logicFlagNames.Doublers}
+            on:change={() => toggleFlag('Doublers')}
+          />
+        </div>
+        <div>
+          <Checkbox
             bind:checked={entropy}
             label={logicFlagNames.Entropy}
             on:change={() => toggleFlag('Entropy')}
@@ -158,5 +194,21 @@
         </div>
       </div>
     </div>
+    {#if sCells}
+      <Select onChange={update} options={sCellTypes} bind:option={sCellType}>
+        <svelte:fragment slot="label">S-Cell Type</svelte:fragment>
+        <div slot="option" let:option>
+          {sCellTypeLabels[option]}
+        </div>
+      </Select>
+    {/if}
+    {#if doublers}
+      <Select onChange={update} options={doublerTypes} bind:option={doublerType}>
+        <svelte:fragment slot="label">Doubler Type</svelte:fragment>
+        <div slot="option" let:option>
+          {doublerTypeLabels[option]}
+        </div>
+      </Select>
+    {/if}
   </div>
 </div>

@@ -5,11 +5,15 @@
   import { onMount } from 'svelte';
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
   import type { PageData } from './$types';
-  import { me } from '$stores/meStore';
+  import { settings } from '$stores/settingsStore';
   import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
-  import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
+  import Gear from 'phosphor-svelte/lib/Gear/Gear.svelte';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
-  import { defaultUserInputs } from '@octopuzzles/sudoku-utils';
+  import { defaultGameData } from '@octopuzzles/sudoku-utils';
+  import UserSettingsModal from '$components/Modals/UserSettingsModal.svelte';
+  import { navigating } from '$app/stores';
+  import { CtC, FPuzzles } from '@octopuzzles/icons';
+  import { exportPuzzle } from '$features/fpuzzles/exportAsFPuzzlesJson';
 
   export let data: PageData;
 
@@ -17,8 +21,7 @@
   let description = data.sudoku.description;
   let walkthrough = data.walkthrough?.steps ?? [];
   let clues = fillCluesWithDefaults(data.sudoku);
-  let userInputs = data.gameData ?? defaultUserInputs(data.sudoku.dimensions);
-  let scannerSettings = me.settings;
+  let gameData = data.gameData ?? defaultGameData(data.sudoku.dimensions);
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
   let now = Date.now();
@@ -60,7 +63,11 @@
   }
 
   let showFinishedSudokuModal = false;
-  let exportToFPuzzlesModalIsOpen = false;
+  let showUserSettingsModal = false;
+
+  let exportDetails: HTMLDetailsElement;
+
+  $: if ($navigating && exportDetails) exportDetails.open = false;
 </script>
 
 <svelte:head>
@@ -89,8 +96,8 @@
 </div>
 
 <SudokuGame
-  scannerSettings={$scannerSettings.scanner}
-  onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
+  settings={$settings}
+  onSettingsChange={(newSettings) => settings.save(newSettings)}
   onDone={() => {
     clearInterval(timer);
     showFinishedSudokuModal = true;
@@ -98,23 +105,46 @@
   solution={data.sudoku.solution ?? undefined}
   bind:walkthrough
   {clues}
-  bind:userInputs
+  bind:gameData
 >
+  <details bind:this={exportDetails}>
+    <summary
+      class="cursor-pointer flex justify-center items-center mr-2 w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+      aria-label="Export to f-puzzles/CtC"
+      aria-haspopup="menu"
+      title="Export to f-puzzles/CtC"
+    >
+      <FileArrowUp size={32} />
+    </summary>
+    <div
+      class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
+      role="menu"
+    >
+      <button
+        on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'FPuzzles')}
+        class="w-8 h-8"
+        title="Export to f-puzzles"
+      >
+        <FPuzzles />
+      </button>
+      <button
+        on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'CTC')}
+        class="w-8 h-8"
+        title="Export to CtC"
+      >
+        <CtC />
+      </button>
+    </div>
+  </details>
+
   <button
-    on:click={() => (exportToFPuzzlesModalIsOpen = true)}
+    on:click={() => (showUserSettingsModal = true)}
     class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-    title="Export"
+    title="Settings"
   >
-    <FileArrowUp size={32} />
+    <Gear size={32} />
   </button>
 </SudokuGame>
-<ExportToFPuzzles
-  bind:isOpen={exportToFPuzzlesModalIsOpen}
-  {clues}
-  {userInputs}
-  title={sudokuTitle}
-  {description}
-/>
 
 <SudokuInfo sudoku={data.sudoku} {takeScreenshot} />
 
@@ -123,4 +153,7 @@
   sudokuId={data.sudoku.id}
   {takeScreenshot}
   finishTime={`${days}${hours}${minutes}:${seconds}`}
+  {clues}
+  {gameData}
 />
+<UserSettingsModal bind:isOpen={showUserSettingsModal} />

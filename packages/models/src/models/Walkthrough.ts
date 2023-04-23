@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ColorValidator } from './Sudoku';
+import { ColorValidator, DigitValidator } from './Sudoku';
 
 export const GameValuesValidator = z.array(z.array(z.string()));
 export type GameValues = z.infer<typeof GameValuesValidator>;
@@ -31,12 +31,42 @@ export const SolutionStepValidator = z.object({
 });
 export type SolutionStep = z.infer<typeof SolutionStepValidator>;
 
+export const CellModifierValidator = z.enum(['SCell', 'Doubler']);
+export type CellModifier = z.infer<typeof CellModifierValidator>;
+
+export const CellModifiersValidator = z.array(CellModifierValidator);
+export type CellModifiers = z.infer<typeof CellModifiersValidator>;
+
+export const CellDataValidator = z.object({
+  digits: z.array(DigitValidator).optional(),
+  centermarks: z.array(DigitValidator).optional(),
+  cornermarks: z.array(DigitValidator).optional(),
+  colors: z.array(ColorValidator).optional(),
+  modifiers: z.array(CellModifierValidator).optional(),
+  value: z.number().optional()
+});
+export type CellData = z.infer<typeof CellDataValidator>;
+
+export const CellValuesValidator = z.array(z.array(CellDataValidator));
+export type CellValues = z.infer<typeof CellValuesValidator>;
+
+export const GameDataValidator = z.object({
+  cellValues: CellValuesValidator,
+  notes: NotesValidator
+});
+export type GameData = z.infer<typeof GameDataValidator>;
+
 /** A single step on the way to a solution */
 export const WalkthroughStepValidator = z.object({
   /** A description of the logic used etc. */
   description: z.string(),
-  /** The actual important step */
-  step: SolutionStepValidator
+  /** (Obsolete) The actual important step */
+  step: SolutionStepValidator.optional(),
+  /** The game state at this step*/
+  gameData: GameDataValidator.default({
+    cellValues: Array(9).fill(Array(9).fill({})),
+    notes: Array(9).fill(Array(9).fill(''))
+  })
 });
 export type WalkthroughStep = z.infer<typeof WalkthroughStepValidator>;
 

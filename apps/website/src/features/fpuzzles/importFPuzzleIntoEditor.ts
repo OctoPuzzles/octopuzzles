@@ -1,4 +1,3 @@
-// import { editorHistory, gameHistory } from '$stores/sudokuStore';
 import { closestColor } from './closestColor';
 import type { FPuzzlesJson, PositionString } from './types';
 import { deepCopy } from '@octopuzzles/utils';
@@ -8,17 +7,14 @@ import {
   defaultCages,
   defaultCellclues,
   defaultCells,
-  defaultCentermarks,
-  defaultCornermarks,
+  defaultCellValues,
   defaultEditorColors,
-  defaultGameColors,
   defaultGivens,
   defaultLogic,
   defaultNotes,
   defaultPaths,
   defaultRegions,
-  defaultRegionSize,
-  defaultValues
+  defaultRegionSize
 } from '@octopuzzles/sudoku-utils';
 import {
   emptyBorderClue,
@@ -31,6 +27,7 @@ import type {
   BorderClueType,
   CellClueSize,
   CellClueType,
+  Digit,
   Dimensions,
   Position,
   Region
@@ -176,11 +173,8 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): {
     logic: defaultLogic()
   };
   const newGameHistory: GameHistoryStep = {
-    values: defaultValues(dim),
-    colors: defaultGameColors(dim),
-    cornermarks: defaultCornermarks(dim),
-    centermarks: defaultCentermarks(dim),
-    notes: defaultNotes(dim)
+    cellValues: defaultCellValues(dim),
+    notes: defaultNotes()
   };
   let newTitle = '';
   let newDescription = '';
@@ -421,7 +415,9 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): {
       fpuzzleGrid.forEach((row, rowIndex) => {
         row.forEach((cell, columnIndex) => {
           if (cell.given && cell.value) {
-            newGivens[rowIndex + offsets.top][columnIndex + offsets.left] = String(cell.value);
+            newGivens[rowIndex + offsets.top][columnIndex + offsets.left] = String(
+              cell.value
+            ) as Digit;
           }
           if (cell.c) {
             newEditorColors[rowIndex + offsets.top][columnIndex + offsets.left] = closestColor(
@@ -525,7 +521,7 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): {
       if (!hasNonconsecutive) return;
 
       const newFlags = [...(newEditorHistory.logic.flags ?? [])];
-      if (newFlags.indexOf('NegativeBlack')) {
+      if (newFlags.includes('NegativeBlack')) {
         newFlags.push('NegativeWhite');
       } else {
         newFlags.push('Nonconsecutive');
@@ -700,17 +696,17 @@ export function importFPuzzleIntoEditorHistory(fpuzzle: FPuzzlesJson): {
       newEditorHistory.cellclues = newCellClues;
     },
     solution: (fpuzzleSolution) => {
-      const newSolution = deepCopy(newGameHistory.values);
+      const newCellValues = deepCopy(newGameHistory.cellValues);
 
       for (let rowIndex = 0; rowIndex < fpuzzle.size; rowIndex++) {
         for (let columnIndex = 0; columnIndex < fpuzzle.size; columnIndex++) {
-          newSolution[rowIndex + offsets.top][columnIndex + offsets.left] = String(
-            fpuzzleSolution[fpuzzle.size * rowIndex + columnIndex]
-          );
+          newCellValues[rowIndex + offsets.top][columnIndex + offsets.left].digits = [
+            String(fpuzzleSolution[fpuzzle.size * rowIndex + columnIndex]) as Digit
+          ];
         }
       }
 
-      newGameHistory.values = newSolution;
+      newGameHistory.cellValues = newCellValues;
     },
     'sumdot(intersection)': () => {},
     text: (fpuzzleText) => {

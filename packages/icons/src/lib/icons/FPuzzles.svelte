@@ -1,10 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 256 256">
+<svg viewBox="0 0 256 256" fill="#000000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style bx:fonts="Bungee">
+      @import url(https://fonts.googleapis.com/css2?family=Bungee%3Aital%2Cwght%400%2C400&amp;display=swap);
+    </style>
+  </defs>
   <path
     d="M64,216a8,8,0,0,1-8-8V165.3a27.6,27.6,0,0,1-14.1,2.6A28,28,0,1,1,56,114.7V72a8,8,0,0,1,8-8h46.7a27.6,27.6,0,0,1-2.6-14.1A28,28,0,1,1,161.3,64H208a8,8,0,0,1,8,8v42.7a27.6,27.6,0,0,0-14.1-2.6A28,28,0,1,0,216,165.3V208a8,8,0,0,1-8,8Z"
     fill="none"
     stroke="#000000"
     stroke-linecap="round"
     stroke-linejoin="round"
-    stroke-width="8"
+    stroke-width="16"
   />
+  <text
+    style="fill: rgb(51, 51, 51); font-family: Bungee; font-size: 84px; white-space: pre;"
+    x="110"
+    y="171.132">f</text
+  >
 </svg>

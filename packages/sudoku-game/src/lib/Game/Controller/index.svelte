@@ -9,14 +9,21 @@
     Numbers as NumbersIcon,
     Scanner as ScannerIcon
   } from '@octopuzzles/icons';
-  import { gameHistory, inputMode, selectedCells, highlightedCells } from '$lib/sudokuStore';
+  import {
+    gameHistory,
+    inputMode,
+    selectedCells,
+    highlightedCells,
+    wrongCells
+  } from '$lib/sudokuStore';
   import { scanner } from '$lib/sudokuStore/scanner';
-  import type { InputMode, WalkthroughStep } from '@octopuzzles/models';
+  import type { InputMode, Solution, WalkthroughStep } from '@octopuzzles/models';
   import { SquareButton, ControllerSkeleton } from '@octopuzzles/ui';
   import { deepCopy, isCommandKey } from '@octopuzzles/utils';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
   import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';
+  import Check from 'phosphor-svelte/lib/Check/Check.svelte';
   import PersonSimpleWalk from 'phosphor-svelte/lib/PersonSimpleWalk/PersonSimpleWalk.svelte';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
@@ -29,14 +36,14 @@
   import Help from '../Help.svelte';
   import { gameAction } from '$lib/gameAction';
 
-  const userInputs = gameHistory.subscribeToInputs();
+  const gameData = gameHistory.subscribeToInputs();
   export let walkthrough: WalkthroughStep[];
 
   const controls: Record<
     string,
     { icon: typeof NumbersIcon; controller: typeof Numbers; label: string; shortcut?: string }
   > = {
-    values: { icon: NumbersIcon, controller: Numbers, label: 'Numbers', shortcut: 'Z' },
+    digits: { icon: NumbersIcon, controller: Numbers, label: 'Digits', shortcut: 'Z' },
     cornermarks: {
       icon: CornerMarksIcon,
       controller: CornerMarks,
@@ -62,7 +69,7 @@
   }
 
   onMount(() => {
-    $inputMode = 'values';
+    $inputMode = 'digits';
   });
 
   let gameInputModePreShortcut = get(inputMode);
@@ -97,7 +104,7 @@
     switch (k.key) {
       case 'z':
         k.preventDefault();
-        $inputMode = 'values';
+        $inputMode = 'digits';
         gameInputModePreShortcut = $inputMode;
         break;
       case 'x':
@@ -159,7 +166,7 @@
       }
       case 'w': {
         k.preventDefault();
-        walkthrough = [...walkthrough, { description: '', step: deepCopy($userInputs) }];
+        walkthrough = [...walkthrough, { description: '', gameData: deepCopy($gameData) }];
         break;
       }
     }
@@ -188,6 +195,10 @@
     } else {
       walkthroughViewerModalIsOpen = true;
     }
+  }
+
+  function verify(): void {
+    $wrongCells = scanner.getErrorCells();
   }
 </script>
 
@@ -234,6 +245,14 @@
   </svelte:fragment>
 
   <svelte:fragment slot="aux">
+    <button
+      title="Check digits"
+      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+      on:click={verify}
+    >
+      <Check size={32} />
+    </button>
+
     {#if $page.url.pathname.includes('/sudoku/editor') || walkthrough.length > 0}
       <button
         title="Walkthrough"
@@ -252,7 +271,7 @@
 <WalkthroughEditorModal
   bind:isOpen={walkthroughEditorModalIsOpen}
   clues={$clues}
-  userInputs={$userInputs}
+  gameData={$gameData}
   onClickStep={(step) => gameHistory.set(step)}
   bind:walkthrough
 />

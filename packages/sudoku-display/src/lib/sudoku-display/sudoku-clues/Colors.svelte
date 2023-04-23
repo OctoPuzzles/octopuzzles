@@ -1,11 +1,9 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { Dimensions, EditorColors, GameColors } from '@octopuzzles/models';
-  import { arrayfrom0ToN } from '@octopuzzles/utils';
+  import type { CellValues, EditorColors } from '@octopuzzles/models';
 
   export let editorColors: EditorColors;
-  export let gameColors: GameColors | undefined;
-  export let dimensions: Dimensions;
+  export let cellValues: CellValues | undefined;
 
   function polarToCartesian(
     centerX: number,
@@ -25,8 +23,9 @@
     const x = 64 * (column + 0.5);
     const y = 64 * (row + 0.5);
     const radius = 64;
-    const startAngle = (360 / numColors) * i;
-    const endAngle = (360 / numColors) * (i + 1) - (numColors === 1 ? 0.0001 : 0);
+    const angleOffset = 225;
+    const startAngle = (360 / numColors) * i + angleOffset;
+    const endAngle = (360 / numColors) * (i + 1) - (numColors === 1 ? 0.0001 : 0) + angleOffset;
     var start = polarToCartesian(x, y, radius, endAngle);
     var end = polarToCartesian(x, y, radius, startAngle);
 
@@ -55,10 +54,10 @@
 </script>
 
 <g id="colors" class="select-none pointer-events-none">
-  {#each arrayfrom0ToN(dimensions.rows) as row}
-    {#each arrayfrom0ToN(dimensions.columns) as column}
-      {@const editorColor = editorColors[row][column]}
-      {@const gameColor = gameColors?.[row]?.[column]}
+  {#each editorColors as colors, row}
+    {#each colors as editorColor, column}
+      {@const cell = cellValues?.[row]?.[column]}
+      {@const gameColors = cell?.colors}
       {#if editorColor}
         <rect
           x={CELL_SIZE * column}
@@ -69,15 +68,15 @@
           vector-effect="non-scaling-size"
         />
       {/if}
-      {#if gameColor && gameColor.length > 0}
+      {#if gameColors}
         <clipPath id="square-{row}-{column}" clipPathUnits="userSpaceOnUse">
           <rect x={CELL_SIZE * column} y={CELL_SIZE * row} width={CELL_SIZE} height={CELL_SIZE} />
         </clipPath>
-        {#each gameColor as color, i}
+        {#each gameColors as color, i}
           <path
             width={CELL_SIZE}
             height={CELL_SIZE}
-            d={describeArc(i, gameColor.length, row, column)}
+            d={describeArc(i, gameColors.length, row, column)}
             clip-path="url(#square-{row}-{column})"
             class="fill-current text-{color.toLowerCase()} opacity-60"
           />

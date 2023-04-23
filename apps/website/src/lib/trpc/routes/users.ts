@@ -1,11 +1,7 @@
 import { t } from '$lib/trpc/t';
 import * as argon2 from 'argon2';
 import { sendVerifyUserMail } from '$server/email';
-import {
-  UpdateUserSettingsValidator,
-  UserSettingsValidator,
-  UserValidator
-} from '@octopuzzles/models';
+import { UserValidator } from '@octopuzzles/models';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import type { Prisma } from '@prisma/client';
@@ -157,35 +153,5 @@ export const users = t.router({
     )
     .query(async ({ input, ctx }) => {
       return ctx.prisma.user.findUnique({ where: { id: input.id } });
-    }),
-  getSettings: t.procedure.query(async ({ ctx }) => {
-    if (ctx.token != null) {
-      const settingsRaw = await ctx.prisma.userSettings.findUnique({
-        where: { userId: ctx.token.id }
-      });
-      if (settingsRaw != null) {
-        const settings = UserSettingsValidator.parse(settingsRaw);
-        if (settings != null) {
-          return settings;
-        }
-      }
-    }
-
-    return null;
-  }),
-  saveSettings: t.procedure.input(UpdateUserSettingsValidator).mutation(async ({ input, ctx }) => {
-    if (ctx.token == null) {
-      throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
-    }
-    try {
-      await ctx.prisma.userSettings.create({
-        data: { userId: ctx.token.id, ...input }
-      });
-    } catch (e) {
-      await ctx.prisma.userSettings.update({
-        where: { userId: ctx.token.id },
-        data: { userId: ctx.token.id, ...input }
-      });
-    }
-  })
+    })
 });

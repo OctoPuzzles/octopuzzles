@@ -4,23 +4,27 @@
   import { Button, Input, Label, PuzzleLabel, RichTextEditor } from '@octopuzzles/ui';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { defaultClues, defaultUserInputs, defaultValues } from '@octopuzzles/sudoku-utils';
+  import { defaultClues, defaultGameData, defaultCellValues } from '@octopuzzles/sudoku-utils';
   import { page } from '$app/stores';
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
   import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
+  import Gear from 'phosphor-svelte/lib/Gear/Gear.svelte';
   import { getUserSolution } from '@octopuzzles/sudoku-utils';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
   import type { PageData } from './$types';
   import { trpc } from '$lib/trpc/client';
-  import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
-  import { me } from '$stores/meStore';
-  import type { GameHistoryStep } from '@octopuzzles/models';
+  import { settings } from '$stores/settingsStore';
+  import type { Digit, GameHistoryStep } from '@octopuzzles/models';
   import { deepCopy } from '@octopuzzles/utils';
   import type { RouterInputs } from '$lib/trpc/router';
+  import UserSettingsModal from '$components/Modals/UserSettingsModal.svelte';
+  import { navigating } from '$app/stores';
+  import { exportPuzzle } from '$features/fpuzzles/exportAsFPuzzlesJson';
+  import { FPuzzles, CtC } from '@octopuzzles/icons';
 
   export let data: PageData;
 
@@ -37,11 +41,16 @@
   let walkthrough = data.walkthrough?.steps ?? [];
   let clues = fillCluesWithDefaults(data.sudoku ?? defaultClues());
   let initialClues = clues;
-  let userInputs: GameHistoryStep = {
-    ...defaultUserInputs(data.sudoku?.dimensions),
-    values: data.sudoku?.solution?.numbers ?? defaultValues(data.sudoku?.dimensions)
+  let gameData: GameHistoryStep = {
+    ...defaultGameData(data.sudoku?.dimensions),
+    cellValues:
+      data.sudoku?.solution?.numbers.map((row) =>
+        row.map((value) => {
+          const digits = value.split('');
+          return digits.length ? { digits: digits.map((d) => d as Digit) } : {};
+        })
+      ) ?? defaultCellValues(data.sudoku?.dimensions)
   };
-  let scannerSettings = me.settings;
 
   let id = data.sudoku?.id;
   let isPublic = data.sudoku?.publicSince != null;
@@ -51,7 +60,7 @@
   let loading = false;
 
   let showImportFromFPuzzlesModal = false;
-  let showExportToFPuzzlesModal = false;
+  let showUserSettingsModal = false;
   let showCommonDescriptionsModal = false;
 
   async function changeUpdateStatus(make_public: boolean): Promise<void> {
@@ -74,21 +83,23 @@
     let solution: RouterInputs['sudokus']['provideSolutionToPuzzle']['solution'] = undefined;
     // create solution
     if (provideSolution) {
-      let values = userInputs.values;
+      let cellValues = gameData.cellValues;
       if (walkthrough.length) {
-        const finalStep = walkthrough[walkthrough.length - 1].step;
+        const finalStep = walkthrough[walkthrough.length - 1].gameData;
         if (
-          userInputs.values.some((row, i) => {
-            return row.some((value, j) => {
-              return value === '' && finalStep.values[i][j] !== '';
+          gameData.cellValues.some((row, i) => {
+            return row.some((cell, j) => {
+              return !cell.digits && finalStep.cellValues[i][j].digits;
             });
           })
         ) {
-          values = finalStep.values;
+          cellValues = finalStep.cellValues;
         }
       }
       solution = {
-        numbers: getUserSolution({ givens: clues.givens, values })
+        numbers: getUserSolution(cellValues, clues.givens).map((row) =>
+          row.map((cell) => cell.digits?.join('') ?? '')
+        )
       };
     }
     await trpc($page).sudokus.provideSolutionToPuzzle.mutate({
@@ -209,13 +220,13 @@
   }
 
   function doesSolutionHaveHoles(): boolean {
-    if (!clues.givens || !userInputs.values) return false;
+    if (!clues.givens || !gameData.cellValues) return false;
 
-    let userSolution = getUserSolution({ givens: clues.givens, values: userInputs.values });
+    let userSolution = getUserSolution(gameData.cellValues, clues.givens);
 
     for (const row of userSolution) {
       for (const cell of row) {
-        if (cell.length === 0) {
+        if (!cell.digits) {
           return true;
         }
       }
@@ -225,9 +236,13 @@
   }
 
   let solutionHasHoles = false;
-  $: if (userInputs.values && clues.givens) {
+  $: if (gameData.cellValues && clues.givens) {
     solutionHasHoles = doesSolutionHaveHoles();
   }
+
+  let exportDetails: HTMLDetailsElement;
+
+  $: if ($navigating && exportDetails) exportDetails.open = false;
 </script>
 
 <div class="flex items-center justify-center h-20 absolute top-0 w-full pointer-events-none">
@@ -262,35 +277,96 @@
 <div class:hidden={tab !== 'editor'}>
   <SudokuEditor bind:clues {initialClues}>
     <button
-      on:click={() => (showExportToFPuzzlesModal = true)}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-      title="Export"
-    >
-      <FileArrowUp size={32} />
-    </button>
-    <button
       on:click={() => (showImportFromFPuzzlesModal = true)}
       class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
       title="Import from f-puzzles"
     >
       <FileArrowDown size={32} />
     </button>
+
+    <details bind:this={exportDetails}>
+      <summary
+        class="cursor-pointer flex justify-center items-center mr-2 w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+        aria-label="Export to f-puzzles/CtC"
+        aria-haspopup="menu"
+        title="Export to f-puzzles/CtC"
+      >
+        <FileArrowUp size={32} />
+      </summary>
+      <div
+        class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
+        role="menu"
+      >
+        <button
+          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'FPuzzles')}
+          class="w-8 h-8"
+          title="Export to f-puzzles"
+        >
+          <FPuzzles />
+        </button>
+        <button
+          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'CTC')}
+          class="w-8 h-8"
+          title="Export to CtC"
+        >
+          <CtC />
+        </button>
+      </div>
+    </details>
+
+    <button
+      on:click={() => (showUserSettingsModal = true)}
+      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+      title="Settings"
+    >
+      <Gear size={32} />
+    </button>
   </SudokuEditor>
 </div>
 <div class:hidden={tab !== 'game'}>
   <SudokuGame
-    scannerSettings={$scannerSettings.scanner}
-    onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
+    settings={$settings}
+    onSettingsChange={(newSettings) => settings.save(newSettings)}
     bind:walkthrough
     {clues}
-    bind:userInputs
+    bind:gameData
   >
+    <details bind:this={exportDetails}>
+      <summary
+        class="cursor-pointer flex justify-center items-center mr-2 w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+        aria-label="Export to f-puzzles/CtC"
+        aria-haspopup="menu"
+        title="Export to f-puzzles/CtC"
+      >
+        <FileArrowUp size={32} />
+      </summary>
+      <div
+        class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
+        role="menu"
+      >
+        <button
+          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'FPuzzles')}
+          class="w-8 h-8"
+          title="Export to f-puzzles"
+        >
+          <FPuzzles />
+        </button>
+        <button
+          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'CTC')}
+          class="w-8 h-8"
+          title="Export to CtC"
+        >
+          <CtC />
+        </button>
+      </div>
+    </details>
+
     <button
-      on:click={() => (showExportToFPuzzlesModal = true)}
+      on:click={() => (showUserSettingsModal = true)}
       class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-      title="Export"
+      title="Settings"
     >
-      <FileArrowUp size={32} />
+      <Gear size={32} />
     </button>
   </SudokuGame>
 </div>
@@ -424,15 +500,9 @@
   bind:isOpen={showImportFromFPuzzlesModal}
   onImport={({ newEditorHistory, newGameHistory, newTitle, newDescription }) => {
     initialClues = newEditorHistory;
-    userInputs = newGameHistory;
+    gameData = newGameHistory;
     sudokuTitle = newTitle;
     description = newDescription;
   }}
 />
-<ExportToFPuzzles
-  bind:isOpen={showExportToFPuzzlesModal}
-  {clues}
-  {userInputs}
-  title={sudokuTitle}
-  {description}
-/>
+<UserSettingsModal bind:isOpen={showUserSettingsModal} />

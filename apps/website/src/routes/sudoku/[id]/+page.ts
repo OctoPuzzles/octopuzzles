@@ -2,7 +2,7 @@ import { trpc } from '$lib/trpc/client';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { decompressFromBase64 } from '@octopuzzles/utils';
-import type { SolutionStep } from '@octopuzzles/models';
+import type { GameData } from '@octopuzzles/models';
 
 export const load: PageLoad = async (event) => {
   const trpcClient = trpc(event);
@@ -19,7 +19,7 @@ export const load: PageLoad = async (event) => {
     sudoku,
     walkthrough,
     gameData: dataParam
-      ? (decompressFromBase64(dataParam.replace(/ /g, '+')) as SolutionStep)
+      ? (decompressFromBase64(dataParam.replace(/ /g, '+')) as GameData)
       : undefined
   };
 };

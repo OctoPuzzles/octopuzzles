@@ -24,6 +24,47 @@ export const DimensionsValidator = z.object({
 
 export type Dimensions = z.infer<typeof DimensionsValidator>;
 
+export const DigitValidator = z.enum([
+  '0',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z'
+]);
+export type Digit = z.infer<typeof DigitValidator>;
+export const Digits = DigitValidator.options;
+
 export const ColorValidator = z.enum([
   'White',
   'LightGray',
@@ -55,7 +96,8 @@ export const RegionValidator = z.object({
   type: RegionTypeValidator.nullish(),
   color: ColorValidator.nullish(),
   borders: z.boolean().nullish(),
-  uniqueDigits: z.boolean().nullish()
+  uniqueDigits: z.boolean().nullish(),
+  nonStandard: z.boolean().nullish()
 });
 
 export type Region = z.infer<typeof RegionValidator>;
@@ -73,7 +115,7 @@ export const LineValidator = z.object({
 
 export type Line = z.infer<typeof LineValidator>;
 
-export const CageTypeValidator = z.enum(['Killer']);
+export const CageTypeValidator = z.enum(['Killer', 'LookAndSay']);
 export type CageType = z.infer<typeof CageTypeValidator>;
 export const CageTypes = CageTypeValidator.options;
 
@@ -82,7 +124,8 @@ export const ExtendedcageValidator = z.object({
   type: CageTypeValidator.nullish(),
   text: z.string().nullish(),
   color: ColorValidator.nullish(),
-  uniqueDigits: z.boolean().nullish()
+  uniqueDigits: z.boolean().nullish(),
+  nonStandard: z.boolean().nullish()
 });
 export type Extendedcage = z.infer<typeof ExtendedcageValidator>;
 
@@ -100,7 +143,9 @@ export const PathTypeValidator = z.enum([
   'Entropic',
   'Odd',
   'Even',
-  'Pill'
+  'Pill',
+  'Parity',
+  'DutchWhisper'
 ]);
 export type PathType = z.infer<typeof PathTypeValidator>;
 export const PathTypes = PathTypeValidator.options;
@@ -121,7 +166,8 @@ export const PathValidator = z.object({
   form: FormValidator.nullish(),
   fill: FillValidator.nullish(),
   arrow: z.boolean().nullish(),
-  uniqueDigits: z.boolean().nullish()
+  uniqueDigits: z.boolean().nullish(),
+  nonStandard: z.boolean().nullish()
 });
 export type Path = z.infer<typeof PathValidator>;
 
@@ -147,7 +193,8 @@ export const BorderclueValidator = z.object({
   shape: ShapeValidator.nullish(),
   color: ColorValidator.nullish(),
   radius: z.number().int().nullish(), // up to 100%
-  text: z.string().nullish()
+  text: z.string().nullish(),
+  nonStandard: z.boolean().nullish()
 });
 export type Borderclue = z.infer<typeof BorderclueValidator>;
 
@@ -215,7 +262,8 @@ export const CellclueValidator = z.object({
   size: CellClueSizeValidator.nullish(),
   symbol: SymbolTypeValidator.nullish(),
   rotation: RotationValidator.nullish(),
-  color: ColorValidator.nullish()
+  color: ColorValidator.nullish(),
+  nonStandard: z.boolean().nullish()
 });
 export type Cellclue = z.infer<typeof CellclueValidator>;
 
@@ -228,6 +276,7 @@ export const LogicFlagValidator = z.enum([
   'Nonconsecutive',
   'DisjointSets',
   'SCells',
+  'Doublers',
   'Entropy',
   'Indexed159',
   'NegativeX',
@@ -238,17 +287,25 @@ export const LogicFlagValidator = z.enum([
 export type LogicFlag = z.infer<typeof LogicFlagValidator>;
 export const LogicFlags = LogicFlagValidator.options;
 
+export const SCellTypeValidator = z.enum(['Sum', 'Average', 'NonStandard']);
+export type SCellType = z.infer<typeof SCellTypeValidator>;
+
+export const DoublerTypeValidator = z.enum(['Unique', 'NonUnique', 'NonStandard']);
+export type DoublerType = z.infer<typeof DoublerTypeValidator>;
+
 export const LogicValidator = z.object({
   /** the valid digits expected in the puzzle, as a comma separated list of ranges (num or alpha). If None, defaults to 1-9 */
   digits: z.string().nullish(),
-  flags: z.array(LogicFlagValidator).nullish()
+  flags: z.array(LogicFlagValidator).nullish(),
+  sCellType: SCellTypeValidator.nullish(),
+  doublerType: DoublerTypeValidator.nullish()
 });
 export type Logic = z.infer<typeof LogicValidator>;
 
 export const CellsValidator = z.array(z.array(z.boolean()));
 export type Cells = z.infer<typeof CellsValidator>;
 
-export const GivensValidator = z.array(z.array(z.string()));
+export const GivensValidator = z.array(z.array(DigitValidator.or(z.string().length(0))));
 export type Givens = z.infer<typeof GivensValidator>;
 
 export const EditorColorsValidator = z.array(z.array(ColorValidator.nullable()));
@@ -277,7 +334,7 @@ export const SudokuCluesValidator = z.object({
   dimensions: DimensionsValidator,
   /** The cells that are interactable in the sudoku. */
   cells: CellsValidator.nullable(),
-  /** The givens in the sudoku.  */
+  /** The givens in the sudoku. */
   givens: GivensValidator.nullable(),
   /** The colors in the cells of the sudoku. */
   colors: EditorColorsValidator.nullable(),

@@ -9,15 +9,15 @@
     ScannerHighlightMode,
     ScannerMode,
     ScannerSettings,
-    ScannerSpeed
+    ScannerSpeed,
+    UserSettings
   } from '@octopuzzles/models';
   import { scanner } from '$lib/sudokuStore/scanner';
   import { gameHistory } from '$lib/sudokuStore';
   import { getContext } from 'svelte';
   import { gameAction } from '$lib/gameAction';
 
-  let onScannerSettingsChange: (newSettings: ScannerSettings) => void =
-    getContext('updateScannerSettings');
+  let onSettingsChange: (newSettings: Partial<UserSettings>) => void = getContext('updateSettings');
 
   let scannerSettings = scanner.scannerSettings;
   let highlightMode = $scannerSettings.highlightMode ?? 'None';
@@ -40,17 +40,17 @@
   const sudokuClues = gameHistory.clues;
 
   let flags = $sudokuClues.logic.flags ?? [];
-  let diagonalPos = flags.indexOf('DiagonalPos') !== -1;
-  let diagonalNeg = flags.indexOf('DiagonalNeg') !== -1;
-  let antiknight = flags.indexOf('Antiknight') !== -1;
-  let antiking = flags.indexOf('Antiking') !== -1;
-  let disjointsets = flags.indexOf('DisjointSets') !== -1;
-  let nonconsecutive = flags.indexOf('Nonconsecutive') !== -1;
-  //let entropy = flags.indexOf('Entropy') !== -1;
-  let negativeX = flags.indexOf('NegativeX') !== -1;
-  let negativeV = flags.indexOf('NegativeV') !== -1;
-  let negativeBlack = flags.indexOf('NegativeBlack') !== -1;
-  let negativeWhite = flags.indexOf('NegativeWhite') !== -1;
+  let diagonalPos = flags.includes('DiagonalPos');
+  let diagonalNeg = flags.includes('DiagonalNeg');
+  let antiknight = flags.includes('Antiknight');
+  let antiking = flags.includes('Antiking');
+  let disjointsets = flags.includes('DisjointSets');
+  let nonconsecutive = flags.includes('Nonconsecutive');
+  //let entropy = flags.includes('Entropy');
+  let negativeX = flags.includes('NegativeX');
+  let negativeV = flags.includes('NegativeV');
+  let negativeBlack = flags.includes('NegativeBlack');
+  let negativeWhite = flags.includes('NegativeWhite');
 
   function updateSettings(): void {
     const newScannerSettings: ScannerSettings = {
@@ -71,7 +71,7 @@
       scanNegativeKropki,
       scanNonConsecutive
     };
-    onScannerSettingsChange(newScannerSettings);
+    onSettingsChange({ scanner: newScannerSettings });
 
     scanner.configure(newScannerSettings);
   }
