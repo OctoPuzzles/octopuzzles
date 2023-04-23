@@ -52,9 +52,11 @@
         />
       {/if}
       {#if gameColor && gameColor.length > 0}
-        <clipPath id="square-{row}-{column}" clipPathUnits="userSpaceOnUse">
-          <rect x={CELL_SIZE * column} y={CELL_SIZE * row} width={CELL_SIZE} height={CELL_SIZE} />
-        </clipPath>
+        <defs>
+          <clipPath id="square-{row}-{column}" clipPathUnits="userSpaceOnUse">
+            <rect x={CELL_SIZE * column} y={CELL_SIZE * row} width={CELL_SIZE} height={CELL_SIZE} />
+          </clipPath>
+        </defs>
         {#each gameColor as color, i}
           <path
             width={CELL_SIZE}
