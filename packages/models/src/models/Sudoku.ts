@@ -310,6 +310,8 @@ export const SudokuValidator = SudokuCluesValidator.extend({
   points: z.number().int(),
   /** The calculated points the sudoku has gotten from upvotes/downvotes using the ranking algorithm */
   rank: z.number(),
+  /** How difficult the puzzle is */
+  difficulty: z.number().int().min(1).max(5).nullish(),
   /** The solution to the puzzle if any is given */
   solution: SolutionValidator.nullable(),
   /** The time when the user was created */
@@ -323,6 +325,8 @@ export const NewSudokuValidator = SudokuCluesValidator.extend({
   /** The title of the sudoku */
   title: z.string().max(64).min(1),
   /** The description of the sudoku, e.g. rules, etc. */
-  description: z.string().max(4096).min(1)
+  description: z.string().max(4096).min(1),
+  /** How difficult the puzzle is */
+  difficulty: z.number().int().min(1).max(5).nullish()
 });
 export const UpdateSudokuValidator = NewSudokuValidator.partial();

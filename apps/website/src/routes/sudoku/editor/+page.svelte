@@ -30,6 +30,7 @@
 
   let sudokuTitle = data.sudoku?.title ?? '';
   let description = data.sudoku?.description ?? '';
+  let difficulty = data.sudoku?.difficulty;
   let labels =
     data.labels
       .sort((a, b) => (a.name > b.name ? 1 : -1))
@@ -114,6 +115,7 @@
         sudoku: {
           title: sudokuTitle,
           description: description,
+          difficulty: difficulty ?? null,
           dimensions: clues.dimensions,
           borderclues: clues.borderclues,
           cellclues: clues.cellclues,
@@ -160,6 +162,7 @@
         id,
         sudokuUpdates: {
           title: sudokuTitle,
+          difficulty: difficulty ?? null,
           description: description,
           dimensions: clues.dimensions,
           borderclues: clues.borderclues,
@@ -349,6 +352,66 @@
           </p>
         {/if}
       </label>
+
+      <div class="flex items-center mt-4">
+        <p>Difficulty:</p>
+        <ul class="flex items-center gap-1 ml-2">
+          <li>
+            <button
+              class={classNames(
+                'h-6 px-1 rounded border border-gray-400 flex items-center justify-center',
+                difficulty == null && 'bg-orange-500 !border-orange-500'
+              )}
+              on:click={() => (difficulty = undefined)}>No difficulty</button
+            >
+          </li>
+          <li>
+            <button
+              class={classNames(
+                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
+                difficulty === 1 && 'bg-orange-500 !border-orange-500'
+              )}
+              on:click={() => (difficulty = 1)}>1</button
+            >
+          </li>
+          <li>
+            <button
+              class={classNames(
+                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
+                difficulty === 2 && 'bg-orange-500 !border-orange-500'
+              )}
+              on:click={() => (difficulty = 2)}>2</button
+            >
+          </li>
+          <li>
+            <button
+              class={classNames(
+                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
+                difficulty === 3 && 'bg-orange-500 !border-orange-500'
+              )}
+              on:click={() => (difficulty = 3)}>3</button
+            >
+          </li>
+          <li>
+            <button
+              class={classNames(
+                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
+                difficulty === 4 && 'bg-orange-500 !border-orange-500'
+              )}
+              on:click={() => (difficulty = 4)}>4</button
+            >
+          </li>
+          <li>
+            <button
+              class={classNames(
+                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
+                difficulty === 5 && 'bg-orange-500 !border-orange-500'
+              )}
+              on:click={() => (difficulty = 5)}>5</button
+            >
+          </li>
+        </ul>
+      </div>
 
       <h1 class="font-semibold mt-8">Labels</h1>
       <p class="mb-2">Pick the labels that match your puzzle</p>
