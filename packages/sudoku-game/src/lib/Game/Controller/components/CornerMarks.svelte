@@ -2,14 +2,15 @@
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { gameHistory, selectedCells } from '$lib/sudokuStore';
   import { get } from 'svelte/store';
-  import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
+  import { deepCopy, isDeleteKey, undefinedIfEmpty } from '@octopuzzles/utils';
   import { SquareButton } from '@octopuzzles/ui';
   import classNames from 'classnames';
   import { gameAction } from '$lib/gameAction';
+  import type { Digit } from '@octopuzzles/models';
 
   function handleClick(newCornermark: string): void {
-    const currentCornermarks = get(gameHistory.getValue('cornermarks'));
-    const newCornermarks = deepCopy(currentCornermarks);
+    let currentCellValues = get(gameHistory.getValue('cellValues'));
+    let newCellValues = deepCopy(currentCellValues);
     const { givens } = get(gameHistory.clues);
     let positions = deepCopy(get(selectedCells));
 
@@ -17,7 +18,9 @@
     if (positions.length === 0) return;
 
     if (newCornermark === '') {
-      const clearAllGameCells = positions.every((p) => currentCornermarks[p.row][p.column] === '');
+      const clearAllGameCells = positions.every(
+        (p) => !currentCellValues[p.row][p.column].cornermarks
+      );
       if (clearAllGameCells) {
         // completely clear the selected cells
         gameHistory.clearCells(positions);
@@ -25,37 +28,41 @@
       } else {
         // Remove the center marks from all selected cells
         positions.forEach((p) => {
-          newCornermarks[p.row][p.column] = '';
+          delete newCellValues[p.row][p.column].cornermarks;
         });
       }
     } else {
+      const digit = newCornermark as Digit;
       const allCellsHasCornerMark = positions.every((p) =>
-        currentCornermarks[p.row][p.column].includes(newCornermark)
+        currentCellValues[p.row][p.column].cornermarks?.includes(digit)
       );
 
       if (!allCellsHasCornerMark) {
         // Add it to the cells that does not have it
         positions.forEach((p) => {
-          if (!currentCornermarks[p.row][p.column].includes(newCornermark)) {
-            newCornermarks[p.row][p.column] = (currentCornermarks[p.row][p.column] + newCornermark)
-              .split('')
-              .sort()
-              .join('');
+          const cornermarks = currentCellValues[p.row][p.column].cornermarks;
+          if (cornermarks) {
+            if (!cornermarks.includes(digit)) {
+              newCellValues[p.row][p.column].cornermarks = [...cornermarks, digit].sort();
+            }
+          } else {
+            newCellValues[p.row][p.column].cornermarks = [digit];
           }
         });
       } else {
         // Remove it from all cells
         positions.forEach((p) => {
-          newCornermarks[p.row][p.column] = currentCornermarks[p.row][p.column]
-            .split('')
-            .filter((s) => s !== newCornermark)
-            .sort()
-            .join('');
+          const cornermarks = currentCellValues[p.row][p.column].cornermarks;
+          if (cornermarks) {
+            newCellValues[p.row][p.column].cornermarks = undefinedIfEmpty(
+              cornermarks.filter((s) => s !== digit)
+            );
+          }
         });
       }
     }
 
-    gameHistory.set({ cornermarks: newCornermarks });
+    gameHistory.set({ cellValues: newCellValues });
   }
 
   function handleKeyDown(k: KeyboardEvent): void {

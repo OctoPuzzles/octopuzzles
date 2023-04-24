@@ -248,7 +248,7 @@
     const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
     if (lastSelectedCell != null) {
       const { row, column } = lastSelectedCell;
-      const dim = editorHistory.getClue('dimensions');
+      const dim = $sudokuClues.dimensions;
       let newCell: Position | undefined = undefined;
       switch (direction) {
         case 'up':

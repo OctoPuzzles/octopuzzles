@@ -101,15 +101,15 @@ function createEditorHistoryStore() {
    * // To get the current killercages
    * const killercages = getEditorState("killercages");
    */
-  function getClue<T extends keyof EditorHistoryStep>(type: T): EditorHistoryStep[T] {
-    const h = get(history);
-    const s = get(step);
-    const res = h[s]?.[type];
-    if (typeof res === 'number') {
-      return h[res]?.[type] as EditorHistoryStep[T];
-    } else {
-      return res as EditorHistoryStep[T];
-    }
+  function getClue<T extends keyof EditorHistoryStep>(type: T): Readable<EditorHistoryStep[T]> {
+    return derived([history, step], ([$editorHistory, $editorStep]) => {
+      const res = $editorHistory[$editorStep]?.[type];
+      if (typeof res === 'number') {
+        return $editorHistory[res]?.[type] as EditorHistoryStep[T];
+      } else {
+        return res as EditorHistoryStep[T];
+      }
+    });
   }
 
   /**
@@ -125,7 +125,7 @@ function createEditorHistoryStore() {
     step.update((step) => Math.min(get(history).length - 1, step + 1));
   }
 
-  const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
+  const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 2);
 
   /** Reset the editor */
   function reset(startState?: Partial<EditorHistoryStep>): void {
@@ -149,8 +149,8 @@ function createEditorHistoryStore() {
 
   /** Clear every input-values, and colors from the specified cells in the editor */
   function clearCells(cells: Position[]): void {
-    const newGivens = getClue('givens');
-    const newColors = getClue('colors');
+    const newGivens = get(getClue('givens'));
+    const newColors = get(getClue('colors'));
     let changes = false;
     cells.forEach((cell) => {
       let newGiven = newGivens[cell.row]?.[cell.column];
@@ -283,15 +283,17 @@ export const handleArrows = writable(defaultHandleArrows);
 // DERIVED STORES
 
 export function setMargins(margins?: Margins | null): void {
-  const dimensions = editorHistory.getClue('dimensions');
-  const borderclues = editorHistory.getClue('borderclues');
-  const cellclues = editorHistory.getClue('cellclues');
-  const editorColors = editorHistory.getClue('colors');
-  const cages = editorHistory.getClue('extendedcages');
-  const givens = editorHistory.getClue('givens');
-  const paths = editorHistory.getClue('paths');
-  const cells = editorHistory.getClue('cells');
-  const regions = editorHistory.getClue('regions');
+  const {
+    dimensions,
+    borderclues,
+    cellclues,
+    colors,
+    extendedcages,
+    givens,
+    paths,
+    cells,
+    regions
+  } = get(editorHistory.subscribeToClues());
 
   const offsets: Margins = {
     left: (margins?.left ?? 0) - (dimensions.margins?.left ?? 0),
@@ -335,8 +337,8 @@ export function setMargins(margins?: Margins | null): void {
           };
         })
         .filter((clue) => isValidPosition(clue.position)),
-      colors: offsetMatrix(editorColors, offsets, null),
-      extendedcages: cages
+      colors: offsetMatrix(colors, offsets, null),
+      extendedcages: extendedcages
         .map((cage) => {
           return { ...cage, positions: offsetPositions(cage.positions, offsets) };
         })

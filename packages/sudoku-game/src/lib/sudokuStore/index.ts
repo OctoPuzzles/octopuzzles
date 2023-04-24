@@ -8,7 +8,7 @@ import type {
 import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
 import { derived, get, writable } from 'svelte/store';
-import { defaultUserInputs } from '@octopuzzles/sudoku-utils';
+import { defaultGameData } from '@octopuzzles/sudoku-utils';
 import type {
   OnMouseDownHitboxHandler,
   OnMouseEnterHitboxHandler
@@ -21,13 +21,13 @@ function createGameHistoryStore() {
   // Step
   const step = writable(0);
   // History
-  const history = writable<GameHistoryStep[]>([deepCopy(defaultUserInputs())]);
+  const history = writable<GameHistoryStep[]>([deepCopy(defaultGameData())]);
 
   const clues = writable<EditorHistoryStep>();
 
   function setClues(newClues: EditorHistoryStep): void {
     clues.set(newClues);
-    reset(deepCopy(defaultUserInputs(newClues.dimensions)));
+    reset(deepCopy(defaultGameData(newClues.dimensions)));
   }
 
   /**
@@ -96,7 +96,7 @@ function createGameHistoryStore() {
     step.update((step) => Math.min(get(history).length - 1, step + 1));
   }
 
-  const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
+  const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 2);
 
   /** Reset the game */
   function reset(startState?: GameHistoryStep): void {
@@ -106,41 +106,33 @@ function createGameHistoryStore() {
     highlightedCells.set([]);
     step.set(0);
     const dim = get(clues).dimensions;
-    history.set([startState ?? defaultUserInputs(dim)]);
+    history.set([startState ?? defaultGameData(dim)]);
   }
 
   /** Clear every input-values, and colors from the specified cells in the editor */
   function clearCells(cells: Position[]): void {
-    const newValues = get(getValue('values'));
-    const newCornerMarks = get(getValue('cornermarks'));
-    const newCenterMarks = get(getValue('centermarks'));
-    const newColors = get(getValue('colors'));
+    const newCellValues = get(getValue('cellValues'));
     let changes = false;
     cells.forEach((cell) => {
-      if (newValues[cell.row]?.[cell.column] !== '') {
+      if (newCellValues[cell.row][cell.column].digits) {
         changes = true;
-        newValues[cell.row][cell.column] = '';
+        delete newCellValues[cell.row][cell.column].digits;
       }
-      if (newCornerMarks[cell.row][cell.column] !== '') {
+      if (newCellValues[cell.row][cell.column].cornermarks) {
         changes = true;
-        newCornerMarks[cell.row][cell.column] = '';
+        delete newCellValues[cell.row][cell.column].cornermarks;
       }
-      if (newCenterMarks[cell.row][cell.column] !== '') {
+      if (newCellValues[cell.row][cell.column].centermarks) {
         changes = true;
-        newCenterMarks[cell.row][cell.column] = '';
+        delete newCellValues[cell.row][cell.column].centermarks;
       }
-      if (newColors[cell.row][cell.column] != null) {
+      if (newCellValues[cell.row][cell.column].colors) {
         changes = true;
-        newColors[cell.row][cell.column] = [];
+        delete newCellValues[cell.row][cell.column].colors;
       }
     });
     if (changes) {
-      set({
-        values: newValues,
-        cornermarks: newCornerMarks,
-        centermarks: newCenterMarks,
-        colors: newColors
-      });
+      set({ cellValues: newCellValues });
     }
   }
 

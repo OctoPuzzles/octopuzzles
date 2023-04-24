@@ -1,7 +1,7 @@
 <script lang="ts">
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { gameHistory, selectedCells } from '$lib/sudokuStore';
-  import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
+  import { deepCopy, isDeleteKey, undefinedIfEmpty } from '@octopuzzles/utils';
   import { get } from 'svelte/store';
   import type { Color } from '@octopuzzles/models';
   import { Colors } from '@octopuzzles/models';
@@ -21,53 +21,52 @@
     const positions = get(selectedCells);
     if (positions.length === 0) return;
 
-    const currentColors = get(gameHistory.getValue('colors'));
-    const newColors = deepCopy(currentColors);
-
-    // Check if we should clear all game cells
-    const clearAllGameCells =
-      newColor == null && positions.every((p) => currentColors[p.row]?.[p.column] == null);
-    if (clearAllGameCells) {
-      // clear all the cells in the game
-      gameHistory.clearCells(positions);
+    const currentCellValues = get(gameHistory.getValue('cellValues'));
+    const newCellValues = deepCopy(currentCellValues);
+    if (newColor === undefined) {
+      const clearAllGameCells = positions.every((p) => !currentCellValues[p.row][p.column].colors);
+      if (clearAllGameCells) {
+        // completely clear the selected cells
+        gameHistory.clearCells(positions);
+        return;
+      } else {
+        // Remove the colors from all selected cells
+        positions.forEach((p) => {
+          delete newCellValues[p.row][p.column].colors;
+        });
+      }
     } else {
-      // Whether there has been any changes
-      let anyChanges = false;
-
-      positions.forEach((position) => {
-        // If we are deleting a cell
-        if (newColor == null) {
-          // If the cell is already empty
-          if (newColors[position.row][position.column] == null) return;
-
-          // Delete the value in the cell
-          newColors[position.row][position.column] = [];
-          anyChanges = true;
-        } else {
-          // We are putting some number in the cell
-
-          // If the cell already contains the number, delete it
-          if (newColors[position.row][position.column].includes(newColor)) {
-            newColors[position.row][position.column] = newColors[position.row][
-              position.column
-            ].filter((c) => c !== newColor);
-            anyChanges = true;
+      let allCellsHasColor = positions.every((p) =>
+        currentCellValues[p.row][p.column].colors?.includes(newColor)
+      );
+      if (!allCellsHasColor) {
+        // Add it to the cells that does not have it
+        positions.forEach((p) => {
+          const colors = currentCellValues[p.row][p.column].colors;
+          if (colors) {
+            if (!colors.includes(newColor)) {
+              newCellValues[p.row][p.column].colors = [...colors, newColor]
+                .map((c) => Colors.indexOf(c))
+                .sort()
+                .map((n) => Colors[n]);
+            }
           } else {
-            // Insert the number
-            newColors[position.row][position.column] = [
-              ...newColors[position.row][position.column],
-              newColor
-            ];
-            anyChanges = true;
+            newCellValues[p.row][p.column].colors = [newColor];
           }
-        }
-      });
-
-      // If there has actually been any changes, update the game history
-      if (anyChanges) {
-        gameHistory.set({ colors: newColors });
+        });
+      } else {
+        // Remove it from all cells
+        positions.forEach((p) => {
+          const colors = currentCellValues[p.row][p.column].colors;
+          if (colors) {
+            newCellValues[p.row][p.column].colors = undefinedIfEmpty(
+              colors.filter((c) => c !== newColor)
+            );
+          }
+        });
       }
     }
+    gameHistory.set({ cellValues: newCellValues });
   };
 
   function handleClick(color?: Color): void {

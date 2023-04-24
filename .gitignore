@@ -36,3 +36,5 @@ dist
 build
 
 storageState.json
+
+launch.json

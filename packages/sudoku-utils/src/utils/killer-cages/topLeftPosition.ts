@@ -1,5 +1,17 @@
 import type { Position } from '@octopuzzles/models';
 
+export function comparePositions(a: Position, b: Position): number {
+  if (a.row < b.row) {
+    return -1;
+  } else if (a.row == b.row && a.column < b.column) {
+    return -1;
+  } else if (a.row === b.row && a.column === b.column) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
 /**
  * Finds the top left of positions in a list.
  * Prioritises tops.
@@ -8,9 +20,7 @@ import type { Position } from '@octopuzzles/models';
 export function topLeftPosition(positions: Position[]): Position {
   let topLeft = positions[0];
   for (const position of positions) {
-    if (position.row < topLeft.row) {
-      topLeft = position;
-    } else if (position.row === topLeft.row && position.column < topLeft.column) {
+    if (comparePositions(position, topLeft) === -1) {
       topLeft = position;
     }
   }

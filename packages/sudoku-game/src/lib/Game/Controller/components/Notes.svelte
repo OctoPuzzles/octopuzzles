@@ -15,7 +15,10 @@
   $: $selectedCells, input != null && setTimeout(() => input != null && input.focus(), 100);
 
   function populateFromSelectedCell(selectedCell: Position): void {
-    value = $notes[selectedCell.row][selectedCell.column];
+    value =
+      $notes.find((n) =>
+        n.positions.some((p) => p.row === selectedCell.row && p.column === selectedCell.column)
+      )?.details ?? '';
   }
 
   let value = '';
@@ -25,8 +28,21 @@
   function handleInput(newValue: string): void {
     if (firstSelectedCell == null) return;
 
-    const newNotes = deepCopy($notes);
-    newNotes[firstSelectedCell.row][firstSelectedCell.column] = newValue;
+    let newNotes = deepCopy($notes);
+    let noteIndex = newNotes.findIndex((n) =>
+      n.positions.some(
+        (p) => p.row === firstSelectedCell?.row && p.column === firstSelectedCell?.column
+      )
+    );
+    if (noteIndex !== -1) {
+      if (newValue !== '') {
+        newNotes.splice(noteIndex, 1, { ...newNotes[noteIndex], details: newValue });
+      } else {
+        newNotes.splice(noteIndex, 1);
+      }
+    } else if (newValue !== '') {
+      newNotes.push({ positions: [firstSelectedCell], type: 'Note', details: newValue });
+    }
 
     gameHistory.set({ notes: newNotes });
   }
@@ -40,7 +56,7 @@
     placeholder="note"
     disabled={$selectedCells.length !== 1}
     title={$selectedCells.length !== 1
-      ? 'Please selct only one cell to make a note on'
+      ? 'Please select only one cell to make a note on'
       : 'Write a note'}
   />
 

@@ -1,32 +1,31 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { Dimensions, Givens, Centermarks, GameValues } from '@octopuzzles/models';
-  import { arrayfrom0ToN } from '@octopuzzles/utils';
+  import type { Givens, CellValues } from '@octopuzzles/models';
 
-  export let dimensions: Dimensions;
-  export let centermarks: Centermarks | undefined;
+  export let cellValues: CellValues | undefined;
   export let givens: Givens;
-  export let values: GameValues | undefined;
 </script>
 
-<g id="centermarks" class="pointer-events-none">
-  {#each arrayfrom0ToN(dimensions.rows) as row}
-    {#each arrayfrom0ToN(dimensions.columns) as column}
-      {@const centermark = centermarks?.[row]?.[column]}
-      {#if centermark && centermark.length > 0 && !givens[row][column] && (values?.[row]?.[column] == null || !values?.[row]?.[column])}
-        <text
-          x={CELL_SIZE * (column + 0.5)}
-          y={CELL_SIZE * (row + 0.55)}
-          dominant-baseline="middle"
-          class:small={centermark.length > 6}
-          class="fill-current text-blue-700 select-none"
-        >
-          {centermark}
-        </text>
-      {/if}
+{#if cellValues}
+  <g id="centermarks" class="pointer-events-none">
+    {#each cellValues as cells, row}
+      {#each cells as cell, column}
+        {@const centermarks = cell.centermarks}
+        {#if centermarks && !givens[row][column] && !cell.digits}
+          <text
+            x={CELL_SIZE * (column + 0.5)}
+            y={CELL_SIZE * (row + 0.55)}
+            dominant-baseline="middle"
+            class:small={centermarks.length > 6}
+            class="fill-current text-blue-700 select-none"
+          >
+            {centermarks.join('')}
+          </text>
+        {/if}
+      {/each}
     {/each}
-  {/each}
-</g>
+  </g>
+{/if}
 
 <style>
   text {

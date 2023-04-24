@@ -1,25 +1,22 @@
 <script lang="ts">
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { gameHistory, selectedCells } from '$lib/sudokuStore';
-  import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
+  import { deepCopy, isDeleteKey, undefinedIfEmpty } from '@octopuzzles/utils';
   import { get } from 'svelte/store';
   import { SquareButton } from '@octopuzzles/ui';
   import { scanner } from '$lib/sudokuStore/scanner';
   import { gameAction } from '$lib/gameAction';
+  import type { Digit } from '@octopuzzles/models';
 
   function handleClick(newValue: string): void {
     const positions = get(selectedCells);
     if (positions.length === 0) return;
 
-    const currentValues = get(gameHistory.getValue('values'));
-    const newValues = deepCopy(currentValues);
-    const newCentermarks = deepCopy(get(gameHistory.getValue('centermarks')));
-    const newCornermarks = deepCopy(get(gameHistory.getValue('cornermarks')));
-    const { givens } = get(gameHistory.clues);
-
+    const currentCellValues = get(gameHistory.getValue('cellValues'));
+    const newCellValues = deepCopy(currentCellValues);
     // Check if we should clear all game cells
     const clearAllGameCells =
-      newValue === '' && positions.every((p) => currentValues[p.row]?.[p.column] === '');
+      newValue === '' && positions.every((p) => !currentCellValues[p.row][p.column].digits);
     if (clearAllGameCells) {
       // clear all the cells in the game
       gameHistory.clearCells(positions);
@@ -27,41 +24,50 @@
       // Whether there has been any changes
       let anyChanges = false;
       let runScan = false;
-
-      for (const position of positions) {
-        // don't put anything on top of a given
-        if (givens[position.row]?.[position.column] !== '') continue;
-
-        // If we are deleting a cell
-        if (newValue === '') {
+      // If we are deleting a cell
+      if (newValue === '') {
+        for (const position of positions) {
           // If the cell is already empty
-          if (newValues[position.row][position.column] === '') return;
-
+          if (!newCellValues[position.row][position.column].digits) continue;
           // Delete the value in the cell
-          newValues[position.row][position.column] = '';
+          delete newCellValues[position.row][position.column].digits;
           anyChanges = true;
-        } else {
-          // We are putting some number in the cell
+        }
+      } else {
+        const digit = newValue as Digit;
+        // We are putting some number in the cell
+        let allCellsHaveValue = positions.every((p) => {
+          return currentCellValues[p.row][p.column].digits?.includes(digit);
+        });
+        if (!allCellsHaveValue) {
+          // Add it to the cells that do not have it
+          positions.forEach((p) => {
+            const currentDigits = currentCellValues[p.row][p.column].digits;
+            if (!currentDigits?.includes(digit)) {
+              // Insert the number
+              newCellValues[p.row][p.column].digits = [digit];
 
-          // If the cell already contains the number, delete it
-          if (newValues[position.row][position.column] === newValue) {
-            newValues[position.row][position.column] = '';
-            anyChanges = true;
-          } else {
-            // Insert the number
-            newValues[position.row][position.column] = newValue;
-            newCentermarks[position.row][position.column] = '';
-            newCornermarks[position.row][position.column] = '';
+              delete newCellValues[p.row][p.column].centermarks;
+              delete newCellValues[p.row][p.column].cornermarks;
+            } else {
+              return;
+            }
             anyChanges = true;
             runScan = get(scanner.scannerSettings).autoScan ?? false;
-          }
+          });
+        } else {
+          // Remove it from all cells
+          positions.forEach((p) => {
+            newCellValues[p.row][p.column].digits = undefinedIfEmpty(
+              currentCellValues[p.row][p.column].digits?.filter((d) => d !== digit)
+            );
+            anyChanges = true;
+          });
         }
       }
-
       // If there has actually been any changes, update the game history
       if (anyChanges) {
-        gameHistory.set({ values: newValues });
-
+        gameHistory.set({ cellValues: newCellValues });
         if (runScan) {
           scanner.startScan(positions[0]);
         }

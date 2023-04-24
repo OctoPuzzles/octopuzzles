@@ -1,8 +1,8 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { Position, Notes } from '@octopuzzles/models';
+  import type { Position, Annotations } from '@octopuzzles/models';
 
-  export let notes: Notes | undefined;
+  export let notes: Annotations | undefined;
   export let onClickNote: ((note: string, position: Position) => void) | undefined = undefined;
 
   function createPolygonPoints(row: number, column: number): string {
@@ -16,22 +16,22 @@
 
 {#if notes}
   <g id="notes">
-    {#each notes as row, rowIndex}
-      {#each row as note, columnIndex}
-        {#if note.length > 0}
+    {#each notes as note}
+      {#if note.details}
+        {#each note.positions as position}
           <polygon
-            points={createPolygonPoints(rowIndex, columnIndex)}
+            points={createPolygonPoints(position.row, position.column)}
             class="fill-current stroke-black-500 text-orange-300 cursor-pointer hover:text-orange-400 transition-colors"
             style="stroke-width:0.5;"
-            on:click={() => onClickNote?.(note, { row: rowIndex, column: columnIndex })}
+            on:click={() => onClickNote?.(note.details ?? '', position)}
             on:keypress={() => {
               /*Do nothing*/
             }}
           >
-            <title>{note}</title>
+            <title>{note.details}</title>
           </polygon>
-        {/if}
-      {/each}
+        {/each}
+      {/if}
     {/each}
   </g>
 {/if}

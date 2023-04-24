@@ -2,13 +2,14 @@
   import Backspace from 'phosphor-svelte/lib/Backspace/Backspace.svelte';
   import { gameHistory, selectedCells } from '$lib/sudokuStore';
   import { get } from 'svelte/store';
-  import { deepCopy, isDeleteKey } from '@octopuzzles/utils';
+  import { deepCopy, isDeleteKey, undefinedIfEmpty } from '@octopuzzles/utils';
   import { SquareButton } from '@octopuzzles/ui';
   import { gameAction } from '$lib/gameAction';
+  import type { Digit } from '@octopuzzles/models';
 
   const handleClick = (newCentermark: string): void => {
-    const currentCentermarks = get(gameHistory.getValue('centermarks'));
-    const newCentermarks = deepCopy(currentCentermarks);
+    let currentCellValues = get(gameHistory.getValue('cellValues'));
+    let newCellValues = deepCopy(currentCellValues);
     const { givens } = get(gameHistory.clues);
     let positions = deepCopy(get(selectedCells));
 
@@ -16,7 +17,9 @@
     if (positions.length === 0) return;
 
     if (newCentermark === '') {
-      const clearAllGameCells = positions.every((p) => currentCentermarks[p.row][p.column] === '');
+      const clearAllGameCells = positions.every(
+        (p) => !currentCellValues[p.row][p.column].centermarks
+      );
       if (clearAllGameCells) {
         // completely clear the selected cells
         gameHistory.clearCells(positions);
@@ -24,37 +27,41 @@
       } else {
         // Remove the center marks from all selected cells
         positions.forEach((p) => {
-          newCentermarks[p.row][p.column] = '';
+          delete newCellValues[p.row][p.column].centermarks;
         });
       }
     } else {
+      const digit = newCentermark as Digit;
       const allCellsHasCenterMark = positions.every((p) =>
-        currentCentermarks[p.row][p.column].includes(newCentermark)
+        currentCellValues[p.row][p.column].centermarks?.includes(digit)
       );
 
       if (!allCellsHasCenterMark) {
         // Add it to the cells that does not have it
         positions.forEach((p) => {
-          if (!currentCentermarks[p.row][p.column].includes(newCentermark)) {
-            newCentermarks[p.row][p.column] = (currentCentermarks[p.row][p.column] + newCentermark)
-              .split('')
-              .sort()
-              .join('');
+          const centermarks = currentCellValues[p.row][p.column].centermarks;
+          if (centermarks) {
+            if (!centermarks.includes(digit)) {
+              newCellValues[p.row][p.column].centermarks = [...centermarks, digit].sort();
+            }
+          } else {
+            newCellValues[p.row][p.column].centermarks = [digit];
           }
         });
       } else {
         // Remove it from all cells
         positions.forEach((p) => {
-          newCentermarks[p.row][p.column] = currentCentermarks[p.row][p.column]
-            .split('')
-            .filter((s) => s !== newCentermark)
-            .sort()
-            .join('');
+          const centermarks = currentCellValues[p.row][p.column].centermarks;
+          if (centermarks) {
+            newCellValues[p.row][p.column].centermarks = undefinedIfEmpty(
+              centermarks.filter((s) => s !== digit)
+            );
+          }
         });
       }
     }
 
-    gameHistory.set({ centermarks: newCentermarks });
+    gameHistory.set({ cellValues: newCellValues });
   };
 
   function handleKeyDown(k: KeyboardEvent): void {

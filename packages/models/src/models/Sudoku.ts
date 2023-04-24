@@ -24,6 +24,47 @@ export const DimensionsValidator = z.object({
 
 export type Dimensions = z.infer<typeof DimensionsValidator>;
 
+export const DigitValidator = z.enum([
+  '0',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z'
+]);
+export type Digit = z.infer<typeof DigitValidator>;
+export const Digits = DigitValidator.options;
+
 export const ColorValidator = z.enum([
   'White',
   'LightGray',
@@ -73,7 +114,7 @@ export const LineValidator = z.object({
 
 export type Line = z.infer<typeof LineValidator>;
 
-export const CageTypeValidator = z.enum(['Killer']);
+export const CageTypeValidator = z.enum(['Killer', 'LookAndSay']);
 export type CageType = z.infer<typeof CageTypeValidator>;
 export const CageTypes = CageTypeValidator.options;
 
@@ -100,7 +141,9 @@ export const PathTypeValidator = z.enum([
   'Entropic',
   'Odd',
   'Even',
-  'Pill'
+  'Pill',
+  'Parity',
+  'DutchWhisper'
 ]);
 export type PathType = z.infer<typeof PathTypeValidator>;
 export const PathTypes = PathTypeValidator.options;
@@ -228,6 +271,7 @@ export const LogicFlagValidator = z.enum([
   'Nonconsecutive',
   'DisjointSets',
   'SCells',
+  'Doublers',
   'Entropy',
   'Indexed159',
   'NegativeX',
@@ -248,7 +292,7 @@ export type Logic = z.infer<typeof LogicValidator>;
 export const CellsValidator = z.array(z.array(z.boolean()));
 export type Cells = z.infer<typeof CellsValidator>;
 
-export const GivensValidator = z.array(z.array(z.string()));
+export const GivensValidator = z.array(z.array(DigitValidator.or(z.string().length(0))));
 export type Givens = z.infer<typeof GivensValidator>;
 
 export const EditorColorsValidator = z.array(z.array(ColorValidator.nullable()));
@@ -277,7 +321,7 @@ export const SudokuCluesValidator = z.object({
   dimensions: DimensionsValidator,
   /** The cells that are interactable in the sudoku. */
   cells: CellsValidator.nullable(),
-  /** The givens in the sudoku.  */
+  /** The givens in the sudoku. */
   givens: GivensValidator.nullable(),
   /** The colors in the cells of the sudoku. */
   colors: EditorColorsValidator.nullable(),

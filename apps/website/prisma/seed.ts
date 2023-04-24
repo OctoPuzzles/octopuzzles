@@ -279,7 +279,6 @@ const main = async (): Promise<void> => {
         'Normal sudoku rules apply: Fill each row, column and marked 3x3 box with the numbers 1 to 9 so that no number appears twice.',
       points: 0,
       rank: 0,
-      difficulty: 4,
       rows: 9,
       columns: 9,
       cells: [
@@ -426,7 +425,6 @@ const main = async (): Promise<void> => {
       paths: [
         {
           positions: [
-            { column: 1, row: 0 },
             { column: 2, row: 0 },
             { column: 3, row: 0 },
             { column: 4, row: 0 },
@@ -464,22 +462,14 @@ const main = async (): Promise<void> => {
             { column: 6, row: 8 },
             { column: 7, row: 8 }
           ],
-          color: 'Black',
-          width: 5,
-          form: 'Round',
-          fill: 'Solid',
-          arrow: true
+          type: 'Arrow'
         },
         {
           positions: [
             { column: 2, row: 0 },
             { column: 1, row: 0 }
           ],
-          color: 'Black',
-          width: 90,
-          form: 'Round',
-          fill: 'Hollow',
-          arrow: false
+          type: 'Pill'
         }
       ],
       borderclues: [
@@ -488,126 +478,98 @@ const main = async (): Promise<void> => {
             { column: 5, row: 0 },
             { column: 4, row: 0 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'V'
+          type: 'XvV'
         },
         {
           positions: [
             { column: 6, row: 1 },
             { column: 5, row: 1 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'V'
+          type: 'XvV'
         },
         {
           positions: [
             { column: 8, row: 2 },
             { column: 8, row: 3 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'V'
+          type: 'XvV'
         },
         {
           positions: [
             { column: 7, row: 4 },
             { column: 6, row: 4 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'V'
+          type: 'XvV'
         },
         {
           positions: [
             { column: 4, row: 4 },
             { column: 4, row: 5 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'V'
+          type: 'XvV'
         },
         {
           positions: [
             { column: 3, row: 3 },
             { column: 2, row: 3 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'V'
+          type: 'XvV'
         },
         {
           positions: [
             { column: 2, row: 2 },
             { column: 1, row: 2 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'V'
+          type: 'XvV'
         },
         {
           positions: [
             { column: 7, row: 1 },
             { column: 7, row: 2 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'X'
+          type: 'XvX'
         },
         {
           positions: [
             { column: 4, row: 3 },
             { column: 4, row: 4 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'X'
+          type: 'XvX'
         },
         {
           positions: [
             { column: 2, row: 1 },
             { column: 2, row: 2 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'X'
+          type: 'XvX'
         },
         {
           positions: [
             { column: 1, row: 6 },
             { column: 0, row: 6 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'X'
+          type: 'XvX'
         },
         {
           positions: [
             { column: 1, row: 7 },
             { column: 1, row: 8 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'X'
+          type: 'XvX'
         },
         {
           positions: [
             { column: 8, row: 6 },
             { column: 7, row: 6 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'X'
+          type: 'XvX'
         },
         {
           positions: [
             { column: 8, row: 8 },
             { column: 7, row: 8 }
           ],
-          color: undefined,
-          radius: 20,
-          text: 'X'
+          type: 'XvX'
         }
       ],
       createdAt: date3,
