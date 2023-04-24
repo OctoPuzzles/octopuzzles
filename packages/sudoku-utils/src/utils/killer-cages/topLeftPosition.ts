@@ -3,7 +3,7 @@ import type { Position } from '@octopuzzles/models';
 export function comparePositions(a: Position, b: Position): number {
   if (a.row < b.row) {
     return -1;
-  } else if (a.row == b.row && a.column < b.column) {
+  } else if (a.row === b.row && a.column < b.column) {
     return -1;
   } else if (a.row === b.row && a.column === b.column) {
     return 0;
