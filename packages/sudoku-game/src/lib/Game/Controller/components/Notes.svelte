@@ -28,8 +28,8 @@
   function handleInput(newValue: string): void {
     if (firstSelectedCell == null) return;
 
-    let newNotes = deepCopy($notes);
-    let noteIndex = newNotes.findIndex((n) =>
+    const newNotes = deepCopy($notes);
+    const noteIndex = newNotes.findIndex((n) =>
       n.positions.some(
         (p) => p.row === firstSelectedCell?.row && p.column === firstSelectedCell?.column
       )

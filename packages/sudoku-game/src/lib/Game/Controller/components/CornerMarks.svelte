@@ -9,8 +9,8 @@
   import type { Digit } from '@octopuzzles/models';
 
   function handleClick(newCornermark: string): void {
-    let currentCellValues = get(gameHistory.getValue('cellValues'));
-    let newCellValues = deepCopy(currentCellValues);
+    const currentCellValues = get(gameHistory.getValue('cellValues'));
+    const newCellValues = deepCopy(currentCellValues);
     const { givens } = get(gameHistory.clues);
     let positions = deepCopy(get(selectedCells));
 

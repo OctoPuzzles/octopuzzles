@@ -1,7 +1,6 @@
 import { get, writable } from 'svelte/store';
 import { deepCopy, getValuesFromRange, undefinedIfEmpty } from '@octopuzzles/utils';
-import { Digits, type Digit, type Position } from '@octopuzzles/models';
-import type { ScannerSettings } from '@octopuzzles/models';
+import { Digits, type Digit, type Position, type ScannerSettings } from '@octopuzzles/models';
 import { gameHistory, mode, highlightedCells, selectedCells } from '.';
 import {
   cageDefaults,
@@ -67,11 +66,11 @@ function createScannerStore() {
 
   const scanning = writable(false);
 
-  function isScanning() {
+  function isScanning(): boolean {
     return get(scanning);
   }
 
-  function initScan(seed?: Position) {
+  function initScan(seed?: Position): void {
     const { dimensions, givens, logic } = get(gameHistory.clues);
 
     const rowOffset = dimensions.margins?.top ?? 0;
@@ -164,7 +163,7 @@ function createScannerStore() {
 
     if (!nonstandard) {
       for (let x = 0; x < rows; ++x) {
-        if (x != j)
+        if (x !== j)
           seen.push({
             row: cell.row,
             column: x + columnOffset,
@@ -196,7 +195,7 @@ function createScannerStore() {
 
     const settings = get(scannerSettings);
     if (all || settings.mode !== 'Basic') {
-      if (diagonalNeg && (all || settings.scanDiagonals)) {
+      if (diagonalNeg && (all || settings.scanDiagonals === true)) {
         if (i === j) {
           for (let k = 0; k < rows; ++k) {
             if (k !== i)
@@ -208,7 +207,7 @@ function createScannerStore() {
           }
         }
       }
-      if (diagonalPos && (all || settings.scanDiagonals)) {
+      if (diagonalPos && (all || settings.scanDiagonals === true)) {
         if (i === rows - 1 - j) {
           for (let k = 0; k < rows; ++k) {
             if (k !== i)
@@ -220,7 +219,7 @@ function createScannerStore() {
           }
         }
       }
-      if (antiking && (all || settings.scanAntiKing)) {
+      if (antiking && (all || settings.scanAntiKing === true)) {
         [-1, 1].forEach((y) => {
           [-1, 1].forEach((x) => {
             if (i + y < 0 || i + y >= rows) return;
@@ -234,7 +233,7 @@ function createScannerStore() {
           });
         });
       }
-      if (antiknight && (all || settings.scanAntiKnight)) {
+      if (antiknight && (all || settings.scanAntiKnight === true)) {
         [-2, -1, 1, 2].forEach((y) => {
           [-2, -1, 1, -2].forEach((x) => {
             if (Math.abs(y) === Math.abs(x)) return;
@@ -249,7 +248,7 @@ function createScannerStore() {
           });
         });
       }
-      if (disjointsets && (all || settings.scanDisjointSets)) {
+      if (disjointsets && (all || settings.scanDisjointSets === true)) {
         for (let m = 0; m < rows / height; ++m) {
           for (let n = 0; m < columns / width; ++n) {
             if (Math.floor(i / height) !== m || Math.floor(j / width) !== n) {
@@ -262,7 +261,7 @@ function createScannerStore() {
           }
         }
       }
-      if (all || settings.scanCages) {
+      if (all || settings.scanCages === true) {
         cages.forEach((c, n) => {
           if (c.uniqueDigits ?? cageDefaults(c.type ?? 'CUSTOM').uniqueDigits) {
             if (c.positions.some((p) => p.row === cell.row && p.column === cell.column)) {
@@ -279,7 +278,7 @@ function createScannerStore() {
           }
         });
       }
-      if (all || settings.scanPaths) {
+      if (all || settings.scanPaths === true) {
         paths.forEach((l, n) => {
           if (l.uniqueDigits ?? pathDefaults(l.type ?? 'CUSTOM').uniqueDigits) {
             if (l.positions.some((p) => p.row === cell.row && p.column === cell.column)) {
@@ -296,7 +295,7 @@ function createScannerStore() {
           }
         });
       }
-      if (all || settings.scanExtraRegions) {
+      if (all || settings.scanExtraRegions === true) {
         regions.forEach((r, n) => {
           if (
             (r.type ?? 'CUSTOM') !== 'Normal' &&
@@ -359,10 +358,13 @@ function createScannerStore() {
             const cells = [c];
             const indexes = [];
             for (let j = seen ? i + 1 : 0; j < contextCells.length; ++j) {
-              if (j == i || (seen && skipIndexes.includes(j))) continue;
+              if (j === i || (seen && skipIndexes.includes(j))) continue;
 
               const d = contextCells[j];
-              if (cellValues[d.row][d.column].centermarks?.every((v) => tuple.includes(v))) {
+              if (
+                cellValues[d.row][d.column].centermarks?.every((v) => tuple.includes(v)) ??
+                false
+              ) {
                 cells.push(d);
                 indexes.push(j);
               }
@@ -531,7 +533,7 @@ function createScannerStore() {
       //if the cell contains the only cornermark in that region for a digit, then that should be the sole candidate
       if (
         !getCornerSets(cell, false)
-          .filter((s) => s.cells.length == 1)
+          .filter((s) => s.cells.length === 1)
           .some((s) => {
             if (newCandidateValues.includes(s.digit)) {
               newCandidateValues = [s.digit];
@@ -559,15 +561,15 @@ function createScannerStore() {
       const nbrCells = getNbrCells(cell);
 
       if (
-        (flags.includes('Nonconsecutive') && settings.scanNonConsecutive) ||
-        (flags.includes('NegativeWhite') && settings.scanNegativeKropki)
+        (flags.includes('Nonconsecutive') && settings.scanNonConsecutive === true) ||
+        (flags.includes('NegativeWhite') && settings.scanNegativeKropki === true)
       ) {
         newCandidateValues = newCandidateValues.filter(
           (v) =>
             !nbrCells.some((n) => {
               if (
                 flags.includes('NegativeWhite') &&
-                settings.scanNegativeKropki &&
+                settings.scanNegativeKropki === true &&
                 borderclues.some(
                   (c) =>
                     c.type === 'KropkiWhite' &&
@@ -597,7 +599,7 @@ function createScannerStore() {
             })
         );
       }
-      if (flags.includes('NegativeBlack') && settings.scanNegativeKropki) {
+      if (flags.includes('NegativeBlack') && settings.scanNegativeKropki === true) {
         newCandidateValues = newCandidateValues.filter(
           (v) =>
             !nbrCells.some((n) => {
@@ -637,7 +639,7 @@ function createScannerStore() {
             })
         );
       }
-      if (flags.includes('NegativeX') && settings.scanNegativeXV) {
+      if (flags.includes('NegativeX') && settings.scanNegativeXV === true) {
         newCandidateValues = newCandidateValues.filter(
           (v) =>
             !nbrCells.some((n) => {
@@ -671,7 +673,7 @@ function createScannerStore() {
             })
         );
       }
-      if (flags.includes('NegativeV') && settings.scanNegativeXV) {
+      if (flags.includes('NegativeV') && settings.scanNegativeXV === true) {
         newCandidateValues = newCandidateValues.filter(
           (v) =>
             !nbrCells.some((n) => {
@@ -845,11 +847,11 @@ function createScannerStore() {
 
   function getHighlightedCells(selectedCells: Position[]): Position[] {
     const highlightMode = get(scannerSettings).highlightMode;
-    if (highlightMode == 'None' || selectedCells.length === 0) return [];
+    if (highlightMode === 'None' || selectedCells.length === 0) return [];
 
     let cellsToHighlight: Position[] = [];
 
-    if (highlightMode == 'Seen') {
+    if (highlightMode === 'Seen') {
       selectedCells.forEach((c, i) => {
         const seenCells = getSeenCells(c);
         if (i === 0) {
@@ -864,7 +866,7 @@ function createScannerStore() {
           );
         }
       });
-    } else if (highlightMode == 'Tuples') {
+    } else if (highlightMode === 'Tuples') {
       const cellValues = get(gameHistory.getValue('cellValues'));
       if (!selectedCells.some((c) => cellValues[c.row][c.column].centermarks)) {
         let tuples = getTuples(selectedCells[0], false);
@@ -891,7 +893,7 @@ function createScannerStore() {
     return cellsToHighlight;
   }
 
-  function toggleSeen() {
+  function toggleSeen(): void {
     const settings = get(scannerSettings);
     if (settings.highlightMode !== 'Seen') {
       settings.highlightMode = 'Seen';
@@ -900,7 +902,7 @@ function createScannerStore() {
     }
   }
 
-  function toggleTuples() {
+  function toggleTuples(): void {
     const settings = get(scannerSettings);
     if (settings.highlightMode !== 'Tuples') {
       settings.highlightMode = 'Tuples';

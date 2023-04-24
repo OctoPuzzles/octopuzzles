@@ -27,7 +27,7 @@
     $selectedCells = [];
     $highlightedCells = [];
     const penTools = $gameData.pentool;
-    if (penTools && penTools[penTools.length - 1] != null) {
+    if (penTools[penTools.length - 1] != null) {
       const lastPenTool = penTools[penTools.length - 1];
       if (lastPenTool.color) {
         penColor = lastPenTool.color;

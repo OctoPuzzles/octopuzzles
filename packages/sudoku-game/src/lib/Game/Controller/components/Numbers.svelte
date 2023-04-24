@@ -36,7 +36,7 @@
       } else {
         const digit = newValue as Digit;
         // We are putting some number in the cell
-        let allCellsHaveValue = positions.every((p) => {
+        const allCellsHaveValue = positions.every((p) => {
           return currentCellValues[p.row][p.column].digits?.includes(digit);
         });
         if (!allCellsHaveValue) {
