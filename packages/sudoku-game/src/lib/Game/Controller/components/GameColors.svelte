@@ -36,7 +36,7 @@
         });
       }
     } else {
-      let allCellsHasColor = positions.every((p) =>
+      const allCellsHasColor = positions.every((p) =>
         currentCellValues[p.row][p.column].colors?.includes(newColor)
       );
       if (!allCellsHasColor) {
