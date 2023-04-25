@@ -111,7 +111,7 @@ export function getFPuzzlesJson(
       if (flags.some((f) => f === 'Indexed159') && (j === 0 || j === 4 || j === 8)) {
         fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor.Red;
       }
-      if (editorColors[i][j] !== null) {
+      if (editorColors[i][j] != null) {
         fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor[editorColors[i][j] as Color];
       }
       const digits = cellValues[i][j].digits;
@@ -379,7 +379,7 @@ export function getFPuzzlesJson(
           const quadruple = fPuzzle.quadruple ?? (fPuzzle.quadruple = []);
           quadruple.push({
             cells: cells as [PositionString, PositionString, PositionString, PositionString],
-            values: c.text ? c.text.split(',').map((v) => parseFloat(v)) : []
+            values: c.text?.split(',').map((v) => parseFloat(v)) ?? []
           });
           return;
         }
@@ -408,7 +408,7 @@ export function getFPuzzlesJson(
           cells
           //angle:
         });
-        if (d.text) {
+        if (d.text != null && d.text !== '') {
           text.push({
             fontC: colorToHexColor.Black,
             size: (d.radius ?? 10) / 50,
@@ -435,10 +435,14 @@ export function getFPuzzlesJson(
           }
         }
 
+        let outlineColor: Color = 'White';
+        if (d.color != null) {
+          outlineColor = d.shape === 'Line' ? d.color : 'Black';
+        }
         rectangle.push({
           baseC: colorToHexColor[d.color ?? 'White'],
           fontC: colorToHexColor.Black,
-          outlineC: colorToHexColor[d.color ? (d.shape === 'Line' ? d.color : 'Black') : 'White'],
+          outlineC: colorToHexColor[outlineColor],
           height: d.shape === 'Line' ? 0.05 : (d.radius ?? 10) / 50,
           width: (d.radius ?? 10) / 50,
           cells,
@@ -502,7 +506,7 @@ export function getFPuzzlesJson(
     }
 
     getCellCluesToDraw(c).forEach((d) => {
-      if (d.text) {
+      if (d.text != null && d.text !== '') {
         const text = fPuzzle.text ?? (fPuzzle.text = []);
 
         let size: number;
@@ -559,7 +563,7 @@ export function exportPuzzle(
   title: string,
   description: string,
   to: 'FPuzzles' | 'CTC'
-) {
+): void {
   let href: string;
   switch (to) {
     case 'FPuzzles':

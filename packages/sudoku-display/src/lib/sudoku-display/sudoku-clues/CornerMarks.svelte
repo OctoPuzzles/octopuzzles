@@ -4,6 +4,22 @@
 
   export let cellValues: CellValues | undefined;
   export let givens: Givens;
+
+  function getPosition(n: number, i: number): number {
+    let k = i;
+    if (i >= 3) {
+      if (n <= 6) {
+        k += 3;
+      } else if (i >= 4) {
+        if (n === 7) {
+          k += 2;
+        } else {
+          k += 1;
+        }
+      }
+    }
+    return k;
+  }
 </script>
 
 {#if cellValues}
@@ -11,11 +27,11 @@
     {#each cellValues as cells, row}
       {#each cells as cell, column}
         {@const cornermarks = cell.cornermarks}
-        {#if cornermarks && !givens[row][column] && !cell.digits}
+        {#if cornermarks !== undefined && givens[row][column] === '' && cell.digits === undefined}
           {@const n = cornermarks.length}
           {#each cornermarks as cornerMark, i}
             {#if i < 8}
-              {@const k = n <= 6 && i >= 3 ? i + 3 : n === 7 && i >= 4 ? i + 2 : i >= 4 ? i + 1 : i}
+              {@const k = getPosition(n, i)}
               <text
                 x={CELL_SIZE * (column + 0.18 + 0.3 * (k % 3))}
                 y={CELL_SIZE * (row + 0.22 + 0.3 * Math.floor(k / 3))}

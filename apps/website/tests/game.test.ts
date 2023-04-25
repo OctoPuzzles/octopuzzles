@@ -9,16 +9,16 @@ const test = base.extend({
 
 test.describe('6x6 sudoku', () => {
   test('Shortcuts for selecting control works', async ({ page }) => {
-    await page.getByRole('button', { name: 'Numbers' }).click();
+    await page.getByRole('button', { name: 'Digits' }).click();
     // Shortcut for corner marks work
     await page.keyboard.press('KeyX');
     expect(await page.getByRole('button', { name: 'Corner marks' }).getAttribute('class')).toMatch(
       /bg-gray-700\/10/
     );
 
-    // Shortcut for numbers work
+    // Shortcut for digits work
     await page.keyboard.press('KeyZ');
-    expect(await page.getByRole('button', { name: 'Numbers' }).getAttribute('class')).toMatch(
+    expect(await page.getByRole('button', { name: 'Digits' }).getAttribute('class')).toMatch(
       /bg-gray-700\/10/
     );
 
