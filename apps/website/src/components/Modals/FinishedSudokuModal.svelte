@@ -1,8 +1,15 @@
 <script lang="ts">
-  import { FacebookLink, Input, RedditLink, TwitterLink, WhatsAppLink } from '@octopuzzles/ui';
+  import {
+    FacebookLink,
+    Input,
+    RedditLink,
+    TwitterLink,
+    WhatsAppLink,
+    Button,
+    Modal
+  } from '@octopuzzles/ui';
   import ClipboardText from 'phosphor-svelte/lib/ClipboardText/ClipboardText.svelte';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
-  import { Button, Modal } from '@octopuzzles/ui';
   import { getUserSolution } from '@octopuzzles/sudoku-utils';
   import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
 

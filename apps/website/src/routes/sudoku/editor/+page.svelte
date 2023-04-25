@@ -10,7 +10,7 @@
     defaultCellValues,
     getUserSolution
   } from '@octopuzzles/sudoku-utils';
-  import { page } from '$app/stores';
+  import { page, navigating } from '$app/stores';
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
@@ -24,7 +24,6 @@
   import type { Digit, GameHistoryStep } from '@octopuzzles/models';
   import { deepCopy } from '@octopuzzles/utils';
   import type { RouterInputs } from '$lib/trpc/router';
-  import { navigating } from '$app/stores';
   import { exportPuzzle } from '$features/fpuzzles/exportAsFPuzzlesJson';
   import { FPuzzles, CtC } from '@octopuzzles/icons';
 
