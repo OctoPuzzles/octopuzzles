@@ -408,7 +408,7 @@ export function getFPuzzlesJson(
           cells
           //angle:
         });
-        if (d.text != null) {
+        if (d.text != null && d.text !== '') {
           text.push({
             fontC: colorToHexColor.Black,
             size: (d.radius ?? 10) / 50,
@@ -506,7 +506,7 @@ export function getFPuzzlesJson(
     }
 
     getCellCluesToDraw(c).forEach((d) => {
-      if (d.text != null && d.text != '') {
+      if (d.text != null && d.text !== '') {
         const text = fPuzzle.text ?? (fPuzzle.text = []);
 
         let size: number;
