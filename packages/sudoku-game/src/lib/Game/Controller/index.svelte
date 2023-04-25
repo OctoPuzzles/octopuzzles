@@ -10,7 +10,13 @@
     Scanner as ScannerIcon,
     PenTool as PenToolIcon
   } from '@octopuzzles/icons';
-  import { gameHistory, inputMode, selectedCells, highlightedCells } from '$lib/sudokuStore';
+  import {
+    gameHistory,
+    inputMode,
+    selectedCells,
+    highlightedCells,
+    wrongCells
+  } from '$lib/sudokuStore';
   import { scanner } from '$lib/sudokuStore/scanner';
   import type { InputMode, WalkthroughStep } from '@octopuzzles/models';
   import { SquareButton, ControllerSkeleton } from '@octopuzzles/ui';
@@ -18,6 +24,7 @@
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
   import ArrowUUpRight from 'phosphor-svelte/lib/ArrowUUpRight/ArrowUUpRight.svelte';
+  import Check from 'phosphor-svelte/lib/Check/Check.svelte';
   import PersonSimpleWalk from 'phosphor-svelte/lib/PersonSimpleWalk/PersonSimpleWalk.svelte';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
@@ -196,6 +203,10 @@
 
   const canUndo = gameHistory.canUndo;
   const canRedo = gameHistory.canRedo;
+
+  function verify(): void {
+    $wrongCells = scanner.getErrorCells();
+  }
 </script>
 
 <svelte:window use:gameAction={{ onKeyDown: handleKeyboardShortcuts, onKeyUp: handleKeyUp }} />
@@ -241,6 +252,14 @@
   </svelte:fragment>
 
   <svelte:fragment slot="aux">
+    <button
+      title="Check digits"
+      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+      on:click={verify}
+    >
+      <Check size={32} />
+    </button>
+
     {#if $page.url.pathname.includes('/sudoku/editor') || walkthrough.length > 0}
       <button
         title="Walkthrough"

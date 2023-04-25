@@ -44,6 +44,7 @@ model UserSettings {
   userId  Int   @unique
   user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   scanner Json?
+  general Json?
 }
 
 enum TokenKind {

@@ -12,12 +12,12 @@
   } from '$lib/sudokuStore';
   import type {
     EditorHistoryStep,
-    GameHistoryStep,
-    ScannerSettings,
+    GameData,
     Solution,
+    UserSettings,
     WalkthroughStep
   } from '@octopuzzles/models';
-  import { defaultClues, getUserSolution } from '@octopuzzles/sudoku-utils';
+  import { defaultClues, getValidDigits } from '@octopuzzles/sudoku-utils';
   import { scanner } from '$lib/sudokuStore/scanner';
   import { onDestroy, onMount, setContext } from 'svelte';
   import { gameAction, handleWindowClick } from '$lib/gameAction';
@@ -38,16 +38,16 @@
 
   export let clues: EditorHistoryStep;
 
-  export let gameData: GameHistoryStep;
+  export let gameData: GameData;
 
   export let walkthrough: WalkthroughStep[];
 
   export let solution: Solution | undefined = undefined;
 
-  export let scannerSettings: ScannerSettings | undefined;
+  export let settings: Partial<UserSettings> | undefined;
 
-  export let onScannerSettingsChange: (newSettings: ScannerSettings) => void;
-  setContext('updateScannerSettings', onScannerSettingsChange);
+  export let onSettingsChange: (newSettings: Partial<UserSettings>) => void;
+  setContext('updateSettings', onSettingsChange);
 
   export let onDone: (() => void) | undefined = undefined;
 
@@ -61,51 +61,58 @@
 
   const storeGameData = gameHistory.subscribeToInputs();
 
-  $: gameData = $storeGameData;
+  $: onInput($storeGameData);
 
   $: gameHistory.clues.set(clues);
 
-  $: scanner.configure(scannerSettings);
+  $: scanner.configure(settings?.scanner);
 
-  $: if (solution != null && onDone != null) {
-    if (
-      checkSolution(
-        gameData.cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
-      )
-    ) {
-      onDone();
+  let generalSettings = settings?.general;
+
+  function onInput(newGameData: GameData): void {
+    gameData = newGameData;
+    const verificationMode = settings?.general?.verificationMode ?? 'OnDemand';
+    if (verificationMode === 'OnComplete' || onDone != null) {
+      const allDigits = getValidDigits(clues.logic, clues.dimensions);
+      //check that every row has the required number of digits before validating the solution
+      const complete = !gameData.cellValues.some((row, i) => {
+        let numDigits = 0;
+        row.forEach((cell, j) => {
+          numDigits += clues.givens[i][j] !== '' ? 1 : cell.digits?.length ?? 0;
+        });
+        return numDigits !== allDigits.length;
+      });
+      if (complete) {
+        if (checkSolution()) {
+          onDone?.();
+          return;
+        }
+      }
+    }
+    if (verificationMode === 'OnInput') {
+      $wrongCells = scanner.getErrorCells();
+    } else {
+      $wrongCells = [];
     }
   }
-
-  function checkSolution(numbers: string[][]): boolean {
-    $wrongCells = [];
-    if (solution?.numbers == null) return false;
-
-    if (
-      solution.numbers.length !== numbers.length ||
-      solution.numbers[0].length !== numbers[0].length
-    ) {
-      return false;
+  function checkSolution(): boolean {
+    //check that the provided solution has the same dimensions as the user input
+    if (solution != null) {
+      if (
+        solution.numbers.length !== gameData.cellValues.length ||
+        solution.numbers[0].length !== gameData.cellValues[0].length
+      ) {
+        return false;
+      }
     }
-
-    const userSolution = getUserSolution({
-      givens: clues.givens,
-      values: numbers
-    });
-
-    let isDone = true;
-
-    userSolution.forEach((row, rowIndex) => {
-      row.forEach((cell, columnIndex) => {
-        if (solution && solution.numbers[rowIndex][columnIndex] !== cell) {
-          if (cell.length > 0) {
-            $wrongCells = [...$wrongCells, { row: rowIndex, column: columnIndex }];
-          }
-          isDone = false;
-        }
-      });
-    });
-    return isDone;
+    //check for errors against the provided solution or the puzzle logic
+    const errorCells = scanner.getErrorCells(solution?.numbers);
+    if ((generalSettings?.verificationMode ?? 'OnDemand') === 'OnComplete') {
+      $wrongCells = errorCells;
+    } else {
+      $wrongCells = [];
+    }
+    return errorCells.length === 0;
   }
 </script>
 

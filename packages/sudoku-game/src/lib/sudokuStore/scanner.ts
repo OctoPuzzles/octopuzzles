@@ -1,12 +1,20 @@
 import { get, writable } from 'svelte/store';
-import { deepCopy, getValuesFromRange, undefinedIfEmpty } from '@octopuzzles/utils';
+import { deepCopy, undefinedIfEmpty } from '@octopuzzles/utils';
 import { Digits, type Digit, type Position, type ScannerSettings } from '@octopuzzles/models';
 import { gameHistory, mode, highlightedCells, selectedCells } from '.';
 import {
   cageDefaults,
   pathDefaults,
   regionDefaults,
-  defaultRegionSize
+  defaultRegionSize,
+  getUserSolution,
+  verifyRegion,
+  verifyPath,
+  verifyBorderClue,
+  verifyCellClue,
+  verifyCage,
+  verifyLogic,
+  getValidDigits
 } from '@octopuzzles/sudoku-utils';
 
 // WRITABLES
@@ -80,7 +88,7 @@ function createScannerStore() {
 
     const cellValues = get(gameHistory.getValue('cellValues'));
 
-    const allDigits = getValuesFromRange(logic.digits ?? '1-' + rows).map((d) => d as Digit);
+    const allDigits = getValidDigits(logic, dimensions);
     const candidates: Digit[][][] = [];
     const queue: Position[] = [];
 
@@ -893,6 +901,94 @@ function createScannerStore() {
     return cellsToHighlight;
   }
 
+  function getErrorCells(solution?: string[][] | null): Position[] {
+    const cellValues = get(gameHistory.getValue('cellValues'));
+    const clues = get(gameHistory.clues);
+
+    const userSolution = getUserSolution(cellValues, clues.givens, clues.logic);
+
+    const wrongCells: Position[] = [];
+
+    if (solution != null) {
+      userSolution.forEach((r, i) => {
+        r.forEach((cell, j) => {
+          if (cell.digits) {
+            if (solution[i][j] !== cell.digits.join('')) {
+              wrongCells.push({ row: i, column: j });
+            }
+          }
+        });
+      });
+    } else {
+      userSolution.forEach((r, i) => {
+        r.forEach((cell, j) => {
+          if (cell.digits) {
+            getSeenCells({ row: i, column: j }, true).forEach((c) => {
+              cell.digits?.forEach((d) => {
+                if (
+                  userSolution[c.row][c.column].digits?.includes(d) &&
+                  !wrongCells.some((w) => w.row === c.row && w.column === c.column)
+                ) {
+                  wrongCells.push(c);
+                }
+              });
+            });
+          }
+        });
+      });
+
+      clues.regions.forEach((r) => {
+        wrongCells.push(
+          ...verifyRegion(r, userSolution, clues).filter(
+            (c) => !wrongCells.some((w) => w.row === c.row && w.column === c.column)
+          )
+        );
+      });
+
+      clues.paths.forEach((l) => {
+        wrongCells.push(
+          ...verifyPath(l, userSolution, clues).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      clues.borderclues.forEach((b) => {
+        wrongCells.push(
+          ...verifyBorderClue(b, userSolution).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      clues.cellclues.forEach((c) => {
+        wrongCells.push(
+          ...verifyCellClue(c, userSolution, clues).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      clues.extendedcages.forEach((k) => {
+        wrongCells.push(
+          ...verifyCage(k, userSolution).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      if (clues.logic.flags) {
+        wrongCells.push(
+          ...verifyLogic(clues.logic, userSolution, clues).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      }
+    }
+
+    return wrongCells;
+  }
+
   function toggleSeen(): void {
     const settings = get(scannerSettings);
     if (settings.highlightMode !== 'Seen') {
@@ -919,6 +1015,7 @@ function createScannerStore() {
     isScanning,
     getSeenCells,
     getHighlightedCells,
+    getErrorCells,
     toggleSeen,
     toggleTuples,
     scannerSettings

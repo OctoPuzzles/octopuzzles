@@ -4,9 +4,11 @@
   import SudokuInfo from '$components/Sudoku/SudokuInfo.svelte';
   import { onMount } from 'svelte';
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
+  import UserSettingsModal from '$components/Modals/UserSettingsModal.svelte';
   import type { PageData } from './$types';
-  import { me } from '$stores/meStore';
+  import { settings } from '$stores/settingsStore';
   import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
+  import Gear from 'phosphor-svelte/lib/Gear/Gear.svelte';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
   import { defaultGameData } from '@octopuzzles/sudoku-utils';
   import { navigating } from '$app/stores';
@@ -20,7 +22,6 @@
   let walkthrough = data.walkthrough?.steps ?? [];
   const clues = fillCluesWithDefaults(data.sudoku);
   let gameData = data.gameData ?? defaultGameData(data.sudoku.dimensions);
-  const scannerSettings = me.settings;
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
   let now = Date.now();
@@ -62,6 +63,7 @@
   }
 
   let showFinishedSudokuModal = false;
+  let showUserSettingsModal = false;
 
   let exportDetails: HTMLDetailsElement;
 
@@ -94,8 +96,8 @@
 </div>
 
 <SudokuGame
-  scannerSettings={$scannerSettings.scanner}
-  onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
+  settings={$settings}
+  onSettingsChange={(newSettings) => settings.save(newSettings)}
   onDone={() => {
     clearInterval(timer);
     showFinishedSudokuModal = true;
@@ -134,6 +136,14 @@
       </button>
     </div>
   </details>
+
+  <button
+    on:click={() => (showUserSettingsModal = true)}
+    class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+    title="Settings"
+  >
+    <Gear size={32} />
+  </button>
 </SudokuGame>
 
 <SudokuInfo sudoku={data.sudoku} {takeScreenshot} />
@@ -146,6 +156,8 @@
   {clues}
   {gameData}
 />
+
+<UserSettingsModal bind:isOpen={showUserSettingsModal} />
 
 <style>
   /* Allow the export dropdown to close when pressing outside the dropdown */

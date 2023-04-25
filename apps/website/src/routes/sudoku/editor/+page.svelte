@@ -15,12 +15,14 @@
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
   import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
+  import Gear from 'phosphor-svelte/lib/Gear/Gear.svelte';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
+  import UserSettingsModal from '$components/Modals/UserSettingsModal.svelte';
   import type { PageData } from './$types';
   import { trpc } from '$lib/trpc/client';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
-  import { me } from '$stores/meStore';
+  import { settings } from '$stores/settingsStore';
   import type { Digit, GameHistoryStep } from '@octopuzzles/models';
   import { deepCopy } from '@octopuzzles/utils';
   import type { RouterInputs } from '$lib/trpc/router';
@@ -54,7 +56,6 @@
         })
       ) ?? defaultCellValues(data.sudoku?.dimensions)
   };
-  const scannerSettings = me.settings;
 
   let id = data.sudoku?.id;
   let isPublic = data.sudoku?.publicSince != null;
@@ -64,6 +65,7 @@
   let loading = false;
 
   let showImportFromFPuzzlesModal = false;
+  let showUserSettingsModal = false;
   let showCommonDescriptionsModal = false;
 
   async function changeUpdateStatus(make_public: boolean): Promise<void> {
@@ -96,10 +98,9 @@
         }
       }
       solution = {
-        numbers: getUserSolution({
-          givens: clues.givens,
-          values: cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
-        })
+        numbers: getUserSolution(cellValues, clues.givens).map((row) =>
+          row.map((cell) => cell.digits?.join('') ?? '')
+        )
       };
     }
     await trpc($page).sudokus.provideSolutionToPuzzle.mutate({
@@ -224,14 +225,11 @@
   function doesSolutionHaveHoles(): boolean {
     if (clues.givens == null || gameData.cellValues == null) return false;
 
-    const userSolution = getUserSolution({
-      givens: clues.givens,
-      values: gameData.cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
-    });
+    const userSolution = getUserSolution(gameData.cellValues, clues.givens);
 
     for (const row of userSolution) {
       for (const cell of row) {
-        if (cell.length === 0) {
+        if (cell.digits === undefined) {
           return true;
         }
       }
@@ -318,12 +316,20 @@
         </button>
       </div>
     </details>
+
+    <button
+      on:click={() => (showUserSettingsModal = true)}
+      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
+      title="Settings"
+    >
+      <Gear size={32} />
+    </button>
   </SudokuEditor>
 </div>
 <div class:hidden={tab !== 'game'}>
   <SudokuGame
-    scannerSettings={$scannerSettings.scanner}
-    onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
+    settings={$settings}
+    onSettingsChange={(newSettings) => settings.save(newSettings)}
     bind:walkthrough
     {clues}
     bind:gameData
@@ -520,6 +526,7 @@
       </div>
     </form>
   </div>
+
   <CommonDescriptionsModal
     bind:isOpen={showCommonDescriptionsModal}
     {labels}
@@ -554,6 +561,8 @@
     description = newDescription;
   }}
 />
+
+<UserSettingsModal bind:isOpen={showUserSettingsModal} />
 
 <style>
   /* Allow the export dropdown to close when pressing outside the dropdown */

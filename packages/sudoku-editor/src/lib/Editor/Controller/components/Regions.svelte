@@ -31,7 +31,7 @@
 
   let type: RegionType | 'CUSTOM' = 'Normal';
   let defaultSettings = regionDefaults(type);
-  let { borders, color, uniqueDigits } = defaultSettings;
+  let { borders, color, uniqueDigits, nonStandard } = defaultSettings;
 
   $: color, updateSelectedRegion();
 
@@ -59,6 +59,7 @@
     borders = region.borders ?? defaultSettings.borders;
     color = region.color ?? defaultSettings.color;
     uniqueDigits = region.uniqueDigits ?? defaultSettings.uniqueDigits;
+    nonStandard = region.nonStandard ?? defaultSettings.nonStandard;
   }
 
   function changeType(type: RegionType | 'CUSTOM'): void {
@@ -75,6 +76,11 @@
   function toggleUniqueDigits(): void {
     uniqueDigits = !uniqueDigits;
 
+    updateSelectedRegion();
+  }
+
+  function toggleNonStandard(): void {
+    nonStandard = !nonStandard;
     updateSelectedRegion();
   }
 
@@ -407,5 +413,15 @@
         on:change={() => toggleUniqueDigits()}
       />
     </div>
+
+    {#if type !== 'CUSTOM'}
+      <div>
+        <Checkbox
+          bind:checked={nonStandard}
+          label="Non-Standard logic"
+          on:change={() => toggleNonStandard()}
+        />
+      </div>
+    {/if}
   </div>
 </div>

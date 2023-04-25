@@ -4,10 +4,10 @@
   import { logicFlagNames, logicFlagsToLabel } from '$lib/constants';
   import type { Logic, LogicFlag } from '@octopuzzles/models';
   import { addLabel } from '$lib/utils/addLabel';
+  import { defaultDigits } from '@octopuzzles/sudoku-utils';
 
   const sudokuClues = editorHistory.subscribeToClues();
 
-  let digits = $sudokuClues.logic.digits ?? '1-9';
   $: flags = $sudokuClues.logic.flags ?? [];
   $: nonstandard = flags.includes('NonStandard');
   $: diagonalPos = flags.includes('DiagonalPos');
@@ -25,10 +25,13 @@
   $: negativeBlack = flags.includes('NegativeBlack');
   $: negativeWhite = flags.includes('NegativeWhite');
 
+  let digits = defaultDigits($sudokuClues.logic, $sudokuClues.dimensions);
+
   function update(): void {
     //TODO: validate number of digits against grid dimensions, prompt for s-cells, or update digits when s-cells are selected
     const newLogic: Logic = {
-      digits: digits !== '' ? digits : undefined,
+      digits:
+        digits !== defaultDigits($sudokuClues.logic, $sudokuClues.dimensions) ? digits : undefined,
       flags: flags.length > 0 ? flags : undefined
     };
 
@@ -43,6 +46,10 @@
       flags.push(flag);
     } else {
       flags.splice(index, 1);
+    }
+
+    if (flagName === 'SCells') {
+      digits = defaultDigits($sudokuClues.logic, $sudokuClues.dimensions);
     }
 
     update();

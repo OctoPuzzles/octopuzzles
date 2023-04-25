@@ -41,7 +41,7 @@
 
   let type: CageType | 'CUSTOM' = 'Killer';
   let defaultSettings = cageDefaults(type);
-  let { text, color, uniqueDigits } = defaultSettings;
+  let { text, color, uniqueDigits, nonStandard } = defaultSettings;
 
   $: color, updateSelectedCage();
 
@@ -63,6 +63,7 @@
     text = cage.text ?? defaultSettings.text;
     color = cage.color ?? defaultSettings.color;
     uniqueDigits = cage.uniqueDigits ?? defaultSettings.uniqueDigits;
+    nonStandard = cage.nonStandard ?? defaultSettings.nonStandard;
   }
 
   function changeType(type: CageType | 'CUSTOM'): void {
@@ -73,6 +74,11 @@
   function toggleUniqueDigits(): void {
     uniqueDigits = !uniqueDigits;
 
+    updateSelectedCage();
+  }
+
+  function toggleNonStandard(): void {
+    nonStandard = !nonStandard;
     updateSelectedCage();
   }
 
@@ -374,5 +380,15 @@
         on:change={() => toggleUniqueDigits()}
       />
     </div>
+
+    {#if type !== 'CUSTOM'}
+      <div>
+        <Checkbox
+          bind:checked={nonStandard}
+          label="Non-Standard logic"
+          on:change={() => toggleNonStandard()}
+        />
+      </div>
+    {/if}
   </div>
 </div>

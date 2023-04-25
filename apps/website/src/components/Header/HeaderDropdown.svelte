@@ -7,12 +7,16 @@
   import AuthDrawer from '$components/Drawer/AuthDrawer/index.svelte';
   import { trpc } from '$lib/trpc/client';
   import { me } from '$stores/meStore';
+  import { settings } from '$stores/settingsStore';
   import { onMount } from 'svelte';
+  import UserSettingsModal from '$components/Modals/UserSettingsModal.svelte';
 
   async function getMe(): Promise<void> {
     const res = await trpc($page).users.me.query();
-    const settings = await trpc($page).users.getSettings.query();
-    me.set(res, settings);
+    me.set(res);
+
+    const userSettings = await trpc($page).userSettings.get.query();
+    settings.set(userSettings);
   }
 
   onMount(() => {
@@ -28,6 +32,16 @@
   let details: HTMLDetailsElement;
 
   $: if ($navigating && details != null) details.open = false;
+
+  function showSettingsModal(): void {
+    if (details) {
+      details.open = false;
+    }
+
+    showUserSettingsModal = true;
+  }
+
+  let showUserSettingsModal = false;
 </script>
 
 {#if $me}
@@ -64,13 +78,9 @@
             class="block py-1 px-2 hover:bg-gray-200 w-full">Profile</a
           >
         </li>
-        <li class="w-full">
-          <a
-            data-sveltekit-preload-data
-            href="/settings"
-            class="block py-1 px-2 hover:bg-gray-200 w-full">Settings</a
-          >
-        </li>
+        <button class="px-2 py-1 w-full text-left hover:bg-gray-200" on:click={showSettingsModal}>
+          Settings
+        </button>
       </ul>
 
       <hr />
@@ -88,7 +98,10 @@
     <Button on:click={() => authMode.setAuthMode('signup')} variant="primary">Sign Up</Button>
   </div>
 {/if}
+
 <AuthDrawer />
+
+<UserSettingsModal bind:isOpen={showUserSettingsModal} />
 
 <style>
   /* Allow the dropdown to close when pressing outside the dropdown */
