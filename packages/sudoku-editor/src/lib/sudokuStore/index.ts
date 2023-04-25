@@ -125,7 +125,7 @@ function createEditorHistoryStore() {
     step.update((step) => Math.min(get(history).length - 1, step + 1));
   }
 
-  const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 2);
+  const canRedo = derived([history, step], ([$history, $step]) => $step < $history.length - 1);
 
   /** Reset the editor */
   function reset(startState?: Partial<EditorHistoryStep>): void {
