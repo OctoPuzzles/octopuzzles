@@ -7,14 +7,17 @@
   import type { PageData } from './$types';
   import { me } from '$stores/meStore';
   import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
+  import FloppyDisk from 'phosphor-svelte/lib/FloppyDisk/FloppyDisk.svelte';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
   import { defaultGameData } from '@octopuzzles/sudoku-utils';
-  import { navigating } from '$app/stores';
+  import { navigating, page } from '$app/stores';
   import { CtC, FPuzzles } from '@octopuzzles/icons';
   import { exportPuzzle } from '$features/fpuzzles/exportAsFPuzzlesJson';
+  import { trpc } from '$lib/trpc/client';
 
   export let data: PageData;
 
+  const sudokuId = data.sudoku.id;
   const sudokuTitle = data.sudoku.title;
   const description = data.sudoku.description;
   let walkthrough = data.walkthrough?.steps ?? [];
@@ -61,6 +64,10 @@
     });
   }
 
+  async function saveProgress(): Promise<void> {
+    await trpc($page).savedGames.createOrUpdate.mutate({ sudokuId, gameData });
+  }
+
   let showFinishedSudokuModal = false;
 
   let exportDetails: HTMLDetailsElement;
@@ -98,6 +105,13 @@
   onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
   onDone={() => {
     clearInterval(timer);
+
+    const trpcClient = trpc($page);
+    trpcClient.userStats.solved.mutate({ sudokuId, solveTime: t });
+    if (data?.gameData) {
+      trpcClient.savedGames.delete.mutate({ sudokuId });
+    }
+
     showFinishedSudokuModal = true;
   }}
   solution={data.sudoku.solution ?? undefined}
@@ -118,6 +132,13 @@
       class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
       role="menu"
     >
+      <button
+        title="Save for later"
+        class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+        on:click={saveProgress}
+      >
+        <FloppyDisk size={32} />
+      </button>
       <button
         on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'FPuzzles')}
         class="w-8 h-8"
@@ -140,7 +161,7 @@
 
 <FinishedSudokuModal
   bind:isOpen={showFinishedSudokuModal}
-  sudokuId={data.sudoku.id}
+  {sudokuId}
   {takeScreenshot}
   finishTime={`${days}${hours}${minutes}:${seconds}`}
   {clues}

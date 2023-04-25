@@ -14,6 +14,7 @@ declare module 'phosphor-svelte/lib/ClipboardText/ClipboardText.svelte';
 declare module 'phosphor-svelte/lib/Crosshair/Crosshair.svelte';
 declare module 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
 declare module 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
+declare module 'phosphor-svelte/lib/FloppyDisk/FloppyDisk.svelte';
 declare module 'phosphor-svelte/lib/Image/Image.svelte';
 declare module 'phosphor-svelte/lib/ListBullets/ListBullets.svelte';
 declare module 'phosphor-svelte/lib/ListNumbers/ListNumbers.svelte';
