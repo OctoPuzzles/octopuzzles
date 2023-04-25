@@ -408,7 +408,7 @@ export function getFPuzzlesJson(
           cells
           //angle:
         });
-        if (d.text) {
+        if (d.text != null) {
           text.push({
             fontC: colorToHexColor.Black,
             size: (d.radius ?? 10) / 50,

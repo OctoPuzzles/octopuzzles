@@ -49,13 +49,13 @@
     });
   }
 
-  const copySolutionCode = async () => {
+  async function copySolutionCode(): Promise<void> {
     try {
       await navigator.clipboard.writeText(solutionCode);
     } catch (err) {
       console.error('Failed to copy solution code: ', err);
     }
-  };
+  }
 </script>
 
 <Modal bind:isOpen let:close>
