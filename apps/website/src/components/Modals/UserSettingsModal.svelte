@@ -2,9 +2,13 @@
   import type { VerificationMode } from '@octopuzzles/models';
   import { settings } from '$stores/settingsStore';
   import { Button, Label, Modal, RadioGroup } from '@octopuzzles/ui';
+
   export let isOpen: boolean;
+
   const generalSettings = settings.getGroup('general');
+
   let verificationMode = $generalSettings?.verificationMode ?? 'OnComplete';
+
   function updateSettings(): void {
     const generalSettings = {
       verificationMode: verificationMode as VerificationMode
