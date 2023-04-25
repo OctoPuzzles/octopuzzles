@@ -8,7 +8,7 @@ import type {
 import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
 import { derived, get, writable } from 'svelte/store';
-import { defaultGameData } from '@octopuzzles/sudoku-utils';
+import { defaultClues, defaultGameData } from '@octopuzzles/sudoku-utils';
 import type {
   OnMouseDownHitboxHandler,
   OnMouseEnterHitboxHandler
@@ -21,9 +21,9 @@ function createGameHistoryStore() {
   // Step
   const step = writable(0);
   // History
-  const history = writable<GameHistoryStep[]>([deepCopy(defaultGameData())]);
+  const history = writable<GameHistoryStep[]>([defaultGameData()]);
 
-  const clues = writable<EditorHistoryStep>();
+  const clues = writable<EditorHistoryStep>(defaultClues());
 
   function setClues(newClues: EditorHistoryStep): void {
     clues.set(newClues);

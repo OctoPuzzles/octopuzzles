@@ -44,7 +44,7 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         form: 'Round',
         fill: 'Solid',
         arrow: true,
-        uniqueDigits: true,
+        uniqueDigits: false,
         nonStandard: false
       };
     case 'Thermo':
