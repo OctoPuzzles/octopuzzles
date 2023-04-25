@@ -54,7 +54,7 @@
     {#each colors as editorColor, column}
       {@const cell = cellValues?.[row]?.[column]}
       {@const gameColors = cell?.colors}
-      {#if editorColor !== null}
+      {#if editorColor != null}
         <rect
           x={CELL_SIZE * column}
           y={CELL_SIZE * row}
