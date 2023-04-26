@@ -6,6 +6,7 @@ export { default as ControllerSkeleton } from './ui/ControllerSkeleton.svelte';
 export { default as ExternalLink } from './ui/ExternalLink.svelte';
 export { default as HTMLContent } from './ui/HTMLContent.svelte';
 export { default as Input } from './ui/Input.svelte';
+export { default as Keypad } from './ui/Keypad.svelte';
 export { default as Label } from './ui/Label.svelte';
 export { default as Modal, hasOpenModals } from './ui/Modal.svelte';
 export { default as PuzzleLabel } from './ui/PuzzleLabel.svelte';

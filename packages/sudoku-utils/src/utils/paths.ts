@@ -274,7 +274,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
               .sort(comparePositions)
               .every((p) => {
                 const cell = solution[p.row][p.column];
-                if (!cell.digits) {
+                if (!cell.digits || (cell.modifiers?.includes('SCell') && cell.digits.length < 2)) {
                   return false;
                 }
 
@@ -375,7 +375,8 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         if (
           path.positions.every((p) => {
             const cell = solution[p.row][p.column];
-            if (!cell.digits) return false;
+            if (!cell.digits || (cell.modifiers?.includes('SCell') && cell.digits.length < 2))
+              return false;
 
             if (min === undefined || max === undefined) {
               min = Digits.indexOf(cell.digits[0]);

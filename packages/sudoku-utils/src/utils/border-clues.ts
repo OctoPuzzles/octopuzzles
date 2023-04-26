@@ -106,7 +106,7 @@ export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): 
         if (
           cells.every((pos) => {
             const cell = solution[pos.row][pos.column];
-            if (!cell.digits) {
+            if (!cell.digits || (cell.modifiers?.includes('SCell') && cell.digits.length < 2)) {
               return false;
             }
             digits.push(...cell.digits);

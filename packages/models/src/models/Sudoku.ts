@@ -287,10 +287,18 @@ export const LogicFlagValidator = z.enum([
 export type LogicFlag = z.infer<typeof LogicFlagValidator>;
 export const LogicFlags = LogicFlagValidator.options;
 
+export const SCellTypeValidator = z.enum(['Sum', 'Average', 'NonStandard']);
+export type SCellType = z.infer<typeof SCellTypeValidator>;
+
+export const DoublerTypeValidator = z.enum(['Unique', 'NonUnique', 'NonStandard']);
+export type DoublerType = z.infer<typeof DoublerTypeValidator>;
+
 export const LogicValidator = z.object({
   /** the valid digits expected in the puzzle, as a comma separated list of ranges (num or alpha). If None, defaults to 1-9 */
   digits: z.string().nullish(),
-  flags: z.array(LogicFlagValidator).nullish()
+  flags: z.array(LogicFlagValidator).nullish(),
+  sCellType: SCellTypeValidator.nullish(),
+  doublerType: DoublerTypeValidator.nullish()
 });
 export type Logic = z.infer<typeof LogicValidator>;
 

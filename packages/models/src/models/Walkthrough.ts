@@ -51,11 +51,15 @@ export const AnnotationValidator = z.object({
 });
 export type Annotation = z.infer<typeof AnnotationValidator>;
 
+export const CellModifierValidator = z.enum(['SCell', 'Doubler']);
+export type CellModifier = z.infer<typeof CellModifierValidator>;
+
 export const CellDataValidator = z.object({
   digits: z.array(DigitValidator).optional(),
   centermarks: z.array(DigitValidator).optional(),
   cornermarks: z.array(DigitValidator).optional(),
   colors: z.array(ColorValidator).optional(),
+  modifiers: z.array(CellModifierValidator).optional(),
   value: z.number().optional()
 });
 export type CellData = z.infer<typeof CellDataValidator>;
@@ -65,6 +69,9 @@ export type CellValues = z.infer<typeof CellValuesValidator>;
 
 export const AnnotationsValidator = z.array(AnnotationValidator);
 export type Annotations = z.infer<typeof AnnotationsValidator>;
+
+export const CellModifiersValidator = z.array(CellModifierValidator);
+export type CellModifiers = z.infer<typeof CellModifiersValidator>;
 
 export const GameDataValidator = z.object({
   cellValues: CellValuesValidator,

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Input, Checkbox, Label } from '@octopuzzles/ui';
+  import { Input, Checkbox, Label, Select } from '@octopuzzles/ui';
   import { editorHistory } from '$lib/sudokuStore';
   import { logicFlagNames, logicFlagsToLabel } from '$lib/constants';
-  import type { Logic, LogicFlag } from '@octopuzzles/models';
+  import type { DoublerType, Logic, LogicFlag, SCellType } from '@octopuzzles/models';
   import { addLabel } from '$lib/utils/addLabel';
   import { defaultDigits } from '@octopuzzles/sudoku-utils';
 
@@ -26,6 +26,25 @@
   $: negativeWhite = flags.includes('NegativeWhite');
 
   let digits = defaultDigits($sudokuClues.logic, $sudokuClues.dimensions);
+
+  $: sCellType = $sudokuClues.logic.sCellType ?? 'Sum';
+  $: doublerType = $sudokuClues.logic.doublerType ?? 'Unique';
+
+  const sCellTypes: SCellType[] = ['Sum', 'Average', 'NonStandard'];
+
+  const sCellTypeLabels: Record<SCellType, string> = {
+    Sum: 'Cell value is treated as the sum of the digits',
+    Average: 'Cell value is treated as the average of the digits',
+    NonStandard: 'SCells do not exhibit standard behaviour'
+  };
+
+  const doublerTypes: DoublerType[] = ['Unique', 'NonUnique', 'NonStandard'];
+
+  const doublerTypeLabels: Record<DoublerType, string> = {
+    Unique: 'Each digit must be doubled exactly once',
+    NonUnique: 'Digits may be doubled more than once',
+    NonStandard: 'Doublers do not exhibit standard behaviour'
+  };
 
   function update(): void {
     //TODO: validate number of digits against grid dimensions, prompt for s-cells, or update digits when s-cells are selected
@@ -173,5 +192,21 @@
         </div>
       </div>
     </div>
+    {#if sCells}
+      <Select onChange={update} options={sCellTypes} bind:option={sCellType}>
+        <svelte:fragment slot="label">S-Cell Type</svelte:fragment>
+        <div slot="option" let:option>
+          {sCellTypeLabels[option]}
+        </div>
+      </Select>
+    {/if}
+    {#if doublers}
+      <Select onChange={update} options={doublerTypes} bind:option={doublerType}>
+        <svelte:fragment slot="label">Doubler Type</svelte:fragment>
+        <div slot="option" let:option>
+          {doublerTypeLabels[option]}
+        </div>
+      </Select>
+    {/if}
   </div>
 </div>

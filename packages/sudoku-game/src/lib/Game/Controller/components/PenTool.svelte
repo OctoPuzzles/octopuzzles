@@ -162,7 +162,7 @@
       {@const color = Colors[number]}
       <div>
         <SquareButton
-          variant="customColor"
+          variant="custom"
           class="text-{color.toLowerCase()}-500 bg-{color.toLowerCase()}-500"
           on:click={() => (penColor = color)}
           title={number}

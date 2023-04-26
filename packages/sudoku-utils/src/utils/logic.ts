@@ -1,4 +1,5 @@
 import {
+  CellModifier,
   CellValues,
   Digit,
   Digits,
@@ -291,6 +292,101 @@ export function verifyLogic(
               );
             }
           }
+        }
+      }
+    }
+    const sCells = logic.flags.includes('SCells') && logic.sCellType !== 'NonStandard';
+    const doublers = logic.flags.includes('Doublers') && logic.doublerType !== 'NonStandard';
+    if (sCells || doublers) {
+      const rows =
+        clues.dimensions.rows -
+        (clues.dimensions.margins?.top ?? 0) -
+        (clues.dimensions.margins?.bottom ?? 0);
+      const columns =
+        clues.dimensions.columns -
+        (clues.dimensions.margins?.left ?? 0) -
+        (clues.dimensions.margins?.right ?? 0);
+      const targetCounts: Map<CellModifier, number> = new Map();
+      if (sCells) {
+        const allDigits = getValidDigits(clues.logic, clues.dimensions);
+        targetCounts.set('SCell', allDigits.length - rows);
+      }
+      if (doublers) {
+        targetCounts.set('Doubler', 1);
+      }
+
+      let modifiedCells: Map<CellModifier, Position[]>;
+      for (let n = 0; n < rows; ++n) {
+        modifiedCells = new Map();
+
+        const i = n + (clues.dimensions.margins?.top ?? 0);
+        for (let m = 0; m < columns; ++m) {
+          const j = m + (clues.dimensions.margins?.left ?? 0);
+          solution[i][j].modifiers?.forEach((m) => {
+            if (modifiedCells.has(m)) {
+              modifiedCells.get(m)?.push({ row: i, column: j });
+            } else {
+              modifiedCells.set(m, [{ row: i, column: j }]);
+            }
+          });
+        }
+        for (const [m, cells] of modifiedCells.entries()) {
+          if (cells.length > (targetCounts.get(m) ?? 1)) {
+            invalidCells.push(
+              ...cells.filter(
+                (s) => !invalidCells.some((c) => c.row === s.row && c.column === s.column)
+              )
+            );
+          }
+        }
+      }
+
+      for (let m = 0; m < columns; ++m) {
+        modifiedCells = new Map();
+
+        const j = m + (clues.dimensions.margins?.left ?? 0);
+        for (let n = 0; n < rows; ++n) {
+          const i = n + (clues.dimensions.margins?.top ?? 0);
+          solution[i][j].modifiers?.forEach((m) => {
+            if (modifiedCells.has(m)) {
+              modifiedCells.get(m)?.push({ row: i, column: j });
+            } else {
+              modifiedCells.set(m, [{ row: i, column: j }]);
+            }
+          });
+        }
+        for (const [m, cells] of modifiedCells.entries()) {
+          if (cells.length > (targetCounts.get(m) ?? 1)) {
+            invalidCells.push(
+              ...cells.filter(
+                (s) => !invalidCells.some((c) => c.row === s.row && c.column === s.column)
+              )
+            );
+          }
+        }
+      }
+
+      modifiedCells = new Map();
+      clues.regions
+        .filter((r) => r.type === 'Normal')
+        .forEach((r) => {
+          r.positions.forEach((p) => {
+            solution[p.row][p.column].modifiers?.forEach((m) => {
+              if (modifiedCells.has(m)) {
+                modifiedCells.get(m)?.push(p);
+              } else {
+                modifiedCells.set(m, [p]);
+              }
+            });
+          });
+        });
+      for (const [m, cells] of modifiedCells.entries()) {
+        if (cells.length > (targetCounts.get(m) ?? 1)) {
+          invalidCells.push(
+            ...cells.filter(
+              (s) => !invalidCells.some((c) => c.row === s.row && c.column === s.column)
+            )
+          );
         }
       }
     }

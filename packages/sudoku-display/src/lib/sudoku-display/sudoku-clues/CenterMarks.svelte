@@ -11,16 +11,31 @@
     {#each cellValues as cells, row}
       {#each cells as cell, column}
         {@const centermarks = cell.centermarks}
-        {#if centermarks !== undefined && givens[row][column] === '' && cell.digits === undefined}
-          <text
-            x={CELL_SIZE * (column + 0.5)}
-            y={CELL_SIZE * (row + 0.55)}
-            dominant-baseline="middle"
-            class:small={centermarks.length > 6}
-            class="fill-current text-blue-700 select-none"
-          >
-            {centermarks.join('')}
-          </text>
+        {#if centermarks && !givens[row][column]}
+          {@const digits = cell.digits}
+          {@const sCell = cell.modifiers?.some((m) => m === 'SCell')}
+          {#if !digits}
+            <text
+              x={CELL_SIZE * (column + 0.5)}
+              y={CELL_SIZE * (row + 0.55)}
+              dominant-baseline="middle"
+              class:small={centermarks.length > 6}
+              class="fill-current text-blue-700 select-none"
+            >
+              {centermarks.join('')}
+            </text>
+          {:else if sCell && digits.length === 1}
+            <text
+              x={CELL_SIZE * (column + 0.75)}
+              y={CELL_SIZE * (row + 0.85)}
+              dominant-baseline="middle"
+              class:small={centermarks.length <= 6}
+              class:x-small={centermarks.length > 6}
+              class="fill-current text-blue-700 select-none"
+            >
+              {centermarks.join('')}
+            </text>
+          {/if}
         {/if}
       {/each}
     {/each}

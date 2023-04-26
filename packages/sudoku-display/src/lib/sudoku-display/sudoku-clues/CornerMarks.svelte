@@ -27,19 +27,35 @@
     {#each cellValues as cells, row}
       {#each cells as cell, column}
         {@const cornermarks = cell.cornermarks}
-        {#if cornermarks !== undefined && givens[row][column] === '' && cell.digits === undefined}
+        {#if cornermarks && !givens[row][column]}
+          {@const digits = cell.digits}
+          {@const sCell = cell.modifiers?.some((m) => m === 'SCell')}
           {@const n = cornermarks.length}
           {#each cornermarks as cornerMark, i}
             {#if i < 8}
               {@const k = getPosition(n, i)}
-              <text
-                x={CELL_SIZE * (column + 0.18 + 0.3 * (k % 3))}
-                y={CELL_SIZE * (row + 0.22 + 0.3 * Math.floor(k / 3))}
-                dominant-baseline="middle"
-                class="fill-current text-blue-700 select-none"
-              >
-                {cornerMark}
-              </text>
+              {@const r = Math.floor(k / 3)}
+              {@const c = k % 3}
+              {#if !digits}
+                <text
+                  x={CELL_SIZE * (column + 0.18 + 0.3 * c)}
+                  y={CELL_SIZE * (row + 0.22 + 0.3 * r)}
+                  dominant-baseline="middle"
+                  class="fill-current text-blue-700 select-none"
+                >
+                  {cornerMark}
+                </text>
+              {:else if sCell && digits.length === 1}
+                <text
+                  x={CELL_SIZE * (column + 0.59 + 0.15 * c)}
+                  y={CELL_SIZE * (row + 0.61 + 0.15 * r)}
+                  dominant-baseline="middle"
+                  class:small={true}
+                  class="fill-current text-blue-700 select-none"
+                >
+                  {cornerMark}
+                </text>
+              {/if}
             {/if}
           {/each}
         {/if}

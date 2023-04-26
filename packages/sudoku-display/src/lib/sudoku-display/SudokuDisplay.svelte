@@ -14,6 +14,7 @@
   import Logic from './sudoku-clues/Logic.svelte';
   import Regions from './sudoku-clues/Regions.svelte';
   import Interface from './sudoku-clues/Interface.svelte';
+  import Modifiers from './sudoku-clues/Modifiers.svelte';
   import type {
     OnClickCellHandler,
     OnEnterCellHandler,
@@ -137,6 +138,7 @@
   <Regions regions={clues.regions} dimensions={clues.dimensions} />
   <BorderClues borderClues={clues.borderclues} />
   <CellClues cellClues={clues.cellclues} />
+  <Modifiers cellValues={gameData?.cellValues} />
   <CornerMarks cellValues={gameData?.cellValues} givens={clues.givens} />
   <CenterMarks cellValues={gameData?.cellValues} givens={clues.givens} />
   <Numbers cellValues={gameData?.cellValues} givens={clues.givens} />

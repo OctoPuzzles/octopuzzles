@@ -51,7 +51,7 @@ export function verifyCage(cage: Extendedcage, solution: CellValues): Position[]
           if (
             !cage.positions.every((p) => {
               const cell = solution[p.row][p.column];
-              if (cell.digits) {
+              if (cell.digits && (!cell.modifiers?.includes('SCell') || cell.digits.length == 2)) {
                 cell.digits.forEach((d) => {
                   counts.set(d, (counts.get(d) ?? 0) + 1);
                 });
