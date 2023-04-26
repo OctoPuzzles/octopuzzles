@@ -73,26 +73,11 @@
   let gameInputModePreShortcut = get(inputMode);
 
   function handleKeyboardShortcuts(k: KeyboardEvent): void {
-    if (isCommandKey(k) && $inputMode !== 'notes') {
-      switch (k.key) {
-        case 'z':
-          k.preventDefault();
-          if (k.shiftKey && get(gameHistory.canRedo)) {
-            gameHistory.redo();
-          } else if (!k.shiftKey && get(gameHistory.canUndo)) {
-            gameHistory.undo();
-          }
-          break;
-        case 'y':
-          k.preventDefault();
-          if (get(gameHistory.canRedo)) {
-            gameHistory.redo();
-          }
-          break;
-      }
+    if (['textarea', 'input'].includes((k.target as Element).tagName.toLowerCase())) {
+      // When inputs are focused, don't use shortcuts
+      return;
     }
-    // In notes mode, you should use command keys
-    if ($inputMode === 'notes' && !isCommandKey(k)) return;
+
     switch (k.key) {
       case 'z':
         k.preventDefault();
