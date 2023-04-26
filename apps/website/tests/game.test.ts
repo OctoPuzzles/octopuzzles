@@ -57,8 +57,8 @@ test.describe('6x6 sudoku', () => {
       'R3C3 should have a red background, as the digit in its cell is wrong'
     ).toMatch(/text-red-200/);
 
-    // Next, press 3 on the controller, and see that the highlight has been removed
-    await page.getByRole('button', { name: '3' }).click();
+    // Next, input 3 on the keyboard, and see that the highlight has been removed
+    await page.keyboard.press('3');
     // Check that there is a 3 in the cell
     expect(
       await page.locator('id=numbers').locator('text').nth(5).textContent(),
