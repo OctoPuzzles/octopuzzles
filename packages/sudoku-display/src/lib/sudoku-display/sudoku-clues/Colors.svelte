@@ -52,20 +52,19 @@
         />
       {/if}
       {#if gameColor && gameColor.length > 0}
-        <defs>
-          <clipPath id="square-{row}-{column}" clipPathUnits="userSpaceOnUse">
-            <rect x={CELL_SIZE * column} y={CELL_SIZE * row} width={CELL_SIZE} height={CELL_SIZE} />
-          </clipPath>
-        </defs>
-        {#each gameColor as color, i}
-          <path
-            width={CELL_SIZE}
-            height={CELL_SIZE}
-            d={describeArc(i, gameColor.length, row, column)}
-            clip-path="url(#square-{row}-{column})"
-            class="fill-current text-{color.toLowerCase()} opacity-60"
-          />
-        {/each}
+        <clipPath id="square-{row}-{column}" clipPathUnits="userSpaceOnUse">
+          <rect x={CELL_SIZE * column} y={CELL_SIZE * row} width={CELL_SIZE} height={CELL_SIZE} />
+        </clipPath>
+        <g clip-path="url(#square-{row}-{column})">
+          {#each gameColor as color, i}
+            <path
+              width={CELL_SIZE}
+              height={CELL_SIZE}
+              d={describeArc(i, gameColor.length, row, column)}
+              class="fill-current text-{color.toLowerCase()} opacity-60"
+            />
+          {/each}
+        </g>
       {/if}
     {/each}
   {/each}

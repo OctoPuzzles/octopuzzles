@@ -43,7 +43,9 @@
         /***/
       }}
     >
-      <slot close={() => dialog.close()} />
+      {#if isOpen}
+        <slot close={() => dialog.close()} />
+      {/if}
     </div>
   </dialog>
 </Portal>
