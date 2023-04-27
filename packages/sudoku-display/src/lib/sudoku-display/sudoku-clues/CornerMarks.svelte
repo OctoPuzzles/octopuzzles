@@ -5,20 +5,20 @@
   export let cellValues: CellValues | undefined;
   export let givens: Givens;
 
-  function getPosition(n: number, i: number): number {
-    let k = i;
-    if (i >= 3) {
-      if (n <= 6) {
-        k += 3;
-      } else if (i >= 4) {
-        if (n === 7) {
-          k += 2;
+  function getSubposition(numDigits: number, index: number): number {
+    let subPosition = index;
+    if (index >= 3) {
+      if (numDigits <= 6) {
+        subPosition += 3;
+      } else if (index >= 4) {
+        if (numDigits === 7) {
+          subPosition += 2;
         } else {
-          k += 1;
+          subPosition += 1;
         }
       }
     }
-    return k;
+    return subPosition;
   }
 </script>
 
@@ -28,13 +28,14 @@
       {#each cells as cell, column}
         {@const cornermarks = cell.cornermarks}
         {#if cornermarks !== undefined && givens[row][column] === '' && cell.digits === undefined}
-          {@const n = cornermarks.length}
+          {@const numDigits = cornermarks.length}
           {#each cornermarks as cornerMark, i}
+            <!--If you're using all 9 digits as cornermarks then you're solving the puzzle wrong! Hide the overflow for clarity-->
             {#if i < 8}
-              {@const k = getPosition(n, i)}
+              {@const subposition = getSubposition(numDigits, i)}
               <text
-                x={CELL_SIZE * (column + 0.18 + 0.3 * (k % 3))}
-                y={CELL_SIZE * (row + 0.22 + 0.3 * Math.floor(k / 3))}
+                x={CELL_SIZE * (column + 0.18 + 0.3 * (subposition % 3))}
+                y={CELL_SIZE * (row + 0.22 + 0.3 * Math.floor(subposition / 3))}
                 dominant-baseline="middle"
                 class="fill-current text-blue-700 select-none"
               >

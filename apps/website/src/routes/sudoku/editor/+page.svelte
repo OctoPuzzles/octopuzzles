@@ -49,7 +49,7 @@
       data.sudoku?.solution?.numbers.map((row) =>
         row.map((value) => {
           const digits = value.split('');
-          return digits.length ? { digits: digits.map((d) => d as Digit) } : {};
+          return digits.length > 0 ? { digits: digits as Digit[] } : {};
         })
       ) ?? defaultCellValues(data.sudoku?.dimensions)
   };
@@ -87,7 +87,7 @@
         if (
           gameData.cellValues.some((row, i) => {
             return row.some((cell, j) => {
-              return !cell.digits && finalStep.cellValues[i][j].digits;
+              return cell.digits !== undefined && finalStep.cellValues[i][j].digits;
             });
           })
         ) {

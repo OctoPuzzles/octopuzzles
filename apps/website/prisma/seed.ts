@@ -279,6 +279,7 @@ const main = async (): Promise<void> => {
         'Normal sudoku rules apply: Fill each row, column and marked 3x3 box with the numbers 1 to 9 so that no number appears twice.',
       points: 0,
       rank: 0,
+      difficulty: 4,
       rows: 9,
       columns: 9,
       cells: [

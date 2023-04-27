@@ -68,12 +68,12 @@ export function getFPuzzlesJson(
 
   const fPuzzle: FPuzzlesJson = {
     author: '',
-    antiking: flags.includes('Antiking') ? true : undefined,
-    antiknight: flags.includes('Antiknight') ? true : undefined,
+    antiking: flags.includes('Antiking') || undefined,
+    antiknight: flags.includes('Antiknight') || undefined,
     //author: string,
-    'diagonal+': flags.includes('DiagonalPos') ? true : undefined,
-    'diagonal-': flags.includes('DiagonalNeg') ? true : undefined,
-    disjointgroups: flags.includes('DisjointSets') ? true : undefined,
+    'diagonal+': flags.includes('DiagonalPos') || undefined,
+    'diagonal-': flags.includes('DiagonalNeg') || undefined,
+    disjointgroups: flags.includes('DisjointSets') || undefined,
     grid,
     negative: flags.some((f) => f === 'NegativeBlack' || f === 'NegativeX' || f === 'NegativeV')
       ? [
