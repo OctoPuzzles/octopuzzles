@@ -119,6 +119,14 @@
   {clues}
   bind:gameData
 >
+  <button
+    title="Save for later"
+    class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+    on:click={saveProgress}
+  >
+    <FloppyDisk size={32} />
+  </button>
+
   <details bind:this={exportDetails}>
     <summary
       class="cursor-pointer flex justify-center items-center mr-2 w-8 h-8 hover:ring hover:ring-orange-500 rounded"
@@ -132,13 +140,6 @@
       class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
       role="menu"
     >
-      <button
-        title="Save for later"
-        class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
-        on:click={saveProgress}
-      >
-        <FloppyDisk size={32} />
-      </button>
       <button
         on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'FPuzzles')}
         class="w-8 h-8"
