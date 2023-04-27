@@ -5,21 +5,16 @@
   export let cellValues: CellValues | undefined;
   export let givens: Givens;
 
-  function getSubposition(numDigits: number, index: number): number {
-    let subPosition = index;
-    if (index >= 3) {
-      if (numDigits <= 6) {
-        subPosition += 3;
-      } else if (index >= 4) {
-        if (numDigits === 7) {
-          subPosition += 2;
-        } else {
-          subPosition += 1;
-        }
-      }
-    }
-    return subPosition;
-  }
+  const subPositions = [
+    [0],
+    [0, 2],
+    [0, 2, 6],
+    [0, 2, 6, 8],
+    [0, 1, 2, 6, 8],
+    [0, 1, 2, 6, 7, 8],
+    [0, 1, 2, 3, 6, 7, 8],
+    [0, 1, 2, 3, 5, 6, 7, 8]
+  ];
 </script>
 
 {#if cellValues}
@@ -32,14 +27,14 @@
           {#each cornermarks as cornerMark, i}
             <!--If you're using all 9 digits as cornermarks then you're solving the puzzle wrong! Hide the overflow for clarity-->
             {#if i < 8}
-              {@const subposition = getSubposition(numDigits, i)}
+              {@const subposition = subPositions[Math.min(cornermarks.length, 8) - 1][i]}
               <text
                 x={CELL_SIZE * (column + 0.18 + 0.3 * (subposition % 3))}
                 y={CELL_SIZE * (row + 0.22 + 0.3 * Math.floor(subposition / 3))}
                 dominant-baseline="middle"
                 class="fill-current text-blue-700 select-none"
               >
-                {cornerMark}
+                {numDigits > 8 && i === 7 ? '...' : cornerMark}
               </text>
             {/if}
           {/each}
