@@ -366,9 +366,13 @@ export function getFPuzzlesJson(
       case 'XvV': {
         if (cells.length === 2) {
           const xv = fPuzzle.xv ?? (fPuzzle.xv = []);
+          let text = (c.text as 'X' | 'V') ?? undefined;
+          if (text == null) {
+            text = c.type === 'XvX' ? 'X' : 'V';
+          }
           xv.push({
             cells: cells as [PositionString, PositionString],
-            value: (c.text as 'X' | 'V') ?? undefined
+            value: text
           });
           return;
         }
