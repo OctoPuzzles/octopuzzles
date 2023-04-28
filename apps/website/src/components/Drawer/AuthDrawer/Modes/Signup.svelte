@@ -56,9 +56,9 @@
       {#if errors}
         <p class="text-sm text-red-500">{errors.message}</p>
       {/if}
-      <Input data-ignoreshortcuts label="Username" bind:value={username} />
-      <Input data-ignoreshortcuts label="Email" bind:value={email} />
-      <Input data-ignoreshortcuts label="Password" type="password" bind:value={password}>
+      <Input label="Username" bind:value={username} />
+      <Input label="Email" bind:value={email} />
+      <Input label="Password" type="password" bind:value={password}>
         <p slot="help">Your password should be at least 10 characters long</p>
       </Input>
       <Button variant="primary" class="mt-4 w-full" {loading}>Sign up</Button>
