@@ -64,7 +64,7 @@
           vector-effect="non-scaling-size"
         />
       {/if}
-      {#if gameColors !== undefined}
+      {#if gameColors != null}
         <clipPath id="square-{row}-{column}" clipPathUnits="userSpaceOnUse">
           <rect x={CELL_SIZE * column} y={CELL_SIZE * row} width={CELL_SIZE} height={CELL_SIZE} />
         </clipPath>

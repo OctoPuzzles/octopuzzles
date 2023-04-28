@@ -22,7 +22,7 @@
     {#each cellValues as cells, row}
       {#each cells as cell, column}
         {@const cornermarks = cell.cornermarks}
-        {#if cornermarks !== undefined && givens[row][column] === '' && cell.digits === undefined}
+        {#if cornermarks != null && givens[row][column] === '' && cell.digits == null}
           {@const numDigits = cornermarks.length}
           {#each cornermarks as cornerMark, i}
             <!--If you're using all 9 digits as cornermarks then you're solving the puzzle wrong! Hide the overflow for clarity-->

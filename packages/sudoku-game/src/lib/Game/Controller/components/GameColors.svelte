@@ -23,9 +23,9 @@
 
     const currentCellValues = get(gameHistory.getValue('cellValues'));
     const newCellValues = deepCopy(currentCellValues);
-    if (newColor === undefined) {
+    if (newColor == null) {
       const clearAllGameCells = positions.every(
-        (p) => currentCellValues[p.row][p.column].colors === undefined
+        (p) => currentCellValues[p.row][p.column].colors == null
       );
       if (clearAllGameCells) {
         // completely clear the selected cells

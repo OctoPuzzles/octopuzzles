@@ -87,7 +87,7 @@
         if (
           gameData.cellValues.some((row, i) => {
             return row.some((cell, j) => {
-              return cell.digits !== undefined && finalStep.cellValues[i][j].digits;
+              return cell.digits != null && finalStep.cellValues[i][j].digits;
             });
           })
         ) {
