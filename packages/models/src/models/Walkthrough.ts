@@ -1,33 +1,32 @@
 import { z } from 'zod';
-import { ColorValidator, PositionValidator } from './Sudoku';
+import { ColorValidator, PositionValidator, DigitValidator } from './Sudoku';
 
-export const GameValuesValidator = z.array(z.array(z.string()));
-export type GameValues = z.infer<typeof GameValuesValidator>;
+/** (Obsolete) */
+const GameValuesValidator = z.array(z.array(z.string()));
 
-export const CornermarksValidator = z.array(z.array(z.string()));
-export type Cornermarks = z.infer<typeof CornermarksValidator>;
+/** (Obsolete) */
+const CornermarksValidator = z.array(z.array(z.string()));
 
-export const CentermarksValidator = z.array(z.array(z.string()));
-export type Centermarks = z.infer<typeof CentermarksValidator>;
+/** (Obsolete) */
+const CentermarksValidator = z.array(z.array(z.string()));
 
-export const NotesValidator = z.array(z.array(z.string()));
-export type Notes = z.infer<typeof NotesValidator>;
+/** (Obsolete) */
+const NotesValidator = z.array(z.array(z.string()));
 
-export const GameColorsValidator = z.array(z.array(z.array(ColorValidator)));
-export type GameColors = z.infer<typeof GameColorsValidator>;
+/** (Obsolete) */
+const GameColorsValidator = z.array(z.array(z.array(ColorValidator)));
 
-export const PenToolTypeValidator = z.enum(['cross', 'circle', 'line']);
-export type PenToolType = z.infer<typeof PenToolTypeValidator>;
-export const PenToolValidator = z.object({
+/** (Obsolete) */
+const PenToolTypeValidator = z.enum(['cross', 'circle', 'line']);
+const PenToolValidator = z.object({
   positions: z.array(PositionValidator),
   type: PenToolTypeValidator,
   color: ColorValidator.nullish()
 });
-export type PenTool = z.infer<typeof PenToolValidator>;
-export const PenToolsValidator = z.array(PenToolValidator);
+const PenToolsValidator = z.array(PenToolValidator);
 
-/** A single step on the way to a solution */
-export const SolutionStepValidator = z.object({
+/** (Obsolete) A single step on the way to a solution */
+const SolutionStepValidator = z.object({
   /** Values on the solution step */
   values: GameValuesValidator,
   /** Cornermarks on the solution step */
@@ -40,14 +39,51 @@ export const SolutionStepValidator = z.object({
   colors: GameColorsValidator,
   pentool: PenToolsValidator.nullish()
 });
-export type SolutionStep = z.infer<typeof SolutionStepValidator>;
+
+export const AnnotationTypeValidator = z.enum(['Note', 'Penline', 'Pencross', 'Pencircle']);
+export type AnnotationType = z.infer<typeof AnnotationTypeValidator>;
+
+export const AnnotationValidator = z.object({
+  positions: z.array(PositionValidator),
+  type: AnnotationTypeValidator,
+  details: z.string().nullish(),
+  color: ColorValidator.nullish()
+});
+export type Annotation = z.infer<typeof AnnotationValidator>;
+
+export const CellDataValidator = z.object({
+  digits: z.array(DigitValidator).optional(),
+  centermarks: z.array(DigitValidator).optional(),
+  cornermarks: z.array(DigitValidator).optional(),
+  colors: z.array(ColorValidator).optional()
+});
+export type CellData = z.infer<typeof CellDataValidator>;
+
+export const CellValuesValidator = z.array(z.array(CellDataValidator));
+export type CellValues = z.infer<typeof CellValuesValidator>;
+
+export const AnnotationsValidator = z.array(AnnotationValidator);
+export type Annotations = z.infer<typeof AnnotationsValidator>;
+
+export const GameDataValidator = z.object({
+  cellValues: CellValuesValidator,
+  notes: AnnotationsValidator,
+  pentool: AnnotationsValidator
+});
+export type GameData = z.infer<typeof GameDataValidator>;
 
 /** A single step on the way to a solution */
 export const WalkthroughStepValidator = z.object({
   /** A description of the logic used etc. */
   description: z.string(),
-  /** The actual important step */
-  step: SolutionStepValidator
+  /** (Obsolete) The actual important step */
+  step: SolutionStepValidator.optional(),
+  /** The game state at this step*/
+  gameData: GameDataValidator.default({
+    cellValues: Array(9).fill(Array(9).fill({})),
+    notes: [],
+    pentool: []
+  })
 });
 export type WalkthroughStep = z.infer<typeof WalkthroughStepValidator>;
 

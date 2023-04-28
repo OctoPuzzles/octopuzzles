@@ -6,11 +6,11 @@
   export let isOpen: boolean;
 
   export let clues: EditorHistoryStep;
-  export let userInputs: GameHistoryStep;
+  export let gameData: GameHistoryStep;
   export let walkthrough: WalkthroughStep[];
   export let onClickStep: (step: GameHistoryStep) => void;
 </script>
 
 <Modal bind:isOpen>
-  <WalkthroughEditor {clues} {userInputs} {onClickStep} bind:walkthrough />
+  <WalkthroughEditor {clues} {gameData} {onClickStep} bind:walkthrough />
 </Modal>

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { CELL_SIZE, type PenTool, type Position } from '@octopuzzles/models';
+  import { CELL_SIZE, type Annotation, type Position } from '@octopuzzles/models';
   import classNames from 'classnames';
 
-  export let pentool: PenTool;
+  export let pentool: Annotation;
 
   const CROSS_SIZE = 0.25;
 
@@ -21,7 +21,7 @@
   {@const { row: y, column: x } = pentool.positions[0]}
   {@const isCenter = Math.round(x) !== x && Math.round(y) !== y}
   {@const scale = isCenter ? 1 : 0.5}
-  {#if pentool.type === 'circle'}
+  {#if pentool.type === 'Pencircle'}
     <circle
       cx={x * CELL_SIZE}
       cy={y * CELL_SIZE}
@@ -36,7 +36,7 @@
           : 'stroke-current text-white-500'
       )}
     />
-  {:else if pentool.type === 'cross'}
+  {:else if pentool.type === 'Pencross'}
     <line
       x1={(x - CROSS_SIZE * scale) * CELL_SIZE}
       y1={(y - CROSS_SIZE * scale) * CELL_SIZE}

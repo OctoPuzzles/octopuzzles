@@ -1,5 +1,5 @@
 import type { FPuzzlesJson, HexColor, PositionString } from './types';
-import { deepCopy } from '@octopuzzles/utils';
+import { compressToBase64, deepCopy } from '@octopuzzles/utils';
 import {
   getBorderCluesToDraw,
   getCellCluesToDraw,
@@ -8,11 +8,18 @@ import {
   defaultRegions,
   topLeftPosition
 } from '@octopuzzles/sudoku-utils';
-import type { Color, EditorHistoryStep, GameHistoryStep, Position } from '@octopuzzles/models';
+import {
+  Digits,
+  type Color,
+  type EditorHistoryStep,
+  type GameHistoryStep,
+  type Position,
+  type Digit
+} from '@octopuzzles/models';
 
-export function exportAsFPuzzlesJson(
+export function getFPuzzlesJson(
   clues: EditorHistoryStep,
-  userInputs: GameHistoryStep,
+  gameData: GameHistoryStep,
   title: string,
   description: string
 ): FPuzzlesJson {
@@ -29,7 +36,7 @@ export function exportAsFPuzzlesJson(
   } = clues;
   const flags = logic.flags ?? [];
 
-  const { values, colors: gameColors, cornermarks, centermarks } = userInputs;
+  const { cellValues } = gameData;
 
   const getPositionString = (position: Position): PositionString => {
     return `R${position.row + 1 - (dimensions.margins?.top ?? 0)}C${
@@ -98,7 +105,7 @@ export function exportAsFPuzzlesJson(
       const gridRow = i - (dimensions.margins?.top ?? 0);
       const gridColumn = j - (dimensions.margins?.top ?? 0);
       if (givens[i][j] !== '') {
-        fPuzzle.grid[gridRow][gridColumn].value = parseInt(givens[i][j]);
+        fPuzzle.grid[gridRow][gridColumn].value = Digits.indexOf(givens[i][j] as Digit);
         fPuzzle.grid[gridRow][gridColumn].given = true;
       }
       if (flags.some((f) => f === 'Indexed159') && (j === 0 || j === 4 || j === 8)) {
@@ -107,21 +114,23 @@ export function exportAsFPuzzlesJson(
       if (editorColors[i][j] != null) {
         fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor[editorColors[i][j] as Color];
       }
-      if (values[i][j] !== '') {
-        fPuzzle.grid[gridRow][gridColumn].value = parseInt(values[i][j]);
+      const digits = cellValues[i][j].digits;
+      if (digits && digits.length) {
+        fPuzzle.grid[gridRow][gridColumn].value = Digits.indexOf(digits[0]);
       }
-      if (gameColors[i][j].length !== 0) {
-        fPuzzle.grid[gridRow][gridColumn].highlight = colorToHexColor[gameColors[i][j][0] as Color];
+      if (cellValues[i][j].colors) {
+        fPuzzle.grid[gridRow][gridColumn].highlight =
+          colorToHexColor[cellValues[i][j].colors?.[0] as Color];
       }
-      if (cornermarks[i][j] !== '') {
-        fPuzzle.grid[gridRow][gridColumn].cornerPencilMarks = cornermarks[i][j]
-          .split('')
-          .map((m) => parseInt(m));
+      if (cellValues[i][j].cornermarks) {
+        fPuzzle.grid[gridRow][gridColumn].cornerPencilMarks = cellValues[i][j].cornermarks?.map(
+          (m) => parseInt(m)
+        );
       }
-      if (centermarks[i][j] !== '') {
-        fPuzzle.grid[gridRow][gridColumn].centerPencilMarks = centermarks[i][j]
-          .split('')
-          .map((m) => parseInt(m));
+      if (cellValues[i][j].centermarks) {
+        fPuzzle.grid[gridRow][gridColumn].centerPencilMarks = cellValues[i][j].centermarks?.map(
+          (m) => parseInt(m)
+        );
       }
     }
   }
@@ -158,7 +167,7 @@ export function exportAsFPuzzlesJson(
 
         const topLeftR = topLeftPosition(r.positions);
         regions.forEach((s, j) => {
-          if (j > i && !handledRegions.includes(j)) {
+          if (j > i && handledRegions.includes(j)) {
             if (s.color === r.color && s.positions.length === r.positions.length) {
               const topLeftS = topLeftPosition(s.positions);
               const rowOffset = topLeftS.row - topLeftR.row;
@@ -357,9 +366,13 @@ export function exportAsFPuzzlesJson(
       case 'XvV': {
         if (cells.length === 2) {
           const xv = fPuzzle.xv ?? (fPuzzle.xv = []);
+          let text = (c.text as 'X' | 'V') ?? undefined;
+          if (text == null) {
+            text = c.type === 'XvX' ? 'X' : 'V';
+          }
           xv.push({
             cells: cells as [PositionString, PositionString],
-            value: (c.text as 'X' | 'V') ?? undefined
+            value: text
           });
           return;
         }
@@ -370,7 +383,7 @@ export function exportAsFPuzzlesJson(
           const quadruple = fPuzzle.quadruple ?? (fPuzzle.quadruple = []);
           quadruple.push({
             cells: cells as [PositionString, PositionString, PositionString, PositionString],
-            values: c.text != null ? c.text.split(',').map((v) => parseFloat(v)) : []
+            values: c.text?.split(',').map((v) => parseFloat(v)) ?? []
           });
           return;
         }
@@ -399,7 +412,7 @@ export function exportAsFPuzzlesJson(
           cells
           //angle:
         });
-        if (d.text != null) {
+        if (d.text != null && d.text !== '') {
           text.push({
             fontC: colorToHexColor.Black,
             size: (d.radius ?? 10) / 50,
@@ -428,11 +441,7 @@ export function exportAsFPuzzlesJson(
 
         let outlineColor: Color = 'White';
         if (d.color != null) {
-          if (d.shape === 'Line') {
-            outlineColor = d.color;
-          } else {
-            outlineColor = 'Black';
-          }
+          outlineColor = d.shape === 'Line' ? d.color : 'Black';
         }
         rectangle.push({
           baseC: colorToHexColor[d.color ?? 'White'],
@@ -501,7 +510,7 @@ export function exportAsFPuzzlesJson(
     }
 
     getCellCluesToDraw(c).forEach((d) => {
-      if (d.text != null) {
+      if (d.text != null && d.text !== '') {
         const text = fPuzzle.text ?? (fPuzzle.text = []);
 
         let size: number;
@@ -550,4 +559,28 @@ export function exportAsFPuzzlesJson(
   });
 
   return fPuzzle;
+}
+
+export function exportPuzzle(
+  clues: EditorHistoryStep,
+  gameData: GameHistoryStep,
+  title: string,
+  description: string,
+  to: 'FPuzzles' | 'CTC'
+): void {
+  let href: string;
+  switch (to) {
+    case 'FPuzzles':
+      href = 'https://www.f-puzzles.com/?load=';
+      break;
+    case 'CTC':
+      href = 'https://app.crackingthecryptic.com/sudoku/?puzzleid=fpuzzles';
+      break;
+    default:
+      return;
+  }
+
+  href += compressToBase64(getFPuzzlesJson(clues, gameData, title, description));
+
+  window.open(href, '_blank', 'noreferrer');
 }

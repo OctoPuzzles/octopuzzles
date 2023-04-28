@@ -5,12 +5,15 @@
   import { get } from 'svelte/store';
   import { isDeleteKey, deepCopy } from '@octopuzzles/utils';
   import { editorAction } from '$lib/editorAction';
+  import type { Digit } from '@octopuzzles/models';
+
+  const givens = editorHistory.getClue('givens');
 
   function handleClick(newGiven: string): void {
     const positions = get(selectedCells);
     if (positions.length === 0) return;
 
-    const currentGivens = editorHistory.getClue('givens');
+    const currentGivens = $givens;
     const newGivens = deepCopy(currentGivens);
 
     // Whether there has been any changes
@@ -37,9 +40,7 @@
           // We are putting some number in the cell
 
           // If the cell already contains the number, delete it
-          newGivens[position.row][position.column] = (
-            newGivens[position.row][position.column] + newGiven
-          ).slice(0, 3);
+          newGivens[position.row][position.column] = newGiven as Digit;
           anyChanges = true;
         }
       }

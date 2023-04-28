@@ -45,7 +45,7 @@
 
   $: color, updateSelectedCage();
 
-  const cageTypes: (CageType | 'CUSTOM')[] = ['Killer', 'CUSTOM'];
+  const cageTypes: (CageType | 'CUSTOM')[] = ['Killer', 'LookAndSay', 'CUSTOM'];
 
   let input: Input;
 
@@ -131,7 +131,7 @@
     }
 
     if (isDeleteKey(k) && text === '') {
-      if ($selectedItemIndex !== undefined) {
+      if ($selectedItemIndex != null) {
         deleteKillerCageAtIndex($selectedItemIndex);
       } else {
         editorHistory.clearCells(get(selectedCells));
@@ -208,7 +208,7 @@
     const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
     if (lastSelectedCell != null) {
       const { row, column } = lastSelectedCell;
-      const dim = editorHistory.getClue('dimensions');
+      const dim = $sudokuClues.dimensions;
       let newCell: Position | undefined = undefined;
       switch (direction) {
         case 'up':

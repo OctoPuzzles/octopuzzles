@@ -31,14 +31,14 @@
   import { gameAction } from '$lib/gameAction';
   import PenTool from './components/PenTool.svelte';
 
-  const userInputs = gameHistory.subscribeToInputs();
+  const gameData = gameHistory.subscribeToInputs();
   export let walkthrough: WalkthroughStep[];
 
   const controls: Record<
     string,
     { icon: typeof NumbersIcon; controller: typeof Numbers; label: string; shortcut?: string }
   > = {
-    values: { icon: NumbersIcon, controller: Numbers, label: 'Numbers', shortcut: 'Z' },
+    digits: { icon: NumbersIcon, controller: Numbers, label: 'Digits', shortcut: 'Z' },
     cornermarks: {
       icon: CornerMarksIcon,
       controller: CornerMarks,
@@ -67,7 +67,7 @@
   }
 
   onMount(() => {
-    $inputMode = 'values';
+    $inputMode = 'digits';
   });
 
   let gameInputModePreShortcut = get(inputMode);
@@ -81,7 +81,7 @@
     switch (k.key) {
       case 'z':
         k.preventDefault();
-        $inputMode = 'values';
+        $inputMode = 'digits';
         gameInputModePreShortcut = $inputMode;
         break;
       case 'x':
@@ -148,7 +148,7 @@
       }
       case 'w': {
         k.preventDefault();
-        walkthrough = [...walkthrough, { description: '', step: deepCopy($userInputs) }];
+        walkthrough = [...walkthrough, { description: '', gameData: deepCopy($gameData) }];
         break;
       }
     }
@@ -244,7 +244,7 @@
 <WalkthroughEditorModal
   bind:isOpen={walkthroughEditorModalIsOpen}
   clues={$clues}
-  userInputs={$userInputs}
+  gameData={$gameData}
   onClickStep={(step) => gameHistory.set(step)}
   bind:walkthrough
 />

@@ -68,15 +68,17 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         uniqueDigits: true
       };
     case 'Whisper':
+    case 'DutchWhisper':
       return {
         arrow: false,
-        color: 'Green',
+        color: type === 'DutchWhisper' ? 'Orange' : 'Green',
         fill: 'Solid',
         form: 'Round',
         width: 15,
         uniqueDigits: false
       };
     case 'Palindrome':
+    case 'Parity':
       return {
         arrow: false,
         color: 'Gray',

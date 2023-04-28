@@ -6,25 +6,24 @@
   import { goto } from '$app/navigation';
   import {
     defaultClues,
-    defaultUserInputs,
-    defaultValues,
+    defaultGameData,
+    defaultCellValues,
     getUserSolution
   } from '@octopuzzles/sudoku-utils';
   import { page } from '$app/stores';
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
-  import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
   import type { PageData } from './$types';
   import { trpc } from '$lib/trpc/client';
-  import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
   import { me } from '$stores/meStore';
-  import type { GameHistoryStep } from '@octopuzzles/models';
+  import type { Digit, GameHistoryStep } from '@octopuzzles/models';
   import { deepCopy } from '@octopuzzles/utils';
   import type { RouterInputs } from '$lib/trpc/router';
+  import ExportButton from '$components/ExportButton.svelte';
 
   export let data: PageData;
 
@@ -42,9 +41,15 @@
   let walkthrough = data.walkthrough?.steps ?? [];
   let clues = fillCluesWithDefaults(data.sudoku ?? defaultClues());
   let initialClues = clues;
-  let userInputs: GameHistoryStep = {
-    ...defaultUserInputs(data.sudoku?.dimensions),
-    values: data.sudoku?.solution?.numbers ?? defaultValues(data.sudoku?.dimensions)
+  let gameData: GameHistoryStep = {
+    ...defaultGameData(data.sudoku?.dimensions),
+    cellValues:
+      data.sudoku?.solution?.numbers.map((row) =>
+        row.map((value) => {
+          const digits = value.split('');
+          return digits.length > 0 ? { digits: digits as Digit[] } : {};
+        })
+      ) ?? defaultCellValues(data.sudoku?.dimensions)
   };
   const scannerSettings = me.settings;
 
@@ -56,7 +61,6 @@
   let loading = false;
 
   let showImportFromFPuzzlesModal = false;
-  let showExportToFPuzzlesModal = false;
   let showCommonDescriptionsModal = false;
 
   async function changeUpdateStatus(make_public: boolean): Promise<void> {
@@ -75,21 +79,24 @@
     let solution: RouterInputs['sudokus']['provideSolutionToPuzzle']['solution'] = undefined;
     // create solution
     if (provideSolution) {
-      let values = userInputs.values;
+      let cellValues = gameData.cellValues;
       if (walkthrough.length) {
-        const finalStep = walkthrough[walkthrough.length - 1].step;
+        const finalStep = walkthrough[walkthrough.length - 1].gameData;
         if (
-          userInputs.values.some((row, i) => {
-            return row.some((value, j) => {
-              return value === '' && finalStep.values[i][j] !== '';
+          gameData.cellValues.some((row, i) => {
+            return row.some((cell, j) => {
+              return cell.digits != null && finalStep.cellValues[i][j].digits;
             });
           })
         ) {
-          values = finalStep.values;
+          cellValues = finalStep.cellValues;
         }
       }
       solution = {
-        numbers: getUserSolution({ givens: clues.givens, values })
+        numbers: getUserSolution({
+          givens: clues.givens,
+          values: cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
+        })
       };
     }
     await trpc($page).sudokus.provideSolutionToPuzzle.mutate({
@@ -212,9 +219,12 @@
   }
 
   function doesSolutionHaveHoles(): boolean {
-    if (clues.givens == null || userInputs.values == null) return false;
+    if (clues.givens == null || gameData.cellValues == null) return false;
 
-    const userSolution = getUserSolution({ givens: clues.givens, values: userInputs.values });
+    const userSolution = getUserSolution({
+      givens: clues.givens,
+      values: gameData.cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
+    });
 
     for (const row of userSolution) {
       for (const cell of row) {
@@ -228,7 +238,7 @@
   }
 
   let solutionHasHoles = false;
-  $: if (userInputs.values != null && clues.givens != null) {
+  $: if (gameData.cellValues != null && clues.givens != null) {
     solutionHasHoles = doesSolutionHaveHoles();
   }
 </script>
@@ -265,19 +275,14 @@
 <div class:hidden={tab !== 'editor'}>
   <SudokuEditor bind:clues {initialClues}>
     <button
-      on:click={() => (showExportToFPuzzlesModal = true)}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-      title="Export"
-    >
-      <FileArrowUp size={32} />
-    </button>
-    <button
       on:click={() => (showImportFromFPuzzlesModal = true)}
       class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
       title="Import from f-puzzles"
     >
       <FileArrowDown size={32} />
     </button>
+
+    <ExportButton {clues} {gameData} {sudokuTitle} {description} />
   </SudokuEditor>
 </div>
 <div class:hidden={tab !== 'game'}>
@@ -286,15 +291,9 @@
     onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
     bind:walkthrough
     {clues}
-    bind:userInputs
+    bind:gameData
   >
-    <button
-      on:click={() => (showExportToFPuzzlesModal = true)}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-      title="Export"
-    >
-      <FileArrowUp size={32} />
-    </button>
+    <ExportButton {clues} {gameData} {sudokuTitle} {description} />
   </SudokuGame>
 </div>
 <div class:hidden={tab !== 'form'}>
@@ -487,15 +486,8 @@
   bind:isOpen={showImportFromFPuzzlesModal}
   onImport={({ newEditorHistory, newGameHistory, newTitle, newDescription }) => {
     initialClues = newEditorHistory;
-    userInputs = newGameHistory;
+    gameData = newGameHistory;
     sudokuTitle = newTitle;
     description = newDescription;
   }}
-/>
-<ExportToFPuzzles
-  bind:isOpen={showExportToFPuzzlesModal}
-  {clues}
-  {userInputs}
-  title={sudokuTitle}
-  {description}
 />

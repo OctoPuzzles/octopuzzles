@@ -1,13 +1,10 @@
 <script lang="ts">
   import { CELL_SIZE } from '@octopuzzles/models';
-  import type { Dimensions, Givens, GameValues } from '@octopuzzles/models';
-  import { arrayfrom0ToN } from '@octopuzzles/utils';
+  import type { Givens, CellValues } from '@octopuzzles/models';
   import classNames from 'classnames';
 
   export let givens: Givens;
-  export let values: GameValues | undefined;
-
-  export let dimensions: Dimensions;
+  export let cellValues: CellValues | undefined;
 
   const fontSize = (s: string): string => {
     switch (s.length) {
@@ -24,18 +21,21 @@
 </script>
 
 <g id="numbers" class="select-none pointer-events-none">
-  {#each arrayfrom0ToN(dimensions.rows) as row}
-    {#each arrayfrom0ToN(dimensions.columns) as column}
-      {@const val = givens[row][column] || values?.[row]?.[column]}
-      {#if val && val.length > 0}
+  {#each givens as givenDigits, row}
+    {#each givenDigits as given, column}
+      {@const isGiven = given !== ''}
+      {@const cell = cellValues?.[row]?.[column]}
+      {@const digits = isGiven ? [given] : cell?.digits}
+      {#if digits != null}
+        {@const val = digits.join('')}
         <text
           x={CELL_SIZE * (column + 0.5)}
-          y={CELL_SIZE * (row + 0.55)}
+          y={CELL_SIZE * (row + 0.5)}
           dominant-baseline="middle"
           class={classNames(
             'fill-current text-4xl textanchor-middle',
-            { 'text-black': !!givens?.[row]?.[column] },
-            { 'text-blue-700': !givens?.[row]?.[column] }
+            { 'text-black': isGiven },
+            { 'text-blue-700': !isGiven }
           )}
           style="font-size: {fontSize(val)};"
         >
