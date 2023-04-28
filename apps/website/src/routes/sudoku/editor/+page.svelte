@@ -491,19 +491,3 @@
     description = newDescription;
   }}
 />
-
-<style>
-  /* Allow the export dropdown to close when pressing outside the dropdown */
-  details[open] > summary::before {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 40;
-    display: block;
-    cursor: default;
-    content: ' ';
-    background: transparent;
-  }
-</style>
