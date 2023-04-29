@@ -39,9 +39,12 @@ export const handleArrows = (direction: ArrowDirection, k: KeyboardEvent): void 
   const cells = get(selectedCells);
   const dim = get(gameHistory.clues).dimensions;
   const lastCell = cells[cells.length - 1];
+
   if (lastCell == null) return;
+
   const { row, column } = lastCell;
   let newCell: Position | null = null;
+
   switch (direction) {
     case 'up':
       if (row !== 0) {
@@ -74,6 +77,7 @@ export const handleArrows = (direction: ArrowDirection, k: KeyboardEvent): void 
     default:
       break;
   }
+
   if (newCell) {
     k.preventDefault();
     if (isCommandKey(k)) {

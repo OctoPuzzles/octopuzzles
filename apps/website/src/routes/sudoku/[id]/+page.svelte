@@ -6,10 +6,9 @@
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
   import type { PageData } from './$types';
   import { me } from '$stores/meStore';
-  import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
-  import ExportToFPuzzles from '$components/Modals/exportToFPuzzles.svelte';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
-  import { defaultUserInputs } from '@octopuzzles/sudoku-utils';
+  import { defaultGameData } from '@octopuzzles/sudoku-utils';
+  import ExportButton from '$components/ExportButton.svelte';
 
   export let data: PageData;
 
@@ -17,7 +16,7 @@
   const description = data.sudoku.description;
   let walkthrough = data.walkthrough?.steps ?? [];
   const clues = fillCluesWithDefaults(data.sudoku);
-  let userInputs = data.gameData ?? defaultUserInputs(data.sudoku.dimensions);
+  let gameData = data.gameData ?? defaultGameData(data.sudoku.dimensions);
   const scannerSettings = me.settings;
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
@@ -60,7 +59,6 @@
   }
 
   let showFinishedSudokuModal = false;
-  let exportToFPuzzlesModalIsOpen = false;
 </script>
 
 <svelte:head>
@@ -98,23 +96,10 @@
   solution={data.sudoku.solution ?? undefined}
   bind:walkthrough
   {clues}
-  bind:userInputs
+  bind:gameData
 >
-  <button
-    on:click={() => (exportToFPuzzlesModalIsOpen = true)}
-    class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-    title="Export"
-  >
-    <FileArrowUp size={32} />
-  </button>
+  <ExportButton {clues} {gameData} {sudokuTitle} {description} />
 </SudokuGame>
-<ExportToFPuzzles
-  bind:isOpen={exportToFPuzzlesModalIsOpen}
-  {clues}
-  {userInputs}
-  title={sudokuTitle}
-  {description}
-/>
 
 <SudokuInfo sudoku={data.sudoku} {takeScreenshot} />
 
@@ -123,4 +108,6 @@
   sudokuId={data.sudoku.id}
   {takeScreenshot}
   finishTime={`${days}${hours}${minutes}:${seconds}`}
+  {clues}
+  {gameData}
 />

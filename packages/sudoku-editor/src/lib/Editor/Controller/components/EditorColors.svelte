@@ -8,6 +8,8 @@
   import { Colors } from '@octopuzzles/models';
   import { editorAction } from '$lib/editorAction';
 
+  const colors = editorHistory.getClue('colors');
+
   function handleKeyDown(k: KeyboardEvent): void {
     if (isDeleteKey(k)) {
       k.preventDefault();
@@ -21,7 +23,7 @@
     const positions = get(selectedCells);
     if (positions.length === 0) return;
 
-    const currentColors = editorHistory.getClue('colors');
+    const currentColors = $colors;
     const newColors = deepCopy(currentColors);
 
     // Whether there has been any changes

@@ -18,9 +18,7 @@ export { default as Select } from './ui/Select.svelte';
 export { default as Spinner } from './ui/Spinner.svelte';
 export { default as SquareButton } from './ui/SquareButton.svelte';
 
-export { default as CtCLink } from './shareButtons/CtCLink.svelte';
 export { default as FacebookLink } from './shareButtons/FacebookLink.svelte';
-export { default as FPuzzlesLink } from './shareButtons/FPuzzlesLink.svelte';
 export { default as RedditLink } from './shareButtons/RedditLink.svelte';
 export { default as TwitterLink } from './shareButtons/TwitterLink.svelte';
 export { default as WhatsAppLink } from './shareButtons/WhatsAppLink.svelte';

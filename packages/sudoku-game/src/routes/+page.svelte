@@ -1,16 +1,16 @@
 <script>
   import { SudokuGame } from '$lib';
-  import { defaultClues, defaultUserInputs } from '@octopuzzles/sudoku-utils';
+  import { defaultClues, defaultGameData } from '@octopuzzles/sudoku-utils';
 
   let clues = defaultClues();
-  let userInputs = defaultUserInputs();
+  let gameData = defaultGameData();
 </script>
 
 <SudokuGame
   {clues}
   scannerSettings={undefined}
   onScannerSettingsChange={console.log}
-  bind:userInputs
+  bind:gameData
   walkthrough={[]}
   onDone={console.log}
 />

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { PenTool } from '@octopuzzles/models';
+  import type { Annotations } from '@octopuzzles/models';
   import PenToolComponent from './PenTool.svelte';
 
-  export let pentools: PenTool[] | null | undefined;
+  export let pentools: Annotations | null | undefined;
 </script>
 
 {#if pentools && pentools.length > 0}

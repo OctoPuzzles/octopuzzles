@@ -1,6 +1,8 @@
 import type {
+  Annotations,
   Borderclues,
   Cellclues,
+  CellData,
   Dimensions,
   EditorHistoryStep,
   Extendedcages,
@@ -112,14 +114,12 @@ export const defaultRegions = (dimensions: Dimensions = defaultDimensions): Regi
 };
 
 function defaultItem<T>(value: T, dimensions: Dimensions = defaultDimensions): T[][] {
-  return Array(dimensions.rows).fill(Array(dimensions.columns).fill(value));
+  return Array(dimensions.rows).fill(Array(dimensions.columns).fill(deepCopy(value)));
 }
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const defaultEditorColors = (dimensions: Dimensions = defaultDimensions) =>
   defaultItem(null, dimensions);
-export const defaultGameColors = (dimensions: Dimensions = defaultDimensions) =>
-  defaultItem([], dimensions);
 export const defaultCells = (dimensions: Dimensions = defaultDimensions) => {
   let defaults = defaultItem((dimensions.margins ?? 0) === 0, dimensions);
   if (dimensions.margins) {
@@ -138,15 +138,11 @@ export const defaultCells = (dimensions: Dimensions = defaultDimensions) => {
 };
 export const defaultGivens = (dimensions: Dimensions = defaultDimensions) =>
   defaultItem('', dimensions);
-export const defaultCornermarks = (dimensions: Dimensions = defaultDimensions) =>
-  defaultItem('', dimensions);
-export const defaultCentermarks = (dimensions: Dimensions = defaultDimensions) =>
-  defaultItem('', dimensions);
-export const defaultValues = (dimensions: Dimensions = defaultDimensions) =>
-  defaultItem('', dimensions);
-export const defaultNotes = (dimensions: Dimensions = defaultDimensions) =>
-  defaultItem('', dimensions);
-export const defaultPenTool = () => [];
+export const defaultCellValues = (
+  dimensions: Dimensions = { rows: 9, columns: 9, margins: undefined }
+) => defaultItem({} as CellData, dimensions);
+export const defaultNotes = (): Annotations => [];
+export const defaultPenTool = (): Annotations => [];
 export const defaultCages = (): Extendedcages => [];
 export const defaultBorderclues = (): Borderclues => [];
 export const defaultCellclues = (): Cellclues => [];
@@ -171,13 +167,10 @@ export const defaultClues = (): EditorHistoryStep => {
   };
 };
 
-export const defaultUserInputs = (dimensions?: Dimensions): GameHistoryStep => {
+export const defaultGameData = (dimensions?: Dimensions): GameHistoryStep => {
   return {
-    values: defaultValues(dimensions),
-    colors: defaultGameColors(dimensions),
-    cornermarks: defaultCornermarks(dimensions),
-    centermarks: defaultCentermarks(dimensions),
-    notes: defaultNotes(dimensions),
+    cellValues: defaultCellValues(dimensions),
+    notes: defaultNotes(),
     pentool: defaultPenTool()
   };
 };

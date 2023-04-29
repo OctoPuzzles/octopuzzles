@@ -55,11 +55,13 @@
     'Lockout',
     'Renban',
     'Whisper',
+    'DutchWhisper',
     'Palindrome',
     'AntiFactor',
     'EqualSum',
     'ProductSum',
     'Entropic',
+    'Parity',
     'Odd',
     'Even',
     'Pill',
@@ -259,7 +261,7 @@
     const lastSelectedCell = $selectedCells[$selectedCells.length - 1];
     if (lastSelectedCell != null) {
       const { row, column } = lastSelectedCell;
-      const dim = editorHistory.getClue('dimensions');
+      const dim = $sudokuClues.dimensions;
       let newCell: Position | undefined = undefined;
       switch (direction) {
         case 'up':
@@ -319,7 +321,7 @@
 
   function handleKeyDown(k: KeyboardEvent): void {
     if (isDeleteKey(k)) {
-      if ($selectedItemIndex !== undefined) {
+      if ($selectedItemIndex != null) {
         deletePathAtIndex($selectedItemIndex);
       } else {
         editorHistory.clearCells(get(selectedCells));

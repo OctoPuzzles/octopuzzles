@@ -6,7 +6,7 @@
     highlightedCells,
     selectedCells
   } from '$lib/sudokuStore';
-  import type { Color, PenTool } from '@octopuzzles/models';
+  import type { Color, Annotations } from '@octopuzzles/models';
   import { Colors } from '@octopuzzles/models';
   import { SquareButton } from '@octopuzzles/ui';
   import { gameAction } from '$lib/gameAction';
@@ -19,15 +19,15 @@
   import { deepCopy } from '@octopuzzles/utils';
   import { splitLineOnOverlap, startsInsideOtherLine } from '$lib/utils';
 
-  const userInputs = gameHistory.subscribeToInputs();
+  const gameData = gameHistory.subscribeToInputs();
 
   let penColor: Color = 'Black';
 
   onMount(() => {
     $selectedCells = [];
     $highlightedCells = [];
-    const penTools = $userInputs.pentool;
-    if (penTools && penTools[penTools.length - 1] != null) {
+    const penTools = $gameData.pentool;
+    if (penTools[penTools.length - 1] != null) {
       const lastPenTool = penTools[penTools.length - 1];
       if (lastPenTool.color) {
         penColor = lastPenTool.color;
@@ -36,7 +36,7 @@
   });
 
   const onMouseUp = (): void => {
-    const currentPenTools = deepCopy($userInputs.pentool) ?? [];
+    const currentPenTools = deepCopy($gameData.pentool) ?? [];
     const lastPenTool = currentPenTools[currentPenTools.length - 1];
     if (lastPenTool == null) return;
     if (lastPenTool.positions.length === 1) {
@@ -51,11 +51,11 @@
       );
       if (otherPenToolIndex > -1) {
         // Another pen tool lies exactly the same place, toggle that
-        const newPenTools: PenTool[] = [];
+        const newPenTools: Annotations = [];
         currentPenTools.forEach((pt, i) => {
           if (i === otherPenToolIndex) {
-            if (pt.type === 'circle') {
-              newPenTools.push({ ...pt, type: 'cross' });
+            if (pt.type === 'Pencircle') {
+              newPenTools.push({ ...pt, type: 'Pencross' });
               return;
             }
           } else {
@@ -65,10 +65,10 @@
         gameHistory.replaceCurrentStep({ pentool: newPenTools });
       } else {
         // No other pen tool lied there, so just toggle this one
-        if (lastPenTool.type === 'line') {
-          currentPenTools.push({ ...lastPenTool, type: 'circle' });
-        } else if (lastPenTool.type === 'circle') {
-          currentPenTools.push({ ...lastPenTool, type: 'cross' });
+        if (lastPenTool.type === 'Penline') {
+          currentPenTools.push({ ...lastPenTool, type: 'Pencircle' });
+        } else if (lastPenTool.type === 'Pencircle') {
+          currentPenTools.push({ ...lastPenTool, type: 'Pencross' });
         } else {
           // The pen tool will be removed
         }
@@ -78,7 +78,7 @@
       currentPenTools.pop();
       if (currentPenTools.some((p) => startsInsideOtherLine(lastPenTool.positions, p.positions))) {
         // This new line is meant for deletion.
-        const newPenTools: PenTool[] = [];
+        const newPenTools: Annotations = [];
         currentPenTools.forEach((p) => {
           const newLines = splitLineOnOverlap(lastPenTool.positions, p.positions);
           if (newLines.length > 0) {
@@ -93,19 +93,19 @@
   };
 
   const onMouseDownHitbox: OnMouseDownHitboxHandler = (type, position) => {
-    const currentPenTools = deepCopy($userInputs.pentool) ?? [];
+    const currentPenTools = deepCopy($gameData.pentool) ?? [];
     if (type === 'border') {
       gameHistory.set({
-        pentool: [...currentPenTools, { positions: [position], type: 'circle', color: penColor }]
+        pentool: [...currentPenTools, { positions: [position], type: 'Pencircle', color: penColor }]
       });
     } else {
       gameHistory.set({
-        pentool: [...currentPenTools, { positions: [position], type: 'line', color: penColor }]
+        pentool: [...currentPenTools, { positions: [position], type: 'Penline', color: penColor }]
       });
     }
   };
   const onMouseEnterHitbox: OnMouseEnterHitboxHandler = (type, position) => {
-    const currentPenTools = deepCopy($userInputs.pentool) ?? [];
+    const currentPenTools = deepCopy($gameData.pentool) ?? [];
     const lastPenTool = currentPenTools[currentPenTools.length - 1];
     if (lastPenTool == null || lastPenTool.positions.length === 0) return;
     // TODO: If the user drags the mouse in from outside
@@ -125,7 +125,7 @@
     if (previousPenPositionType === 'border') {
       // Start a new line with the new type
       gameHistory.replaceCurrentStep({
-        pentool: [...currentPenTools, { positions: [position], type: 'line', color: penColor }]
+        pentool: [...currentPenTools, { positions: [position], type: 'Penline', color: penColor }]
       });
       return;
     }

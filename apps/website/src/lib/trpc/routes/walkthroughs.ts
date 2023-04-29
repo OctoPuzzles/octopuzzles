@@ -2,7 +2,10 @@ import { t } from '$lib/trpc/t';
 import {
   WalkthroughStepValidator,
   WalkthroughValidator,
-  type Walkthrough
+  type Walkthrough,
+  type Digit,
+  type Annotations,
+  type AnnotationType
 } from '@octopuzzles/models';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -20,6 +23,47 @@ export const walkthroughs = t.router({
       });
       const walkthrough: Walkthrough | null =
         walkthroughRaw != null ? WalkthroughValidator.parse(walkthroughRaw) : null;
+      walkthrough?.steps?.forEach((s) => {
+        //migrate old style game data
+        if (s.step) {
+          const notes: Annotations = [];
+          s.gameData = {
+            cellValues: s.step.values.map((row, i) => {
+              return row.map((digit, j) => {
+                const centermarks = s.step?.centermarks[i][j] ?? '';
+                const cornermarks = s.step?.cornermarks[i][j] ?? '';
+                const colors = s.step?.colors[i][j] ?? [];
+                const note = s.step?.notes[i][j] ?? '';
+                if (note !== '') {
+                  notes.push({
+                    positions: [{ row: i, column: j }],
+                    type: 'Note',
+                    details: note
+                  });
+                }
+                return {
+                  digits: digit !== '' ? [digit as Digit] : undefined,
+                  cornermarks:
+                    cornermarks !== '' ? cornermarks.split('').map((d) => d as Digit) : undefined,
+                  centermarks:
+                    centermarks !== '' ? centermarks.split('').map((d) => d as Digit) : undefined,
+                  colors: colors.length > 0 ? colors : undefined
+                };
+              });
+            }),
+            notes,
+            pentool:
+              s.step.pentool?.map((a) => {
+                return {
+                  positions: a.positions,
+                  type: ('Pen' + a.type) as AnnotationType,
+                  color: a.color
+                };
+              }) ?? []
+          };
+          delete s.step;
+        }
+      });
       return walkthrough;
     }),
   delete: t.procedure

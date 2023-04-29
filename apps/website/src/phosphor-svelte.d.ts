@@ -10,6 +10,7 @@ declare module 'phosphor-svelte/lib/Backspace/Backspace.svelte';
 declare module 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
 declare module 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
 declare module 'phosphor-svelte/lib/Check/Check.svelte';
+declare module 'phosphor-svelte/lib/ClipboardText/ClipboardText.svelte';
 declare module 'phosphor-svelte/lib/Crosshair/Crosshair.svelte';
 declare module 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
 declare module 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';

@@ -38,7 +38,7 @@
 
   export let clues: EditorHistoryStep;
 
-  export let userInputs: GameHistoryStep;
+  export let gameData: GameHistoryStep;
 
   export let walkthrough: WalkthroughStep[];
 
@@ -59,16 +59,20 @@
     gameHistory.clues.set(defaultClues());
   });
 
-  const storeUserInputs = gameHistory.subscribeToInputs();
+  const storeGameData = gameHistory.subscribeToInputs();
 
-  $: userInputs = $storeUserInputs;
+  $: gameData = $storeGameData;
 
   $: gameHistory.clues.set(clues);
 
   $: scanner.configure(scannerSettings);
 
   $: if (solution != null && onDone != null) {
-    if (checkSolution(userInputs.values)) {
+    if (
+      checkSolution(
+        gameData.cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
+      )
+    ) {
       onDone();
     }
   }
@@ -116,7 +120,7 @@
   <div class="p-2 mb-2" style="height: {sudokuSize}px; width: {sudokuSize}px" id="sudoku-display">
     <SudokuDisplay
       {clues}
-      {userInputs}
+      {gameData}
       highlightedCells={$highlightedCells}
       selectedCells={$selectedCells}
       wrongCells={$wrongCells}
