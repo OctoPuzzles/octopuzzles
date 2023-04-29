@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
+  import { DangerActionModal } from '@octopuzzles/ui';
   import SudokuList from '$components/Sudoku/SudokuList.svelte';
   import { trpc } from '$lib/trpc/client';
   import type { PageData } from './$types';

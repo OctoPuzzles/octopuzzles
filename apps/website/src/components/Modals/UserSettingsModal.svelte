@@ -35,6 +35,6 @@
       </div>
     </div>
 
-    <Button variant="primary" class="w-full" on:click={close}>Close</Button>
+    <Button variant="default" class="w-full" on:click={close}>Close</Button>
   </div>
 </Modal>

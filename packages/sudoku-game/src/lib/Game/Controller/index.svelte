@@ -19,7 +19,7 @@
   } from '$lib/sudokuStore';
   import { scanner } from '$lib/sudokuStore/scanner';
   import type { InputMode, WalkthroughStep } from '@octopuzzles/models';
-  import { SquareButton, ControllerSkeleton } from '@octopuzzles/ui';
+  import { SquareButton, ControllerSkeleton, NotificationModal } from '@octopuzzles/ui';
   import { deepCopy, isCommandKey } from '@octopuzzles/utils';
   import ArrowCounterClockwise from 'phosphor-svelte/lib/ArrowCounterClockwise/ArrowCounterClockwise.svelte';
   import ArrowUUpLeft from 'phosphor-svelte/lib/ArrowUUpLeft/ArrowUUpLeft.svelte';
@@ -190,8 +190,12 @@
   const canRedo = gameHistory.canRedo;
 
   function verify(): void {
-    $wrongCells = scanner.getErrorCells();
+    const errorCells = scanner.getErrorCells();
+    $wrongCells = errorCells;
+    constraintsChecked = errorCells.length === 0;
   }
+
+  let constraintsChecked = false;
 </script>
 
 <svelte:window use:gameAction={{ onKeyDown: handleKeyboardShortcuts, onKeyUp: handleKeyUp }} />
@@ -272,4 +276,9 @@
   bind:isOpen={walkthroughViewerModalIsOpen}
   clues={$clues}
   {walkthrough}
+/>
+
+<NotificationModal
+  bind:isOpen={constraintsChecked}
+  notificationMessage="No constraint violations detected"
 />
