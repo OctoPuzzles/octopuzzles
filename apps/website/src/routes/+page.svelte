@@ -1,7 +1,8 @@
 <script lang="ts">
   import SudokuList from '$components/Sudoku/SudokuList.svelte';
-  import { PuzzleLabel, Button } from '@octopuzzles/ui';
+  import { PuzzleLabel, Button, Input, DualRange } from '@octopuzzles/ui';
   import { Filters } from '@octopuzzles/icons';
+  import MagnifyingGlass from 'phosphor-svelte/lib/MagnifyingGlass/MagnifyingGlass.svelte';
   import { page } from '$app/stores';
   import type { PageData } from './$types';
   import { trpc } from '$lib/trpc/client';
@@ -9,6 +10,8 @@
   export let data: PageData;
   let sudokus = data.sudokuData;
 
+  let query = '';
+  let difficultyRange: [number, number] = [0, 5];
   let currentCursor: Date | null = null;
   let nextCursor: Date | null = null;
   $: nextCursor = sudokus.nextCursor;
@@ -19,6 +22,8 @@
     loading = true;
     currentCursor = nextCursor;
     const sudokuData = await trpc($page).sudokus.search.query({
+      query,
+      difficultyRange,
       labels: [],
       limit: 24,
       cursor: nextCursor ?? undefined
@@ -31,6 +36,8 @@
   async function refetch(labels: number[]): Promise<void> {
     loading = true;
     const sudokuData = await trpc($page).sudokus.search.query({
+      query,
+      difficultyRange,
       labels,
       limit: 24,
       cursor: currentCursor ?? undefined
@@ -69,7 +76,15 @@
       activeLabels = [...activeLabels, labelId];
     }
   }
+
+  function handleKeydown(k: KeyboardEvent): void {
+    if (k.key === 'Enter') {
+      search();
+    }
+  }
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <svelte:head>
   <title>OctoPuzzles</title>
@@ -85,14 +100,19 @@
   <meta property="og:title" content="OctoPuzzles" />
 </svelte:head>
 
-<button
-  title="Filter results"
-  class="flex gap-1 items-center ml-auto mr-4 rounded-full hover:bg-gray-100 px-2 py-1"
-  on:click={() => (showFilters = !showFilters)}
->
-  <span class="text-sm text-gray-500">Filter</span>
-  <span class="w-6 h-6"><Filters /></span>
-</button>
+<div class="mb-4 flex justify-center">
+  <div class="flex items-center gap-2">
+    <Input placeholder="Search..." class="w-[400px]" bind:value={query} />
+    <Button on:click={search} variant="primary"
+      ><div class="flex items-center gap-2"><MagnifyingGlass /> Search</div></Button
+    >
+    <Button variant="subtle" title="Filter results" on:click={() => (showFilters = !showFilters)}>
+      <div class="flex items-center gap-1 text-sm">
+        Filter <span class="w-6 h-6"><Filters /></span>
+      </div>
+    </Button>
+  </div>
+</div>
 
 {#if showFilters}
   <div class="w-full shadow-inner bg-gray-100 py-4 px-4 mt-4">
@@ -106,11 +126,26 @@
       {/each}
     </div>
 
+    <div class="mb-8 mt-8 inline-block">
+      <h2 class="font-semibold mb-2">Difficulty</h2>
+      <div class="w-96">
+        <DualRange
+          id="difficulty"
+          min={0}
+          max={5}
+          formatter={(v) => (v === 0 ? 'None' : String(v))}
+          bind:values={difficultyRange}
+          all="label"
+          pips
+        />
+      </div>
+    </div>
+
     <div>
-      <Button variant="primary" class="mt-4 ml-auto flex" on:click={search}>Search</Button>
       <Button
-        variant="subtle"
+        variant="default"
         on:click={() => {
+          difficultyRange = [0, 5];
           if (activeLabels.length > 0) {
             activeLabels = [];
             search();
