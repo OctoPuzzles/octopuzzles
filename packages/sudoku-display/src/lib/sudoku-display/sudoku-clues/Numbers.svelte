@@ -26,7 +26,7 @@
       {@const isGiven = given !== ''}
       {@const cell = cellValues?.[row]?.[column]}
       {@const digits = isGiven ? [given] : cell?.digits}
-      {#if digits !== undefined}
+      {#if digits != null}
         {@const val = digits.join('')}
         <text
           x={CELL_SIZE * (column + 0.5)}

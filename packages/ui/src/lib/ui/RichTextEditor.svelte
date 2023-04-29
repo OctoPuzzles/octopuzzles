@@ -133,7 +133,7 @@
     </div>
   {/if}
 
-  <div bind:this={element} class="flex-1" data-ignoreshortcuts />
+  <div bind:this={element} class="flex-1" />
 </div>
 
 <style>

@@ -10,11 +10,10 @@
     defaultCellValues,
     getUserSolution
   } from '@octopuzzles/sudoku-utils';
-  import { page, navigating } from '$app/stores';
+  import { page } from '$app/stores';
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
-  import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
   import Gear from 'phosphor-svelte/lib/Gear/Gear.svelte';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
@@ -26,8 +25,7 @@
   import type { Digit, GameHistoryStep } from '@octopuzzles/models';
   import { deepCopy } from '@octopuzzles/utils';
   import type { RouterInputs } from '$lib/trpc/router';
-  import { exportPuzzle } from '$features/fpuzzles/exportAsFPuzzlesJson';
-  import { FPuzzles, CtC } from '@octopuzzles/icons';
+  import ExportButton from '$components/ExportButton.svelte';
 
   export let data: PageData;
 
@@ -51,7 +49,7 @@
       data.sudoku?.solution?.numbers.map((row) =>
         row.map((value) => {
           const digits = value.split('');
-          return digits.length ? { digits: digits.map((d) => d as Digit) } : {};
+          return digits.length > 0 ? { digits: digits as Digit[] } : {};
         })
       ) ?? defaultCellValues(data.sudoku?.dimensions)
   };
@@ -89,7 +87,7 @@
         if (
           gameData.cellValues.some((row, i) => {
             return row.some((cell, j) => {
-              return !cell.digits && finalStep.cellValues[i][j].digits;
+              return cell.digits != null && finalStep.cellValues[i][j].digits;
             });
           })
         ) {
@@ -241,10 +239,6 @@
   $: if (gameData.cellValues != null && clues.givens != null) {
     solutionHasHoles = doesSolutionHaveHoles();
   }
-
-  let exportDetails: HTMLDetailsElement;
-
-  $: if ($navigating && exportDetails != null) exportDetails.open = false;
 </script>
 
 <div class="flex items-center justify-center h-20 absolute top-0 w-full pointer-events-none">
@@ -286,35 +280,7 @@
       <FileArrowDown size={32} />
     </button>
 
-    <details bind:this={exportDetails}>
-      <summary
-        class="cursor-pointer flex justify-center items-center mr-2 w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-        aria-label="Export to f-puzzles/CtC"
-        aria-haspopup="menu"
-        title="Export to f-puzzles/CtC"
-      >
-        <FileArrowUp size={32} />
-      </summary>
-      <div
-        class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
-        role="menu"
-      >
-        <button
-          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'FPuzzles')}
-          class="w-8 h-8"
-          title="Export to f-puzzles"
-        >
-          <FPuzzles />
-        </button>
-        <button
-          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'CTC')}
-          class="w-8 h-8"
-          title="Export to CtC"
-        >
-          <CtC />
-        </button>
-      </div>
-    </details>
+    <ExportButton {clues} {gameData} {sudokuTitle} {description} />
 
     <button
       on:click={() => (showUserSettingsModal = true)}
@@ -333,35 +299,7 @@
     {clues}
     bind:gameData
   >
-    <details bind:this={exportDetails}>
-      <summary
-        class="cursor-pointer flex justify-center items-center mr-2 w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-        aria-label="Export to f-puzzles/CtC"
-        aria-haspopup="menu"
-        title="Export to f-puzzles/CtC"
-      >
-        <FileArrowUp size={32} />
-      </summary>
-      <div
-        class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
-        role="menu"
-      >
-        <button
-          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'FPuzzles')}
-          class="w-8 h-8"
-          title="Export to f-puzzles"
-        >
-          <FPuzzles />
-        </button>
-        <button
-          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'CTC')}
-          class="w-8 h-8"
-          title="Export to CtC"
-        >
-          <CtC />
-        </button>
-      </div>
-    </details>
+    <ExportButton {clues} {gameData} {sudokuTitle} {description} />
   </SudokuGame>
 </div>
 <div class:hidden={tab !== 'form'}>
@@ -562,19 +500,3 @@
 />
 
 <UserSettingsModal bind:isOpen={showUserSettingsModal} />
-
-<style>
-  /* Allow the export dropdown to close when pressing outside the dropdown */
-  details[open] > summary::before {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 40;
-    display: block;
-    cursor: default;
-    content: ' ';
-    background: transparent;
-  }
-</style>

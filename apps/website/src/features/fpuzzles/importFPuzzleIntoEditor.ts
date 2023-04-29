@@ -109,7 +109,7 @@ function regionsForFPuzzle(dimensions: Dimensions, grid: FPuzzlesJson['grid']): 
     regionNos.push(
       row.map((cell, columnIndex) =>
         // If a region is not specified, it is the default region
-        cell.region !== undefined
+        cell.region != null
           ? cell.region + 1
           : Math.ceil((columnIndex + 1) / width) +
             (gridSize / width) * Math.floor(rowIndex / height)

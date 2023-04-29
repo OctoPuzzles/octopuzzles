@@ -137,7 +137,7 @@
     }
 
     if (isDeleteKey(k) && text === '') {
-      if ($selectedItemIndex !== undefined) {
+      if ($selectedItemIndex != null) {
         deleteKillerCageAtIndex($selectedItemIndex);
       } else {
         editorHistory.clearCells(get(selectedCells));

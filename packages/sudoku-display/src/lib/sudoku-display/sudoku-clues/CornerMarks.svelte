@@ -5,21 +5,16 @@
   export let cellValues: CellValues | undefined;
   export let givens: Givens;
 
-  function getPosition(n: number, i: number): number {
-    let k = i;
-    if (i >= 3) {
-      if (n <= 6) {
-        k += 3;
-      } else if (i >= 4) {
-        if (n === 7) {
-          k += 2;
-        } else {
-          k += 1;
-        }
-      }
-    }
-    return k;
-  }
+  const subPositions = [
+    [0],
+    [0, 2],
+    [0, 2, 6],
+    [0, 2, 6, 8],
+    [0, 1, 2, 6, 8],
+    [0, 1, 2, 6, 7, 8],
+    [0, 1, 2, 3, 6, 7, 8],
+    [0, 1, 2, 3, 5, 6, 7, 8]
+  ];
 </script>
 
 {#if cellValues}
@@ -27,18 +22,19 @@
     {#each cellValues as cells, row}
       {#each cells as cell, column}
         {@const cornermarks = cell.cornermarks}
-        {#if cornermarks !== undefined && givens[row][column] === '' && cell.digits === undefined}
-          {@const n = cornermarks.length}
+        {#if cornermarks != null && givens[row][column] === '' && cell.digits == null}
+          {@const numDigits = cornermarks.length}
           {#each cornermarks as cornerMark, i}
+            <!--If you're using all 9 digits as cornermarks then you're solving the puzzle wrong! Hide the overflow for clarity-->
             {#if i < 8}
-              {@const k = getPosition(n, i)}
+              {@const subposition = subPositions[Math.min(cornermarks.length, 8) - 1][i]}
               <text
-                x={CELL_SIZE * (column + 0.18 + 0.3 * (k % 3))}
-                y={CELL_SIZE * (row + 0.22 + 0.3 * Math.floor(k / 3))}
+                x={CELL_SIZE * (column + 0.18 + 0.3 * (subposition % 3))}
+                y={CELL_SIZE * (row + 0.22 + 0.3 * Math.floor(subposition / 3))}
                 dominant-baseline="middle"
                 class="fill-current text-blue-700 select-none"
               >
-                {cornerMark}
+                {numDigits > 8 && i === 7 ? '...' : cornerMark}
               </text>
             {/if}
           {/each}

@@ -64,19 +64,20 @@
           vector-effect="non-scaling-size"
         />
       {/if}
-      {#if gameColors !== undefined}
+      {#if gameColors != null}
         <clipPath id="square-{row}-{column}" clipPathUnits="userSpaceOnUse">
           <rect x={CELL_SIZE * column} y={CELL_SIZE * row} width={CELL_SIZE} height={CELL_SIZE} />
         </clipPath>
-        {#each gameColors as color, i}
-          <path
-            width={CELL_SIZE}
-            height={CELL_SIZE}
-            d={describeArc(i, gameColors.length, row, column)}
-            clip-path="url(#square-{row}-{column})"
-            class="fill-current text-{color.toLowerCase()} opacity-60"
-          />
-        {/each}
+        <g clip-path="url(#square-{row}-{column})">
+          {#each gameColors as color, i}
+            <path
+              width={CELL_SIZE}
+              height={CELL_SIZE}
+              d={describeArc(i, gameColors.length, row, column)}
+              class="fill-current text-{color.toLowerCase()} opacity-60"
+            />
+          {/each}
+        </g>
       {/if}
     {/each}
   {/each}

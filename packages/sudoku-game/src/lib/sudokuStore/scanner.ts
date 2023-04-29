@@ -539,17 +539,17 @@ function createScannerStore() {
       settings.useCornerMarks === true
     ) {
       //if the cell contains the only cornermark in that region for a digit, then that should be the sole candidate
-      if (
-        !getCornerSets(cell, false)
-          .filter((s) => s.cells.length === 1)
-          .some((s) => {
-            if (newCandidateValues.includes(s.digit)) {
-              newCandidateValues = [s.digit];
-              return true;
-            }
-            return false;
-          })
-      ) {
+      const isUniqueCornermark = !getCornerSets(cell, false)
+        .filter((s) => s.cells.length === 1)
+        .some((s) => {
+          if (newCandidateValues.includes(s.digit)) {
+            newCandidateValues = [s.digit];
+            return true;
+          }
+          return false;
+        });
+
+      if (isUniqueCornermark) {
         //otherwise if all cells that contain a cornermark within a region for a value are seen by this cell we can eliminate that value
         const sets = getCornerSets(cell, true);
         newCandidateValues = newCandidateValues.filter((v) => {
