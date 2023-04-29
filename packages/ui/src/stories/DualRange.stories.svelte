@@ -1,6 +1,8 @@
-<script>
+<script lang="ts">
   import { Meta, Story, Template } from '@storybook/addon-svelte-csf';
   import DualRange from '$lib/ui/DualRange.svelte';
+
+  const formatter = (v: number): string => (v === 0 ? 'No difficulty' : String(v));
 </script>
 
 <Meta title="UI/DualRange" component={DualRange} />
@@ -16,8 +18,6 @@
     max: 5,
     values: [1, 4],
     all: 'label',
-    formatter: (v) => {
-      return v === 0 ? 'No difficulty' : v;
-    }
+    formatter
   }}
 />
