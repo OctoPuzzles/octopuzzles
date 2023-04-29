@@ -10,8 +10,6 @@
   import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
   import type { WalkthroughStep } from '@octopuzzles/models';
 
-  // const inModal = !$page.url.pathname.endsWith('/walkthrough');
-
   export let clues: EditorHistoryStep;
   export let walkthrough: WalkthroughStep[];
   export let onClickStep: ((gameData: GameHistoryStep) => void) | undefined = undefined;

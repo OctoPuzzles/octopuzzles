@@ -103,7 +103,7 @@
 <div class="mb-4 flex justify-center">
   <div class="flex items-center gap-2">
     <Input placeholder="Search..." class="w-[400px]" bind:value={query} />
-    <Button on:click={search} variant="primary"
+    <Button on:click={search} variant="primary" {loading}
       ><div class="flex items-center gap-2"><MagnifyingGlass /> Search</div></Button
     >
     <Button variant="subtle" title="Filter results" on:click={() => (showFilters = !showFilters)}>
