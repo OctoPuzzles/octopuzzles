@@ -16,6 +16,7 @@ import {
   type Position,
   type Digit
 } from '@octopuzzles/models';
+import { htmlToText } from 'html-to-text';
 
 export function getFPuzzlesJson(
   clues: EditorHistoryStep,
@@ -115,19 +116,19 @@ export function getFPuzzlesJson(
         fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor[editorColors[i][j] as Color];
       }
       const digits = cellValues[i][j].digits;
-      if (digits && digits.length) {
+      if (digits != null && digits.length > 0) {
         fPuzzle.grid[gridRow][gridColumn].value = Digits.indexOf(digits[0]);
       }
-      if (cellValues[i][j].colors) {
+      if (cellValues[i][j].colors != null) {
         fPuzzle.grid[gridRow][gridColumn].highlight =
           colorToHexColor[cellValues[i][j].colors?.[0] as Color];
       }
-      if (cellValues[i][j].cornermarks) {
+      if (cellValues[i][j].cornermarks != null) {
         fPuzzle.grid[gridRow][gridColumn].cornerPencilMarks = cellValues[i][j].cornermarks?.map(
           (m) => parseInt(m)
         );
       }
-      if (cellValues[i][j].centermarks) {
+      if (cellValues[i][j].centermarks != null) {
         fPuzzle.grid[gridRow][gridColumn].centerPencilMarks = cellValues[i][j].centermarks?.map(
           (m) => parseInt(m)
         );
@@ -580,7 +581,7 @@ export function exportPuzzle(
       return;
   }
 
-  href += compressToBase64(getFPuzzlesJson(clues, gameData, title, description));
+  href += compressToBase64(getFPuzzlesJson(clues, gameData, title, htmlToText(description)));
 
   window.open(href, '_blank', 'noreferrer');
 }
