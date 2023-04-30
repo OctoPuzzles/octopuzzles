@@ -26,14 +26,14 @@ export function verifyCage(cage: Extendedcage, solution: CellValues): Position[]
   if (!(cage.nonStandard ?? false)) {
     switch (cage.type) {
       case 'Killer': {
-        if (cage.text) {
+        if (cage.text != null) {
           const target = parseFloat(cage.text);
 
           let total = 0;
           if (
             cage.positions.every((p) => {
               const value = solution[p.row][p.column].value;
-              if (value !== undefined) {
+              if (value != null) {
                 total += value;
                 return true;
               }
@@ -45,13 +45,13 @@ export function verifyCage(cage: Extendedcage, solution: CellValues): Position[]
         break;
       }
       case 'LookAndSay': {
-        if (cage.text) {
+        if (cage.text != null) {
           const keys = cage.text.split('');
           const counts = new Map<string, number>();
           if (
             !cage.positions.every((p) => {
               const cell = solution[p.row][p.column];
-              if (cell.digits) {
+              if (cell.digits != null) {
                 cell.digits.forEach((d) => {
                   counts.set(d, (counts.get(d) ?? 0) + 1);
                 });

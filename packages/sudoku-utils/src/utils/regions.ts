@@ -76,7 +76,7 @@ export function verifyRegion(
           for (let j = 0; j < n; ++j) {
             const p = positions[i * n + j];
             const cell = solution[p.row][p.column];
-            if (cell.value === undefined) {
+            if (cell.value == null) {
               return [];
             }
             values[i].push(cell.value);
@@ -102,7 +102,7 @@ export function verifyRegion(
           for (let i = 0; i < n; ++i) {
             total += values[i][j];
           }
-          if (target === undefined) {
+          if (target == null) {
             target = total;
           } else if (total !== target) {
             return positions;
@@ -113,7 +113,7 @@ export function verifyRegion(
         for (let i = 0; i < n; ++i) {
           total += values[i][i];
         }
-        if (target === undefined) {
+        if (target == null) {
           target = total;
         } else if (total !== target) {
           return positions;
@@ -124,7 +124,7 @@ export function verifyRegion(
           const j = n - i - 1;
           total += values[i][j];
         }
-        if (target === undefined) {
+        if (target == null) {
           target = total;
         } else if (total !== target) {
           return positions;
@@ -141,10 +141,10 @@ export function verifyRegion(
           const clonePositions = deepCopy(r.positions).sort(comparePositions);
           positions.forEach((p, i) => {
             const a = solution[p.row][p.column];
-            if (a.value !== undefined) {
+            if (a.value != null) {
               const q = clonePositions[i];
               const b = solution[q.row][q.column];
-              if (b.value !== undefined && b.value !== a.value) {
+              if (b.value != null && b.value !== a.value) {
                 if (!uncloned.includes(p)) {
                   uncloned.push(p);
                 }
@@ -153,7 +153,7 @@ export function verifyRegion(
             }
           });
         });
-        if (uncloned.length) {
+        if (uncloned.length > 0) {
           return uncloned;
         }
         break;

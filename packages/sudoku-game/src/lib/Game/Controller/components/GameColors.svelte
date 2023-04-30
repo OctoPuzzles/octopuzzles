@@ -45,7 +45,7 @@
         // Add it to the cells that does not have it
         positions.forEach((p) => {
           const colors = currentCellValues[p.row][p.column].colors;
-          if (colors) {
+          if (colors != null) {
             if (!colors.includes(newColor)) {
               newCellValues[p.row][p.column].colors = [...colors, newColor].sort(
                 (a, b) => Colors.indexOf(a) - Colors.indexOf(b)
@@ -59,7 +59,7 @@
         // Remove it from all cells
         positions.forEach((p) => {
           const colors = currentCellValues[p.row][p.column].colors;
-          if (colors) {
+          if (colors != null) {
             newCellValues[p.row][p.column].colors = undefinedIfEmpty(
               colors.filter((c) => c !== newColor)
             );

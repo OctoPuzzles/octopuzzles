@@ -127,7 +127,7 @@
                 (c) => !$selectedCells.some((s) => s.row === c.row && s.column === c.column)
               )
             };
-            if (newRegion.positions.length) {
+            if (newRegion.positions.length > 0) {
               newRegions.push(newRegion);
             }
           } else {
@@ -202,7 +202,7 @@
             return true;
           })
         };
-        if (newRegion.positions.length) {
+        if (newRegion.positions.length > 0) {
           newRegions.push(newRegion);
         } else if (i < selectedRegionIndex) {
           --selectedRegionIndex;

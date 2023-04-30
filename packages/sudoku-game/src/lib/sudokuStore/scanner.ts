@@ -101,10 +101,10 @@ function createScannerStore() {
         const column = j + columnOffset;
         const cell = cellValues[row][column];
 
-        if (givens[row][column] === '' && !cell.digits) {
+        if (givens[row][column] === '' && cell.digits == null) {
           queue.push({ row, column });
 
-          if (cell.centermarks) {
+          if (cell.centermarks != null) {
             candidates[row][column] = [...cell.centermarks];
           } else {
             candidates[row][column] = [...allDigits];
@@ -333,7 +333,7 @@ function createScannerStore() {
     seen = true
   ): { tuple: string[]; context: string; cells: Position[] }[] {
     const cellValues = get(gameHistory.getValue('cellValues'));
-    if (!seen && !cellValues[cell.row][cell.column].centermarks) return [];
+    if (!seen && cellValues[cell.row][cell.column].centermarks == null) return [];
 
     const tuples: { tuple: string[]; context: string; cells: Position[] }[] = [];
     const seenCells = getSeenCells(cell);
@@ -346,7 +346,7 @@ function createScannerStore() {
           (c) => c.context === context && cellValues[c.row][c.column].centermarks
         );
 
-        if (contextCells.length) {
+        if (contextCells.length > 0) {
           if (!seen) {
             contextCells.unshift({ ...cell, context });
           }
@@ -405,7 +405,7 @@ function createScannerStore() {
       const seenCells = getSeenCells(cell);
 
       seenCells
-        .filter((s) => cellValues[s.row][s.column].cornermarks)
+        .filter((s) => cellValues[s.row][s.column].cornermarks != null)
         .forEach((c) => {
           const regionCells =
             regions
@@ -415,7 +415,7 @@ function createScannerStore() {
                   (r.uniqueDigits ?? true) &&
                   r.positions.some((p) => p.row === c.row && p.column === c.column)
               )
-              ?.positions.filter((p) => cellValues[p.row][p.column].cornermarks) ?? [];
+              ?.positions.filter((p) => cellValues[p.row][p.column].cornermarks != null) ?? [];
 
           cellValues[c.row][c.column].cornermarks?.forEach((v) => {
             const valueCells = regionCells.filter((p) =>
@@ -430,7 +430,7 @@ function createScannerStore() {
             }
           });
         });
-    } else if (cellValues[cell.row][cell.column].cornermarks) {
+    } else if (cellValues[cell.row][cell.column].cornermarks != null) {
       const regionCells =
         regions
           .find(
@@ -439,7 +439,7 @@ function createScannerStore() {
               (r.uniqueDigits ?? true) &&
               r.positions.some((p) => p.row === cell.row && p.column === cell.column)
           )
-          ?.positions.filter((p) => cellValues[p.row][p.column].cornermarks) ?? [];
+          ?.positions.filter((p) => cellValues[p.row][p.column].cornermarks != null) ?? [];
 
       cellValues[cell.row][cell.column].cornermarks?.forEach((v) => {
         sets.push({
@@ -592,10 +592,10 @@ function createScannerStore() {
 
               const given = givens[n.row][n.column];
               let digits = given !== '' ? [given as Digit] : undefined;
-              if (!digits) {
+              if (digits == null) {
                 digits = cellValues[n.row][n.column].digits;
               }
-              if (digits) {
+              if (digits != null) {
                 if (digits.some((d) => Math.abs(Digits.indexOf(d) - Digits.indexOf(v)) === 1)) {
                   highlightedCells.push(n);
 
@@ -626,10 +626,10 @@ function createScannerStore() {
 
               const given = givens[n.row][n.column];
               let digits = given !== '' ? [given as Digit] : undefined;
-              if (!digits) {
+              if (digits == null) {
                 digits = cellValues[n.row][n.column].digits;
               }
-              if (digits) {
+              if (digits != null) {
                 if (
                   digits.some(
                     (d) =>
@@ -666,10 +666,10 @@ function createScannerStore() {
 
               const given = givens[n.row][n.column];
               let digits = given !== '' ? [given as Digit] : undefined;
-              if (!digits) {
+              if (digits == null) {
                 digits = cellValues[n.row][n.column].digits;
               }
-              if (digits) {
+              if (digits != null) {
                 if (digits.some((d) => Digits.indexOf(d) + Digits.indexOf(v) === 10)) {
                   highlightedCells.push(n);
 
@@ -700,10 +700,10 @@ function createScannerStore() {
 
               const given = givens[n.row][n.column];
               let digits = given !== '' ? [given as Digit] : undefined;
-              if (!digits) {
+              if (digits == null) {
                 digits = cellValues[n.row][n.column].digits;
               }
-              if (digits) {
+              if (digits != null) {
                 if (digits.some((d) => Digits.indexOf(d) + Digits.indexOf(v) === 5)) {
                   highlightedCells.push(n);
 
@@ -758,11 +758,11 @@ function createScannerStore() {
         sortQueue(cell);
       } else {
         //remove eliminated values from any pencil marks
-        if (centermarks) {
+        if (centermarks != null) {
           centermarks = [...candidateValues];
           changed = true;
         }
-        if (cornermarks) {
+        if (cornermarks != null) {
           cornermarks = undefinedIfEmpty(
             cornermarks.filter((u) => {
               if (candidateValues.some((v) => v === u)) {
@@ -876,7 +876,7 @@ function createScannerStore() {
       });
     } else if (highlightMode === 'Tuples') {
       const cellValues = get(gameHistory.getValue('cellValues'));
-      if (!selectedCells.some((c) => cellValues[c.row][c.column].centermarks)) {
+      if (!selectedCells.some((c) => cellValues[c.row][c.column].centermarks != null)) {
         let tuples = getTuples(selectedCells[0], false);
         if (selectedCells.length > 1) {
           tuples = tuples.filter((t) =>
@@ -891,7 +891,7 @@ function createScannerStore() {
               !selectedCells.some((q) => q.row === p.row && q.column === p.column) &&
               !cellsToHighlight.some((q) => q.row === p.row && q.column === p.column)
           );
-          if (cellsToAdd.length) {
+          if (cellsToAdd.length > 0) {
             cellsToHighlight = [...cellsToHighlight, ...cellsToAdd];
           }
         });
@@ -912,7 +912,7 @@ function createScannerStore() {
     if (solution != null) {
       userSolution.forEach((r, i) => {
         r.forEach((cell, j) => {
-          if (cell.digits) {
+          if (cell.digits != null) {
             if (solution[i][j] !== cell.digits.join('')) {
               wrongCells.push({ row: i, column: j });
             }
@@ -922,11 +922,11 @@ function createScannerStore() {
     } else {
       userSolution.forEach((r, i) => {
         r.forEach((cell, j) => {
-          if (cell.digits) {
+          if (cell.digits != null) {
             getSeenCells({ row: i, column: j }, true).forEach((c) => {
               cell.digits?.forEach((d) => {
                 if (
-                  userSolution[c.row][c.column].digits?.includes(d) &&
+                  userSolution[c.row][c.column].digits?.includes(d) === true &&
                   !wrongCells.some((w) => w.row === c.row && w.column === c.column)
                 ) {
                   wrongCells.push(c);

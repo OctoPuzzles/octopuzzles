@@ -82,7 +82,7 @@
     // create solution
     if (provideSolution) {
       let cellValues = gameData.cellValues;
-      if (walkthrough.length) {
+      if (walkthrough.length > 0) {
         const finalStep = walkthrough[walkthrough.length - 1].gameData;
         if (
           gameData.cellValues.some((row, i) => {
@@ -226,7 +226,7 @@
 
     for (const row of userSolution) {
       for (const cell of row) {
-        if (cell.digits === undefined) {
+        if (cell.digits == null) {
           return true;
         }
       }

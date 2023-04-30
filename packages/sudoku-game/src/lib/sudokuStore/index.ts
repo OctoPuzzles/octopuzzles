@@ -114,19 +114,19 @@ function createGameHistoryStore() {
     const newCellValues = get(getValue('cellValues'));
     let changes = false;
     cells.forEach((cell) => {
-      if (newCellValues[cell.row][cell.column].digits) {
+      if (newCellValues[cell.row][cell.column].digits != null) {
         changes = true;
         delete newCellValues[cell.row][cell.column].digits;
       }
-      if (newCellValues[cell.row][cell.column].cornermarks) {
+      if (newCellValues[cell.row][cell.column].cornermarks != null) {
         changes = true;
         delete newCellValues[cell.row][cell.column].cornermarks;
       }
-      if (newCellValues[cell.row][cell.column].centermarks) {
+      if (newCellValues[cell.row][cell.column].centermarks != null) {
         changes = true;
         delete newCellValues[cell.row][cell.column].centermarks;
       }
-      if (newCellValues[cell.row][cell.column].colors) {
+      if (newCellValues[cell.row][cell.column].colors != null) {
         changes = true;
         delete newCellValues[cell.row][cell.column].colors;
       }

@@ -1,12 +1,12 @@
-import {
+import type {
   Position,
   BorderClueType,
   Borderclue,
   Shape,
   Color,
-  Digits,
   CellValues
 } from '@octopuzzles/models';
+import { Digits } from '@octopuzzles/models';
 
 export function emptyBorderClue(
   positions: [Position, Position],
@@ -98,7 +98,7 @@ export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): 
 
   if (!(borderclue.nonStandard ?? false)) {
     if (borderclue.type === 'Quadruple') {
-      if (borderclue.text) {
+      if (borderclue.text != null) {
         const p = borderclue.positions[0];
         const q = borderclue.positions[1];
         const cells = [p, { row: p.row, column: q.column }, q, { row: q.row, column: p.column }];
@@ -106,7 +106,7 @@ export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): 
         if (
           cells.every((pos) => {
             const cell = solution[pos.row][pos.column];
-            if (!cell.digits) {
+            if (cell.digits == null) {
               return false;
             }
             digits.push(...cell.digits);
@@ -125,18 +125,18 @@ export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): 
       const a = solution[p.row][p.column];
       const b = solution[q.row][q.column];
 
-      if (!a.digits || !b.digits) return [];
+      if (a.digits == null || b.digits == null) return [];
 
       if (borderclue.type === 'XvX' || borderclue.type === 'XvV') {
         const x = a.value;
         const y = b.value;
-        if (x !== undefined && y !== undefined) {
+        if (x != null && y != null) {
           isValid = x + y === (borderclue.type === 'XvX' ? 10 : 5);
         }
       } else if (
         !a.digits.every(
           (v) =>
-            !b.digits?.every((u) => {
+            b.digits?.every((u) => {
               const x = Digits.indexOf(v);
               const y = Digits.indexOf(u);
               switch (borderclue.type) {
@@ -150,7 +150,7 @@ export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): 
                   isValid = Math.abs(x - y) === 1;
                   break;
               }
-            })
+            }) !== true
         )
       ) {
         isValid = false;

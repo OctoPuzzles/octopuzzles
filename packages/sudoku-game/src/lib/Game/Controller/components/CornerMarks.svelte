@@ -41,7 +41,7 @@
         // Add it to the cells that does not have it
         positions.forEach((p) => {
           const cornermarks = currentCellValues[p.row][p.column].cornermarks;
-          if (cornermarks) {
+          if (cornermarks != null) {
             if (!cornermarks.includes(digit)) {
               newCellValues[p.row][p.column].cornermarks = [...cornermarks, digit].sort();
             }
@@ -53,7 +53,7 @@
         // Remove it from all cells
         positions.forEach((p) => {
           const cornermarks = currentCellValues[p.row][p.column].cornermarks;
-          if (cornermarks) {
+          if (cornermarks != null) {
             newCellValues[p.row][p.column].cornermarks = undefinedIfEmpty(
               cornermarks.filter((s) => s !== digit)
             );

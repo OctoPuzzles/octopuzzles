@@ -178,7 +178,7 @@ export function verifyCellClue(
       case 'LittleKillerNE':
       case 'LittleKillerSE':
       case 'LittleKillerSW': {
-        if (cellclue.text) {
+        if (cellclue.text != null) {
           const target = parseInt(cellclue.text);
           let rowStep = 0;
           let colStep = 0;
@@ -207,7 +207,7 @@ export function verifyCellClue(
             i += rowStep, j += colStep
           ) {
             const cell = solution[i][j];
-            if (cell.value === undefined) {
+            if (cell.value == null) {
               return [];
             }
             total += cell.value;
@@ -224,7 +224,7 @@ export function verifyCellClue(
       case 'Skyscraper':
       case 'XSum':
       case 'NumberedRoom': {
-        if (cellclue.text) {
+        if (cellclue.text != null) {
           const target = parseFloat(cellclue.text);
           let rowStep = 0;
           let colStep = 0;
@@ -253,7 +253,7 @@ export function verifyCellClue(
           let key = 0;
           if (cellclue.type === 'XSum' || cellclue.type === 'NumberedRoom') {
             let cell = solution[i][j];
-            if (cell.value === undefined) {
+            if (cell.value == null) {
               break;
             } else {
               key = cell.value;
@@ -261,7 +261,7 @@ export function verifyCellClue(
                 i += (key - 1) * rowStep;
                 j += (key - 1) * colStep;
                 cell = solution[i][j];
-                if (cell.value === undefined) {
+                if (cell.value == null) {
                   break;
                 } else {
                   if (cell.value !== key) {
@@ -284,7 +284,7 @@ export function verifyCellClue(
             i += rowStep, j += colStep
           ) {
             const cell = solution[i][j];
-            if (cell.value !== undefined) {
+            if (cell.value != null) {
               const v = cell.value;
               if (cellclue.type === 'Skyscraper') {
                 if (v > key) {
@@ -328,7 +328,7 @@ export function verifyCellClue(
       case 'Maximum':
       case 'Minimum': {
         const cell = solution[cellclue.position.row][cellclue.position.column];
-        if (cell.digits) {
+        if (cell.digits != null) {
           const nbrCells = [];
           for (const step of [
             { x: -1, y: 0 },
@@ -339,7 +339,7 @@ export function verifyCellClue(
             const row = cellclue.position.row + step.x;
             const column = cellclue.position.column + step.y;
             if (row >= 0 && row < solution.length && column >= 0 && column < solution[0].length) {
-              if (solution[row][column].digits) {
+              if (solution[row][column].digits != null) {
                 nbrCells.push({ row, column });
               }
             }
@@ -352,7 +352,7 @@ export function verifyCellClue(
               )
             );
           });
-          if (invalidCells.length) {
+          if (invalidCells.length > 0) {
             return [cellclue.position, ...invalidCells];
           }
           break;

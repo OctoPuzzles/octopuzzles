@@ -1,12 +1,12 @@
-import {
+import type {
   CellValues,
   Digit,
-  Digits,
   Dimensions,
   EditorHistoryStep,
   Logic,
   Position
 } from '@octopuzzles/models';
+import { Digits } from '@octopuzzles/models';
 import { getValuesFromRange } from '@octopuzzles/utils';
 
 export function defaultDigits(logic: Logic, dimensions: Dimensions): string {
@@ -57,7 +57,7 @@ export function verifyLogic(
           ++j
         ) {
           const cell = solution[i][j];
-          if (cell.digits) {
+          if (cell.digits != null) {
             const nbrCells = [];
             for (const step of [
               { x: 1, y: 0 },
@@ -78,7 +78,7 @@ export function verifyLogic(
             if (nonConsecutive) {
               const invalidNbrs = nbrCells.filter((c) => {
                 const nbrCell = solution[c.row][c.column];
-                if (nbrCell.digits) {
+                if (nbrCell.digits != null) {
                   return cell.digits?.some((d) =>
                     nbrCell.digits?.some(
                       (e) => Math.abs(Digits.indexOf(d) - Digits.indexOf(e)) === 1
@@ -99,15 +99,16 @@ export function verifyLogic(
             if (negativeBlack) {
               const invalidNbrs = nbrCells.filter((c) => {
                 const nbrCell = solution[c.row][c.column];
-                if (nbrCell.digits) {
+                if (nbrCell.digits != null) {
+                  const inRatio = cell.digits?.some((d) =>
+                    nbrCell.digits?.some(
+                      (e) =>
+                        Digits.indexOf(d) === 2 * Digits.indexOf(e) ||
+                        Digits.indexOf(e) === 2 * Digits.indexOf(d)
+                    )
+                  );
                   return (
-                    cell.digits?.some((d) =>
-                      nbrCell.digits?.some(
-                        (e) =>
-                          Digits.indexOf(d) === 2 * Digits.indexOf(e) ||
-                          Digits.indexOf(e) === 2 * Digits.indexOf(d)
-                      )
-                    ) &&
+                    inRatio === true &&
                     !clues.borderclues.some(
                       (b) =>
                         b.type === 'KropkiBlack' &&
@@ -133,13 +134,14 @@ export function verifyLogic(
             if (negativeWhite) {
               const invalidNbrs = nbrCells.filter((c) => {
                 const nbrCell = solution[c.row][c.column];
-                if (nbrCell.digits) {
+                if (nbrCell.digits != null) {
+                  const consecutive = cell.digits?.some((d) =>
+                    nbrCell.digits?.some(
+                      (e) => Math.abs(Digits.indexOf(d) - Digits.indexOf(e)) === 1
+                    )
+                  );
                   return (
-                    cell.digits?.some((d) =>
-                      nbrCell.digits?.some(
-                        (e) => Math.abs(Digits.indexOf(d) - Digits.indexOf(e)) === 1
-                      )
-                    ) &&
+                    consecutive === true &&
                     !clues.borderclues.some(
                       (b) =>
                         b.type === 'KropkiWhite' &&
@@ -162,11 +164,11 @@ export function verifyLogic(
                 );
               }
             }
-            if (cell.value !== undefined) {
+            if (cell.value != null) {
               if (negativeX) {
                 const invalidNbrs = nbrCells.filter((c) => {
                   const nbrCell = solution[c.row][c.column];
-                  if (nbrCell.value !== undefined) {
+                  if (nbrCell.value != null) {
                     return (
                       (cell.value ?? NaN) + nbrCell.value === 10 &&
                       !clues.borderclues.some(
@@ -194,7 +196,7 @@ export function verifyLogic(
               if (negativeV) {
                 const invalidNbrs = nbrCells.filter((c) => {
                   const nbrCell = solution[c.row][c.column];
-                  if (nbrCell.value !== undefined) {
+                  if (nbrCell.value != null) {
                     return (
                       (cell.value ?? NaN) + nbrCell.value === 5 &&
                       !clues.borderclues.some(
@@ -236,7 +238,7 @@ export function verifyLogic(
           ++j
         ) {
           const cell = solution[i][j];
-          if (cell.digits) {
+          if (cell.digits != null) {
             const nbrCells = [];
             const digits = [...cell.digits];
             for (const step of [
@@ -247,7 +249,7 @@ export function verifyLogic(
               const row = i + step.x;
               const column = j + step.y;
               const nbrCell = solution[row][column];
-              if (nbrCell.digits) {
+              if (nbrCell.digits != null) {
                 nbrCells.push({ row, column });
                 digits.push(...nbrCell.digits);
               } else {
@@ -281,7 +283,7 @@ export function verifyLogic(
       ) {
         for (const d of [1, 5, 9]) {
           let cell = solution[i][(clues.dimensions.margins?.left ?? 0) + d - 1];
-          if (cell.value !== undefined) {
+          if (cell.value != null) {
             const j = cell.value - 1;
             cell = solution[i][j];
             if (cell.digits && !cell.digits.includes(String(d) as Digit)) {

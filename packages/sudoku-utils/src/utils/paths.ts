@@ -1,15 +1,15 @@
-import {
+import type {
   Position,
   PathType,
   Path,
   Color,
   Form,
   Fill,
-  Digits,
   Digit,
   CellValues,
   EditorHistoryStep
 } from '@octopuzzles/models';
+import { Digits } from '@octopuzzles/models';
 import { deepCopy } from '@octopuzzles/utils';
 import { comparePositions } from './killer-cages';
 
@@ -274,7 +274,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
               .sort(comparePositions)
               .every((p) => {
                 const cell = solution[p.row][p.column];
-                if (!cell.digits) {
+                if (cell.digits == null) {
                   return false;
                 }
 
@@ -288,7 +288,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         } else {
           target = solution[p.row][p.column].value;
         }
-        if (target === undefined) {
+        if (target == null) {
           break;
         }
 
@@ -299,7 +299,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
             if (i === 0) return true;
 
             const v = solution[p.row][p.column].value;
-            if (v !== undefined) {
+            if (v != null) {
               total += v;
               return true;
             } else {
@@ -322,9 +322,9 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         for (let n = 0; n < path.positions.length; ++n) {
           const p = path.positions[n];
           const digits = solution[p.row][p.column].digits;
-          if (digits) {
+          if (digits != null) {
             if (
-              prev !== null &&
+              prev != null &&
               digits.some((d) => Digits.indexOf(d) <= Digits.indexOf(prev as Digit))
             ) {
               isValid = false;
@@ -343,7 +343,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         const a = solution[p.row][p.column];
         const b = solution[q.row][q.column];
 
-        if (a.value !== undefined && b.value !== undefined) {
+        if (a.value != null && b.value != null) {
           const min = a.value < b.value ? a.value : b.value;
           const max = a.value > b.value ? a.value : b.value;
 
@@ -354,7 +354,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
               if (i === 0 || i === path.positions.length - 1) return true;
 
               const cell = solution[p.row][p.column];
-              if (!cell.digits) {
+              if (cell.digits == null) {
                 return true;
               }
 
@@ -375,9 +375,9 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         if (
           path.positions.every((p) => {
             const cell = solution[p.row][p.column];
-            if (!cell.digits) return false;
+            if (cell.digits == null) return false;
 
-            if (min === undefined || max === undefined) {
+            if (min == null || max == null) {
               min = Digits.indexOf(cell.digits[0]);
               max = Digits.indexOf(cell.digits[cell.digits.length - 1]);
             } else {
@@ -388,7 +388,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
             return true;
           })
         ) {
-          if (min !== undefined && max !== undefined) {
+          if (min != null && max != null) {
             isValid = max - min < count;
           }
         }
@@ -402,7 +402,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         for (let n = 0; n < path.positions.length; ++n) {
           const p = path.positions[n];
           const cell = solution[p.row][p.column];
-          if (cell.digits) {
+          if (cell.digits != null) {
             if (
               prev.length > 0 &&
               cell.digits.some((d) =>
@@ -427,7 +427,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           const q = path.positions[path.positions.length - n - 1];
           const a = solution[p.row][p.column];
           const b = solution[q.row][q.column];
-          if (a.value !== undefined && b.value !== undefined && a.value !== b.value) {
+          if (a.value != null && b.value != null && a.value !== b.value) {
             unmirrored.push(p, q);
           }
         }
@@ -439,8 +439,8 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         let count = 0;
         const invalidCells = path.positions.filter((p) => {
           const cell = solution[p.row][p.column];
-          if (cell.digits) {
-            if (cell.value !== undefined) {
+          if (cell.digits != null) {
+            if (cell.value != null) {
               total += cell.value;
               ++count;
             }
@@ -463,7 +463,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         break;
       }
       case 'EqualSum': {
-        if (regionNos === null) {
+        if (regionNos == null) {
           regionNos = new Map<string, number>();
           clues.regions.forEach((r, n) => {
             if (r.type === 'Normal') {
@@ -483,7 +483,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           const cell = solution[p.row][p.column];
           const regionNo = regionNos.get('R' + p.row + 'C' + p.column);
           if (regionNo !== prevRegionNo) {
-            if (prevRegionNo !== undefined) {
+            if (prevRegionNo != null) {
               if (!skip) {
                 if (isNaN(target)) {
                   target = total;
@@ -498,7 +498,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           } else if (skip) {
             continue;
           }
-          if (cell.value === undefined) {
+          if (cell.value == null) {
             skip = true;
           } else {
             total += cell.value;
@@ -514,7 +514,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         const a = solution[p.row][p.column];
         const b = solution[q.row][q.column];
 
-        if (a.value !== undefined && b.value !== undefined) {
+        if (a.value != null && b.value != null) {
           const product = a.value * b.value;
           let total = 0;
 
@@ -523,7 +523,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
               if (i === 0 || i === path.positions.length - 1) return true;
 
               const cell = solution[p.row][p.column];
-              if (cell.value !== undefined) {
+              if (cell.value != null) {
                 total += cell.value;
                 return true;
               }
@@ -546,7 +546,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           const u = solution[p.row][p.column];
           const v = solution[q.row][q.column];
           const w = solution[r.row][r.column];
-          if (u.digits && v.digits && w.digits) {
+          if (u.digits != null && v.digits != null && w.digits != null) {
             const entropySets = [...u.digits, ...v.digits, ...w.digits].map((d) =>
               Math.ceil(Digits.indexOf(d) / 3)
             );
@@ -566,7 +566,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         const invalidCells: Position[] = [];
         path.positions.forEach((p) => {
           const cell = solution[p.row][p.column];
-          if (cell.digits) {
+          if (cell.digits != null) {
             cell.digits.some((d) => {
               if (Digits.indexOf(d) % 2 !== (path.type === 'Odd' ? 1 : 0)) {
                 invalidCells.push(p);
@@ -584,7 +584,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           const q = path.positions[i];
           const a = solution[p.row][p.column];
           const b = solution[q.row][q.column];
-          if (a.digits && b.digits) {
+          if (a.digits != null && b.digits != null) {
             if (
               a.digits.some((d) =>
                 b.digits?.some((e) => Digits.indexOf(d) % 2 === Digits.indexOf(e) % 2)
