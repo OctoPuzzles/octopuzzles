@@ -10,13 +10,7 @@
     Scanner as ScannerIcon,
     PenTool as PenToolIcon
   } from '@octopuzzles/icons';
-  import {
-    gameHistory,
-    inputMode,
-    selectedCells,
-    highlightedCells,
-    wrongCells
-  } from '$lib/sudokuStore';
+  import { gameHistory, inputMode, selectedCells, highlightedCells } from '$lib/sudokuStore';
   import { scanner } from '$lib/sudokuStore/scanner';
   import type { InputMode, WalkthroughStep } from '@octopuzzles/models';
   import { SquareButton, ControllerSkeleton } from '@octopuzzles/ui';

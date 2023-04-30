@@ -69,8 +69,6 @@
 
   $: scanner.configure(settings?.scanner);
 
-  let generalSettings = settings?.general;
-
   function isComplete(): boolean {
     const allDigits = getValidDigits(clues.logic, clues.dimensions);
     //check that every row has the required number of digits before validating the solution
@@ -138,7 +136,7 @@
 
     const errorCells = scanner.getErrorCells();
     $wrongCells = errorCells;
-    constraintsChecked = errorCells.length == 0;
+    constraintsChecked = errorCells.length === 0;
   }
 </script>
 
