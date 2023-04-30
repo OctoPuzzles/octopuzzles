@@ -13,7 +13,7 @@ export function getUserSolution(userInput: CellValues, givens: Givens, logic?: L
       if (v && v !== '') {
         cell.digits = [v as Digit];
       }
-      if (cell.digits && !sCells && !doublers) {
+      if (cell.digits != null && !sCells && !doublers) {
         cell.value = Digits.indexOf(cell.digits[0]);
       }
     });

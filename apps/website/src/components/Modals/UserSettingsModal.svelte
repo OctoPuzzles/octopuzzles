@@ -7,7 +7,7 @@
 
   const generalSettings = settings.getGroup('general');
 
-  let verificationMode = $generalSettings?.verificationMode ?? 'OnComplete';
+  let verificationMode = $generalSettings?.verificationMode ?? 'OnDemand';
 
   function updateSettings(): void {
     const generalSettings = {
@@ -34,7 +34,7 @@
         </RadioGroup>
       </div>
     </div>
-
-    <Button variant="default" class="w-full" on:click={close}>Close</Button>
   </div>
+
+  <Button variant="default" class="w-full" on:click={close}>Close</Button>
 </Modal>

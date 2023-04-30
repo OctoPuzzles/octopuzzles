@@ -1,6 +1,7 @@
 <script lang="ts">
   import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import Controller from './Controller/index.svelte';
+  import Check from 'phosphor-svelte/lib/Check/Check.svelte';
   import {
     selectedCells,
     highlightedCells,
@@ -26,6 +27,7 @@
     handleClickCell,
     handleEnterCell
   } from '$lib/sudokuStore/interactionHandlers';
+  import { NotificationModal } from '@octopuzzles/ui';
 
   // SIZING
   let windowHeight: number;
@@ -69,33 +71,38 @@
 
   let generalSettings = settings?.general;
 
+  function isComplete(): boolean {
+    const allDigits = getValidDigits(clues.logic, clues.dimensions);
+    //check that every row has the required number of digits before validating the solution
+    const complete = !gameData.cellValues.some((row, i) => {
+      let numDigits = 0;
+      row.forEach((cell, j) => {
+        numDigits += clues.givens[i][j] !== '' ? 1 : cell.digits?.length ?? 0;
+      });
+      return numDigits !== allDigits.length;
+    });
+    return complete;
+  }
+
   function onInput(newGameData: GameData): void {
     gameData = newGameData;
+
     const verificationMode = settings?.general?.verificationMode ?? 'OnDemand';
-    if (verificationMode === 'OnComplete' || onDone != null) {
-      const allDigits = getValidDigits(clues.logic, clues.dimensions);
-      //check that every row has the required number of digits before validating the solution
-      const complete = !gameData.cellValues.some((row, i) => {
-        let numDigits = 0;
-        row.forEach((cell, j) => {
-          numDigits += clues.givens[i][j] !== '' ? 1 : cell.digits?.length ?? 0;
-        });
-        return numDigits !== allDigits.length;
-      });
-      if (complete) {
-        if (checkSolution()) {
-          onDone?.();
-          return;
-        }
+    if (isComplete()) {
+      if (checkSolution(verificationMode !== 'OnDemand')) {
+        onDone?.();
       }
+      return;
     }
+
     if (verificationMode === 'OnInput') {
       $wrongCells = scanner.getErrorCells();
     } else {
       $wrongCells = [];
     }
   }
-  function checkSolution(): boolean {
+
+  function checkSolution(showErrors: boolean): boolean {
     //check that the provided solution has the same dimensions as the user input
     if (solution != null) {
       if (
@@ -107,12 +114,31 @@
     }
     //check for errors against the provided solution or the puzzle logic
     const errorCells = scanner.getErrorCells(solution?.numbers);
-    if ((generalSettings?.verificationMode ?? 'OnDemand') === 'OnComplete') {
+    if (showErrors) {
       $wrongCells = errorCells;
     } else {
       $wrongCells = [];
     }
     return errorCells.length === 0;
+  }
+
+  let constraintsChecked = false;
+
+  function verify(): void {
+    if (isComplete()) {
+      if (checkSolution(true)) {
+        if (onDone != null) {
+          onDone?.();
+        } else {
+          constraintsChecked = true;
+        }
+      }
+      return;
+    }
+
+    const errorCells = scanner.getErrorCells();
+    $wrongCells = errorCells;
+    constraintsChecked = errorCells.length == 0;
   }
 </script>
 
@@ -143,7 +169,19 @@
   </div>
   <div class="my-auto">
     <Controller bind:walkthrough>
+      <button
+        title="Check digits"
+        class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+        on:click={verify}
+      >
+        <Check size={32} />
+      </button>
       <slot />
     </Controller>
   </div>
 </div>
+
+<NotificationModal
+  bind:isOpen={constraintsChecked}
+  notificationMessage="No constraint violations detected"
+/>
