@@ -34,7 +34,7 @@
   $: if ($navigating && details != null) details.open = false;
 
   function showSettingsModal(): void {
-    if (details) {
+    if (details != null) {
       details.open = false;
     }
 

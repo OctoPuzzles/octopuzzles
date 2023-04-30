@@ -8,7 +8,7 @@ import { page } from '$app/stores';
 function createSettingsStore() {
   const settings = writable<Partial<UserSettings>>({});
 
-  function set(newSettings: UserSettings | null = null) {
+  function set(newSettings: UserSettings | null = null): void {
     settings.set(newSettings ?? {});
   }
 
@@ -18,12 +18,12 @@ function createSettingsStore() {
     });
   }
 
-  async function save(newSettings: Partial<UserSettings>) {
+  async function save(newSettings: Partial<UserSettings>): Promise<void> {
     const oldSettings = get(settings) ?? {};
     settings.set({ ...oldSettings, ...newSettings });
 
     const userId = get(me)?.id;
-    if (userId) {
+    if (userId != null) {
       await trpc(get(page)).userSettings.save.mutate(newSettings);
     }
   }
