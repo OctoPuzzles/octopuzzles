@@ -7,7 +7,7 @@
 
   const generalSettings = settings.getGroup('general');
 
-  let verificationMode = $generalSettings?.verificationMode ?? 'OnDemand';
+  let verificationMode = $generalSettings?.verificationMode ?? 'OnInput';
 
   function updateSettings(): void {
     const generalSettings = {

@@ -44,13 +44,13 @@ test.describe('6x6 sudoku', () => {
   test('Number inputs in the sudoku game, and wrong cell highlights', async ({ page }) => {
     // Click row 3 cell 3
     await page.locator('id=interface').locator('rect').nth(14).click();
-    // Input digit 5 to see if it shows a wrong cell
-    await page.keyboard.press('Digit5');
-    // Check that there is a 5 in the cell
+    // Input digit 4 to see if it shows a wrong cell
+    await page.keyboard.press('Digit4');
+    // Check that there is a 4 in the cell
     expect(
       await page.locator('id=numbers').locator('text').nth(5).textContent(),
-      'R3C3 Should have a 5 in the cell'
-    ).toBe('5');
+      'R3C3 Should have a 4 in the cell'
+    ).toBe('4');
     // Check that it shows a red background
     expect(
       await page.locator('id=highlights').locator('rect').first().getAttribute('class'),

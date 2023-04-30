@@ -85,7 +85,7 @@
   function onInput(newGameData: GameData): void {
     gameData = newGameData;
 
-    const verificationMode = settings?.general?.verificationMode ?? 'OnDemand';
+    const verificationMode = settings?.general?.verificationMode ?? 'OnInput';
     if (isComplete()) {
       if (checkSolution(verificationMode !== 'OnDemand')) {
         onDone?.();
