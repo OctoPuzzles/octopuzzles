@@ -148,10 +148,11 @@
           difficultyRange = [0, 5];
           if (activeLabels.length > 0) {
             activeLabels = [];
-            search();
           }
+          search();
         }}>Clear filters</Button
       >
+      <Button variant="primary" on:click={search}>Apply filters</Button>
     </div>
   </div>
 {/if}
