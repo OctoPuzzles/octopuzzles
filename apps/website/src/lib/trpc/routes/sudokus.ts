@@ -13,12 +13,17 @@ import {
 } from '@octopuzzles/models';
 import type { Sudoku } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+import range from 'lodash/range';
 import { z } from 'zod';
 
 export const sudokus = t.router({
   search: t.procedure
     .input(
       z.object({
+        query: z.string().optional(),
+        difficultyRange: z
+          .tuple([z.number().int().min(0).max(5), z.number().int().min(0).max(5)])
+          .optional(),
         labels: z.array(z.number().int()),
         limit: z.number().min(1).max(100).optional(),
         cursor: z.date().optional(),
@@ -27,15 +32,34 @@ export const sudokus = t.router({
     )
     .query(async ({ input, ctx }) => {
       const limit = input.limit ?? 24;
+      const [lowerRange, upperRange] =
+        input.difficultyRange == null ? [0, 5] : input.difficultyRange.sort();
+
+      const orFilter: any[] = [];
+      if (lowerRange === 0) {
+        orFilter.push({ difficulty: null });
+      }
+      orFilter.push({ difficulty: { in: range(lowerRange, upperRange + 1) } });
 
       const rawSudokus = await ctx.prisma.sudoku.findMany({
         where: {
-          publicSince:
-            ctx.token != null && input.userId === ctx.token.id
-              ? { lt: input.cursor }
-              : { not: null, lt: input.cursor },
-          userId: input.userId,
-          labels: input.labels.length > 0 ? { some: { id: { in: input.labels } } } : undefined
+          AND: {
+            // Only get published sudokus, unless it is the users own puzzle
+            publicSince:
+              ctx.token != null && input.userId === ctx.token.id
+                ? { lt: input.cursor }
+                : { not: null, lt: input.cursor },
+            title:
+              input.query != null && input.query !== ''
+                ? {
+                    contains: input.query,
+                    mode: 'insensitive'
+                  }
+                : undefined,
+            userId: input.userId,
+            labels: input.labels.length > 0 ? { some: { id: { in: input.labels } } } : undefined
+          },
+          OR: orFilter
         },
         include: {
           labels: true,

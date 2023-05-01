@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SudokuGame } from '@octopuzzles/sudoku-game';
   import { SudokuEditor } from '@octopuzzles/sudoku-editor';
-  import { Button, Input, Label, PuzzleLabel, RichTextEditor } from '@octopuzzles/ui';
+  import { Button, Input, Label, PuzzleLabel, Range, RichTextEditor } from '@octopuzzles/ui';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import {
@@ -29,7 +29,7 @@
 
   let sudokuTitle = data.sudoku?.title ?? '';
   let description = data.sudoku?.description ?? '';
-  let difficulty = data.sudoku?.difficulty;
+  let difficulty = data.sudoku?.difficulty ?? 0;
   let labels =
     data.labels
       .sort((a, b) => (a.name > b.name ? 1 : -1))
@@ -122,7 +122,7 @@
         sudoku: {
           title: sudokuTitle,
           description: description,
-          difficulty: difficulty ?? null,
+          difficulty: difficulty === 0 ? null : difficulty,
           dimensions: clues.dimensions,
           borderclues: clues.borderclues,
           cellclues: clues.cellclues,
@@ -169,7 +169,7 @@
         id,
         sudokuUpdates: {
           title: sudokuTitle,
-          difficulty: difficulty ?? null,
+          difficulty: difficulty === 0 ? null : difficulty,
           description: description,
           dimensions: clues.dimensions,
           borderclues: clues.borderclues,
@@ -352,64 +352,19 @@
         {/if}
       </label>
 
-      <div class="flex items-center mt-4">
+      <div class="mt-4 inline-block mb-4">
         <p>Difficulty:</p>
-        <ul class="flex items-center gap-1 ml-2">
-          <li>
-            <button
-              class={classNames(
-                'h-6 px-1 rounded border border-gray-400 flex items-center justify-center',
-                difficulty == null && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = undefined)}>No difficulty</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 1 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 1)}>1</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 2 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 2)}>2</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 3 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 3)}>3</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 4 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 4)}>4</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 5 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 5)}>5</button
-            >
-          </li>
-        </ul>
+        <div class="w-96 ml-4">
+          <Range
+            id="difficulty"
+            min={0}
+            max={5}
+            formatter={(v) => (v === 0 ? 'None' : String(v))}
+            bind:value={difficulty}
+            all="label"
+            pips
+          />
+        </div>
       </div>
 
       <h1 class="font-semibold mt-8">Labels</h1>
