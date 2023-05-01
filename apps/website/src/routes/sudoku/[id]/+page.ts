@@ -8,16 +8,12 @@ export const load: PageLoad = async (event) => {
   const trpcClient = trpc(event);
   const sudokuId = parseInt(event.params.id);
   const dataParam = event.url.searchParams.get('data');
-  const [sudoku, walkthrough] = await Promise.all([
-    trpcClient.sudokus.get.query({ id: sudokuId }),
-    trpcClient.walkthroughs.get.query({ sudokuId })
-  ]);
+  const sudoku = await trpcClient.sudokus.get.query({ id: sudokuId });
   if (sudoku == null) {
     throw error(404, 'Not found');
   }
   return {
     sudoku,
-    walkthrough,
     gameData:
       dataParam != null
         ? (decompressFromBase64(dataParam.replace(/ /g, '+')) as GameData)
