@@ -9,8 +9,6 @@
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
   import { defaultGameData } from '@octopuzzles/sudoku-utils';
   import ExportButton from '$components/ExportButton.svelte';
-  import { trpc } from '$lib/trpc/client';
-  import { page } from '$app/stores';
   import type { WalkthroughStep } from '@octopuzzles/models';
 
   export let data: PageData;
@@ -21,6 +19,14 @@
   const clues = fillCluesWithDefaults(data.sudoku);
   let gameData = data.gameData ?? defaultGameData(data.sudoku.dimensions);
   const scannerSettings = me.settings;
+
+  onMount(() => {
+    data.streamed.walkthrough.then((w) => {
+      if (w != null) {
+        walkthrough = w.steps;
+      }
+    });
+  });
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
   let now = Date.now();
@@ -49,17 +55,6 @@
       now = Date.now();
     }, 1000);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-  });
-
-  const getWalkthrough = async (): Promise<void> => {
-    const res = await trpc($page).walkthroughs.get.query({ sudokuId: data.sudoku.id });
-    if (res != null) {
-      walkthrough = res.steps;
-    }
-  };
-
-  onMount(() => {
-    void getWalkthrough();
   });
 
   function takeScreenshot(): void {
@@ -108,7 +103,7 @@
     showFinishedSudokuModal = true;
   }}
   solution={data.sudoku.solution ?? undefined}
-  walkthrough={walkthrough ?? []}
+  {walkthrough}
   {clues}
   bind:gameData
 >

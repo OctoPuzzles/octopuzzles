@@ -14,6 +14,7 @@ export const load: PageLoad = async (event) => {
   }
   return {
     sudoku,
+    streamed: { walkthrough: trpcClient.walkthroughs.get.query({ sudokuId }) },
     gameData:
       dataParam != null
         ? (decompressFromBase64(dataParam.replace(/ /g, '+')) as GameData)
