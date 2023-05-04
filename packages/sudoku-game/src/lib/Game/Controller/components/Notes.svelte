@@ -5,7 +5,10 @@
     highlightedCells,
     highlightedItemIndex,
     selectedCells,
-    selectedItemIndex
+    selectedItemIndex,
+    handleArrows,
+    handleClickCell,
+    handleEnterCell
   } from '$lib/sudokuStore';
   import { Button, ColorSelect, ControllerButton, Input } from '@octopuzzles/ui';
   import {
@@ -15,7 +18,6 @@
     type ArrowDirection
   } from '@octopuzzles/utils';
   import { onMount } from 'svelte';
-  import { handleArrows, handleClickCell, handleEnterCell } from '$lib/sudokuStore';
   import { defaultHandleArrows } from '$lib/sudokuStore/interactionHandlers';
   import type { OnClickCellHandler, OnEnterCellHandler } from '@octopuzzles/sudoku-display';
   import { get } from 'svelte/store';
@@ -23,17 +25,12 @@
 
   const notes = gameHistory.getValue('notes');
   let input: Input;
+
   $: firstSelectedCell = $selectedCells.length === 1 ? $selectedCells[0] : undefined;
 
-  $: if ($selectedItemIndex === -1) {
-    if (firstSelectedCell) {
-      populateFromSelectedCell(firstSelectedCell);
-    }
-  } /*else {
-    if (details === '') {
-      deleteNoteAtIndex($selectedItemIndex);
-    }
-  }*/
+  $: if ($selectedItemIndex === -1 && firstSelectedCell != null) {
+    populateFromSelectedCell(firstSelectedCell);
+  }
 
   $: $selectedCells, input != null && setTimeout(() => input != null && input.focus(), 100);
 

@@ -8,7 +8,10 @@
     inputMode,
     gameHistory,
     handleMouseDownHitbox,
-    handleMouseEnterHitbox
+    handleMouseEnterHitbox,
+    handleArrows,
+    handleClickCell,
+    handleEnterCell
   } from '$lib/sudokuStore';
   import type {
     EditorHistoryStep,
@@ -21,7 +24,6 @@
   import { scanner } from '$lib/sudokuStore/scanner';
   import { onDestroy, onMount, setContext } from 'svelte';
   import { gameAction, handleWindowClick } from '$lib/gameAction';
-  import { handleArrows, handleClickCell, handleEnterCell } from '$lib/sudokuStore';
 
   // SIZING
   let windowHeight: number;
