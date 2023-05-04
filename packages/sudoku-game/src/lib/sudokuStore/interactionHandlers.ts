@@ -7,7 +7,7 @@ import { gameHistory, selectedCells } from '.';
 /**
  * Default action to do when user clicks on a cell
  */
-export const handleClickCell: OnClickCellHandler = (cell, metaButtonClicked) => {
+export const defaultHandleClickCell: OnClickCellHandler = (cell, metaButtonClicked) => {
   if (!metaButtonClicked) {
     const currentSelectedCells = get(selectedCells);
     const firstSelectedCell = currentSelectedCells[0];
@@ -28,14 +28,14 @@ export const handleClickCell: OnClickCellHandler = (cell, metaButtonClicked) => 
 /**
  * Default action to do when users mouse enters a cell and meta button is down
  */
-export const handleEnterCell: OnEnterCellHandler = (cell) => {
+export const defaultHandleEnterCell: OnEnterCellHandler = (cell) => {
   if (get(selectedCells).length > 0) {
     selectedCells.add(cell);
   }
 };
 
 /** Default action to run when user moves around with the arrow buttons */
-export const handleArrows = (direction: ArrowDirection, k: KeyboardEvent): void => {
+export const defaultHandleArrows = (direction: ArrowDirection, k: KeyboardEvent): void => {
   const cells = get(selectedCells);
   const dim = get(gameHistory.clues).dimensions;
   const lastCell = cells[cells.length - 1];
