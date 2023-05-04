@@ -511,7 +511,7 @@ function createScannerStore() {
       return true;
     });
 
-    if (newCandidateValues.length > 1 && settings.useCentreMarks) {
+    if (newCandidateValues.length > 1 && settings.useCentreMarks === true) {
       //eliminate all values of any tuple seen by this cell
       const tuples = getTuples(cell);
       newCandidateValues = newCandidateValues.filter((v) => {
@@ -528,20 +528,20 @@ function createScannerStore() {
     if (
       newCandidateValues.length > 1 &&
       !flags.includes('NonStandard') &&
-      settings.useCornerMarks
+      settings.useCornerMarks === true
     ) {
       //if the cell contains the only cornermark in that region for a digit, then that should be the sole candidate
-      if (
-        !getCornerSets(cell, false)
-          .filter((s) => s.cells.length === 1)
-          .some((s) => {
-            if (newCandidateValues.includes(s.digit)) {
-              newCandidateValues = [s.digit];
-              return true;
-            }
-            return false;
-          })
-      ) {
+      const isUniqueCornermark = !getCornerSets(cell, false)
+        .filter((s) => s.cells.length === 1)
+        .some((s) => {
+          if (newCandidateValues.includes(s.digit)) {
+            newCandidateValues = [s.digit];
+            return true;
+          }
+          return false;
+        });
+
+      if (isUniqueCornermark) {
         //otherwise if all cells that contain a cornermark within a region for a value are seen by this cell we can eliminate that value
         const sets = getCornerSets(cell, true);
         newCandidateValues = newCandidateValues.filter((v) => {

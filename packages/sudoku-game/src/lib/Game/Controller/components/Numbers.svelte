@@ -43,7 +43,7 @@
           // Add it to the cells that do not have it
           positions.forEach((p) => {
             const currentDigits = currentCellValues[p.row][p.column].digits;
-            if (!currentDigits?.includes(digit)) {
+            if (currentDigits?.includes(digit) !== true) {
               // Insert the number
               newCellValues[p.row][p.column].digits = [digit];
 

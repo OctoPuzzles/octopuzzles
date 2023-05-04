@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SudokuGame } from '@octopuzzles/sudoku-game';
   import { SudokuEditor } from '@octopuzzles/sudoku-editor';
-  import { Button, Input, Label, PuzzleLabel, RichTextEditor } from '@octopuzzles/ui';
+  import { Button, Input, Label, PuzzleLabel, Range, RichTextEditor } from '@octopuzzles/ui';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import {
@@ -14,7 +14,6 @@
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
-  import FileArrowUp from 'phosphor-svelte/lib/FileArrowUp/FileArrowUp.svelte';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
   import type { PageData } from './$types';
@@ -24,15 +23,13 @@
   import type { Digit, GameHistoryStep } from '@octopuzzles/models';
   import { deepCopy } from '@octopuzzles/utils';
   import type { RouterInputs } from '$lib/trpc/router';
-  import { navigating } from '$app/stores';
-  import { exportPuzzle } from '$features/fpuzzles/exportAsFPuzzlesJson';
-  import { FPuzzles, CtC } from '@octopuzzles/icons';
+  import ExportButton from '$components/ExportButton.svelte';
 
   export let data: PageData;
 
   let sudokuTitle = data.sudoku?.title ?? '';
   let description = data.sudoku?.description ?? '';
-  let difficulty = data.sudoku?.difficulty;
+  let difficulty = data.sudoku?.difficulty ?? 0;
   let labels =
     data.labels
       .sort((a, b) => (a.name > b.name ? 1 : -1))
@@ -50,7 +47,7 @@
       data.sudoku?.solution?.numbers.map((row) =>
         row.map((value) => {
           const digits = value.split('');
-          return digits.length ? { digits: digits.map((d) => d as Digit) } : {};
+          return digits.length > 0 ? { digits: digits as Digit[] } : {};
         })
       ) ?? defaultCellValues(data.sudoku?.dimensions)
   };
@@ -88,7 +85,7 @@
         if (
           gameData.cellValues.some((row, i) => {
             return row.some((cell, j) => {
-              return !cell.digits && finalStep.cellValues[i][j].digits;
+              return cell.digits != null && finalStep.cellValues[i][j].digits;
             });
           })
         ) {
@@ -125,7 +122,7 @@
         sudoku: {
           title: sudokuTitle,
           description: description,
-          difficulty: difficulty ?? null,
+          difficulty: difficulty === 0 ? null : difficulty,
           dimensions: clues.dimensions,
           borderclues: clues.borderclues,
           cellclues: clues.cellclues,
@@ -172,7 +169,7 @@
         id,
         sudokuUpdates: {
           title: sudokuTitle,
-          difficulty: difficulty ?? null,
+          difficulty: difficulty === 0 ? null : difficulty,
           description: description,
           dimensions: clues.dimensions,
           borderclues: clues.borderclues,
@@ -244,10 +241,6 @@
   $: if (gameData.cellValues != null && clues.givens != null) {
     solutionHasHoles = doesSolutionHaveHoles();
   }
-
-  let exportDetails: HTMLDetailsElement;
-
-  $: if ($navigating && exportDetails != null) exportDetails.open = false;
 </script>
 
 <div class="flex items-center justify-center h-20 absolute top-0 w-full pointer-events-none">
@@ -289,35 +282,7 @@
       <FileArrowDown size={32} />
     </button>
 
-    <details bind:this={exportDetails}>
-      <summary
-        class="cursor-pointer flex justify-center items-center mr-2 w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-        aria-label="Export to f-puzzles/CtC"
-        aria-haspopup="menu"
-        title="Export to f-puzzles/CtC"
-      >
-        <FileArrowUp size={32} />
-      </summary>
-      <div
-        class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
-        role="menu"
-      >
-        <button
-          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'FPuzzles')}
-          class="w-8 h-8"
-          title="Export to f-puzzles"
-        >
-          <FPuzzles />
-        </button>
-        <button
-          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'CTC')}
-          class="w-8 h-8"
-          title="Export to CtC"
-        >
-          <CtC />
-        </button>
-      </div>
-    </details>
+    <ExportButton {clues} {gameData} {sudokuTitle} {description} />
   </SudokuEditor>
 </div>
 <div class:hidden={tab !== 'game'}>
@@ -328,35 +293,7 @@
     {clues}
     bind:gameData
   >
-    <details bind:this={exportDetails}>
-      <summary
-        class="cursor-pointer flex justify-center items-center mr-2 w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-        aria-label="Export to f-puzzles/CtC"
-        aria-haspopup="menu"
-        title="Export to f-puzzles/CtC"
-      >
-        <FileArrowUp size={32} />
-      </summary>
-      <div
-        class="absolute list-none shadow-lg bg-white ring-1 ring-black ring-opacity-10 focus:outline-none rounded-md mt-0.5 overflow-hidden z-50"
-        role="menu"
-      >
-        <button
-          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'FPuzzles')}
-          class="w-8 h-8"
-          title="Export to f-puzzles"
-        >
-          <FPuzzles />
-        </button>
-        <button
-          on:click={() => exportPuzzle(clues, gameData, sudokuTitle, description, 'CTC')}
-          class="w-8 h-8"
-          title="Export to CtC"
-        >
-          <CtC />
-        </button>
-      </div>
-    </details>
+    <ExportButton {clues} {gameData} {sudokuTitle} {description} />
   </SudokuGame>
 </div>
 <div class:hidden={tab !== 'form'}>
@@ -415,64 +352,19 @@
         {/if}
       </label>
 
-      <div class="flex items-center mt-4">
+      <div class="mt-4 inline-block mb-4">
         <p>Difficulty:</p>
-        <ul class="flex items-center gap-1 ml-2">
-          <li>
-            <button
-              class={classNames(
-                'h-6 px-1 rounded border border-gray-400 flex items-center justify-center',
-                difficulty == null && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = undefined)}>No difficulty</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 1 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 1)}>1</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 2 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 2)}>2</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 3 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 3)}>3</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 4 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 4)}>4</button
-            >
-          </li>
-          <li>
-            <button
-              class={classNames(
-                'w-6 h-6 rounded border border-gray-400 flex items-center justify-center',
-                difficulty === 5 && 'bg-orange-500 !border-orange-500'
-              )}
-              on:click={() => (difficulty = 5)}>5</button
-            >
-          </li>
-        </ul>
+        <div class="w-96 ml-4">
+          <Range
+            id="difficulty"
+            min={0}
+            max={5}
+            formatter={(v) => (v === 0 ? 'None' : String(v))}
+            bind:value={difficulty}
+            all="label"
+            pips
+          />
+        </div>
       </div>
 
       <h1 class="font-semibold mt-8">Labels</h1>
@@ -554,19 +446,3 @@
     description = newDescription;
   }}
 />
-
-<style>
-  /* Allow the export dropdown to close when pressing outside the dropdown */
-  details[open] > summary::before {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 40;
-    display: block;
-    cursor: default;
-    content: ' ';
-    background: transparent;
-  }
-</style>

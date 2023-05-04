@@ -150,7 +150,7 @@
 
   function handleKeyDown(k: KeyboardEvent): void {
     if (isDeleteKey(k)) {
-      if ($selectedItemIndex !== undefined) {
+      if ($selectedItemIndex != null) {
         deleteRegionAtIndex($selectedItemIndex);
       } else {
         editorHistory.clearCells(get(selectedCells));

@@ -23,10 +23,10 @@
 <g id="numbers" class="select-none pointer-events-none">
   {#each givens as givenDigits, row}
     {#each givenDigits as given, column}
-      {@const isGiven = !!given}
+      {@const isGiven = given !== ''}
       {@const cell = cellValues?.[row]?.[column]}
       {@const digits = isGiven ? [given] : cell?.digits}
-      {#if digits}
+      {#if digits != null}
         {@const val = digits.join('')}
         <text
           x={CELL_SIZE * (column + 0.5)}

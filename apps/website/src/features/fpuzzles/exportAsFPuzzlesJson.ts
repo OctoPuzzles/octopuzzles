@@ -16,6 +16,7 @@ import {
   type Position,
   type Digit
 } from '@octopuzzles/models';
+import { htmlToText } from 'html-to-text';
 
 export function getFPuzzlesJson(
   clues: EditorHistoryStep,
@@ -68,12 +69,12 @@ export function getFPuzzlesJson(
 
   const fPuzzle: FPuzzlesJson = {
     author: '',
-    antiking: flags.includes('Antiking') ? true : undefined,
-    antiknight: flags.includes('Antiknight') ? true : undefined,
+    antiking: flags.includes('Antiking') || undefined,
+    antiknight: flags.includes('Antiknight') || undefined,
     //author: string,
-    'diagonal+': flags.includes('DiagonalPos') ? true : undefined,
-    'diagonal-': flags.includes('DiagonalNeg') ? true : undefined,
-    disjointgroups: flags.includes('DisjointSets') ? true : undefined,
+    'diagonal+': flags.includes('DiagonalPos') || undefined,
+    'diagonal-': flags.includes('DiagonalNeg') || undefined,
+    disjointgroups: flags.includes('DisjointSets') || undefined,
     grid,
     negative: flags.some((f) => f === 'NegativeBlack' || f === 'NegativeX' || f === 'NegativeV')
       ? [
@@ -111,23 +112,23 @@ export function getFPuzzlesJson(
       if (flags.some((f) => f === 'Indexed159') && (j === 0 || j === 4 || j === 8)) {
         fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor.Red;
       }
-      if (editorColors[i][j] !== null) {
+      if (editorColors[i][j] != null) {
         fPuzzle.grid[gridRow][gridColumn].c = colorToHexColor[editorColors[i][j] as Color];
       }
       const digits = cellValues[i][j].digits;
-      if (digits && digits.length) {
+      if (digits != null && digits.length > 0) {
         fPuzzle.grid[gridRow][gridColumn].value = Digits.indexOf(digits[0]);
       }
-      if (cellValues[i][j].colors) {
+      if (cellValues[i][j].colors != null) {
         fPuzzle.grid[gridRow][gridColumn].highlight =
           colorToHexColor[cellValues[i][j].colors?.[0] as Color];
       }
-      if (cellValues[i][j].cornermarks) {
+      if (cellValues[i][j].cornermarks != null) {
         fPuzzle.grid[gridRow][gridColumn].cornerPencilMarks = cellValues[i][j].cornermarks?.map(
           (m) => parseInt(m)
         );
       }
-      if (cellValues[i][j].centermarks) {
+      if (cellValues[i][j].centermarks != null) {
         fPuzzle.grid[gridRow][gridColumn].centerPencilMarks = cellValues[i][j].centermarks?.map(
           (m) => parseInt(m)
         );
@@ -366,9 +367,13 @@ export function getFPuzzlesJson(
       case 'XvV': {
         if (cells.length === 2) {
           const xv = fPuzzle.xv ?? (fPuzzle.xv = []);
+          let text = (c.text as 'X' | 'V') ?? undefined;
+          if (text == null) {
+            text = c.type === 'XvX' ? 'X' : 'V';
+          }
           xv.push({
             cells: cells as [PositionString, PositionString],
-            value: (c.text as 'X' | 'V') ?? undefined
+            value: text
           });
           return;
         }
@@ -379,7 +384,7 @@ export function getFPuzzlesJson(
           const quadruple = fPuzzle.quadruple ?? (fPuzzle.quadruple = []);
           quadruple.push({
             cells: cells as [PositionString, PositionString, PositionString, PositionString],
-            values: c.text ? c.text.split(',').map((v) => parseFloat(v)) : []
+            values: c.text?.split(',').map((v) => parseFloat(v)) ?? []
           });
           return;
         }
@@ -408,7 +413,7 @@ export function getFPuzzlesJson(
           cells
           //angle:
         });
-        if (d.text) {
+        if (d.text != null && d.text !== '') {
           text.push({
             fontC: colorToHexColor.Black,
             size: (d.radius ?? 10) / 50,
@@ -435,10 +440,14 @@ export function getFPuzzlesJson(
           }
         }
 
+        let outlineColor: Color = 'White';
+        if (d.color != null) {
+          outlineColor = d.shape === 'Line' ? d.color : 'Black';
+        }
         rectangle.push({
           baseC: colorToHexColor[d.color ?? 'White'],
           fontC: colorToHexColor.Black,
-          outlineC: colorToHexColor[d.color ? (d.shape === 'Line' ? d.color : 'Black') : 'White'],
+          outlineC: colorToHexColor[outlineColor],
           height: d.shape === 'Line' ? 0.05 : (d.radius ?? 10) / 50,
           width: (d.radius ?? 10) / 50,
           cells,
@@ -502,7 +511,7 @@ export function getFPuzzlesJson(
     }
 
     getCellCluesToDraw(c).forEach((d) => {
-      if (d.text) {
+      if (d.text != null && d.text !== '') {
         const text = fPuzzle.text ?? (fPuzzle.text = []);
 
         let size: number;
@@ -559,7 +568,7 @@ export function exportPuzzle(
   title: string,
   description: string,
   to: 'FPuzzles' | 'CTC'
-) {
+): void {
   let href: string;
   switch (to) {
     case 'FPuzzles':
@@ -572,7 +581,7 @@ export function exportPuzzle(
       return;
   }
 
-  href += compressToBase64(getFPuzzlesJson(clues, gameData, title, description));
+  href += compressToBase64(getFPuzzlesJson(clues, gameData, title, htmlToText(description)));
 
   window.open(href, '_blank', 'noreferrer');
 }

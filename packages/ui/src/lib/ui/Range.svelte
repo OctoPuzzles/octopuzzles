@@ -1,13 +1,17 @@
 <script lang="ts">
-  import Label from './Label.svelte';
+  import DualRange from './DualRange.svelte';
 
   export let value: number;
-  export let label: string;
   export let id: string;
   export let min: number;
   export let max: number;
   export let step = 1;
+  export let onChange: ((newValue: number) => void) | undefined = undefined;
+  export let formatter = (n: number): string => String(n);
+
+  let values = [value];
+  $: value = values[0];
+  $: onChange?.(value);
 </script>
 
-<Label {id} class="mb-0">{label}</Label>
-<input type="range" {id} name={id} {min} {max} {step} bind:value on:change class="w-full" />
+<DualRange {...$$props} {step} {min} {max} {id} bind:values {formatter} />

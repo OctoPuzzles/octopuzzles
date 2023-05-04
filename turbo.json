@@ -21,6 +21,10 @@
       "cache": false,
       "persistent": true
     },
+    "storybook": {
+      "cache": false,
+      "persistent": true
+    },
     "isolate": {
       "cache": false,
       "persistent": true

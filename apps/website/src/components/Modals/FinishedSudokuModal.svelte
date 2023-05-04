@@ -1,8 +1,15 @@
 <script lang="ts">
-  import { FacebookLink, Input, RedditLink, TwitterLink, WhatsAppLink } from '@octopuzzles/ui';
+  import {
+    FacebookLink,
+    Input,
+    RedditLink,
+    TwitterLink,
+    WhatsAppLink,
+    Button,
+    Modal
+  } from '@octopuzzles/ui';
   import ClipboardText from 'phosphor-svelte/lib/ClipboardText/ClipboardText.svelte';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
-  import { Button, Modal } from '@octopuzzles/ui';
   import { getUserSolution } from '@octopuzzles/sudoku-utils';
   import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
 
@@ -15,14 +22,14 @@
   export let gameData: GameHistoryStep;
 
   let solutionCodeKey = '';
-  let solutionCode = '';
 
-  function generateSolutionCode(): void {
+  function generateSolutionCode(): string {
     const solution = getUserSolution({
       givens: clues.givens,
       values: gameData.cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
     });
-    solutionCode = '';
+
+    let solutionCode = '';
     solutionCodeKey.split(';').forEach((k) => {
       if (k[0] === 'R') {
         const row = parseInt(k.substring(1)) - 1;
@@ -40,15 +47,17 @@
         }
       }
     });
+
+    return solutionCode;
   }
 
-  const copySolutionCode = async () => {
+  async function copySolutionCode(): Promise<void> {
     try {
-      await navigator.clipboard.writeText(solutionCode);
+      await navigator.clipboard.writeText(generateSolutionCode());
     } catch (err) {
       console.error('Failed to copy solution code: ', err);
     }
-  };
+  }
 </script>
 
 <Modal bind:isOpen let:close>
@@ -57,12 +66,7 @@
     <p class="text-center text-lg">You finished the puzzle!</p>
 
     <div class="flex space-x-2 mx-auto my-4">
-      <Input
-        label="Solution Code:"
-        bind:value={solutionCodeKey}
-        placeholder="e.g. R1;C1"
-        on:input={generateSolutionCode}
-      />
+      <Input label="Solution Code:" bind:value={solutionCodeKey} placeholder="e.g. R1;C1" />
       <button title="Copy code to clipboard" on:click={copySolutionCode}
         ><ClipboardText size={24} /></button
       >

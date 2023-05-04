@@ -23,8 +23,10 @@
 
     const currentCellValues = get(gameHistory.getValue('cellValues'));
     const newCellValues = deepCopy(currentCellValues);
-    if (newColor === undefined) {
-      const clearAllGameCells = positions.every((p) => !currentCellValues[p.row][p.column].colors);
+    if (newColor == null) {
+      const clearAllGameCells = positions.every(
+        (p) => currentCellValues[p.row][p.column].colors == null
+      );
       if (clearAllGameCells) {
         // completely clear the selected cells
         gameHistory.clearCells(positions);
@@ -36,7 +38,7 @@
         });
       }
     } else {
-      let allCellsHasColor = positions.every((p) =>
+      const allCellsHasColor = positions.every((p) =>
         currentCellValues[p.row][p.column].colors?.includes(newColor)
       );
       if (!allCellsHasColor) {
@@ -45,10 +47,9 @@
           const colors = currentCellValues[p.row][p.column].colors;
           if (colors) {
             if (!colors.includes(newColor)) {
-              newCellValues[p.row][p.column].colors = [...colors, newColor]
-                .map((c) => Colors.indexOf(c))
-                .sort()
-                .map((n) => Colors[n]);
+              newCellValues[p.row][p.column].colors = [...colors, newColor].sort(
+                (a, b) => Colors.indexOf(a) - Colors.indexOf(b)
+              );
             }
           } else {
             newCellValues[p.row][p.column].colors = [newColor];

@@ -11,7 +11,7 @@
     {#each cellValues as cells, row}
       {#each cells as cell, column}
         {@const centermarks = cell.centermarks}
-        {#if centermarks && !givens[row][column] && !cell.digits}
+        {#if centermarks != null && givens[row][column] === '' && cell.digits == null}
           <text
             x={CELL_SIZE * (column + 0.5)}
             y={CELL_SIZE * (row + 0.55)}
