@@ -30,7 +30,7 @@
         {@const val = digits.join('')}
         <text
           x={CELL_SIZE * (column + 0.5)}
-          y={CELL_SIZE * (row + 0.5)}
+          y={CELL_SIZE * (row + 0.55)}
           dominant-baseline="middle"
           class={classNames(
             'fill-current text-4xl textanchor-middle',
