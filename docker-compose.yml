@@ -22,6 +22,20 @@ services:
       timeout: 5s
       retries: 15
 
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    container_name: surrealdb
+    environment:
+      SURREAL_STRICT: true
+      SURREAL_USER: ${SURREAL_USER:-user}
+      SURREAL_PASS: ${SURREAL_PASS:-pass}
+    restart: always
+    command: start file:/data/database.db
+    ports:
+      - 8000:8000
+    volumes:
+      - ./data:/data
+
 networks:
   dev_network:
     name: dev_network
