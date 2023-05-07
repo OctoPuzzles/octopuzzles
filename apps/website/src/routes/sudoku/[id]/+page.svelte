@@ -12,6 +12,7 @@
   import { page } from '$app/stores';
   import ExportButton from '$components/ExportButton.svelte';
   import { trpc } from '$lib/trpc/client';
+  import { formatTime } from '@octopuzzles/utils';
 
   export let data: PageData;
 
@@ -29,11 +30,6 @@
   let timer: ReturnType<typeof setInterval>;
 
   $: t = Math.floor((now - start) / 1000);
-
-  $: seconds = `0${t % 60}`.slice(-2);
-  $: minutes = `0${Math.floor(t / 60) % 60}`.slice(-2);
-  $: hours = t >= 3600 ? `0${Math.floor(t / 3600) % 24}`.slice(-2) + ':' : '';
-  $: days = t >= 86400 ? Math.floor(t / 86400) + 'd ' : '';
 
   // When the page is not visible, the timer should not run, but it should also not stop, but be incremented by the number of seconds the user was off screen
   function handleVisibilityChange(): void {
@@ -87,8 +83,7 @@
         {data.sudoku.title}
       </h1>
       <span>
-        {days}
-        {hours}{minutes}:{seconds}
+        {formatTime(t)}
       </span>
     </div>
   </div>
@@ -130,7 +125,7 @@
   bind:isOpen={showFinishedSudokuModal}
   {sudokuId}
   {takeScreenshot}
-  finishTime={`${days}${hours}${minutes}:${seconds}`}
+  finishTime={formatTime(t)}
   {clues}
   {gameData}
 />

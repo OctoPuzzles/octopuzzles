@@ -138,7 +138,14 @@ export const sudokus = t.router({
             })
           : null;
 
-      return sudoku != null ? { ...sudoku, userVote } : null;
+      const stats =
+        sudoku != null && userId != null
+          ? await ctx.prisma.userStats.findUnique({
+              where: { uniqueKey: { sudokuId: sudoku?.id, userId } }
+            })
+          : null;
+
+      return sudoku != null ? { ...sudoku, userVote, stats } : null;
     }),
   delete: t.procedure
     .input(

@@ -9,7 +9,14 @@
     HTMLContent
   } from '@octopuzzles/ui';
   import { trpc } from '$lib/trpc/client';
-  import type { Label, Vote, FrontendUser, Sudoku, SudokuStats } from '@octopuzzles/models';
+  import type {
+    Label,
+    Vote,
+    FrontendUser,
+    Sudoku,
+    SudokuStats,
+    UserStats
+  } from '@octopuzzles/models';
   import classNames from 'classnames';
   import { formatDistanceToNowStrict } from 'date-fns';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
@@ -17,11 +24,13 @@
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
   import { page } from '$app/stores';
   import { getStats } from '@octopuzzles/sudoku-utils';
+  import { formatTime } from '@octopuzzles/utils';
 
   export let sudoku: Sudoku & {
     user?: FrontendUser | null;
     userVote?: Vote | null;
     userStats?: SudokuStats;
+    stats?: UserStats | null;
     labels: Label[];
   };
   export let takeScreenshot: () => void;
@@ -99,6 +108,13 @@
             {#if sudoku.publicSince == null}
               -
               <span class="text-orange-500">NOT PUBLIC</span>
+            {/if}
+          </p>
+          <p>
+            {#if sudoku.stats?.solvedOn != null}
+              - Solved {formatDistanceToNowStrict(sudoku.stats?.solvedOn)} ago in {formatTime(
+                sudoku.stats?.solveTime ?? 0
+              )}
             {/if}
           </p>
           <p>
