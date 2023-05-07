@@ -34,23 +34,24 @@
 
   $: variantClasses = {
     primary: classNames('border-transparent', {
-      'bg-orange-500 hover:bg-orange-400 active:bg-orange-600': !faded,
-      'bg-gray-300': faded
-    }),
-    secondary: classNames('border-transparent', {
-      'bg-blue-500 hover:bg-blue-400 active:bg-blue-800 text-white': !faded,
+      'bg-orange-500 hover:bg-orange-400 active:bg-orange-600 text-white': !faded,
       'bg-gray-100 text-gray-500 border-gray-300': faded
     }),
-    default: classNames('border-gray-300 font-medium', {
-      'text-gray-700 bg-white hover:bg-gray-100 active:text-gray-700 active:bg-gray-100': !faded,
+    secondary: classNames('border-transparent', {
+      'bg-blue-500 hover:bg-blue-400 active:bg-blue-600 text-white': !faded,
+      'bg-gray-100 text-gray-500 border-gray-300': faded
+    }),
+    default: classNames('border-gray-300', {
+      'text-gray-700 bg-transparent hover:bg-gray-100 active:text-gray-700 active:bg-gray-200':
+        !faded,
       'bg-gray-100 text-gray-500': faded
     }),
     danger: classNames('border-transparent text-white', {
-      'bg-red-600 hover:bg-red-500 active:bg-red-700': !faded,
-      'bg-gray-100 text-gray-500': faded
+      'bg-red-500 hover:bg-red-400 active:bg-red-600': !faded,
+      'bg-gray-100 !text-gray-700': faded
     }),
     subtle: classNames('border-transparent bg-none text-gray-600', {
-      'hover:text-gray-700 hover:bg-gray-200': !faded
+      'hover:text-gray-700 hover:bg-gray-200 active:bg-gray-300': !faded
     })
   };
 </script>

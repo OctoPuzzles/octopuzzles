@@ -13,6 +13,7 @@
     "preview": "turbo run preview",
     "dev": "turbo run dev",
     "isolate": "turbo run isolate",
+    "storybook": "turbo run storybook",
     "lint": "turbo run lint",
     "check": "turbo run check",
     "format": "prettier --write .",
@@ -28,7 +29,7 @@
   "devDependencies": {
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
-    "turbo": "latest"
+    "turbo": "1.8.3"
   },
   "packageManager": "npm@8.12.1"
 }
