@@ -9,17 +9,19 @@
     HTMLContent
   } from '@octopuzzles/ui';
   import { trpc } from '$lib/trpc/client';
-  import type { Label, Vote, User, Sudoku } from '@octopuzzles/models';
+  import type { Label, Vote, FrontendUser, Sudoku, SudokuStats } from '@octopuzzles/models';
   import classNames from 'classnames';
   import { formatDistanceToNowStrict } from 'date-fns';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
   import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
   import { page } from '$app/stores';
+  import { getStats } from '@octopuzzles/sudoku-utils';
 
   export let sudoku: Sudoku & {
-    user?: Pick<User, 'id' | 'username' | 'role'> | null;
+    user?: FrontendUser | null;
     userVote?: Vote | null;
+    userStats?: SudokuStats;
     labels: Label[];
   };
   export let takeScreenshot: () => void;
@@ -27,6 +29,8 @@
   $: pointsWithoutUserVote = (sudoku.points ?? 0) - (sudoku.userVote?.value ?? 0);
 
   let userVote = sudoku.userVote == null || sudoku.userVote.value === 0 ? 0 : sudoku.userVote.value;
+
+  $: stats = getStats(sudoku?.userStats);
 
   async function handleVote(value: 1 | -1): Promise<void> {
     if (sudoku.publicSince) {
@@ -98,12 +102,10 @@
             {/if}
           </p>
           <p>
-            -
-            {#if sudoku.difficulty != null}
-              Difficulty: {sudoku.difficulty} / 5
-            {:else}
-              No difficulty
-            {/if}
+            - Views: {stats.viewCount} - Solves: {stats.solveCount} - Difficulty: {sudoku.difficulty !=
+              null && stats.solveCount < 10
+              ? '(' + sudoku.difficulty + ')'
+              : stats.userDifficulty ?? '-'} / 5
           </p>
         </div>
         {#if sudoku.labels}

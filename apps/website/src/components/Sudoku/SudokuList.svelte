@@ -4,11 +4,16 @@
   import { Button, Spinner, PuzzleLabel } from '@octopuzzles/ui';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
   import NotePencil from 'phosphor-svelte/lib/NotePencil/NotePencil.svelte';
-  import type { User, Sudoku, Label } from '@octopuzzles/models';
+  import type { FrontendUser, Sudoku, Label, SudokuStats } from '@octopuzzles/models';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
+  import { getStats } from '@octopuzzles/sudoku-utils';
 
   export let sudokus:
-    | (Sudoku & { user?: Pick<User, 'id' | 'username' | 'role'>; labels: Label[] })[]
+    | (Sudoku & {
+        user?: FrontendUser;
+        labels: Label[];
+        userStats?: SudokuStats;
+      })[]
     | null;
   export let hasNextPage: boolean;
   export let loading: boolean;
@@ -27,6 +32,7 @@
   >
     {#each sudokus as sudoku (sudoku.id)}
       {#if sudoku}
+        {@const { viewCount, solveCount, userDifficulty } = getStats(sudoku.userStats)}
         <a
           class="shadow-md items-center col-span-1 flex flex-col border rounded-md overflow-hidden cursor-pointer"
           href="/sudoku/{sudoku.id}"
@@ -55,13 +61,28 @@
                   {:else}
                     <p class="text-orange-500">Not public</p>
                   {/if}
+                </div>
+                <div class="flex text-sm text-gray-500">
+                  <p class="">
+                    Views: {viewCount}
+                  </p>
                   <span class="mx-1">•</span>
                   <p class="">
-                    {sudoku.points ?? 0} upvote{Math.abs(sudoku.points) !== 1 ? 's' : ''}
+                    Solves: {solveCount}
                   </p>
-                  {#if sudoku.difficulty != null}
+                  <span class="mx-1">•</span>
+                  <p class="">
+                    Votes: {sudoku.points ?? 0}
+                  </p>
+                  {#if sudoku.difficulty != null || userDifficulty != null}
+                    {@const difficulty =
+                      sudoku.difficulty != null && solveCount < 10
+                        ? '(' + sudoku.difficulty + ')'
+                        : userDifficulty ?? '-'}
                     <span class="mx-1">•</span>
-                    <p title="{sudoku.difficulty}/5 difficulty">{sudoku.difficulty} / 5</p>
+                    <p title="Difficulty: {difficulty}/5">
+                      Difficulty: {difficulty}/5
+                    </p>
                   {/if}
                 </div>
               </div>

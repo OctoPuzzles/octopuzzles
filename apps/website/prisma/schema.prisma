@@ -147,9 +147,9 @@ model UserStats {
   userId       Int
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   lastViewedOn DateTime  @default(now())
-  bookmarked   Boolean?
   solvedOn     DateTime?
   solveTime    Int?
+  difficulty   Int?
 
   @@unique(fields: [sudokuId, userId], name: "uniqueKey")
 }

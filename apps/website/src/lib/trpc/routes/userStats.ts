@@ -51,12 +51,11 @@ export const userStats = t.router({
         data: { solvedOn: new Date(), solveTime: input.solveTime }
       });
     }),
-  bookmarked: t.procedure
-    .input(z.object({ sudokuId: z.number().int() }))
+  setDifficulty: t.procedure
+    .input(UserStatsValidator.pick({ sudokuId: true, difficulty: true }))
     .mutation(async ({ input, ctx }) => {
-      if (ctx.token == null) {
-        throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
-      }
+      if (ctx.token == null) return;
+
       const userStatsRaw = await ctx.prisma.userStats.findUnique({
         where: { uniqueKey: { sudokuId: input.sudokuId, userId: ctx.token.id } }
       });
@@ -69,7 +68,7 @@ export const userStats = t.router({
 
       return ctx.prisma.userStats.update({
         where: { uniqueKey: { sudokuId: input.sudokuId, userId: ctx.token.id } },
-        data: { bookmarked: UserStatsValidator.parse(userStatsRaw).bookmarked ?? false }
+        data: { difficulty: input.difficulty }
       });
     }),
   get: t.procedure
@@ -84,7 +83,7 @@ export const userStats = t.router({
           where: { userId: ctx.token.id, sudokuId: input.sudokuId }
         });
         const userStats: UserStats | null =
-          userStatsRaw !== null ? UserStatsValidator.parse(userStatsRaw) : null;
+          userStatsRaw != null ? UserStatsValidator.parse(userStatsRaw) : null;
         return userStats;
       }
       return null;

@@ -9,7 +9,8 @@ import {
   NewSudokuValidator,
   SolutionValidator,
   SudokuValidator,
-  UpdateSudokuValidator
+  UpdateSudokuValidator,
+  SudokuStatsValidator
 } from '@octopuzzles/models';
 import type { Sudoku } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
@@ -69,6 +70,13 @@ export const sudokus = t.router({
               username: true,
               role: true
             }
+          },
+          userStats: {
+            select: {
+              lastViewedOn: true,
+              solvedOn: true,
+              difficulty: true
+            }
           }
         },
         orderBy: { publicSince: 'desc' },
@@ -79,7 +87,8 @@ export const sudokus = t.router({
         .array(
           SudokuValidator.extend({
             labels: z.array(LabelValidator),
-            user: FrontendUserValidator
+            user: FrontendUserValidator,
+            userStats: SudokuStatsValidator
           })
         )
         .parse(rawSudokus);
@@ -104,14 +113,22 @@ export const sudokus = t.router({
         where: { id: input.id },
         include: {
           user: { select: { id: true, username: true, role: true } },
-          labels: true
+          labels: true,
+          userStats: {
+            select: {
+              lastViewedOn: true,
+              solvedOn: true,
+              difficulty: true
+            }
+          }
         }
       });
       if (sudokuRaw == null) return null;
 
       const sudoku = SudokuValidator.extend({
         user: FrontendUserValidator,
-        labels: z.array(LabelValidator)
+        labels: z.array(LabelValidator),
+        userStats: SudokuStatsValidator
       }).parse(sudokuRaw);
 
       const userVote =

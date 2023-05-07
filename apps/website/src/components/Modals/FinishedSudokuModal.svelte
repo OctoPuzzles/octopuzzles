@@ -6,12 +6,15 @@
     TwitterLink,
     WhatsAppLink,
     Button,
-    Modal
+    Modal,
+    Range
   } from '@octopuzzles/ui';
   import ClipboardText from 'phosphor-svelte/lib/ClipboardText/ClipboardText.svelte';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
   import { getUserSolution } from '@octopuzzles/sudoku-utils';
   import type { EditorHistoryStep, GameHistoryStep } from '@octopuzzles/models';
+  import { trpc } from '$lib/trpc/client';
+  import { page } from '$app/stores';
 
   export let isOpen: boolean;
   export let sudokuId: number;
@@ -21,6 +24,7 @@
   export let clues: EditorHistoryStep;
   export let gameData: GameHistoryStep;
 
+  let difficulty = 0;
   let solutionCodeKey = '';
 
   function generateSolutionCode(): string {
@@ -65,6 +69,21 @@
     <h1 class="text-3xl mb-2 text-center">Congratulations!</h1>
     <p class="text-center text-lg">You finished the puzzle!</p>
 
+    <div class="mt-4 inline-block mb-4">
+      <p>Difficulty:</p>
+      <div class="w-96 ml-4">
+        <Range
+          id="difficulty"
+          min={0}
+          max={5}
+          formatter={(v) => (v === 0 ? 'None' : String(v))}
+          bind:value={difficulty}
+          all="label"
+          pips
+        />
+      </div>
+    </div>
+
     <div class="flex space-x-2 mx-auto my-4">
       <Input label="Solution Code:" bind:value={solutionCodeKey} placeholder="e.g. R1;C1" />
       <button title="Copy code to clipboard" on:click={copySolutionCode}
@@ -98,6 +117,16 @@
       >
     </div>
 
-    <Button variant="primary" class="w-full" on:click={close}>Okay</Button>
+    <Button
+      variant="primary"
+      class="w-full"
+      on:click={() => {
+        if (difficulty !== 0) {
+          trpc($page).userStats.setDifficulty.mutate({ sudokuId, difficulty });
+        }
+
+        close();
+      }}>Okay</Button
+    >
   </div>
 </Modal>

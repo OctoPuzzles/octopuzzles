@@ -11,9 +11,9 @@ CREATE TABLE "UserStats" (
     "sudokuId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
     "lastViewedOn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "bookmarked" BOOLEAN,
     "solvedOn" TIMESTAMP(3),
-    "solveTime" INTEGER
+    "solveTime" INTEGER,
+    "difficulty" INTEGER
 );
 
 -- CreateIndex
