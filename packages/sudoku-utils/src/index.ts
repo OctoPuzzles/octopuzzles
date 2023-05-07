@@ -5,4 +5,3 @@ export * from './utils/cell-clues';
 export * from './utils/border-clues';
 export * from './utils/defaults';
 export * from './utils/solution';
-export * from './utils/getStats';

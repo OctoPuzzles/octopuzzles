@@ -9,8 +9,7 @@ import {
   NewSudokuValidator,
   SolutionValidator,
   SudokuValidator,
-  UpdateSudokuValidator,
-  SudokuStatsValidator
+  UpdateSudokuValidator
 } from '@octopuzzles/models';
 import type { Sudoku } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
@@ -70,13 +69,6 @@ export const sudokus = t.router({
               username: true,
               role: true
             }
-          },
-          userStats: {
-            select: {
-              lastViewedOn: true,
-              solvedOn: true,
-              difficulty: true
-            }
           }
         },
         orderBy: { publicSince: 'desc' },
@@ -87,8 +79,7 @@ export const sudokus = t.router({
         .array(
           SudokuValidator.extend({
             labels: z.array(LabelValidator),
-            user: FrontendUserValidator,
-            userStats: SudokuStatsValidator
+            user: FrontendUserValidator
           })
         )
         .parse(rawSudokus);
@@ -113,22 +104,14 @@ export const sudokus = t.router({
         where: { id: input.id },
         include: {
           user: { select: { id: true, username: true, role: true } },
-          labels: true,
-          userStats: {
-            select: {
-              lastViewedOn: true,
-              solvedOn: true,
-              difficulty: true
-            }
-          }
+          labels: true
         }
       });
       if (sudokuRaw == null) return null;
 
       const sudoku = SudokuValidator.extend({
         user: FrontendUserValidator,
-        labels: z.array(LabelValidator),
-        userStats: SudokuStatsValidator
+        labels: z.array(LabelValidator)
       }).parse(sudokuRaw);
 
       const userVote =
@@ -138,14 +121,14 @@ export const sudokus = t.router({
             })
           : null;
 
-      const stats =
+      const userStats =
         sudoku != null && userId != null
           ? await ctx.prisma.userStats.findUnique({
               where: { uniqueKey: { sudokuId: sudoku?.id, userId } }
             })
           : null;
 
-      return sudoku != null ? { ...sudoku, userVote, stats } : null;
+      return sudoku != null ? { ...sudoku, userVote, userStats } : null;
     }),
   delete: t.procedure
     .input(

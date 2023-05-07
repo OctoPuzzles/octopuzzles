@@ -9,28 +9,19 @@
     HTMLContent
   } from '@octopuzzles/ui';
   import { trpc } from '$lib/trpc/client';
-  import type {
-    Label,
-    Vote,
-    FrontendUser,
-    Sudoku,
-    SudokuStats,
-    UserStats
-  } from '@octopuzzles/models';
+  import type { Label, Vote, FrontendUser, Sudoku, UserStats } from '@octopuzzles/models';
   import classNames from 'classnames';
   import { formatDistanceToNowStrict } from 'date-fns';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
   import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
   import { page } from '$app/stores';
-  import { getStats } from '@octopuzzles/sudoku-utils';
   import { formatTime } from '@octopuzzles/utils';
 
   export let sudoku: Sudoku & {
     user?: FrontendUser | null;
     userVote?: Vote | null;
-    userStats?: SudokuStats;
-    stats?: UserStats | null;
+    userStats?: UserStats | null;
     labels: Label[];
   };
   export let takeScreenshot: () => void;
@@ -38,8 +29,6 @@
   $: pointsWithoutUserVote = (sudoku.points ?? 0) - (sudoku.userVote?.value ?? 0);
 
   let userVote = sudoku.userVote == null || sudoku.userVote.value === 0 ? 0 : sudoku.userVote.value;
-
-  $: stats = getStats(sudoku?.userStats);
 
   async function handleVote(value: 1 | -1): Promise<void> {
     if (sudoku.publicSince) {
@@ -111,17 +100,17 @@
             {/if}
           </p>
           <p>
-            {#if sudoku.stats?.solvedOn != null}
-              - Solved {formatDistanceToNowStrict(sudoku.stats?.solvedOn)} ago in {formatTime(
-                sudoku.stats?.solveTime ?? 0
+            {#if sudoku.userStats?.solvedOn != null}
+              - Solved {formatDistanceToNowStrict(sudoku.userStats?.solvedOn)} ago in {formatTime(
+                sudoku.userStats?.solveTime ?? 0
               )}
             {/if}
           </p>
           <p>
-            - Views: {stats.viewCount} - Solves: {stats.solveCount} - Difficulty: {sudoku.difficulty !=
-              null && stats.solveCount < 10
+            - Views: {sudoku.views} - Solves: {sudoku.solves} - Difficulty: {sudoku.difficulty !=
+              null && sudoku.solves < 10
               ? '(' + sudoku.difficulty + ')'
-              : stats.userDifficulty ?? '-'} / 5
+              : sudoku.userDifficulty ?? '-'} / 5
           </p>
         </div>
         {#if sudoku.labels}

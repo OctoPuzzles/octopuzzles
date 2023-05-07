@@ -4,15 +4,13 @@
   import { Button, Spinner, PuzzleLabel } from '@octopuzzles/ui';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
   import NotePencil from 'phosphor-svelte/lib/NotePencil/NotePencil.svelte';
-  import type { FrontendUser, Sudoku, Label, SudokuStats } from '@octopuzzles/models';
+  import type { FrontendUser, Sudoku, Label } from '@octopuzzles/models';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
-  import { getStats } from '@octopuzzles/sudoku-utils';
 
   export let sudokus:
     | (Sudoku & {
         user?: FrontendUser;
         labels: Label[];
-        userStats?: SudokuStats;
       })[]
     | null;
   export let hasNextPage: boolean;
@@ -32,7 +30,6 @@
   >
     {#each sudokus as sudoku (sudoku.id)}
       {#if sudoku}
-        {@const { viewCount, solveCount, userDifficulty } = getStats(sudoku.userStats)}
         <a
           class="shadow-md items-center col-span-1 flex flex-col border rounded-md overflow-hidden cursor-pointer"
           href="/sudoku/{sudoku.id}"
@@ -64,21 +61,21 @@
                 </div>
                 <div class="flex text-sm text-gray-500">
                   <p class="">
-                    Views: {viewCount}
+                    Views: {sudoku.views}
                   </p>
                   <span class="mx-1">•</span>
                   <p class="">
-                    Solves: {solveCount}
+                    Solves: {sudoku.solves}
                   </p>
                   <span class="mx-1">•</span>
                   <p class="">
                     Votes: {sudoku.points ?? 0}
                   </p>
-                  {#if sudoku.difficulty != null || userDifficulty != null}
+                  {#if sudoku.difficulty != null || sudoku.userDifficulty != null}
                     {@const difficulty =
-                      sudoku.difficulty != null && solveCount < 10
+                      sudoku.difficulty != null && sudoku.solves < 10
                         ? '(' + sudoku.difficulty + ')'
-                        : userDifficulty ?? '-'}
+                        : sudoku.userDifficulty ?? '-'}
                     <span class="mx-1">•</span>
                     <p title="Difficulty: {difficulty}/5">
                       Difficulty: {difficulty}/5

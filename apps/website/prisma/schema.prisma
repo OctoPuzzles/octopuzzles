@@ -61,39 +61,42 @@ model Token {
 }
 
 model Sudoku {
-  id            Int           @id @default(autoincrement())
-  userId        Int
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  publicSince   DateTime?
-  title         String
-  description   String
-  points        Int
-  rank          Float
-  difficulty    Int?
-  rows          Int
-  columns       Int
-  marginTop     Int?
-  marginRight   Int?
-  marginBottom  Int?
-  marginLeft    Int?
-  cells         Json?
-  givens        Json?
-  colors        Json?
-  regions       Json?
-  extendedcages Json?
-  paths         Json?
-  borderclues   Json?
-  cellclues     Json?
-  logic         Json?
-  solution      Json?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  labels        Label[]
-  votes         Vote[]
-  walkthroughs  Walkthrough[]
-  comments      Comment[]
-  savedGames    SavedGame[]
-  userStats     UserStats[]
+  id             Int           @id @default(autoincrement())
+  userId         Int
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publicSince    DateTime?
+  title          String
+  description    String
+  views          Int           @default(0)
+  solves         Int           @default(0)
+  points         Int
+  rank           Float
+  difficulty     Int?
+  userDifficulty Float?
+  rows           Int
+  columns        Int
+  marginTop      Int?
+  marginRight    Int?
+  marginBottom   Int?
+  marginLeft     Int?
+  cells          Json?
+  givens         Json?
+  colors         Json?
+  regions        Json?
+  extendedcages  Json?
+  paths          Json?
+  borderclues    Json?
+  cellclues      Json?
+  logic          Json?
+  solution       Json?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  labels         Label[]
+  votes          Vote[]
+  walkthroughs   Walkthrough[]
+  comments       Comment[]
+  savedGames     SavedGame[]
+  userStats      UserStats[]
 
   @@unique([userId, title])
 }

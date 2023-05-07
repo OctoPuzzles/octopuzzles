@@ -9,12 +9,3 @@ export const UserStatsValidator = z.object({
   difficulty: z.number().int().nullable()
 });
 export type UserStats = z.infer<typeof UserStatsValidator>;
-
-export const SudokuStatsValidator = z.array(
-  z.object({
-    lastViewedOn: z.date(),
-    solvedOn: z.date().nullable(),
-    difficulty: z.number().int().nullable()
-  })
-);
-export type SudokuStats = z.infer<typeof SudokuStatsValidator>;
