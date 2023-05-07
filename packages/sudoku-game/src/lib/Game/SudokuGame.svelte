@@ -39,6 +39,7 @@
   export let clues: EditorHistoryStep;
 
   export let gameData: GameHistoryStep;
+  export let initialGameData: GameHistoryStep;
 
   export let walkthrough: WalkthroughStep[];
 
@@ -53,6 +54,8 @@
 
   onMount(() => {
     gameHistory.clues.set(clues);
+    gameHistory.reset(initialGameData);
+    storeGameData.subscribe((d) => (gameData = d));
   });
 
   onDestroy(() => {
@@ -61,9 +64,8 @@
 
   const storeGameData = gameHistory.subscribeToInputs();
 
-  $: gameData = $storeGameData;
-
   $: gameHistory.clues.set(clues);
+  $: gameHistory.reset(initialGameData);
 
   $: scanner.configure(scannerSettings);
 

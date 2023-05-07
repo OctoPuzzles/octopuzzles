@@ -21,7 +21,8 @@ export const savedGames = t.router({
           uniqueKey: { sudokuId: input.sudokuId, userId: ctx.token.id }
         },
         update: {
-          gameData: input.gameData
+          gameData: input.gameData,
+          savedOn: new Date()
         },
         create: {
           sudokuId: input.sudokuId,
@@ -44,7 +45,7 @@ export const savedGames = t.router({
           where: { userId: ctx.token.id, sudokuId: input.sudokuId }
         });
         const savedGame: SavedGame | null =
-          savedGameRaw !== null ? SavedGameValidator.parse(savedGameRaw) : null;
+          savedGameRaw != null ? SavedGameValidator.parse(savedGameRaw) : null;
         return savedGame;
       }
       return null;

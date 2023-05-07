@@ -7,6 +7,7 @@ import {
   FrontendUserValidator,
   LabelValidator,
   NewSudokuValidator,
+  SavedGameValidator,
   SolutionValidator,
   SudokuValidator,
   UpdateSudokuValidator
@@ -31,6 +32,8 @@ export const sudokus = t.router({
       })
     )
     .query(async ({ input, ctx }) => {
+      const userId = ctx.token?.id;
+
       const limit = input.limit ?? 24;
       const [lowerRange, upperRange] =
         input.difficultyRange == null ? [0, 5] : input.difficultyRange.sort();
@@ -69,6 +72,9 @@ export const sudokus = t.router({
               username: true,
               role: true
             }
+          },
+          savedGames: {
+            where: { userId }
           }
         },
         orderBy: { publicSince: 'desc' },
@@ -79,7 +85,65 @@ export const sudokus = t.router({
         .array(
           SudokuValidator.extend({
             labels: z.array(LabelValidator),
-            user: FrontendUserValidator
+            user: FrontendUserValidator,
+            savedGames: z.array(SavedGameValidator)
+          })
+        )
+        .parse(rawSudokus);
+
+      let nextCursor: typeof input.cursor | null = null;
+      if (sudokus.length > limit) {
+        const nextItem = sudokus.pop();
+        nextCursor = nextItem?.publicSince ?? null;
+      }
+
+      return { sudokus, nextCursor };
+    }),
+  saved: t.procedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).optional(),
+        cursor: z.date().optional()
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      if (ctx.token == null) return { sudokus: [], nextCursor: null };
+
+      const userId = ctx.token.id;
+
+      const limit = input.limit ?? 24;
+
+      const rawSudokus = await ctx.prisma.sudoku.findMany({
+        where: {
+          savedGames: {
+            some: {
+              userId
+            }
+          }
+        },
+        include: {
+          labels: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              role: true
+            }
+          },
+          savedGames: {
+            where: { userId }
+          }
+        },
+        orderBy: { publicSince: 'desc' },
+        take: limit + 1
+      });
+
+      const sudokus = z
+        .array(
+          SudokuValidator.extend({
+            labels: z.array(LabelValidator),
+            user: FrontendUserValidator,
+            savedGames: z.array(SavedGameValidator)
           })
         )
         .parse(rawSudokus);
@@ -104,14 +168,18 @@ export const sudokus = t.router({
         where: { id: input.id },
         include: {
           user: { select: { id: true, username: true, role: true } },
-          labels: true
+          labels: true,
+          savedGames: {
+            where: { userId }
+          }
         }
       });
       if (sudokuRaw == null) return null;
 
       const sudoku = SudokuValidator.extend({
         user: FrontendUserValidator,
-        labels: z.array(LabelValidator)
+        labels: z.array(LabelValidator),
+        savedGames: z.array(SavedGameValidator)
       }).parse(sudokuRaw);
 
       const userVote =
@@ -149,7 +217,9 @@ export const sudokus = t.router({
       }
       await ctx.prisma.$transaction([
         ctx.prisma.sudoku.delete({ where: { id: input.id } }),
-        ctx.prisma.vote.deleteMany({ where: { sudokuId: sudoku?.id } })
+        ctx.prisma.vote.deleteMany({ where: { sudokuId: sudoku?.id } }),
+        ctx.prisma.userStats.deleteMany({ where: { sudokuId: sudoku?.id } }),
+        ctx.prisma.savedGame.deleteMany({ where: { sudokuId: sudoku?.id } })
       ]);
 
       return sudoku;
@@ -203,6 +273,8 @@ export const sudokus = t.router({
 
         if (shouldDeleteVotes) {
           await tx.vote.deleteMany({ where: { sudokuId: sudoku.id } });
+          await tx.userStats.deleteMany({ where: { sudokuId: sudoku.id } });
+          await tx.savedGame.deleteMany({ where: { sudokuId: sudoku.id } });
         }
       });
 

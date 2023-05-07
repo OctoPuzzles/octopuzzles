@@ -13,6 +13,7 @@
   import ExportButton from '$components/ExportButton.svelte';
   import { trpc } from '$lib/trpc/client';
   import { formatTime } from '@octopuzzles/utils';
+  import { NotificationModal } from '@octopuzzles/ui';
 
   export let data: PageData;
 
@@ -21,7 +22,7 @@
   const description = data.sudoku.description;
   let walkthrough = data.walkthrough?.steps ?? [];
   const clues = fillCluesWithDefaults(data.sudoku);
-  let gameData = data.gameData ?? defaultGameData(data.sudoku.dimensions);
+  let gameData = data.initialGameData ?? defaultGameData(data.sudoku.dimensions);
   const scannerSettings = me.settings;
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
@@ -60,9 +61,11 @@
 
   async function saveProgress(): Promise<void> {
     await trpc($page).savedGames.createOrUpdate.mutate({ sudokuId, gameData });
+    savedProgress = true;
   }
 
   let showFinishedSudokuModal = false;
+  let savedProgress = false;
 </script>
 
 <svelte:head>
@@ -97,7 +100,7 @@
 
     const trpcClient = trpc($page);
     trpcClient.userStats.solved.mutate({ sudokuId, solveTime: t });
-    if (data?.gameData) {
+    if (data?.initialGameData) {
       trpcClient.savedGames.delete.mutate({ sudokuId });
     }
 
@@ -107,6 +110,7 @@
   bind:walkthrough
   {clues}
   bind:gameData
+  initialGameData={data?.initialGameData}
 >
   <button
     title="Save for later"
@@ -129,3 +133,5 @@
   {clues}
   {gameData}
 />
+
+<NotificationModal bind:isOpen={savedProgress} notificationMessage={'Saved for later'} />

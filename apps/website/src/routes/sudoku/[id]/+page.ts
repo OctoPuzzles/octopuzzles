@@ -8,10 +8,9 @@ export const load: PageLoad = async (event) => {
   const trpcClient = trpc(event);
   const sudokuId = parseInt(event.params.id);
   const dataParam = event.url.searchParams.get('data');
-  const [sudoku, walkthrough, savedGame] = await Promise.all([
+  const [sudoku, walkthrough] = await Promise.all([
     trpcClient.sudokus.get.query({ id: sudokuId }),
     trpcClient.walkthroughs.get.query({ sudokuId }),
-    trpcClient.savedGames.get.query({ sudokuId }),
     trpcClient.userStats.viewed.mutate({ sudokuId })
   ]);
   if (sudoku == null) {
@@ -20,9 +19,9 @@ export const load: PageLoad = async (event) => {
   return {
     sudoku,
     walkthrough,
-    gameData:
+    initialGameData:
       dataParam != null
         ? (decompressFromBase64(dataParam.replace(/ /g, '+')) as GameData)
-        : savedGame?.gameData
+        : sudoku.savedGames?.[0]?.gameData
   };
 };

@@ -4,15 +4,17 @@
   import { Button, Spinner, PuzzleLabel } from '@octopuzzles/ui';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
   import NotePencil from 'phosphor-svelte/lib/NotePencil/NotePencil.svelte';
-  import type { FrontendUser, Sudoku, Label } from '@octopuzzles/models';
+  import type { FrontendUser, Sudoku, Label, SavedGame } from '@octopuzzles/models';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
 
   export let sudokus:
     | (Sudoku & {
         user?: FrontendUser;
         labels: Label[];
+        savedGames?: SavedGame[];
       })[]
     | null;
+  export let userId: number | undefined = undefined;
   export let hasNextPage: boolean;
   export let loading: boolean;
   export let loadNextPage: () => Promise<void>;
@@ -36,7 +38,10 @@
           data-sveltekit-preload-data
         >
           <div class="h-96 w-full p-4 justify-center">
-            <SudokuDisplay clues={fillCluesWithDefaults(sudoku)} />
+            <SudokuDisplay
+              clues={fillCluesWithDefaults(sudoku)}
+              gameData={sudoku.savedGames?.[0]?.gameData}
+            />
           </div>
           <div class="h-32 bg-gray-100 w-full border-t p-2">
             <div class="flex justify-between h-20">
@@ -57,6 +62,10 @@
                     <p>{formatDistanceToNowStrict(sudoku.publicSince)} ago</p>
                   {:else}
                     <p class="text-orange-500">Not public</p>
+                  {/if}
+                  {#if sudoku.savedGames?.[0] != null}
+                    <span class="mx-1">•</span>
+                    <p>Saved {formatDistanceToNowStrict(sudoku.savedGames?.[0]?.savedOn)} ago</p>
                   {/if}
                 </div>
                 <div class="flex text-sm text-gray-500">
@@ -85,10 +94,12 @@
               </div>
               {#if deleteSudoku}
                 <div class="flex flex-col items-end justify-around">
-                  <a
-                    class="rounded-full w-7 h-7 p-1 hover:bg-gray-200"
-                    href="/sudoku/editor?id={sudoku.id}"><NotePencil size={20} /></a
-                  >
+                  {#if userId != null && sudoku.userId === userId}
+                    <a
+                      class="rounded-full w-7 h-7 p-1 hover:bg-gray-200"
+                      href="/sudoku/editor?id={sudoku.id}"><NotePencil size={20} /></a
+                    >
+                  {/if}
                   <button
                     class="rounded-full w-7 h-7 p-1 hover:text-red-500 hover:bg-red-100"
                     on:click|preventDefault={() => deleteSudoku?.(sudoku.id)}

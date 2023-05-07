@@ -1,8 +1,7 @@
 <script lang="ts">
-  import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
   import { trpc } from '$lib/trpc/client';
   import type { RouterOutputs } from '$lib/trpc/router';
-  import { Button, RichTextEditor, HTMLContent } from '@octopuzzles/ui';
+  import { Button, RichTextEditor, HTMLContent, DangerActionModal } from '@octopuzzles/ui';
   import { formatDistanceToNowStrict } from 'date-fns';
   import { page } from '$app/stores';
 

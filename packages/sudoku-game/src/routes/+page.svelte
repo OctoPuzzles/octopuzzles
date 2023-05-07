@@ -4,6 +4,7 @@
 
   let clues = defaultClues();
   let gameData = defaultGameData();
+  let initialGameData = gameData;
 </script>
 
 <SudokuGame
@@ -11,6 +12,7 @@
   scannerSettings={undefined}
   onScannerSettingsChange={console.log}
   bind:gameData
+  {initialGameData}
   walkthrough={[]}
   onDone={console.log}
 />
