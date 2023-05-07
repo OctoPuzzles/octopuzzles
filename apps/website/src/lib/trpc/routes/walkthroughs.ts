@@ -30,10 +30,10 @@ export const walkthroughs = t.router({
           s.gameData = {
             cellValues: s.step.values.map((row, i) => {
               return row.map((digit, j) => {
-                const centermarks = s.step?.centermarks[i][j] ?? '';
-                const cornermarks = s.step?.cornermarks[i][j] ?? '';
-                const colors = s.step?.colors[i][j] ?? [];
-                const note = s.step?.notes[i][j] ?? '';
+                const centermarks = s.step?.centermarks[i]?.[j] ?? '';
+                const cornermarks = s.step?.cornermarks[i]?.[j] ?? '';
+                const colors = s.step?.colors[i]?.[j] ?? [];
+                const note = s.step?.notes[i]?.[j] ?? '';
                 if (note !== '') {
                   notes.push({
                     positions: [{ row: i, column: j }],

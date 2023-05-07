@@ -16,6 +16,7 @@ import {
   type Position,
   type Digit
 } from '@octopuzzles/models';
+import { htmlToText } from 'html-to-text';
 
 export function getFPuzzlesJson(
   clues: EditorHistoryStep,
@@ -580,7 +581,7 @@ export function exportPuzzle(
       return;
   }
 
-  href += compressToBase64(getFPuzzlesJson(clues, gameData, title, description));
+  href += compressToBase64(getFPuzzlesJson(clues, gameData, title, htmlToText(description)));
 
   window.open(href, '_blank', 'noreferrer');
 }

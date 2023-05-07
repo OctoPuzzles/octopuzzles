@@ -8,7 +8,8 @@
     Select,
     ScaledSvg,
     ColorSelect,
-    Checkbox
+    Checkbox,
+    Range
   } from '@octopuzzles/ui';
   import {
     editorHistory,
@@ -303,21 +304,17 @@
     </div>
 
     <div>
-      <Label id="radius">Radius</Label>
-      <div class="flex w-full">
-        <input
-          class="w-5/6 mr-2"
-          id="radius"
-          type="range"
+      <Label id="radius">Radius {radius}:</Label>
+      <div class="block w-full">
+        <Range
+          bind:value={radius}
           min={5}
           max={100}
-          step={1}
-          bind:value={radius}
-          on:change={() => {
+          id="radius"
+          onChange={() => {
             updateSelectedClue();
           }}
         />
-        <span class="text-right w-1/6">{radius}</span>
       </div>
     </div>
 

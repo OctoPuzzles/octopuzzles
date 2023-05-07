@@ -413,14 +413,14 @@
     </div>
 
     <div>
+      <Label>Width: {width}%</Label>
       <Range
         min={1}
         max={100}
         bind:value={width}
-        label="Width: {width}%"
         id="width"
         step={1}
-        on:change={() => updateSelectedPath()}
+        onChange={() => updateSelectedPath()}
       />
     </div>
 

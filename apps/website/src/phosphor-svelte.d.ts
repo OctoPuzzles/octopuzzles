@@ -18,6 +18,7 @@ declare module 'phosphor-svelte/lib/Gear/Gear.svelte';
 declare module 'phosphor-svelte/lib/Image/Image.svelte';
 declare module 'phosphor-svelte/lib/ListBullets/ListBullets.svelte';
 declare module 'phosphor-svelte/lib/ListNumbers/ListNumbers.svelte';
+declare module 'phosphor-svelte/lib/MagnifyingGlass/MagnifyingGlass.svelte';
 declare module 'phosphor-svelte/lib/NotePencil/NotePencil.svelte';
 declare module 'phosphor-svelte/lib/Pause/Pause.svelte';
 declare module 'phosphor-svelte/lib/PersonSimpleWalk/PersonSimpleWalk.svelte';
