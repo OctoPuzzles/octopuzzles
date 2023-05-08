@@ -100,7 +100,7 @@
 
     const trpcClient = trpc($page);
     trpcClient.userStats.solved.mutate({ sudokuId, solveTime: t });
-    if (data?.initialGameData) {
+    if (data?.initialGameData != null) {
       trpcClient.savedGames.delete.mutate({ sudokuId });
     }
 

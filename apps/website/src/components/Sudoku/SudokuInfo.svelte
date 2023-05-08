@@ -107,8 +107,7 @@
             {/if}
           </p>
           <p>
-            - Views: {sudoku.views} - Solves: {sudoku.solves} - Difficulty: {sudoku.difficulty !=
-              null && sudoku.solves < 10
+            - Difficulty: {sudoku.difficulty != null && sudoku.solves < 10
               ? '(' + sudoku.difficulty + ')'
               : sudoku.userDifficulty ?? '-'} / 5
           </p>

@@ -51,7 +51,7 @@
         })
       ) ?? defaultCellValues(data.sudoku?.dimensions)
   };
-  let initialGameData = gameData;
+  const initialGameData = gameData;
   const scannerSettings = me.settings;
 
   let id = data.sudoku?.id;

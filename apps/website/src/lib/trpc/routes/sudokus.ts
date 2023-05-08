@@ -10,7 +10,9 @@ import {
   SavedGameValidator,
   SolutionValidator,
   SudokuValidator,
-  UpdateSudokuValidator
+  UpdateSudokuValidator,
+  UserStatsValidator,
+  VoteValidator
 } from '@octopuzzles/models';
 import type { Sudoku } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
@@ -75,6 +77,12 @@ export const sudokus = t.router({
           },
           savedGames: {
             where: { userId }
+          },
+          userStats: {
+            where: { userId }
+          },
+          votes: {
+            where: { userId }
           }
         },
         orderBy: { publicSince: 'desc' },
@@ -86,7 +94,9 @@ export const sudokus = t.router({
           SudokuValidator.extend({
             labels: z.array(LabelValidator),
             user: FrontendUserValidator,
-            savedGames: z.array(SavedGameValidator)
+            savedGames: z.array(SavedGameValidator),
+            userStats: z.array(UserStatsValidator),
+            votes: z.array(VoteValidator)
           })
         )
         .parse(rawSudokus);
