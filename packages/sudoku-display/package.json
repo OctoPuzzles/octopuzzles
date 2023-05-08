@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@octopuzzles/models": "*",
+    "@octopuzzles/sudoku-utils": "*",
     "@octopuzzles/utils": "*",
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/kit": "^1.15.1",

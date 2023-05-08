@@ -81,8 +81,8 @@ export type Color = z.infer<typeof ColorValidator>;
 export const Colors = ColorValidator.options;
 
 export const PositionValidator = z.object({
-  row: z.number().int(),
-  column: z.number().int()
+  row: z.number(),
+  column: z.number()
 });
 
 export type Position = z.infer<typeof PositionValidator>;
