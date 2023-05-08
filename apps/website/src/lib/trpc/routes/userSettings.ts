@@ -22,15 +22,18 @@ export const userSettings = t.router({
     if (ctx.token == null) {
       throw new TRPCError({ message: 'You are not logged in', code: 'UNAUTHORIZED' });
     }
-    try {
-      await ctx.prisma.userSettings.create({
-        data: { userId: ctx.token.id, ...input }
-      });
-    } catch (e) {
-      await ctx.prisma.userSettings.update({
-        where: { userId: ctx.token.id },
-        data: { userId: ctx.token.id, ...input }
-      });
-    }
+    await ctx.prisma.userSettings.upsert({
+      where: { userId: ctx.token.id },
+      create: {
+        userId: ctx.token.id,
+        ...input,
+        scanner: input.scanner ?? undefined
+      },
+      update: {
+        userId: ctx.token.id,
+        ...input,
+        scanner: input.scanner ?? undefined
+      }
+    });
   })
 });

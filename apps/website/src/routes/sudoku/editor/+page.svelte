@@ -297,7 +297,7 @@
   <SudokuGame
     settings={$settings}
     onSettingsChange={(newSettings) => settings.save(newSettings)}
-    bind:$walkthrough
+    bind:walkthrough={$walkthrough}
     clues={$clues}
     bind:gameData
   >
