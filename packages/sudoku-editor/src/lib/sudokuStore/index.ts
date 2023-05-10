@@ -18,7 +18,8 @@ import {
   defaultLogic,
   defaultPaths,
   defaultRegions,
-  defaultClues
+  defaultClues,
+  defaultDimensions
 } from '@octopuzzles/sudoku-utils';
 import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
@@ -129,7 +130,7 @@ function createEditorHistoryStore() {
 
   /** Reset the editor */
   function reset(startState?: Partial<EditorHistoryStep>): void {
-    const dim: Dimensions = startState?.dimensions || { rows: 9, columns: 9, margins: undefined };
+    const dim: Dimensions = startState?.dimensions || defaultDimensions;
     step.set(0);
     history.set([
       {

@@ -105,8 +105,7 @@ function createGameHistoryStore() {
     selectedCells.set([]);
     highlightedCells.set([]);
     step.set(0);
-    const dim = get(clues).dimensions;
-    history.set([startState ?? defaultGameData(dim)]);
+    history.set([startState ?? defaultGameData(get(clues)?.dimensions)]);
   }
 
   /** Clear every input-values, and colors from the specified cells in the editor */

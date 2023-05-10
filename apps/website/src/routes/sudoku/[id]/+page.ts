@@ -18,7 +18,7 @@ export const load: PageLoad = async (event) => {
   return {
     sudoku,
     walkthrough,
-    gameData:
+    initialGameData:
       dataParam != null
         ? (decompressFromBase64(dataParam.replace(/ /g, '+')) as GameData)
         : undefined
