@@ -281,7 +281,9 @@
             onMoveUp={() => reorderNote(index, 'up')}
             onMoveDown={() => reorderNote(index, 'down')}
           >
-            <p class={classNames(`text-${color !== 'NONE' ? color.toLowerCase() : 'black'}`)}>
+            <p
+              class={classNames(`text-${note.color != null ? note.color.toLowerCase() : 'black'}`)}
+            >
               Note {index + 1}
             </p>
             <!-- TODO: find some way to display the note or a snippet of it in the button
@@ -290,7 +292,7 @@
                   'overflow-hidden',
                   'text-overflow-ellipsis',
                   'white-space-nowrap',
-                  `text-${color !== 'NONE' ? color.toLowerCase() : 'black'}`
+                  `text-${note.color != null ? note.color.toLowerCase() : 'black'}`
                 )}
               >
                 {details}
