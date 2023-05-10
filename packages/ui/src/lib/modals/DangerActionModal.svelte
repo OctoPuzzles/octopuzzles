@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { default as Modal } from '$lib/ui/Modal.svelte';
-  import { default as Button } from '$lib/ui/Button.svelte';
+  import Modal from '$lib/ui/Modal.svelte';
+  import Button from '$lib/ui/Button.svelte';
 
   export let isOpen: boolean;
   export let onAccept: () => Promise<void>;
