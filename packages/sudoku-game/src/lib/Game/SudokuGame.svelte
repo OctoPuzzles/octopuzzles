@@ -39,7 +39,7 @@
   export let clues: EditorHistoryStep;
 
   export let gameData: GameHistoryStep;
-  export let initialGameData: GameHistoryStep;
+  export let initialGameData: GameHistoryStep | undefined;
 
   export let walkthrough: WalkthroughStep[];
 
