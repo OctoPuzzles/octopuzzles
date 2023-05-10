@@ -167,6 +167,8 @@ export function getCellCluesToDraw(clue: Cellclue): Cellclue[] {
   return drawClues;
 }
 
+/*Checks the inputted digits against the standard constraint logic for the cell clue
+and returns any cells that have errors*/
 export function verifyCellClue(
   cellclue: Cellclue,
   solution: CellValues,

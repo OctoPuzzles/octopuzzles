@@ -253,6 +253,8 @@ export function getPathsToDraw(path: Path): Path[] {
   return drawPaths;
 }
 
+/*Checks the inputted digits against the standard constraint logic for the path
+and returns any cells that have errors*/
 export function verifyPath(path: Path, solution: CellValues, clues: EditorHistoryStep): Position[] {
   let regionNos: Map<string, number> | null = null;
 
@@ -474,7 +476,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           });
         }
 
-        let target = NaN;
+        let target: number | null = null;
         let prevRegionNo: number | undefined = undefined;
         let total = 0;
         let skip = false;
@@ -485,7 +487,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           if (regionNo !== prevRegionNo) {
             if (prevRegionNo != null) {
               if (!skip) {
-                if (isNaN(target)) {
+                if (target == null) {
                   target = total;
                 } else if (total !== target) {
                   break;
@@ -505,7 +507,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           }
         }
 
-        isValid = isNaN(target) || (!skip && total === target);
+        isValid = target == null || (!skip && total === target);
         break;
       }
       case 'ProductSum': {

@@ -32,6 +32,8 @@ export function getValidDigits(logic: Logic, dimensions: Dimensions): Digit[] {
   );
 }
 
+/*Checks the inputted digits against the standard global constraint logic
+and returns any cells that have errors*/
 export function verifyLogic(
   logic: Logic,
   solution: CellValues,

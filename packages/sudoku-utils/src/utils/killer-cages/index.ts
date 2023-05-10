@@ -20,6 +20,8 @@ export function cageDefaults(type: CageType | null | 'CUSTOM'): {
   return { text: '', color: 'Black', uniqueDigits: type === 'Killer', nonStandard: false };
 }
 
+/*Checks the inputted digits against the standard constraint logic for the cage
+and returns any cells that have errors*/
 export function verifyCage(cage: Extendedcage, solution: CellValues): Position[] {
   let isValid = true;
 

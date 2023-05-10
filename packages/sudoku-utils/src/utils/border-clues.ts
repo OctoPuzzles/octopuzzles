@@ -93,6 +93,8 @@ export function getBorderCluesToDraw(clue: Borderclue): Borderclue[] {
   ];
 }
 
+/*Checks the inputted digits against the standard constraint logic for the border clue
+and returns any cells that have errors*/
 export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): Position[] {
   let isValid = true;
 

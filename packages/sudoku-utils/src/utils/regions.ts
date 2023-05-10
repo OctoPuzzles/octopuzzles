@@ -60,12 +60,14 @@ export function getRegionsToDraw(region: Region): Region[] {
   ];
 }
 
+/*Checks the inputted digits against the standard constraint logic for the region
+and returns any cells that have errors*/
 export function verifyRegion(
   region: Region,
   solution: CellValues,
   clues: EditorHistoryStep
 ): Position[] {
-  if (!(region.nonStandard ?? false)) {
+  if (region.nonStandard !== true) {
     switch (region.type) {
       case 'MagicSquare': {
         const n = Math.sqrt(region.positions.length);
@@ -82,7 +84,7 @@ export function verifyRegion(
             values[i].push(cell.value);
           }
         }
-        let target = NaN;
+        let target: number | null = null;
         let total: number;
         //rows
         for (let i = 0; i < n; ++i) {
@@ -90,7 +92,7 @@ export function verifyRegion(
           for (let j = 0; j < n; ++j) {
             total += values[i][j];
           }
-          if (isNaN(target)) {
+          if (target == null) {
             target = total;
           } else if (total !== target) {
             return positions;
