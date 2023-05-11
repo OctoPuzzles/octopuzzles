@@ -62,7 +62,6 @@
   let loading = false;
 
   let showImportFromFPuzzlesModal = false;
-  let showUserSettingsModal = false;
   let showCommonDescriptionsModal = false;
 
   async function changeUpdateStatus(make_public: boolean): Promise<void> {
