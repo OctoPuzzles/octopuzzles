@@ -1,19 +1,13 @@
 <script lang="ts">
-  import type { VerificationMode } from '@octopuzzles/models';
   import { settings } from '$stores/settingsStore';
   import { Button, Label, Modal, RadioGroup } from '@octopuzzles/ui';
 
   export let isOpen: boolean;
 
-  const generalSettings = settings.getGroup('general');
-
-  let verificationMode = $generalSettings?.verificationMode ?? 'OnInput';
+  let verificationMode = $settings.verificationMode ?? 'ON_INPUT';
 
   function updateSettings(): void {
-    const generalSettings = {
-      verificationMode: verificationMode as VerificationMode
-    };
-    settings.save({ general: generalSettings });
+    settings.save({ verificationMode });
   }
 </script>
 
@@ -21,9 +15,9 @@
   <div class="grid grid-cols-1 w-full h-full p-2">
     <div class="px-2 flex flex-col justify-between">
       <div>
-        <Label id="highlightErrors">Show Error Cells</Label>
+        <Label id="highlightErrors">Highlight Error Cells</Label>
         <RadioGroup
-          options={['OnInput', 'OnComplete', 'OnDemand']}
+          options={['ON_INPUT', 'ON_COMPLETE', 'ON_DEMAND']}
           bind:value={verificationMode}
           name="VerificationMode"
           let:option

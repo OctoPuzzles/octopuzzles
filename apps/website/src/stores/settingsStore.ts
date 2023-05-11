@@ -1,6 +1,6 @@
 import { trpc } from '$lib/trpc/client';
 import type { UserSettings } from '@octopuzzles/models';
-import { derived, get, writable, type Readable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { me } from './meStore';
 import { page } from '$app/stores';
 
@@ -10,12 +10,6 @@ function createSettingsStore() {
 
   function set(newSettings: UserSettings | null = null): void {
     settings.set(newSettings ?? {});
-  }
-
-  function getGroup<T extends keyof UserSettings>(type: T): Readable<UserSettings[T]> {
-    return derived([settings], ([$settings]) => {
-      return $settings?.[type] as UserSettings[T];
-    });
   }
 
   async function save(newSettings: Partial<UserSettings>): Promise<void> {
@@ -31,7 +25,6 @@ function createSettingsStore() {
   return {
     subscribe: settings.subscribe,
     set,
-    getGroup,
     save
   };
 }

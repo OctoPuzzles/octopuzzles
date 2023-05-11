@@ -99,7 +99,7 @@
   bind:walkthrough
   {clues}
   bind:gameData
-  verificationMode={$settings.general?.verificationMode ?? 'OnInput'}
+  verificationMode={$settings.verificationMode ?? 'ON_INPUT'}
 >
   <ExportButton {clues} {gameData} {sudokuTitle} {description} />
 

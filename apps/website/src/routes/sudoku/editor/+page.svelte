@@ -14,10 +14,8 @@
   import CommonDescriptionsModal from '$components/Sudoku/CommonDescriptionsModal.svelte';
   import Plus from 'phosphor-svelte/lib/Plus/Plus.svelte';
   import FileArrowDown from 'phosphor-svelte/lib/FileArrowDown/FileArrowDown.svelte';
-  import Gear from 'phosphor-svelte/lib/Gear/Gear.svelte';
   import classNames from 'classnames';
   import ImportFromFPuzzles from '$components/Modals/ImportFromFPuzzles.svelte';
-  import UserSettingsModal from '$components/Modals/UserSettingsModal.svelte';
   import type { PageData } from './$types';
   import { trpc } from '$lib/trpc/client';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
@@ -283,14 +281,6 @@
     </button>
 
     <ExportButton clues={$clues} {gameData} {sudokuTitle} {description} />
-
-    <button
-      on:click={() => (showUserSettingsModal = true)}
-      class="w-8 h-8 hover:ring hover:ring-orange-500 rounded"
-      title="Settings"
-    >
-      <Gear size={32} />
-    </button>
   </SudokuEditor>
 </div>
 <div class:hidden={tab !== 'game'}>
@@ -300,7 +290,7 @@
     bind:walkthrough={$walkthrough}
     clues={$clues}
     bind:gameData
-    verificationMode="OnInput"
+    verificationMode="ON_INPUT"
   >
     <ExportButton clues={$clues} {gameData} {sudokuTitle} {description} />
   </SudokuGame>
@@ -456,5 +446,3 @@
     description = newDescription;
   }}
 />
-
-<UserSettingsModal bind:isOpen={showUserSettingsModal} />

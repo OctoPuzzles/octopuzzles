@@ -9,16 +9,15 @@
     ScannerHighlightMode,
     ScannerMode,
     ScannerSettings,
-    ScannerSpeed,
-    UserSettings
+    ScannerSpeed
   } from '@octopuzzles/models';
   import { scanner } from '$lib/sudokuStore/scanner';
   import { gameHistory } from '$lib/sudokuStore';
   import { getContext } from 'svelte';
   import { gameAction } from '$lib/gameAction';
 
-  const onSettingsChange: (newSettings: Partial<UserSettings>) => void =
-    getContext('updateSettings');
+  const onScannerSettingsChange: (newSettings: ScannerSettings) => void =
+    getContext('updateScannerSettings');
 
   const scannerSettings = scanner.scannerSettings;
   let highlightMode = $scannerSettings.highlightMode ?? 'None';
@@ -73,7 +72,7 @@
       scanNonConsecutive
     };
 
-    onSettingsChange({ scanner: newScannerSettings });
+    onScannerSettingsChange(newScannerSettings);
 
     scanner.configure(newScannerSettings);
   }

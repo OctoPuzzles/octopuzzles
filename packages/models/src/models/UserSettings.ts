@@ -29,18 +29,13 @@ export const ScannerSettingsValidator = z.object({
 });
 export type ScannerSettings = z.infer<typeof ScannerSettingsValidator>;
 
-export const VerificationModeValidator = z.enum(['OnDemand', 'OnComplete', 'OnInput']);
+export const VerificationModeValidator = z.enum(['ON_DEMAND', 'ON_COMPLETE', 'ON_INPUT']);
 export type VerificationMode = z.infer<typeof VerificationModeValidator>;
-
-export const GeneralSettingsValidator = z.object({
-  verificationMode: VerificationModeValidator.nullish()
-});
-export type GeneralSettings = z.infer<typeof GeneralSettingsValidator>;
 
 export const UserSettingsValidator = z.object({
   userId: z.number().int(),
-  scanner: ScannerSettingsValidator.nullable(),
-  general: GeneralSettingsValidator.nullable()
+  scanner: ScannerSettingsValidator.nullish(),
+  verificationMode: VerificationModeValidator.nullable()
 });
 export type UserSettings = z.infer<typeof UserSettingsValidator>;
 

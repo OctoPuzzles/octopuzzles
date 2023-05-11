@@ -47,7 +47,7 @@
 
   export let solution: Solution | undefined = undefined;
 
-  export let verificationMode: VerificationMode = 'OnInput';
+  export let verificationMode: VerificationMode = 'ON_INPUT';
 
   export let scannerSettings: ScannerSettings | null | undefined;
 
@@ -89,13 +89,13 @@
     gameData = newGameData;
 
     if (isComplete()) {
-      if (checkSolution(verificationMode !== 'OnDemand')) {
+      if (checkSolution(verificationMode !== 'ON_DEMAND')) {
         onDone?.();
       }
       return;
     }
 
-    if (verificationMode === 'OnInput') {
+    if (verificationMode === 'ON_INPUT') {
       $wrongCells = scanner.getErrorCells();
     } else {
       $wrongCells = [];

@@ -1,14 +1,19 @@
 import { t } from '$lib/trpc/t';
-import { UpdateUserSettingsValidator } from '@octopuzzles/models';
+import { UpdateUserSettingsValidator, UserSettingsValidator } from '@octopuzzles/models';
 import { TRPCError } from '@trpc/server';
 
 export const userSettings = t.router({
   get: t.procedure.query(async ({ ctx }) => {
     if (ctx.token != null) {
-      const settings = await ctx.prisma.userSettings.findUnique({
+      const settingsRaw = await ctx.prisma.userSettings.findUnique({
         where: { userId: ctx.token.id }
       });
-      return settings;
+      if (settingsRaw != null) {
+        const settings = UserSettingsValidator.parse(settingsRaw);
+        if (settings != null) {
+          return settings;
+        }
+      }
     }
 
     return null;
