@@ -70,9 +70,9 @@
     let newNotes: Annotations = [];
     $notes.forEach((note, i) => {
       if (i !== $selectedItemIndex) {
-        newNotes = [...newNotes, note];
+        newNotes.push(note);
       } else {
-        newNotes = [...newNotes, newNote(note.positions)];
+        newNotes.push(newNote(note.positions));
       }
     });
 
