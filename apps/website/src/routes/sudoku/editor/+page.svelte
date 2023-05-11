@@ -295,11 +295,12 @@
 </div>
 <div class:hidden={tab !== 'game'}>
   <SudokuGame
-    settings={$settings}
-    onSettingsChange={(newSettings) => settings.save(newSettings)}
+    scannerSettings={$settings.scanner}
+    onScannerSettingsChange={(newSettings) => settings.save({ scanner: newSettings })}
     bind:walkthrough={$walkthrough}
     clues={$clues}
     bind:gameData
+    verificationMode="OnInput"
   >
     <ExportButton clues={$clues} {gameData} {sudokuTitle} {description} />
   </SudokuGame>

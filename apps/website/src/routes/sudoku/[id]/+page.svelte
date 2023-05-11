@@ -89,8 +89,8 @@
 </div>
 
 <SudokuGame
-  settings={$settings}
-  onSettingsChange={(newSettings) => settings.save(newSettings)}
+  scannerSettings={$settings.scanner}
+  onScannerSettingsChange={(newSettings) => settings.save({ scanner: newSettings })}
   onDone={() => {
     clearInterval(timer);
     showFinishedSudokuModal = true;
@@ -99,6 +99,7 @@
   bind:walkthrough
   {clues}
   bind:gameData
+  verificationMode={$settings.general?.verificationMode ?? 'OnInput'}
 >
   <ExportButton {clues} {gameData} {sudokuTitle} {description} />
 

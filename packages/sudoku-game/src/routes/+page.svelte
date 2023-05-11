@@ -8,8 +8,8 @@
 
 <SudokuGame
   {clues}
-  settings={undefined}
-  onSettingsChange={console.log}
+  scannerSettings={undefined}
+  onScannerSettingsChange={console.log}
   bind:gameData
   walkthrough={[]}
   onDone={console.log}

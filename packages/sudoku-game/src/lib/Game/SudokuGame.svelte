@@ -14,8 +14,9 @@
   import type {
     EditorHistoryStep,
     GameData,
+    ScannerSettings,
     Solution,
-    UserSettings,
+    VerificationMode,
     WalkthroughStep
   } from '@octopuzzles/models';
   import { defaultClues, getValidDigits } from '@octopuzzles/sudoku-utils';
@@ -46,10 +47,12 @@
 
   export let solution: Solution | undefined = undefined;
 
-  export let settings: Partial<UserSettings> | undefined;
+  export let verificationMode: VerificationMode = 'OnInput';
 
-  export let onSettingsChange: (newSettings: Partial<UserSettings>) => void;
-  setContext('updateSettings', onSettingsChange);
+  export let scannerSettings: ScannerSettings | null | undefined;
+
+  export let onScannerSettingsChange: (newSettings: ScannerSettings) => void;
+  setContext('updateScannerSettings', onScannerSettingsChange);
 
   export let onDone: (() => void) | undefined = undefined;
 
@@ -67,7 +70,7 @@
 
   $: gameHistory.clues.set(clues);
 
-  $: scanner.configure(settings?.scanner);
+  $: scanner.configure(scannerSettings);
 
   function isComplete(): boolean {
     const allDigits = getValidDigits(clues.logic, clues.dimensions);
@@ -85,7 +88,6 @@
   function onInput(newGameData: GameData): void {
     gameData = newGameData;
 
-    const verificationMode = settings?.general?.verificationMode ?? 'OnInput';
     if (isComplete()) {
       if (checkSolution(verificationMode !== 'OnDemand')) {
         onDone?.();
