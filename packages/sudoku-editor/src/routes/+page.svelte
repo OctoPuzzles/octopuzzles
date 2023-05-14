@@ -2,8 +2,8 @@
   import { SudokuEditor } from '$lib';
   import { defaultClues } from '@octopuzzles/sudoku-utils';
 
-  let initialClues = defaultClues();
   let clues = defaultClues();
+  let initialClues = clues;
 </script>
 
 <SudokuEditor {initialClues} bind:clues />

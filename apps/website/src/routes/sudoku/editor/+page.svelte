@@ -59,6 +59,7 @@
         })
       ) ?? defaultCellValues(data.sudoku?.dimensions)
   };
+  const initialGameData = gameData;
   const scannerSettings = me.settings;
 
   let id = data.sudoku?.id;
@@ -300,6 +301,7 @@
     bind:walkthrough={$walkthrough}
     clues={$clues}
     bind:gameData
+    {initialGameData}
   >
     <ExportButton clues={$clues} {gameData} {sudokuTitle} {description} />
   </SudokuGame>

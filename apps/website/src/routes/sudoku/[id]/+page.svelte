@@ -12,11 +12,12 @@
 
   export let data: PageData;
 
+  const sudokuId = data.sudoku.id;
   const sudokuTitle = data.sudoku.title;
   const description = data.sudoku.description;
   let walkthrough = data.walkthrough?.steps ?? [];
   const clues = fillCluesWithDefaults(data.sudoku);
-  let gameData = data.gameData ?? defaultGameData(data.sudoku.dimensions);
+  let gameData = data.initialGameData ?? defaultGameData(data.sudoku.dimensions);
   const scannerSettings = me.settings;
 
   // TIMER: one that does not run when the tab is inactive, but runs as if it had.
@@ -97,6 +98,7 @@
   bind:walkthrough
   {clues}
   bind:gameData
+  initialGameData={data?.initialGameData}
 >
   <ExportButton {clues} {gameData} {sudokuTitle} {description} />
 </SudokuGame>
@@ -105,7 +107,7 @@
 
 <FinishedSudokuModal
   bind:isOpen={showFinishedSudokuModal}
-  sudokuId={data.sudoku.id}
+  {sudokuId}
   {takeScreenshot}
   finishTime={`${days}${hours}${minutes}:${seconds}`}
   {clues}
