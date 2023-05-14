@@ -25,9 +25,10 @@
   export let clues: EditorHistoryStep;
   export let initialClues: EditorHistoryStep;
 
+  let unsubscribe: any;
   onMount(() => {
     editorHistory.reset(initialClues);
-    storeClues.subscribe((c) => (clues = c));
+    unsubscribe = storeClues.subscribe((c) => (clues = c));
   });
 
   $: editorHistory.reset(initialClues);
@@ -35,7 +36,9 @@
   const storeClues = editorHistory.subscribeToClues();
 
   onDestroy(() => {
-    editorHistory.reset();
+    if (typeof unsubscribe === 'function') {
+      unsubscribe();
+    }
   });
 </script>
 

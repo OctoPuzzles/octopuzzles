@@ -2,7 +2,7 @@
   import { SudokuGame } from '@octopuzzles/sudoku-game';
   import { SudokuEditor } from '@octopuzzles/sudoku-editor';
   import { Button, Input, Label, PuzzleLabel, Range, RichTextEditor } from '@octopuzzles/ui';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import {
     defaultClues,
@@ -28,6 +28,12 @@
   import { get } from 'svelte/store';
 
   export let data: PageData;
+
+  onDestroy(() => {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.removeItem('clues');
+    localStorage.removeItem('walkthrough');
+  });
 
   let sudokuTitle = data.sudoku?.title ?? '';
   let description = data.sudoku?.description ?? '';

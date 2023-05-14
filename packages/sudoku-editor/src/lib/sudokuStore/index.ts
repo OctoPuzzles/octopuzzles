@@ -35,7 +35,9 @@ function createEditorHistoryStore() {
   // Step
   const step = writable(0);
   // History
-  const history = writable<EditorHistoryStepWithNumbers[]>([deepCopy(defaultClues())]);
+  const history = writable<EditorHistoryStepWithNumbers[]>([deepCopy(defaultClues())], () => {
+    return () => reset();
+  });
 
   // TODO: Move these out of this package
   const labels = writable<{ label: Label; selected: boolean }[]>([]);
