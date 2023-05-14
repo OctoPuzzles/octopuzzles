@@ -47,12 +47,14 @@
   {loadNextPage}
   {loading}
   sudokus={data.sudokus.sudokus ?? null}
-  deleteSudoku={(id) => {
-    if (data.me != null && data.me.id === data.user.id) {
-      showDeleteSudokuModal = true;
-      sudokuToDelete = id;
-    }
-  }}
+  deleteSudoku={data.me == null
+    ? undefined
+    : (id) => {
+        if (data.me != null && data.me.id === data.user.id) {
+          showDeleteSudokuModal = true;
+          sudokuToDelete = id;
+        }
+      }}
 />
 
 <DangerActionModal
