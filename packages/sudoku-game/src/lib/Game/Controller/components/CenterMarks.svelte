@@ -40,7 +40,7 @@
         // Add it to the cells that does not have it
         positions.forEach((p) => {
           const centermarks = currentCellValues[p.row][p.column].centermarks;
-          if (centermarks) {
+          if (centermarks != null) {
             if (!centermarks.includes(digit)) {
               newCellValues[p.row][p.column].centermarks = [...centermarks, digit].sort();
             }
@@ -52,7 +52,7 @@
         // Remove it from all cells
         positions.forEach((p) => {
           const centermarks = currentCellValues[p.row][p.column].centermarks;
-          if (centermarks) {
+          if (centermarks != null) {
             newCellValues[p.row][p.column].centermarks = undefinedIfEmpty(
               centermarks.filter((s) => s !== digit)
             );

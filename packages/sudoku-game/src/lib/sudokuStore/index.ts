@@ -8,7 +8,7 @@ import type {
 import { deepCopy } from '@octopuzzles/utils';
 import type { Readable } from 'svelte/store';
 import { derived, get, writable } from 'svelte/store';
-import { defaultGameData } from '@octopuzzles/sudoku-utils';
+import { defaultClues, defaultGameData } from '@octopuzzles/sudoku-utils';
 import type {
   OnMouseDownHitboxHandler,
   OnMouseEnterHitboxHandler
@@ -21,9 +21,9 @@ function createGameHistoryStore() {
   // Step
   const step = writable(0);
   // History
-  const history = writable<GameHistoryStep[]>([deepCopy(defaultGameData())]);
+  const history = writable<GameHistoryStep[]>([defaultGameData()]);
 
-  const clues = writable<EditorHistoryStep>();
+  const clues = writable<EditorHistoryStep>(defaultClues());
 
   function setClues(newClues: EditorHistoryStep): void {
     clues.set(newClues);
@@ -114,19 +114,19 @@ function createGameHistoryStore() {
     const newCellValues = get(getValue('cellValues'));
     let changes = false;
     cells.forEach((cell) => {
-      if (newCellValues[cell.row][cell.column].digits) {
+      if (newCellValues[cell.row][cell.column].digits != null) {
         changes = true;
         delete newCellValues[cell.row][cell.column].digits;
       }
-      if (newCellValues[cell.row][cell.column].cornermarks) {
+      if (newCellValues[cell.row][cell.column].cornermarks != null) {
         changes = true;
         delete newCellValues[cell.row][cell.column].cornermarks;
       }
-      if (newCellValues[cell.row][cell.column].centermarks) {
+      if (newCellValues[cell.row][cell.column].centermarks != null) {
         changes = true;
         delete newCellValues[cell.row][cell.column].centermarks;
       }
-      if (newCellValues[cell.row][cell.column].colors) {
+      if (newCellValues[cell.row][cell.column].colors != null) {
         changes = true;
         delete newCellValues[cell.row][cell.column].colors;
       }

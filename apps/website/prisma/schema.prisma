@@ -40,10 +40,17 @@ model User {
   UserSettings UserSettings?
 }
 
+enum VerificationMode {
+  ON_DEMAND
+  ON_COMPLETE
+  ON_INPUT
+}
+
 model UserSettings {
-  userId  Int   @unique
-  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  scanner Json?
+  userId           Int               @unique
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scanner          Json?
+  verificationMode VerificationMode?
 }
 
 enum TokenKind {

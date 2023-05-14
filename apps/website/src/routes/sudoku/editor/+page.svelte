@@ -19,7 +19,7 @@
   import type { PageData } from './$types';
   import { trpc } from '$lib/trpc/client';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
-  import { me } from '$stores/meStore';
+  import { settings } from '$stores/settingsStore';
   import type { Digit, GameHistoryStep } from '@octopuzzles/models';
   import { deepCopy } from '@octopuzzles/utils';
   import type { RouterInputs } from '$lib/trpc/router';
@@ -59,7 +59,6 @@
         })
       ) ?? defaultCellValues(data.sudoku?.dimensions)
   };
-  const scannerSettings = me.settings;
 
   let id = data.sudoku?.id;
   let isPublic = data.sudoku?.publicSince != null;
@@ -88,7 +87,7 @@
     // create solution
     if (provideSolution) {
       let cellValues = gameData.cellValues;
-      if ($walkthrough.length) {
+      if ($walkthrough.length > 0) {
         const finalStep = $walkthrough[$walkthrough.length - 1].gameData;
         if (
           gameData.cellValues.some((row, i) => {
@@ -101,10 +100,9 @@
         }
       }
       solution = {
-        numbers: getUserSolution({
-          givens: $clues.givens,
-          values: cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
-        })
+        numbers: getUserSolution(cellValues, $clues.givens).map((row) =>
+          row.map((cell) => cell.digits?.join('') ?? '')
+        )
       };
     }
     await trpc($page).sudokus.provideSolutionToPuzzle.mutate({
@@ -229,14 +227,11 @@
   function doesSolutionHaveHoles(): boolean {
     if ($clues.givens == null || gameData.cellValues == null) return false;
 
-    const userSolution = getUserSolution({
-      givens: $clues.givens,
-      values: gameData.cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
-    });
+    const userSolution = getUserSolution(gameData.cellValues, $clues.givens);
 
     for (const row of userSolution) {
       for (const cell of row) {
-        if (cell.length === 0) {
+        if (cell.digits == null) {
           return true;
         }
       }
@@ -295,11 +290,12 @@
 </div>
 <div class:hidden={tab !== 'game'}>
   <SudokuGame
-    scannerSettings={$scannerSettings.scanner}
-    onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
+    scannerSettings={$settings.scanner}
+    onScannerSettingsChange={(newSettings) => settings.save({ scanner: newSettings })}
     bind:walkthrough={$walkthrough}
     clues={$clues}
     bind:gameData
+    verificationMode="ON_INPUT"
   >
     <ExportButton clues={$clues} {gameData} {sudokuTitle} {description} />
   </SudokuGame>
@@ -420,6 +416,7 @@
       </div>
     </form>
   </div>
+
   <CommonDescriptionsModal
     bind:isOpen={showCommonDescriptionsModal}
     {labels}

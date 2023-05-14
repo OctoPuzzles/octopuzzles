@@ -16,7 +16,7 @@
     const newCellValues = deepCopy(currentCellValues);
     // Check if we should clear all game cells
     const clearAllGameCells =
-      newValue === '' && positions.every((p) => !currentCellValues[p.row][p.column].digits);
+      newValue === '' && positions.every((p) => currentCellValues[p.row][p.column].digits == null);
     if (clearAllGameCells) {
       // clear all the cells in the game
       gameHistory.clearCells(positions);
@@ -28,7 +28,7 @@
       if (newValue === '') {
         for (const position of positions) {
           // If the cell is already empty
-          if (!newCellValues[position.row][position.column].digits) continue;
+          if (newCellValues[position.row][position.column].digits == null) continue;
           // Delete the value in the cell
           delete newCellValues[position.row][position.column].digits;
           anyChanges = true;

@@ -1,4 +1,17 @@
-import type { Position, PathType, Path, Color, Form, Fill } from '@octopuzzles/models';
+import type {
+  Position,
+  PathType,
+  Path,
+  Color,
+  Form,
+  Fill,
+  Digit,
+  CellValues,
+  EditorHistoryStep
+} from '@octopuzzles/models';
+import { Digits } from '@octopuzzles/models';
+import { deepCopy } from '@octopuzzles/utils';
+import { comparePositions } from './killer-cages';
 
 export function emptyPath(positions: Position[], type?: PathType): Path {
   return {
@@ -9,7 +22,8 @@ export function emptyPath(positions: Position[], type?: PathType): Path {
     form: undefined,
     fill: undefined,
     arrow: undefined,
-    uniqueDigits: undefined
+    uniqueDigits: undefined,
+    nonStandard: undefined
   };
 }
 
@@ -20,6 +34,7 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
   fill: Fill;
   arrow: boolean;
   uniqueDigits: boolean;
+  nonStandard: boolean;
 } {
   switch (type) {
     case 'Arrow':
@@ -29,7 +44,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         form: 'Round',
         fill: 'Solid',
         arrow: true,
-        uniqueDigits: true
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'Thermo':
       return {
@@ -38,7 +54,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Round',
         width: 20,
-        uniqueDigits: true
+        uniqueDigits: true,
+        nonStandard: false
       };
     case 'Between':
       return {
@@ -47,7 +64,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Round',
         width: 5,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'Lockout':
       return {
@@ -56,7 +74,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Diamond',
         width: 5,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'Renban':
       return {
@@ -65,7 +84,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Round',
         width: 15,
-        uniqueDigits: true
+        uniqueDigits: true,
+        nonStandard: false
       };
     case 'Whisper':
     case 'DutchWhisper':
@@ -75,7 +95,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Round',
         width: 15,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'Palindrome':
     case 'Parity':
@@ -85,7 +106,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Round',
         width: 15,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'AntiFactor':
       return {
@@ -94,7 +116,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Round',
         width: 15,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'EqualSum':
       return {
@@ -103,7 +126,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Round',
         width: 15,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'ProductSum':
       return {
@@ -112,7 +136,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Square',
         width: 13,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'Entropic':
       return {
@@ -121,7 +146,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: 'Round',
         width: 15,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'Odd':
     case 'Even':
@@ -131,7 +157,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         fill: 'Solid',
         form: type === 'Even' ? 'Square' : 'Round',
         width: 70,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     case 'Pill':
       return {
@@ -140,7 +167,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         form: 'Round',
         fill: 'Hollow',
         arrow: false,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
     default:
       return {
@@ -149,7 +177,8 @@ export function pathDefaults(type?: PathType | 'CUSTOM' | null): {
         form: 'Round',
         fill: 'Solid',
         arrow: false,
-        uniqueDigits: false
+        uniqueDigits: false,
+        nonStandard: false
       };
   }
 }
@@ -222,4 +251,362 @@ export function getPathsToDraw(path: Path): Path[] {
   }
 
   return drawPaths;
+}
+
+/*Checks the inputted digits against the standard constraint logic for the path
+and returns any cells that have errors*/
+export function verifyPath(path: Path, solution: CellValues, clues: EditorHistoryStep): Position[] {
+  let regionNos: Map<string, number> | null = null;
+
+  let isValid = true;
+  if (!(path.nonStandard ?? false)) {
+    switch (path.type) {
+      case 'Arrow': {
+        let target: number | undefined = undefined;
+        const p = path.positions[0];
+        const pill = clues.paths.find(
+          (l) =>
+            l.type === 'Pill' && l.positions.some((q) => q.row === p.row && q.column === p.column)
+        );
+
+        if (pill) {
+          let t = '';
+          if (
+            deepCopy(pill.positions)
+              .sort(comparePositions)
+              .every((p) => {
+                const cell = solution[p.row][p.column];
+                if (cell.digits == null) {
+                  return false;
+                }
+
+                t += cell.digits?.join('');
+
+                return true;
+              })
+          ) {
+            target = parseInt(t);
+          }
+        } else {
+          target = solution[p.row][p.column].value;
+        }
+        if (target == null) {
+          break;
+        }
+
+        let total = 0;
+
+        if (
+          path.positions.every((p, i) => {
+            if (i === 0) return true;
+
+            const v = solution[p.row][p.column].value;
+            if (v != null) {
+              total += v;
+              return true;
+            } else {
+              return false;
+            }
+          })
+        ) {
+          isValid = total === target;
+        }
+
+        if (!isValid && pill) {
+          return [...pill.positions, ...path.positions.filter((_, i) => i !== 0)];
+        }
+
+        break;
+      }
+      case 'Thermo': {
+        let prev: Digit | null = null;
+
+        for (let n = 0; n < path.positions.length; ++n) {
+          const p = path.positions[n];
+          const digits = solution[p.row][p.column].digits;
+          if (digits != null) {
+            if (
+              prev != null &&
+              digits.some((d) => Digits.indexOf(d) <= Digits.indexOf(prev as Digit))
+            ) {
+              isValid = false;
+              break;
+            }
+
+            prev = digits[digits.length - 1];
+          }
+        }
+        break;
+      }
+      case 'Between':
+      case 'Lockout': {
+        const p = path.positions[0];
+        const q = path.positions[path.positions.length - 1];
+        const a = solution[p.row][p.column];
+        const b = solution[q.row][q.column];
+
+        if (a.value != null && b.value != null) {
+          const min = a.value < b.value ? a.value : b.value;
+          const max = a.value > b.value ? a.value : b.value;
+
+          if (path.type === 'Lockout' && max - min < 4) {
+            isValid = false;
+          } else {
+            isValid = path.positions.every((p, i) => {
+              if (i === 0 || i === path.positions.length - 1) return true;
+
+              const cell = solution[p.row][p.column];
+              if (cell.digits == null) {
+                return true;
+              }
+
+              if (path.type === 'Lockout') {
+                return cell.digits.every((d) => Digits.indexOf(d) < min || Digits.indexOf(d) > max);
+              } else {
+                return cell.digits.every((d) => Digits.indexOf(d) > min && Digits.indexOf(d) < max);
+              }
+            });
+          }
+        }
+        break;
+      }
+      case 'Renban': {
+        let min: number | undefined = undefined;
+        let max: number | undefined = undefined;
+        let count = 0;
+        if (
+          path.positions.every((p) => {
+            const cell = solution[p.row][p.column];
+            if (cell.digits == null) return false;
+
+            if (min == null || max == null) {
+              min = Digits.indexOf(cell.digits[0]);
+              max = Digits.indexOf(cell.digits[cell.digits.length - 1]);
+            } else {
+              min = Math.min(Digits.indexOf(cell.digits[0]), min);
+              max = Math.max(Digits.indexOf(cell.digits[cell.digits.length - 1]), max);
+            }
+            count += cell.digits.length;
+            return true;
+          })
+        ) {
+          if (min != null && max != null) {
+            isValid = max - min < count;
+          }
+        }
+        break;
+      }
+      case 'Whisper':
+      case 'DutchWhisper': {
+        const diff = path.type === 'DutchWhisper' ? 4 : 5;
+        let prev: Digit[] = [];
+
+        for (let n = 0; n < path.positions.length; ++n) {
+          const p = path.positions[n];
+          const cell = solution[p.row][p.column];
+          if (cell.digits != null) {
+            if (
+              prev.length > 0 &&
+              cell.digits.some((d) =>
+                prev.some((e) => Math.abs(Digits.indexOf(d) - Digits.indexOf(e)) < diff)
+              )
+            ) {
+              isValid = false;
+              break;
+            }
+
+            prev = cell.digits;
+          } else {
+            prev = [];
+          }
+        }
+        break;
+      }
+      case 'Palindrome': {
+        const unmirrored: Position[] = [];
+        for (let n = 0; n < Math.floor(path.positions.length / 2); ++n) {
+          const p = path.positions[n];
+          const q = path.positions[path.positions.length - n - 1];
+          const a = solution[p.row][p.column];
+          const b = solution[q.row][q.column];
+          if (a.value != null && b.value != null && a.value !== b.value) {
+            unmirrored.push(p, q);
+          }
+        }
+        return unmirrored;
+      }
+      case 'AntiFactor': {
+        const factor = path.positions.length;
+        let total = 0;
+        let count = 0;
+        const invalidCells = path.positions.filter((p) => {
+          const cell = solution[p.row][p.column];
+          if (cell.digits != null) {
+            if (cell.value != null) {
+              total += cell.value;
+              ++count;
+            }
+
+            return cell.digits.some((d) => {
+              const n = Digits.indexOf(d);
+              return n !== 1 && (factor % n === 0 || n % factor === 0);
+            });
+          }
+
+          return false;
+        });
+
+        if (count === path.positions.length) {
+          isValid = total % factor === 0;
+        }
+        if (isValid) {
+          return invalidCells;
+        }
+        break;
+      }
+      case 'EqualSum': {
+        if (regionNos == null) {
+          regionNos = new Map<string, number>();
+          clues.regions.forEach((r, n) => {
+            if (r.type === 'Normal') {
+              r.positions.forEach((p) => {
+                regionNos?.set('R' + p.row + 'C' + p.column, n);
+              });
+            }
+          });
+        }
+
+        let target: number | null = null;
+        let prevRegionNo: number | undefined = undefined;
+        let total = 0;
+        let skip = false;
+        for (let n = 0; n < path.positions.length; ++n) {
+          const p = path.positions[n];
+          const cell = solution[p.row][p.column];
+          const regionNo = regionNos.get('R' + p.row + 'C' + p.column);
+          if (regionNo !== prevRegionNo) {
+            if (prevRegionNo != null) {
+              if (!skip) {
+                if (target == null) {
+                  target = total;
+                } else if (total !== target) {
+                  break;
+                }
+              }
+              total = 0;
+              skip = false;
+            }
+            prevRegionNo = regionNo;
+          } else if (skip) {
+            continue;
+          }
+          if (cell.value == null) {
+            skip = true;
+          } else {
+            total += cell.value;
+          }
+        }
+
+        isValid = target == null || (!skip && total === target);
+        break;
+      }
+      case 'ProductSum': {
+        const p = path.positions[0];
+        const q = path.positions[path.positions.length - 1];
+        const a = solution[p.row][p.column];
+        const b = solution[q.row][q.column];
+
+        if (a.value != null && b.value != null) {
+          const product = a.value * b.value;
+          let total = 0;
+
+          if (
+            path.positions.every((p, i) => {
+              if (i === 0 || i === path.positions.length - 1) return true;
+
+              const cell = solution[p.row][p.column];
+              if (cell.value != null) {
+                total += cell.value;
+                return true;
+              }
+
+              return false;
+            })
+          ) {
+            isValid = total === product;
+          }
+        }
+        break;
+      }
+      case 'Entropic': {
+        const invalidCells: Position[] = [];
+        let lastInvalidIndex = -1;
+        for (let i = 2; i < path.positions.length; ++i) {
+          const p = path.positions[i - 2];
+          const q = path.positions[i - 1];
+          const r = path.positions[i];
+          const u = solution[p.row][p.column];
+          const v = solution[q.row][q.column];
+          const w = solution[r.row][r.column];
+          if (u.digits != null && v.digits != null && w.digits != null) {
+            const entropySets = [...u.digits, ...v.digits, ...w.digits].map((d) =>
+              Math.ceil(Digits.indexOf(d) / 3)
+            );
+            if (!entropySets.includes(1) || !entropySets.includes(2) || !entropySets.includes(3)) {
+              isValid = false;
+              if (i - 2 > lastInvalidIndex) invalidCells.push(p);
+              if (i - 1 > lastInvalidIndex) invalidCells.push(q);
+              if (i > lastInvalidIndex) invalidCells.push(r);
+              lastInvalidIndex = i;
+            }
+          }
+        }
+        return invalidCells;
+      }
+      case 'Odd':
+      case 'Even': {
+        const invalidCells: Position[] = [];
+        path.positions.forEach((p) => {
+          const cell = solution[p.row][p.column];
+          if (cell.digits != null) {
+            cell.digits.some((d) => {
+              if (Digits.indexOf(d) % 2 !== (path.type === 'Odd' ? 1 : 0)) {
+                invalidCells.push(p);
+              }
+            });
+          }
+        });
+        return invalidCells;
+      }
+      case 'Parity': {
+        const invalidCells: Position[] = [];
+        let lastInvalidIndex = -1;
+        for (let i = 1; i < path.positions.length; ++i) {
+          const p = path.positions[i - 1];
+          const q = path.positions[i];
+          const a = solution[p.row][p.column];
+          const b = solution[q.row][q.column];
+          if (a.digits != null && b.digits != null) {
+            if (
+              a.digits.some((d) =>
+                b.digits?.some((e) => Digits.indexOf(d) % 2 === Digits.indexOf(e) % 2)
+              )
+            ) {
+              isValid = false;
+              if (i - 1 > lastInvalidIndex) invalidCells.push(p);
+              if (i > lastInvalidIndex) invalidCells.push(q);
+              lastInvalidIndex = i;
+            }
+          }
+        }
+        return invalidCells;
+      }
+    }
+  }
+
+  if (!isValid) {
+    return path.positions;
+  } else {
+    return [];
+  }
 }

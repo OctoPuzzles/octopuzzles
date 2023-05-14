@@ -71,6 +71,7 @@
       scanNegativeKropki,
       scanNonConsecutive
     };
+
     onScannerSettingsChange(newScannerSettings);
 
     scanner.configure(newScannerSettings);

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { SudokuDisplay } from '@octopuzzles/sudoku-display';
   import Controller from './Controller/index.svelte';
+  import Check from 'phosphor-svelte/lib/Check/Check.svelte';
   import {
     selectedCells,
     highlightedCells,
@@ -12,12 +13,13 @@
   } from '$lib/sudokuStore';
   import type {
     EditorHistoryStep,
-    GameHistoryStep,
+    GameData,
     ScannerSettings,
     Solution,
+    VerificationMode,
     WalkthroughStep
   } from '@octopuzzles/models';
-  import { defaultClues, getUserSolution } from '@octopuzzles/sudoku-utils';
+  import { defaultClues, getValidDigits } from '@octopuzzles/sudoku-utils';
   import { scanner } from '$lib/sudokuStore/scanner';
   import { onDestroy, onMount, setContext } from 'svelte';
   import { gameAction, handleWindowClick } from '$lib/gameAction';
@@ -26,6 +28,7 @@
     handleClickCell,
     handleEnterCell
   } from '$lib/sudokuStore/interactionHandlers';
+  import { NotificationModal } from '@octopuzzles/ui';
 
   // SIZING
   let windowHeight: number;
@@ -38,13 +41,15 @@
 
   export let clues: EditorHistoryStep;
 
-  export let gameData: GameHistoryStep;
+  export let gameData: GameData;
 
   export let walkthrough: WalkthroughStep[];
 
   export let solution: Solution | undefined = undefined;
 
-  export let scannerSettings: ScannerSettings | undefined;
+  export let verificationMode: VerificationMode = 'ON_INPUT';
+
+  export let scannerSettings: ScannerSettings | null | undefined;
 
   export let onScannerSettingsChange: (newSettings: ScannerSettings) => void;
   setContext('updateScannerSettings', onScannerSettingsChange);
@@ -61,51 +66,79 @@
 
   const storeGameData = gameHistory.subscribeToInputs();
 
-  $: gameData = $storeGameData;
+  $: onInput($storeGameData);
 
   $: gameHistory.clues.set(clues);
 
   $: scanner.configure(scannerSettings);
 
-  $: if (solution != null && onDone != null) {
-    if (
-      checkSolution(
-        gameData.cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
-      )
-    ) {
-      onDone();
+  function isComplete(): boolean {
+    const allDigits = getValidDigits(clues.logic, clues.dimensions);
+    //check that every row has the required number of digits before validating the solution
+    const complete = !gameData.cellValues.some((row, i) => {
+      let numDigits = 0;
+      row.forEach((cell, j) => {
+        numDigits += clues.givens[i][j] !== '' ? 1 : cell.digits?.length ?? 0;
+      });
+      return numDigits !== allDigits.length;
+    });
+    return complete;
+  }
+
+  function onInput(newGameData: GameData): void {
+    gameData = newGameData;
+
+    if (isComplete()) {
+      if (checkSolution(verificationMode !== 'ON_DEMAND')) {
+        onDone?.();
+      }
+      return;
+    }
+
+    if (verificationMode === 'ON_INPUT') {
+      $wrongCells = scanner.getErrorCells();
+    } else {
+      $wrongCells = [];
     }
   }
 
-  function checkSolution(numbers: string[][]): boolean {
-    $wrongCells = [];
-    if (solution?.numbers == null) return false;
+  function checkSolution(showErrors: boolean): boolean {
+    //check that the provided solution has the same dimensions as the user input
+    if (solution != null) {
+      if (
+        solution.numbers.length !== gameData.cellValues.length ||
+        solution.numbers[0].length !== gameData.cellValues[0].length
+      ) {
+        return false;
+      }
+    }
+    //check for errors against the provided solution or the puzzle logic
+    const errorCells = scanner.getErrorCells(solution?.numbers);
+    if (showErrors) {
+      $wrongCells = errorCells;
+    } else {
+      $wrongCells = [];
+    }
+    return errorCells.length === 0;
+  }
 
-    if (
-      solution.numbers.length !== numbers.length ||
-      solution.numbers[0].length !== numbers[0].length
-    ) {
-      return false;
+  let constraintsChecked = false;
+
+  function verify(): void {
+    if (isComplete()) {
+      if (checkSolution(true)) {
+        if (onDone != null) {
+          onDone?.();
+        } else {
+          constraintsChecked = true;
+        }
+      }
+      return;
     }
 
-    const userSolution = getUserSolution({
-      givens: clues.givens,
-      values: numbers
-    });
-
-    let isDone = true;
-
-    userSolution.forEach((row, rowIndex) => {
-      row.forEach((cell, columnIndex) => {
-        if (solution && solution.numbers[rowIndex][columnIndex] !== cell) {
-          if (cell.length > 0) {
-            $wrongCells = [...$wrongCells, { row: rowIndex, column: columnIndex }];
-          }
-          isDone = false;
-        }
-      });
-    });
-    return isDone;
+    const errorCells = scanner.getErrorCells();
+    $wrongCells = errorCells;
+    constraintsChecked = errorCells.length === 0;
   }
 </script>
 
@@ -136,7 +169,19 @@
   </div>
   <div class="my-auto">
     <Controller bind:walkthrough>
+      <button
+        title="Check digits"
+        class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+        on:click={verify}
+      >
+        <Check size={32} />
+      </button>
       <slot />
     </Controller>
   </div>
 </div>
+
+<NotificationModal
+  bind:isOpen={constraintsChecked}
+  notificationMessage="No constraint violations detected"
+/>

@@ -96,7 +96,8 @@ export const RegionValidator = z.object({
   type: RegionTypeValidator.nullish(),
   color: ColorValidator.nullish(),
   borders: z.boolean().nullish(),
-  uniqueDigits: z.boolean().nullish()
+  uniqueDigits: z.boolean().nullish(),
+  nonStandard: z.boolean().nullish()
 });
 
 export type Region = z.infer<typeof RegionValidator>;
@@ -123,7 +124,8 @@ export const ExtendedcageValidator = z.object({
   type: CageTypeValidator.nullish(),
   text: z.string().nullish(),
   color: ColorValidator.nullish(),
-  uniqueDigits: z.boolean().nullish()
+  uniqueDigits: z.boolean().nullish(),
+  nonStandard: z.boolean().nullish()
 });
 export type Extendedcage = z.infer<typeof ExtendedcageValidator>;
 
@@ -164,7 +166,8 @@ export const PathValidator = z.object({
   form: FormValidator.nullish(),
   fill: FillValidator.nullish(),
   arrow: z.boolean().nullish(),
-  uniqueDigits: z.boolean().nullish()
+  uniqueDigits: z.boolean().nullish(),
+  nonStandard: z.boolean().nullish()
 });
 export type Path = z.infer<typeof PathValidator>;
 
@@ -190,7 +193,8 @@ export const BorderclueValidator = z.object({
   shape: ShapeValidator.nullish(),
   color: ColorValidator.nullish(),
   radius: z.number().int().nullish(), // up to 100%
-  text: z.string().nullish()
+  text: z.string().nullish(),
+  nonStandard: z.boolean().nullish()
 });
 export type Borderclue = z.infer<typeof BorderclueValidator>;
 
@@ -258,7 +262,8 @@ export const CellclueValidator = z.object({
   size: CellClueSizeValidator.nullish(),
   symbol: SymbolTypeValidator.nullish(),
   rotation: RotationValidator.nullish(),
-  color: ColorValidator.nullish()
+  color: ColorValidator.nullish(),
+  nonStandard: z.boolean().nullish()
 });
 export type Cellclue = z.infer<typeof CellclueValidator>;
 

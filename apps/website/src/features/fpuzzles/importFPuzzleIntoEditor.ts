@@ -47,13 +47,13 @@ function getDimensions(fpuzzle: FPuzzlesJson): Dimensions {
   };
 
   const cells: PositionString[] = [];
-  if (fpuzzle.text) {
+  if (fpuzzle.text != null) {
     cells.push(...fpuzzle.text.map((t) => t.cells).flat());
   }
-  if (fpuzzle.littlekillersum) {
+  if (fpuzzle.littlekillersum != null) {
     cells.push(...fpuzzle.littlekillersum.map((l) => l.cell));
   }
-  if (fpuzzle.sandwichsum) {
+  if (fpuzzle.sandwichsum != null) {
     cells.push(...fpuzzle.sandwichsum.map((l) => l.cell));
   }
 

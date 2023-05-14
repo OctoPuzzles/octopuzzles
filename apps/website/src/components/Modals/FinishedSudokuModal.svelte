@@ -24,10 +24,7 @@
   let solutionCodeKey = '';
 
   function generateSolutionCode(): string {
-    const solution = getUserSolution({
-      givens: clues.givens,
-      values: gameData.cellValues.map((row) => row.map((cell) => cell.digits?.join('') ?? ''))
-    });
+    const solution = getUserSolution(gameData.cellValues, clues.givens);
 
     let solutionCode = '';
     solutionCodeKey.split(';').forEach((k) => {

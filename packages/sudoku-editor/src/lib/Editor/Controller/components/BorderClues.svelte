@@ -8,6 +8,7 @@
     Select,
     ScaledSvg,
     ColorSelect,
+    Checkbox,
     Range
   } from '@octopuzzles/ui';
   import {
@@ -31,7 +32,7 @@
 
   let type: BorderClueType | 'CUSTOM' = $sudokuClues.borderclues[0]?.type ?? 'CUSTOM';
   let defaultSettings = borderClueDefaults(type);
-  let { shape, color, radius, text } = defaultSettings;
+  let { shape, color, radius, text, nonStandard } = defaultSettings;
 
   $: color, updateSelectedClue();
 
@@ -65,11 +66,17 @@
     color = clue.color ?? defaultSettings.color;
     radius = clue.radius ?? defaultSettings.radius;
     text = clue.text ?? defaultSettings.text;
+    nonStandard = clue.nonStandard ?? defaultSettings.nonStandard;
   }
 
   function changeType(type: BorderClueType | 'CUSTOM'): void {
     updateSettings(type !== 'CUSTOM' ? { type } : {});
 
+    updateSelectedClue();
+  }
+
+  function toggleNonStandard(): void {
+    nonStandard = !nonStandard;
     updateSelectedClue();
   }
 
@@ -331,5 +338,15 @@
         }}
       />
     </div>
+
+    {#if type !== 'CUSTOM'}
+      <div>
+        <Checkbox
+          bind:checked={nonStandard}
+          label="Non-Standard logic"
+          on:change={() => toggleNonStandard()}
+        />
+      </div>
+    {/if}
   </div>
 </div>

@@ -55,7 +55,8 @@ export const CellDataValidator = z.object({
   digits: z.array(DigitValidator).optional(),
   centermarks: z.array(DigitValidator).optional(),
   cornermarks: z.array(DigitValidator).optional(),
-  colors: z.array(ColorValidator).optional()
+  colors: z.array(ColorValidator).optional(),
+  value: z.number().optional()
 });
 export type CellData = z.infer<typeof CellDataValidator>;
 

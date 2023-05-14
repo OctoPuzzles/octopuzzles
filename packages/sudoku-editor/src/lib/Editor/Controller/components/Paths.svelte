@@ -42,7 +42,7 @@
 
   let type: PathType | 'CUSTOM' = $sudokuClues.paths[0]?.type ?? 'CUSTOM';
   let defaultSettings = pathDefaults(type);
-  let { color, width, form, fill, arrow, uniqueDigits } = defaultSettings;
+  let { color, width, form, fill, arrow, uniqueDigits, nonStandard } = defaultSettings;
   $: hollow = fill === 'Hollow';
 
   $: color, updateSelectedPath();
@@ -88,6 +88,7 @@
     hollow = fill === 'Hollow';
     arrow = path.arrow ?? defaultSettings.arrow;
     uniqueDigits = path.uniqueDigits ?? defaultSettings.uniqueDigits;
+    nonStandard = path.nonStandard ?? defaultSettings.nonStandard;
   }
 
   function onChangeType(): void {
@@ -115,6 +116,11 @@
   function toggleUniqueDigits(): void {
     uniqueDigits = !uniqueDigits;
 
+    updateSelectedPath();
+  }
+
+  function toggleNonStandard(): void {
+    nonStandard = !nonStandard;
     updateSelectedPath();
   }
 
@@ -430,5 +436,15 @@
         on:change={() => toggleUniqueDigits()}
       />
     </div>
+
+    {#if type !== 'CUSTOM'}
+      <div>
+        <Checkbox
+          bind:checked={nonStandard}
+          label="Non-Standard logic"
+          on:change={() => toggleNonStandard()}
+        />
+      </div>
+    {/if}
   </div>
 </div>

@@ -22,3 +22,6 @@ export { default as FacebookLink } from './shareButtons/FacebookLink.svelte';
 export { default as RedditLink } from './shareButtons/RedditLink.svelte';
 export { default as TwitterLink } from './shareButtons/TwitterLink.svelte';
 export { default as WhatsAppLink } from './shareButtons/WhatsAppLink.svelte';
+
+export { default as NotificationModal } from './modals/NotificationModal.svelte';
+export { default as DangerActionModal } from './modals/DangerActionModal.svelte';

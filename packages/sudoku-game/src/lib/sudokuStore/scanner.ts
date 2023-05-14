@@ -1,12 +1,20 @@
 import { get, writable } from 'svelte/store';
-import { deepCopy, getValuesFromRange, undefinedIfEmpty } from '@octopuzzles/utils';
+import { deepCopy, undefinedIfEmpty } from '@octopuzzles/utils';
 import { Digits, type Digit, type Position, type ScannerSettings } from '@octopuzzles/models';
 import { gameHistory, mode, highlightedCells, selectedCells } from '.';
 import {
   cageDefaults,
   pathDefaults,
   regionDefaults,
-  defaultRegionSize
+  defaultRegionSize,
+  getUserSolution,
+  verifyRegion,
+  verifyPath,
+  verifyBorderClue,
+  verifyCellClue,
+  verifyCage,
+  verifyLogic,
+  getValidDigits
 } from '@octopuzzles/sudoku-utils';
 
 // WRITABLES
@@ -80,7 +88,7 @@ function createScannerStore() {
 
     const cellValues = get(gameHistory.getValue('cellValues'));
 
-    const allDigits = getValuesFromRange(logic.digits ?? '1-' + rows).map((d) => d as Digit);
+    const allDigits = getValidDigits(logic, dimensions);
     const candidates: Digit[][][] = [];
     const queue: Position[] = [];
 
@@ -93,10 +101,10 @@ function createScannerStore() {
         const column = j + columnOffset;
         const cell = cellValues[row][column];
 
-        if (givens[row][column] === '' && !cell.digits) {
+        if (givens[row][column] === '' && cell.digits == null) {
           queue.push({ row, column });
 
-          if (cell.centermarks) {
+          if (cell.centermarks != null) {
             candidates[row][column] = [...cell.centermarks];
           } else {
             candidates[row][column] = [...allDigits];
@@ -325,7 +333,7 @@ function createScannerStore() {
     seen = true
   ): { tuple: string[]; context: string; cells: Position[] }[] {
     const cellValues = get(gameHistory.getValue('cellValues'));
-    if (!seen && !cellValues[cell.row][cell.column].centermarks) return [];
+    if (!seen && cellValues[cell.row][cell.column].centermarks == null) return [];
 
     const tuples: { tuple: string[]; context: string; cells: Position[] }[] = [];
     const seenCells = getSeenCells(cell);
@@ -338,7 +346,7 @@ function createScannerStore() {
           (c) => c.context === context && cellValues[c.row][c.column].centermarks
         );
 
-        if (contextCells.length) {
+        if (contextCells.length > 0) {
           if (!seen) {
             contextCells.unshift({ ...cell, context });
           }
@@ -397,7 +405,7 @@ function createScannerStore() {
       const seenCells = getSeenCells(cell);
 
       seenCells
-        .filter((s) => cellValues[s.row][s.column].cornermarks)
+        .filter((s) => cellValues[s.row][s.column].cornermarks != null)
         .forEach((c) => {
           const regionCells =
             regions
@@ -407,7 +415,7 @@ function createScannerStore() {
                   (r.uniqueDigits ?? true) &&
                   r.positions.some((p) => p.row === c.row && p.column === c.column)
               )
-              ?.positions.filter((p) => cellValues[p.row][p.column].cornermarks) ?? [];
+              ?.positions.filter((p) => cellValues[p.row][p.column].cornermarks != null) ?? [];
 
           cellValues[c.row][c.column].cornermarks?.forEach((v) => {
             const valueCells = regionCells.filter((p) =>
@@ -422,7 +430,7 @@ function createScannerStore() {
             }
           });
         });
-    } else if (cellValues[cell.row][cell.column].cornermarks) {
+    } else if (cellValues[cell.row][cell.column].cornermarks != null) {
       const regionCells =
         regions
           .find(
@@ -431,7 +439,7 @@ function createScannerStore() {
               (r.uniqueDigits ?? true) &&
               r.positions.some((p) => p.row === cell.row && p.column === cell.column)
           )
-          ?.positions.filter((p) => cellValues[p.row][p.column].cornermarks) ?? [];
+          ?.positions.filter((p) => cellValues[p.row][p.column].cornermarks != null) ?? [];
 
       cellValues[cell.row][cell.column].cornermarks?.forEach((v) => {
         sets.push({
@@ -584,10 +592,10 @@ function createScannerStore() {
 
               const given = givens[n.row][n.column];
               let digits = given !== '' ? [given as Digit] : undefined;
-              if (!digits) {
+              if (digits == null) {
                 digits = cellValues[n.row][n.column].digits;
               }
-              if (digits) {
+              if (digits != null) {
                 if (digits.some((d) => Math.abs(Digits.indexOf(d) - Digits.indexOf(v)) === 1)) {
                   highlightedCells.push(n);
 
@@ -618,10 +626,10 @@ function createScannerStore() {
 
               const given = givens[n.row][n.column];
               let digits = given !== '' ? [given as Digit] : undefined;
-              if (!digits) {
+              if (digits == null) {
                 digits = cellValues[n.row][n.column].digits;
               }
-              if (digits) {
+              if (digits != null) {
                 if (
                   digits.some(
                     (d) =>
@@ -658,10 +666,10 @@ function createScannerStore() {
 
               const given = givens[n.row][n.column];
               let digits = given !== '' ? [given as Digit] : undefined;
-              if (!digits) {
+              if (digits == null) {
                 digits = cellValues[n.row][n.column].digits;
               }
-              if (digits) {
+              if (digits != null) {
                 if (digits.some((d) => Digits.indexOf(d) + Digits.indexOf(v) === 10)) {
                   highlightedCells.push(n);
 
@@ -692,10 +700,10 @@ function createScannerStore() {
 
               const given = givens[n.row][n.column];
               let digits = given !== '' ? [given as Digit] : undefined;
-              if (!digits) {
+              if (digits == null) {
                 digits = cellValues[n.row][n.column].digits;
               }
-              if (digits) {
+              if (digits != null) {
                 if (digits.some((d) => Digits.indexOf(d) + Digits.indexOf(v) === 5)) {
                   highlightedCells.push(n);
 
@@ -750,11 +758,11 @@ function createScannerStore() {
         sortQueue(cell);
       } else {
         //remove eliminated values from any pencil marks
-        if (centermarks) {
+        if (centermarks != null) {
           centermarks = [...candidateValues];
           changed = true;
         }
-        if (cornermarks) {
+        if (cornermarks != null) {
           cornermarks = undefinedIfEmpty(
             cornermarks.filter((u) => {
               if (candidateValues.some((v) => v === u)) {
@@ -868,7 +876,7 @@ function createScannerStore() {
       });
     } else if (highlightMode === 'Tuples') {
       const cellValues = get(gameHistory.getValue('cellValues'));
-      if (!selectedCells.some((c) => cellValues[c.row][c.column].centermarks)) {
+      if (!selectedCells.some((c) => cellValues[c.row][c.column].centermarks != null)) {
         let tuples = getTuples(selectedCells[0], false);
         if (selectedCells.length > 1) {
           tuples = tuples.filter((t) =>
@@ -883,7 +891,7 @@ function createScannerStore() {
               !selectedCells.some((q) => q.row === p.row && q.column === p.column) &&
               !cellsToHighlight.some((q) => q.row === p.row && q.column === p.column)
           );
-          if (cellsToAdd.length) {
+          if (cellsToAdd.length > 0) {
             cellsToHighlight = [...cellsToHighlight, ...cellsToAdd];
           }
         });
@@ -891,6 +899,94 @@ function createScannerStore() {
     }
 
     return cellsToHighlight;
+  }
+
+  function getErrorCells(solution?: string[][] | null): Position[] {
+    const cellValues = get(gameHistory.getValue('cellValues'));
+    const clues = get(gameHistory.clues);
+
+    const userSolution = getUserSolution(cellValues, clues.givens, clues.logic);
+
+    const wrongCells: Position[] = [];
+
+    if (solution != null) {
+      userSolution.forEach((r, i) => {
+        r.forEach((cell, j) => {
+          if (cell.digits != null) {
+            if (solution[i][j] !== cell.digits.join('')) {
+              wrongCells.push({ row: i, column: j });
+            }
+          }
+        });
+      });
+    } else {
+      userSolution.forEach((r, i) => {
+        r.forEach((cell, j) => {
+          if (cell.digits != null) {
+            getSeenCells({ row: i, column: j }, true).forEach((c) => {
+              cell.digits?.forEach((d) => {
+                if (
+                  userSolution[c.row][c.column].digits?.includes(d) === true &&
+                  !wrongCells.some((w) => w.row === c.row && w.column === c.column)
+                ) {
+                  wrongCells.push(c);
+                }
+              });
+            });
+          }
+        });
+      });
+
+      clues.regions.forEach((r) => {
+        wrongCells.push(
+          ...verifyRegion(r, userSolution, clues).filter(
+            (c) => !wrongCells.some((w) => w.row === c.row && w.column === c.column)
+          )
+        );
+      });
+
+      clues.paths.forEach((l) => {
+        wrongCells.push(
+          ...verifyPath(l, userSolution, clues).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      clues.borderclues.forEach((b) => {
+        wrongCells.push(
+          ...verifyBorderClue(b, userSolution).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      clues.cellclues.forEach((c) => {
+        wrongCells.push(
+          ...verifyCellClue(c, userSolution, clues).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      clues.extendedcages.forEach((k) => {
+        wrongCells.push(
+          ...verifyCage(k, userSolution).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      });
+
+      if (clues.logic.flags) {
+        wrongCells.push(
+          ...verifyLogic(clues.logic, userSolution, clues).filter(
+            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
+          )
+        );
+      }
+    }
+
+    return wrongCells;
   }
 
   function toggleSeen(): void {
@@ -919,6 +1015,7 @@ function createScannerStore() {
     isScanning,
     getSeenCells,
     getHighlightedCells,
+    getErrorCells,
     toggleSeen,
     toggleTuples,
     scannerSettings
