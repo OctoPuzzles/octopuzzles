@@ -11,8 +11,15 @@ import { derived, get, writable } from 'svelte/store';
 import { defaultGameData } from '@octopuzzles/sudoku-utils';
 import type {
   OnMouseDownHitboxHandler,
-  OnMouseEnterHitboxHandler
+  OnMouseEnterHitboxHandler,
+  OnClickCellHandler,
+  OnEnterCellHandler
 } from '@octopuzzles/sudoku-display';
+import {
+  defaultHandleArrows,
+  defaultHandleClickCell,
+  defaultHandleEnterCell
+} from './interactionHandlers';
 
 // WRITABLES
 
@@ -227,3 +234,19 @@ export const selectedCells = createSelectedCellsStore();
 
 export const handleMouseDownHitbox = writable<OnMouseDownHitboxHandler | undefined>(undefined);
 export const handleMouseEnterHitbox = writable<OnMouseEnterHitboxHandler | undefined>(undefined);
+
+/**
+ * The controller components can augment the functionality and how user inputs should be handled by changing this function.
+ * This function specifies what to do when a user clicks a cell.
+ */
+export const handleClickCell = writable<OnClickCellHandler>(defaultHandleClickCell);
+/**
+ * The controller components can augment the functionality and how user inputs should be handled by changing this function.
+ * This function specifies what to do when a user enters a cell with their mouse and the meta button is clicked.
+ */
+export const handleEnterCell = writable<OnEnterCellHandler>(defaultHandleEnterCell);
+/**
+ * The controller components can augment the functionality and how user inputs should be handled by changing this function.
+ * This function specifies what to do when a user moves around the board with the arrow buttons.
+ */
+export const handleArrows = writable(defaultHandleArrows);
