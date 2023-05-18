@@ -22,6 +22,7 @@
   const gameData = gameHistory.subscribeToInputs();
 
   let penColor: Color = 'Black';
+  let mouseDown = false;
 
   onMount(() => {
     $selectedCells = [];
@@ -36,6 +37,8 @@
   });
 
   const onMouseUp = (): void => {
+    if (!mouseDown) return;
+    mouseDown = false;
     const currentPenTools = deepCopy($gameData.pentool) ?? [];
     const lastPenTool = currentPenTools[currentPenTools.length - 1];
     if (lastPenTool == null) return;
@@ -93,6 +96,7 @@
   };
 
   const onMouseDownHitbox: OnMouseDownHitboxHandler = (type, position) => {
+    mouseDown = true;
     const currentPenTools = deepCopy($gameData.pentool) ?? [];
     if (type === 'border') {
       gameHistory.set({
