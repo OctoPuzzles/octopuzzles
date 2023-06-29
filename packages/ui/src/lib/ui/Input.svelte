@@ -17,6 +17,7 @@
   export let value: string | number | string[];
   /** If the helptext slot should be hidden */
   export let hideHelpSlot = false;
+  export let required = false;
 
   let input: HTMLInputElement | HTMLTextAreaElement;
 
@@ -26,7 +27,7 @@
 </script>
 
 {#if label}
-  <Label {id}>
+  <Label {id} {required}>
     {label}
   </Label>
 {/if}

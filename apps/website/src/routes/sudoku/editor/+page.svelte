@@ -323,10 +323,10 @@
         </ul>
       {/if}
 
-      <Input label="Title" bind:value={sudokuTitle} placeholder="My sudoku">
+      <Input label="Title" required bind:value={sudokuTitle} placeholder="My sudoku">
         <p slot="error">{errors.title ? errors.title : ''}</p>
       </Input>
-      <Label>Description</Label>
+      <Label required>Description</Label>
       <div class="relative w-full">
         <button
           tabindex={-1}
@@ -411,7 +411,16 @@
               <a href="/sudoku/{id}"><Button type="button">Go to pre-release puzzle</Button></a>
             {/if}
           {:else}
-            <Button type="button" {loading} variant="primary" on:click={() => save()}>Save</Button>
+            <Button
+              disabled={sudokuTitle.length === 0 || description.length === 0}
+              title={sudokuTitle.length === 0 || description.length === 0
+                ? 'Please specify a title and description'
+                : 'Save the puzzle'}
+              type="button"
+              {loading}
+              variant="primary"
+              on:click={() => save()}>Save</Button
+            >
           {/if}
         </div>
         <div class="flex gap-2">
