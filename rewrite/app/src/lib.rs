@@ -2,6 +2,8 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use ui::Button;
+use sudoku::{Sudoku, Dimensions};
+use sudoku_display::SudokuDisplay;
 
 pub mod error_template;
 
@@ -34,12 +36,23 @@ pub fn App(cx: Scope) -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage(cx: Scope) -> impl IntoView {
+    let sudokus = vec![Sudoku {
+        title: "Sudoku".to_string(),
+        description: "".to_string(),
+        dimensions: Dimensions {
+            rows: 9,
+            columns: 9
+        }
+    }];
     // Creates a reactive value to update the button
     let (count, set_count) = create_signal(cx, 0);
     let on_click = move |_| set_count.update(|count| *count += 1);
 
     view! { cx,
-        <h1>"Welcome to Leptos!"</h1>
+        <h1>"Welcome to Octopuzzles!"</h1>
         <Button on_click=on_click>"Click Me: " {count}</Button>
+        {sudokus.into_iter()
+            .map(|sudoku| view! { cx, <SudokuDisplay sudoku=sudoku />})
+            .collect::<Vec<_>>()}
     }
 }

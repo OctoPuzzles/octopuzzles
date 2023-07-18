@@ -1,5 +1,5 @@
 [workspace]
-members = ["app", "frontend", "server", "ui"]
+members = ["app", "frontend", "server", "ui", "sudoku", "sudoku_display"]
 
 # need to be applied only to wasm build
 [profile.release]
@@ -13,6 +13,8 @@ leptos_meta = { version = "0.4", features = ["nightly"] }
 leptos_router = { version = "0.4", features = ["nightly"] }
 leptos_axum = { version = "0.4" }
 ui = { path = "ui" }
+sudoku = { path = "sudoku" }
+sudoku_display = { path = "sudoku_display" }
 
 axum = "0.6.11"
 cfg-if = "1.0.0"

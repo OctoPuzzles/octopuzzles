@@ -12,6 +12,9 @@ leptos_router.workspace = true
 leptos_axum = { workspace = true, optional = true }
 
 ui.workspace = true
+sudoku.workspace = true
+sudoku_display.workspace = true
+
 http.workspace = true
 cfg-if.workspace = true
 thiserror.workspace = true

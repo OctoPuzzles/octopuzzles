@@ -79,6 +79,8 @@ dependencies = [
  "leptos_axum",
  "leptos_meta",
  "leptos_router",
+ "sudoku",
+ "sudoku_display",
  "thiserror",
  "ui",
 ]
@@ -2165,6 +2167,18 @@ name = "strsim"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
+
+[[package]]
+name = "sudoku"
+version = "0.1.0"
+
+[[package]]
+name = "sudoku_display"
+version = "0.1.0"
+dependencies = [
+ "leptos",
+ "sudoku",
+]
 
 [[package]]
 name = "syn"
