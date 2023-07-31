@@ -1,6 +1,6 @@
 pub struct Dimensions {
     pub rows: i32,
-    pub columns: i32
+    pub columns: i32,
 }
 
 pub struct Sudoku {

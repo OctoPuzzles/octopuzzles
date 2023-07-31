@@ -1,17 +1,13 @@
-use leptos::{*, ev::MouseEvent};
+use leptos::{ev::MouseEvent, *};
 
 #[component]
-pub fn Button<F>(
-    cx: Scope,
-    on_click: F,
-    children: Children,
-) -> impl IntoView
+pub fn Button<F>(on_click: F, children: Children) -> impl IntoView
 where
     F: Fn(MouseEvent) + 'static,
 {
-    view! { cx,
+    view! {
         <button on:click=on_click class="rounded bg-red-500 h-10 px-2">
-            "Hi" {children(cx)}
+            "Hi" {children()}
         </button>
     }
 }
