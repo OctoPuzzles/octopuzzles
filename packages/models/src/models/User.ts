@@ -37,6 +37,7 @@ export const FrontendUserValidator = z.object({
 });
 
 export type User = z.infer<typeof UserValidator>;
+export type FrontendUser = z.infer<typeof FrontendUserValidator>;
 
 export const ScannerHighlightModeValidator = z.enum(['None', 'Seen', 'Tuples']);
 export type ScannerHighlightMode = z.infer<typeof ScannerHighlightModeValidator>;

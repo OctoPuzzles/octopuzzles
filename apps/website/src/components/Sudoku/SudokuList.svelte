@@ -4,12 +4,31 @@
   import { Button, Spinner, PuzzleLabel } from '@octopuzzles/ui';
   import Trash from 'phosphor-svelte/lib/Trash/Trash.svelte';
   import NotePencil from 'phosphor-svelte/lib/NotePencil/NotePencil.svelte';
-  import type { User, Sudoku, Label } from '@octopuzzles/models';
+  import Eye from 'phosphor-svelte/lib/Eye/Eye.svelte';
+  import Check from 'phosphor-svelte/lib/Check/Check.svelte';
+  import ThumbsUp from 'phosphor-svelte/lib/ThumbsUp/ThumbsUp.svelte';
+  import ThumbsDown from 'phosphor-svelte/lib/ThumbsDown/ThumbsDown.svelte';
+  import type {
+    FrontendUser,
+    Sudoku,
+    Label,
+    SavedGame,
+    UserStats,
+    Vote
+  } from '@octopuzzles/models';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
+  import classNames from 'classnames';
 
   export let sudokus:
-    | (Sudoku & { user?: Pick<User, 'id' | 'username' | 'role'>; labels: Label[] })[]
+    | (Sudoku & {
+        user?: FrontendUser;
+        labels: Label[];
+        savedGames?: SavedGame[];
+        userStats?: UserStats[];
+        votes?: Vote[];
+      })[]
     | null;
+  export let userId: number | undefined = undefined;
   export let hasNextPage: boolean;
   export let loading: boolean;
   export let loadNextPage: () => Promise<void>;
@@ -33,7 +52,10 @@
           data-sveltekit-preload-data
         >
           <div class="h-96 w-full p-4 justify-center">
-            <SudokuDisplay clues={fillCluesWithDefaults(sudoku)} />
+            <SudokuDisplay
+              clues={fillCluesWithDefaults(sudoku)}
+              gameData={sudoku.savedGames?.[0]?.gameData}
+            />
           </div>
           <div class="h-32 bg-gray-100 w-full border-t p-2">
             <div class="flex justify-between h-20">
@@ -55,30 +77,61 @@
                   {:else}
                     <p class="text-orange-500">Not public</p>
                   {/if}
-                  <span class="mx-1">•</span>
-                  <p class="">
-                    {sudoku.points ?? 0} upvote{Math.abs(sudoku.points) !== 1 ? 's' : ''}
-                  </p>
-                  {#if sudoku.difficulty != null}
+                  {#if sudoku.difficulty != null || sudoku.userDifficulty != null}
+                    {@const difficulty =
+                      sudoku.difficulty != null && sudoku.solves < 10
+                        ? '(' + sudoku.difficulty + ')'
+                        : sudoku.userDifficulty ?? '-'}
                     <span class="mx-1">•</span>
-                    <p title="{sudoku.difficulty}/5 difficulty">{sudoku.difficulty} / 5</p>
+                    <p title="Difficulty: {difficulty}/5">
+                      Difficulty: {difficulty}/5
+                    </p>
                   {/if}
                 </div>
               </div>
-              {#if deleteSudoku}
-                <div class="flex flex-col items-end justify-around">
-                  <a
-                    class="rounded-full w-7 h-7 p-1 hover:bg-gray-200"
-                    href="/sudoku/editor?id={sudoku.id}"><NotePencil size={20} /></a
-                  >
+              <div class="flex flex-col items-end justify-around">
+                {#if deleteSudoku}
+                  {#if userId != null && sudoku.userId === userId}
+                    <a
+                      class="rounded-full w-7 h-7 p-1 hover:bg-gray-200"
+                      href="/sudoku/editor?id={sudoku.id}"><NotePencil size={20} /></a
+                    >
+                  {/if}
                   <button
                     class="rounded-full w-7 h-7 p-1 hover:text-red-500 hover:bg-red-100"
                     on:click|preventDefault={() => deleteSudoku?.(sudoku.id)}
                   >
                     <Trash size={20} />
                   </button>
-                </div>
-              {/if}
+                {:else}
+                  <p
+                    title="Views: {sudoku.views}"
+                    class={classNames({
+                      'text-orange-500': sudoku.userStats?.[0]?.lastViewedOn != null
+                    })}
+                  >
+                    <Eye size={20} />
+                  </p>
+                  <p
+                    title="Solves: {sudoku.solves}"
+                    class={classNames({
+                      'text-orange-500': sudoku.userStats?.[0]?.solvedOn != null
+                    })}
+                  >
+                    <Check size={20} />
+                  </p>
+                  <p
+                    title="Votes: {sudoku.points}"
+                    class={classNames({ 'text-orange-500': (sudoku.votes?.[0]?.value ?? 0) !== 0 })}
+                  >
+                    {#if sudoku.votes?.[0]?.value ?? sudoku.points < 0}
+                      <ThumbsDown size={20} />
+                    {:else}
+                      <ThumbsUp size={20} />
+                    {/if}
+                  </p>
+                {/if}
+              </div>
             </div>
 
             <div class="h-8 w-full flex items-center overflow-y-hidden overflow-x-auto">

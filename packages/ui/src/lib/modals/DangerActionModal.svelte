@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { Button, Modal } from '@octopuzzles/ui';
+  import Modal from '$lib/ui/Modal.svelte';
+  import Button from '$lib/ui/Button.svelte';
 
   export let isOpen: boolean;
   export let onAccept: () => Promise<void>;

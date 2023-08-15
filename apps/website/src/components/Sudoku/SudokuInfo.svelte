@@ -9,17 +9,19 @@
     HTMLContent
   } from '@octopuzzles/ui';
   import { trpc } from '$lib/trpc/client';
-  import type { Label, Vote, User, Sudoku } from '@octopuzzles/models';
+  import type { Label, Vote, FrontendUser, Sudoku, UserStats } from '@octopuzzles/models';
   import classNames from 'classnames';
   import { formatDistanceToNowStrict } from 'date-fns';
   import CaretDown from 'phosphor-svelte/lib/CaretDown/CaretDown.svelte';
   import CaretUp from 'phosphor-svelte/lib/CaretUp/CaretUp.svelte';
   import Image from 'phosphor-svelte/lib/Image/Image.svelte';
   import { page } from '$app/stores';
+  import { formatTime } from '@octopuzzles/utils';
 
   export let sudoku: Sudoku & {
-    user?: Pick<User, 'id' | 'username' | 'role'> | null;
+    user?: FrontendUser | null;
     userVote?: Vote | null;
+    userStats?: UserStats | null;
     labels: Label[];
   };
   export let takeScreenshot: () => void;
@@ -98,12 +100,16 @@
             {/if}
           </p>
           <p>
-            -
-            {#if sudoku.difficulty != null}
-              Difficulty: {sudoku.difficulty} / 5
-            {:else}
-              No difficulty
+            {#if sudoku.userStats?.solvedOn != null}
+              - Solved {formatDistanceToNowStrict(sudoku.userStats?.solvedOn)} ago in {formatTime(
+                sudoku.userStats?.solveTime ?? 0
+              )}
             {/if}
+          </p>
+          <p>
+            - Difficulty: {sudoku.difficulty != null && sudoku.solves < 10
+              ? '(' + sudoku.difficulty + ')'
+              : sudoku.userDifficulty ?? '-'} / 5
           </p>
         </div>
         {#if sudoku.labels}

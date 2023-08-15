@@ -67,6 +67,13 @@
         <li class="w-full">
           <a
             data-sveltekit-preload-data
+            href="/bookmarks"
+            class="block py-1 px-2 hover:bg-gray-200 w-full">Saved Games</a
+          >
+        </li>
+        <li class="w-full">
+          <a
+            data-sveltekit-preload-data
             href="/settings"
             class="block py-1 px-2 hover:bg-gray-200 w-full">Settings</a
           >

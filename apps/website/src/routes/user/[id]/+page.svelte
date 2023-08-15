@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DangerActionModal from '$components/Modals/DangerActionModal.svelte';
+  import { DangerActionModal } from '@octopuzzles/ui';
   import SudokuList from '$components/Sudoku/SudokuList.svelte';
   import { trpc } from '$lib/trpc/client';
   import type { PageData } from './$types';
@@ -46,6 +46,7 @@
   hasNextPage={data.sudokus.nextCursor != null}
   {loadNextPage}
   {loading}
+  userId={data.me != null && data.me.id === data.user.id ? data.user.id : undefined}
   sudokus={data.sudokus.sudokus ?? null}
   deleteSudoku={data.me == null
     ? undefined

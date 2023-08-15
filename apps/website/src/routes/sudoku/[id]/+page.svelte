@@ -6,9 +6,14 @@
   import FinishedSudokuModal from '$components/Modals/FinishedSudokuModal.svelte';
   import type { PageData } from './$types';
   import { me } from '$stores/meStore';
+  import FloppyDisk from 'phosphor-svelte/lib/FloppyDisk/FloppyDisk.svelte';
   import { fillCluesWithDefaults } from '$utils/fillSudokuWithDefaults';
   import { defaultGameData } from '@octopuzzles/sudoku-utils';
+  import { page } from '$app/stores';
   import ExportButton from '$components/ExportButton.svelte';
+  import { trpc } from '$lib/trpc/client';
+  import { formatTime } from '@octopuzzles/utils';
+  import { NotificationModal } from '@octopuzzles/ui';
 
   export let data: PageData;
 
@@ -26,11 +31,6 @@
   let timer: ReturnType<typeof setInterval>;
 
   $: t = Math.floor((now - start) / 1000);
-
-  $: seconds = `0${t % 60}`.slice(-2);
-  $: minutes = `0${Math.floor(t / 60) % 60}`.slice(-2);
-  $: hours = t >= 3600 ? `0${Math.floor(t / 3600) % 24}`.slice(-2) + ':' : '';
-  $: days = t >= 86400 ? Math.floor(t / 86400) + 'd ' : '';
 
   // When the page is not visible, the timer should not run, but it should also not stop, but be incremented by the number of seconds the user was off screen
   function handleVisibilityChange(): void {
@@ -59,7 +59,13 @@
     });
   }
 
+  async function saveProgress(): Promise<void> {
+    await trpc($page).savedGames.createOrUpdate.mutate({ sudokuId, gameData });
+    savedProgress = true;
+  }
+
   let showFinishedSudokuModal = false;
+  let savedProgress = false;
 </script>
 
 <svelte:head>
@@ -80,8 +86,7 @@
         {data.sudoku.title}
       </h1>
       <span>
-        {days}
-        {hours}{minutes}:{seconds}
+        {formatTime(t)}
       </span>
     </div>
   </div>
@@ -92,6 +97,13 @@
   onScannerSettingsChange={(newSettings) => me.saveSettings({ scanner: newSettings })}
   onDone={() => {
     clearInterval(timer);
+
+    const trpcClient = trpc($page);
+    trpcClient.userStats.solved.mutate({ sudokuId, solveTime: t });
+    if (data?.initialGameData != null) {
+      trpcClient.savedGames.delete.mutate({ sudokuId });
+    }
+
     showFinishedSudokuModal = true;
   }}
   solution={data.sudoku.solution ?? undefined}
@@ -100,6 +112,14 @@
   bind:gameData
   initialGameData={data?.initialGameData}
 >
+  <button
+    title="Save for later"
+    class="w-8 h-8 hover:ring hover:ring-orange-500 rounded-full"
+    on:click={saveProgress}
+  >
+    <FloppyDisk size={32} />
+  </button>
+
   <ExportButton {clues} {gameData} {sudokuTitle} {description} />
 </SudokuGame>
 
@@ -109,7 +129,9 @@
   bind:isOpen={showFinishedSudokuModal}
   {sudokuId}
   {takeScreenshot}
-  finishTime={`${days}${hours}${minutes}:${seconds}`}
+  finishTime={formatTime(t)}
   {clues}
   {gameData}
 />
+
+<NotificationModal bind:isOpen={savedProgress} notificationMessage={'Saved for later'} />
