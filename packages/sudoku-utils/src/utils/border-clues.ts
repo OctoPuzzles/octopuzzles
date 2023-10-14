@@ -101,9 +101,14 @@ export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): 
   if (!(borderclue.nonStandard ?? false)) {
     if (borderclue.type === 'Quadruple') {
       if (borderclue.text != null) {
-        const p = borderclue.positions[0];
-        const q = borderclue.positions[1];
-        const cells = [p, { row: p.row, column: q.column }, q, { row: q.row, column: p.column }];
+        const position1 = borderclue.positions[0];
+        const position2 = borderclue.positions[1];
+        const cells = [
+          position1,
+          { row: position1.row, column: position2.column },
+          position2,
+          { row: position2.row, column: position1.column }
+        ];
         const digits: string[] = [];
         if (
           cells.every((pos) => {
@@ -122,23 +127,23 @@ export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): 
         }
       }
     } else {
-      const p = borderclue.positions[0];
-      const q = borderclue.positions[1];
-      const a = solution[p.row][p.column];
-      const b = solution[q.row][q.column];
+      const position1 = borderclue.positions[0];
+      const position2 = borderclue.positions[1];
+      const cell1 = solution[position1.row][position1.column];
+      const cell2 = solution[position2.row][position2.column];
 
-      if (a.digits == null || b.digits == null) return [];
+      if (cell1.digits == null || cell2.digits == null) return [];
 
       if (borderclue.type === 'XvX' || borderclue.type === 'XvV') {
-        const x = a.value;
-        const y = b.value;
+        const x = cell1.value;
+        const y = cell2.value;
         if (x != null && y != null) {
           isValid = x + y === (borderclue.type === 'XvX' ? 10 : 5);
         }
       } else if (
-        !a.digits.every(
+        !cell1.digits.every(
           (v) =>
-            b.digits?.every((u) => {
+            cell2.digits?.every((u) => {
               const x = Digits.indexOf(v);
               const y = Digits.indexOf(u);
               switch (borderclue.type) {

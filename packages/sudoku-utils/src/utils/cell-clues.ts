@@ -287,28 +287,28 @@ export function verifyCellClue(
           ) {
             const cell = solution[i][j];
             if (cell.value != null) {
-              const v = cell.value;
+              const value = cell.value;
               if (cellclue.type === 'Skyscraper') {
-                if (v > key) {
+                if (value > key) {
                   ++total;
-                  key = v;
+                  key = value;
                 }
               } else if (cellclue.type === 'Sandwich') {
-                if (v === 1 || v === 9) {
+                if (value === 1 || value === 9) {
                   if (key === 0) {
-                    key = v;
+                    key = value;
                   } else {
                     ++count;
                     cells.push({ row: i, column: j });
                     break;
                   }
                 } else if (key !== 0) {
-                  total += v;
+                  total += value;
                 } else {
                   continue;
                 }
               } else if (cellclue.type === 'XSum') {
-                total += v;
+                total += value;
               }
               ++count;
             }

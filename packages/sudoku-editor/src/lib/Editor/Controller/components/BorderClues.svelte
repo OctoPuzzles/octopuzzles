@@ -125,14 +125,16 @@
 
     let positions = $selectedCells;
     if (positions.length > 2) {
-      let p = positions[0];
-      let q = positions.find((q) => q.row !== p.row && q.column !== p.column);
-      if (q == null) {
-        p = positions[1];
-        q = positions.find((q) => q.row !== p.row && q.column !== p.column);
+      let position1 = positions[0];
+      let position2 = positions.find(
+        (q) => q.row !== position1.row && q.column !== position1.column
+      );
+      if (position2 == null) {
+        position1 = positions[1];
+        position2 = positions.find((q) => q.row !== position1.row && q.column !== position1.column);
       }
-      if (q) {
-        positions = [p, q];
+      if (position2) {
+        positions = [position1, position2];
       }
     }
 

@@ -76,8 +76,8 @@ export function verifyRegion(
         for (let i = 0; i < n; ++i) {
           values[i] = [];
           for (let j = 0; j < n; ++j) {
-            const p = positions[i * n + j];
-            const cell = solution[p.row][p.column];
+            const position = positions[i * n + j];
+            const cell = solution[position.row][position.column];
             if (cell.value == null) {
               return [];
             }
@@ -142,15 +142,15 @@ export function verifyRegion(
         clones.forEach((r) => {
           const clonePositions = deepCopy(r.positions).sort(comparePositions);
           positions.forEach((p, i) => {
-            const a = solution[p.row][p.column];
-            if (a.value != null) {
-              const q = clonePositions[i];
-              const b = solution[q.row][q.column];
-              if (b.value != null && b.value !== a.value) {
+            const cell1 = solution[p.row][p.column];
+            if (cell1.value != null) {
+              const position2 = clonePositions[i];
+              const cell2 = solution[position2.row][position2.column];
+              if (cell2.value != null && cell2.value !== cell1.value) {
                 if (!uncloned.includes(p)) {
                   uncloned.push(p);
                 }
-                uncloned.push(q);
+                uncloned.push(position2);
               }
             }
           });

@@ -9,9 +9,9 @@ export function getUserSolution(userInput: CellValues, givens: Givens, logic?: L
 
   userSolution.forEach((row, i) => {
     row.forEach((cell, j) => {
-      const v = givens[i]?.[j];
-      if (v && v !== '') {
-        cell.digits = [v as Digit];
+      const given = givens[i]?.[j];
+      if (given && given !== '') {
+        cell.digits = [given as Digit];
       }
       if (cell.digits != null && !sCells && !doublers) {
         cell.value = Digits.indexOf(cell.digits[0]);

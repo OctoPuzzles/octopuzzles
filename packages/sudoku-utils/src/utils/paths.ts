@@ -263,10 +263,11 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
     switch (path.type) {
       case 'Arrow': {
         let target: number | undefined = undefined;
-        const p = path.positions[0];
+        const position = path.positions[0];
         const pill = clues.paths.find(
           (l) =>
-            l.type === 'Pill' && l.positions.some((q) => q.row === p.row && q.column === p.column)
+            l.type === 'Pill' &&
+            l.positions.some((q) => q.row === position.row && q.column === position.column)
         );
 
         if (pill) {
@@ -288,7 +289,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
             target = parseInt(t);
           }
         } else {
-          target = solution[p.row][p.column].value;
+          target = solution[position.row][position.column].value;
         }
         if (target == null) {
           break;
@@ -300,9 +301,9 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           path.positions.every((p, i) => {
             if (i === 0) return true;
 
-            const v = solution[p.row][p.column].value;
-            if (v != null) {
-              total += v;
+            const value = solution[p.row][p.column].value;
+            if (value != null) {
+              total += value;
               return true;
             } else {
               return false;
@@ -322,8 +323,8 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         let prev: Digit | null = null;
 
         for (let n = 0; n < path.positions.length; ++n) {
-          const p = path.positions[n];
-          const digits = solution[p.row][p.column].digits;
+          const position = path.positions[n];
+          const digits = solution[position.row][position.column].digits;
           if (digits != null) {
             if (
               prev != null &&
@@ -340,14 +341,14 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
       }
       case 'Between':
       case 'Lockout': {
-        const p = path.positions[0];
-        const q = path.positions[path.positions.length - 1];
-        const a = solution[p.row][p.column];
-        const b = solution[q.row][q.column];
+        const position1 = path.positions[0];
+        const position2 = path.positions[path.positions.length - 1];
+        const cell1 = solution[position1.row][position1.column];
+        const cell2 = solution[position2.row][position2.column];
 
-        if (a.value != null && b.value != null) {
-          const min = a.value < b.value ? a.value : b.value;
-          const max = a.value > b.value ? a.value : b.value;
+        if (cell1.value != null && cell2.value != null) {
+          const min = cell1.value < cell2.value ? cell1.value : cell2.value;
+          const max = cell1.value > cell2.value ? cell1.value : cell2.value;
 
           if (path.type === 'Lockout' && max - min < 4) {
             isValid = false;
@@ -402,8 +403,8 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         let prev: Digit[] = [];
 
         for (let n = 0; n < path.positions.length; ++n) {
-          const p = path.positions[n];
-          const cell = solution[p.row][p.column];
+          const position = path.positions[n];
+          const cell = solution[position.row][position.column];
           if (cell.digits != null) {
             if (
               prev.length > 0 &&
@@ -425,12 +426,12 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
       case 'Palindrome': {
         const unmirrored: Position[] = [];
         for (let n = 0; n < Math.floor(path.positions.length / 2); ++n) {
-          const p = path.positions[n];
-          const q = path.positions[path.positions.length - n - 1];
-          const a = solution[p.row][p.column];
-          const b = solution[q.row][q.column];
-          if (a.value != null && b.value != null && a.value !== b.value) {
-            unmirrored.push(p, q);
+          const position1 = path.positions[n];
+          const position2 = path.positions[path.positions.length - n - 1];
+          const cell1 = solution[position1.row][position1.column];
+          const cell2 = solution[position2.row][position2.column];
+          if (cell1.value != null && cell2.value != null && cell1.value !== cell2.value) {
+            unmirrored.push(position1, position2);
           }
         }
         return unmirrored;
@@ -481,9 +482,9 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         let total = 0;
         let skip = false;
         for (let n = 0; n < path.positions.length; ++n) {
-          const p = path.positions[n];
-          const cell = solution[p.row][p.column];
-          const regionNo = regionNos.get('R' + p.row + 'C' + p.column);
+          const position = path.positions[n];
+          const cell = solution[position.row][position.column];
+          const regionNo = regionNos.get('R' + position.row + 'C' + position.column);
           if (regionNo !== prevRegionNo) {
             if (prevRegionNo != null) {
               if (!skip) {
@@ -511,13 +512,13 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         break;
       }
       case 'ProductSum': {
-        const p = path.positions[0];
-        const q = path.positions[path.positions.length - 1];
-        const a = solution[p.row][p.column];
-        const b = solution[q.row][q.column];
+        const position1 = path.positions[0];
+        const position2 = path.positions[path.positions.length - 1];
+        const cell1 = solution[position1.row][position1.column];
+        const cell2 = solution[position2.row][position2.column];
 
-        if (a.value != null && b.value != null) {
-          const product = a.value * b.value;
+        if (cell1.value != null && cell2.value != null) {
+          const product = cell1.value * cell2.value;
           let total = 0;
 
           if (
@@ -542,21 +543,21 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         const invalidCells: Position[] = [];
         let lastInvalidIndex = -1;
         for (let i = 2; i < path.positions.length; ++i) {
-          const p = path.positions[i - 2];
-          const q = path.positions[i - 1];
-          const r = path.positions[i];
-          const u = solution[p.row][p.column];
-          const v = solution[q.row][q.column];
-          const w = solution[r.row][r.column];
-          if (u.digits != null && v.digits != null && w.digits != null) {
-            const entropySets = [...u.digits, ...v.digits, ...w.digits].map((d) =>
+          const position1 = path.positions[i - 2];
+          const position2 = path.positions[i - 1];
+          const position3 = path.positions[i];
+          const cell1 = solution[position1.row][position1.column];
+          const cell2 = solution[position2.row][position2.column];
+          const cell3 = solution[position3.row][position3.column];
+          if (cell1.digits != null && cell2.digits != null && cell3.digits != null) {
+            const entropySets = [...cell1.digits, ...cell2.digits, ...cell3.digits].map((d) =>
               Math.ceil(Digits.indexOf(d) / 3)
             );
             if (!entropySets.includes(1) || !entropySets.includes(2) || !entropySets.includes(3)) {
               isValid = false;
-              if (i - 2 > lastInvalidIndex) invalidCells.push(p);
-              if (i - 1 > lastInvalidIndex) invalidCells.push(q);
-              if (i > lastInvalidIndex) invalidCells.push(r);
+              if (i - 2 > lastInvalidIndex) invalidCells.push(position1);
+              if (i - 1 > lastInvalidIndex) invalidCells.push(position2);
+              if (i > lastInvalidIndex) invalidCells.push(position3);
               lastInvalidIndex = i;
             }
           }
@@ -582,19 +583,19 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         const invalidCells: Position[] = [];
         let lastInvalidIndex = -1;
         for (let i = 1; i < path.positions.length; ++i) {
-          const p = path.positions[i - 1];
-          const q = path.positions[i];
-          const a = solution[p.row][p.column];
-          const b = solution[q.row][q.column];
-          if (a.digits != null && b.digits != null) {
+          const position1 = path.positions[i - 1];
+          const position2 = path.positions[i];
+          const cell1 = solution[position1.row][position1.column];
+          const cell2 = solution[position2.row][position2.column];
+          if (cell1.digits != null && cell2.digits != null) {
             if (
-              a.digits.some((d) =>
-                b.digits?.some((e) => Digits.indexOf(d) % 2 === Digits.indexOf(e) % 2)
+              cell1.digits.some((d) =>
+                cell2.digits?.some((e) => Digits.indexOf(d) % 2 === Digits.indexOf(e) % 2)
               )
             ) {
               isValid = false;
-              if (i - 1 > lastInvalidIndex) invalidCells.push(p);
-              if (i > lastInvalidIndex) invalidCells.push(q);
+              if (i - 1 > lastInvalidIndex) invalidCells.push(position1);
+              if (i > lastInvalidIndex) invalidCells.push(position2);
               lastInvalidIndex = i;
             }
           }
