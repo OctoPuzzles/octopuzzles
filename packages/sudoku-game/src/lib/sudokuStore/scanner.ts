@@ -1,6 +1,6 @@
 import { get, writable } from 'svelte/store';
 import { deepCopy, undefinedIfEmpty } from '@octopuzzles/utils';
-import { Digits, type Digit, type Position, type ScannerSettings } from '@octopuzzles/models';
+import type { Digit, Position, ScannerSettings } from '@octopuzzles/models';
 import { gameHistory, mode, highlightedCells, selectedCells } from '.';
 import {
   cageDefaults,
@@ -15,7 +15,8 @@ import {
   verifyCage,
   verifyLogic,
   getValidDigits,
-  isEqualPosition
+  isEqualPosition,
+  digitValue
 } from '@octopuzzles/sudoku-utils';
 import uniqWith from 'lodash/uniqWith';
 
@@ -598,7 +599,7 @@ function createScannerStore() {
                 digits = cellValues[n.row][n.column].digits;
               }
               if (digits != null) {
-                if (digits.some((d) => Math.abs(Digits.indexOf(d) - Digits.indexOf(v)) === 1)) {
+                if (digits.some((d) => Math.abs(digitValue(d) - digitValue(v)) === 1)) {
                   highlightedCells.push(n);
 
                   return true;
@@ -635,8 +636,7 @@ function createScannerStore() {
                 if (
                   digits.some(
                     (d) =>
-                      Digits.indexOf(d) === 2 * Digits.indexOf(v) ||
-                      2 * Digits.indexOf(d) === Digits.indexOf(v)
+                      digitValue(d) === 2 * digitValue(v) || 2 * digitValue(d) === digitValue(v)
                   )
                 ) {
                   highlightedCells.push(n);
@@ -672,7 +672,7 @@ function createScannerStore() {
                 digits = cellValues[n.row][n.column].digits;
               }
               if (digits != null) {
-                if (digits.some((d) => Digits.indexOf(d) + Digits.indexOf(v) === 10)) {
+                if (digits.some((d) => digitValue(d) + digitValue(v) === 10)) {
                   highlightedCells.push(n);
 
                   return true;
@@ -706,7 +706,7 @@ function createScannerStore() {
                 digits = cellValues[n.row][n.column].digits;
               }
               if (digits != null) {
-                if (digits.some((d) => Digits.indexOf(d) + Digits.indexOf(v) === 5)) {
+                if (digits.some((d) => digitValue(d) + digitValue(v) === 5)) {
                   highlightedCells.push(n);
 
                   return true;

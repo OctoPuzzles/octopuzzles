@@ -1,22 +1,26 @@
 import { type Digit, Digits, type Position } from '@octopuzzles/models';
 
+export function digitValue(d: Digit): number {
+  return Digits.indexOf(d);
+}
+
 export function isConsecutive(a: Digit, b: Digit): boolean {
-  const u = Digits.indexOf(a);
-  const v = Digits.indexOf(b);
+  const u = digitValue(a);
+  const v = digitValue(b);
 
   return Math.abs(u - v) === 1;
 }
 
 export function isWithin(a: Digit, b: Digit, diff: number): boolean {
-  const u = Digits.indexOf(a);
-  const v = Digits.indexOf(b);
+  const u = digitValue(a);
+  const v = digitValue(b);
 
   return Math.abs(u - v) < diff;
 }
 
 export function isInRatio(a: Digit, b: Digit, ratio: number): boolean {
-  const u = Digits.indexOf(a);
-  const v = Digits.indexOf(b);
+  const u = digitValue(a);
+  const v = digitValue(b);
 
   return u === ratio * v || v === ratio * u;
 }

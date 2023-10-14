@@ -9,9 +9,8 @@ import type {
   CellValues,
   EditorHistoryStep
 } from '@octopuzzles/models';
-import { Digits } from '@octopuzzles/models';
 import { deepCopy } from '@octopuzzles/utils';
-import { comparePositions, isEqualPosition, isWithin } from './general';
+import { comparePositions, isEqualPosition, digitValue, isWithin } from './general';
 
 export function emptyPath(positions: Position[], type?: PathType): Path {
   return {
@@ -327,12 +326,12 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         const digits = solution[position.row][position.column].digits;
         if (digits == null) continue;
 
-        if (!isNaN(max) && digits.some((d) => Digits.indexOf(d) <= max)) {
+        if (!isNaN(max) && digits.some((d) => digitValue(d) <= max)) {
           isValid = false;
           break;
         }
 
-        max = Digits.indexOf(digits[digits.length - 1]);
+        max = digitValue(digits[digits.length - 1]);
       }
       break;
     }
@@ -361,9 +360,9 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           if (digits == null) return true;
 
           if (path.type === 'Lockout') {
-            return digits.every((d) => Digits.indexOf(d) < min || Digits.indexOf(d) > max);
+            return digits.every((d) => digitValue(d) < min || digitValue(d) > max);
           } else {
-            return digits.every((d) => Digits.indexOf(d) > min && Digits.indexOf(d) < max);
+            return digits.every((d) => digitValue(d) > min && digitValue(d) < max);
           }
         };
 
@@ -382,11 +381,11 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         if (cell.digits == null) return false;
 
         if (isNaN(min) || isNaN(max)) {
-          min = Digits.indexOf(cell.digits[0]);
-          max = Digits.indexOf(cell.digits[cell.digits.length - 1]);
+          min = digitValue(cell.digits[0]);
+          max = digitValue(cell.digits[cell.digits.length - 1]);
         } else {
-          min = Math.min(Digits.indexOf(cell.digits[0]), min);
-          max = Math.max(Digits.indexOf(cell.digits[cell.digits.length - 1]), max);
+          min = Math.min(digitValue(cell.digits[0]), min);
+          max = Math.max(digitValue(cell.digits[cell.digits.length - 1]), max);
         }
         count += cell.digits.length;
         return true;
@@ -452,7 +451,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
           }
 
           return cell.digits.some((d) => {
-            const n = Digits.indexOf(d);
+            const n = digitValue(d);
             return n !== 1 && (factor % n === 0 || n % factor === 0);
           });
         }
@@ -564,7 +563,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         if (digits1 == null || digits2 == null || digits3 == null) continue;
 
         const entropySets = [...digits1, ...digits2, ...digits3].map((d) =>
-          Math.ceil(Digits.indexOf(d) / 3)
+          Math.ceil(digitValue(d) / 3)
         );
         if (!entropySets.includes(1) || !entropySets.includes(2) || !entropySets.includes(3)) {
           isValid = false;
@@ -586,7 +585,7 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
         if (digits == null) return;
 
         digits.some((digit) => {
-          if (Digits.indexOf(digit) % 2 !== (path.type === 'Odd' ? 1 : 0)) {
+          if (digitValue(digit) % 2 !== (path.type === 'Odd' ? 1 : 0)) {
             invalidCells.push(position);
           }
         });
@@ -609,9 +608,9 @@ export function verifyPath(path: Path, solution: CellValues, clues: EditorHistor
 
         if (
           digits1.some((digit1) => {
-            const value1 = Digits.indexOf(digit1);
+            const value1 = digitValue(digit1);
             return digits2.some((digit2) => {
-              const value2 = Digits.indexOf(digit2);
+              const value2 = digitValue(digit2);
               return value1 % 2 === value2 % 2;
             });
           })

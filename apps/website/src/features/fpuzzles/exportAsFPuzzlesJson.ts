@@ -7,15 +7,15 @@ import {
   getRegionsToDraw,
   defaultRegions,
   topLeftPosition,
-  isEqualPosition
+  isEqualPosition,
+  digitValue
 } from '@octopuzzles/sudoku-utils';
-import {
-  Digits,
-  type Color,
-  type EditorHistoryStep,
-  type GameHistoryStep,
-  type Position,
-  type Digit
+import type {
+  Color,
+  EditorHistoryStep,
+  GameHistoryStep,
+  Position,
+  Digit
 } from '@octopuzzles/models';
 import { htmlToText } from 'html-to-text';
 
@@ -107,7 +107,7 @@ export function getFPuzzlesJson(
       const gridRow = i - (dimensions.margins?.top ?? 0);
       const gridColumn = j - (dimensions.margins?.top ?? 0);
       if (givens[i][j] !== '') {
-        fPuzzle.grid[gridRow][gridColumn].value = Digits.indexOf(givens[i][j] as Digit);
+        fPuzzle.grid[gridRow][gridColumn].value = digitValue(givens[i][j] as Digit);
         fPuzzle.grid[gridRow][gridColumn].given = true;
       }
       if (flags.some((f) => f === 'Indexed159') && (j === 0 || j === 4 || j === 8)) {
@@ -118,7 +118,7 @@ export function getFPuzzlesJson(
       }
       const digits = cellValues[i][j].digits;
       if (digits != null && digits.length > 0) {
-        fPuzzle.grid[gridRow][gridColumn].value = Digits.indexOf(digits[0]);
+        fPuzzle.grid[gridRow][gridColumn].value = digitValue(digits[0]);
       }
       if (cellValues[i][j].colors != null) {
         fPuzzle.grid[gridRow][gridColumn].highlight =

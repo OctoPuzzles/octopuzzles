@@ -1,6 +1,6 @@
 import type { CellValues, Digit, Givens, Logic } from '@octopuzzles/models';
-import { Digits } from '@octopuzzles/models';
 import { deepCopy } from '@octopuzzles/utils';
+import { digitValue } from './general';
 
 export function getUserSolution(userInput: CellValues, givens: Givens, logic?: Logic): CellValues {
   const userSolution = deepCopy(userInput);
@@ -14,7 +14,7 @@ export function getUserSolution(userInput: CellValues, givens: Givens, logic?: L
         cell.digits = [given as Digit];
       }
       if (cell.digits != null && !sCells && !doublers) {
-        cell.value = Digits.indexOf(cell.digits[0]);
+        cell.value = digitValue(cell.digits[0]);
       }
     });
   });

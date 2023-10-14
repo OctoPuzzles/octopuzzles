@@ -6,9 +6,8 @@ import type {
   Logic,
   Position
 } from '@octopuzzles/models';
-import { Digits } from '@octopuzzles/models';
 import { getValuesFromRange } from '@octopuzzles/utils';
-import { isConsecutive, isEqualPosition, isInRatio } from './general';
+import { digitValue, isConsecutive, isEqualPosition, isInRatio } from './general';
 import uniqWith from 'lodash/uniqWith';
 
 export function defaultDigits(logic: Logic, dimensions: Dimensions): string {
@@ -231,7 +230,7 @@ export function verifyLogic(
         }
 
         if (nbrs.length === 3) {
-          const entropySets = allDigits.map((d) => Math.ceil(Digits.indexOf(d) / 3));
+          const entropySets = allDigits.map((d) => Math.ceil(digitValue(d) / 3));
 
           if (!entropySets.includes(1) || !entropySets.includes(2) || !entropySets.includes(3)) {
             invalidCells.push(...[{ row: i, column: j }, ...nbrs]);

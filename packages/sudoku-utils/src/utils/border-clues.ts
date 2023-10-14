@@ -7,8 +7,7 @@ import type {
   CellValues,
   Digit
 } from '@octopuzzles/models';
-import { Digits } from '@octopuzzles/models';
-import { isConsecutive, isInRatio } from './general';
+import { digitValue, isConsecutive, isInRatio } from './general';
 
 export function emptyBorderClue(
   positions: [Position, Position],
@@ -152,7 +151,7 @@ export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): 
       const checkConstraint = (digit1: Digit, digit2: Digit): boolean => {
         switch (borderclue.type) {
           case 'Inequality':
-            return Digits.indexOf(digit1) < Digits.indexOf(digit2);
+            return digitValue(digit1) < digitValue(digit2);
           case 'KropkiBlack':
             return isInRatio(digit1, digit2, 2);
           case 'KropkiWhite':
