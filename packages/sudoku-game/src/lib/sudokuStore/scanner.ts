@@ -14,8 +14,10 @@ import {
   verifyCellClue,
   verifyCage,
   verifyLogic,
-  getValidDigits
+  getValidDigits,
+  isEqualPosition
 } from '@octopuzzles/sudoku-utils';
+import uniqWith from 'lodash/uniqWith';
 
 // WRITABLES
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -863,14 +865,10 @@ function createScannerStore() {
       selectedCells.forEach((c, i) => {
         const seenCells = getSeenCells(c);
         if (i === 0) {
-          seenCells.forEach((p) => {
-            if (!cellsToHighlight.some((q) => q.row === p.row && q.column === p.column)) {
-              cellsToHighlight.push(p);
-            }
-          });
+          cellsToHighlight = uniqWith(seenCells, isEqualPosition);
         } else {
           cellsToHighlight = cellsToHighlight.filter((p) =>
-            seenCells.some((q) => q.row === p.row && q.column === p.column)
+            seenCells.some((q) => isEqualPosition(q, p))
           );
         }
       });
@@ -880,16 +878,14 @@ function createScannerStore() {
         let tuples = getTuples(selectedCells[0], false);
         if (selectedCells.length > 1) {
           tuples = tuples.filter((t) =>
-            selectedCells.every((c) =>
-              t.cells.some((p) => p.row === c.row && p.column === c.column)
-            )
+            selectedCells.every((c) => t.cells.some((p) => isEqualPosition(p, c)))
           );
         }
         tuples.forEach((t) => {
           const cellsToAdd = t.cells.filter(
             (p) =>
-              !selectedCells.some((q) => q.row === p.row && q.column === p.column) &&
-              !cellsToHighlight.some((q) => q.row === p.row && q.column === p.column)
+              !selectedCells.some((q) => isEqualPosition(q, p)) &&
+              !cellsToHighlight.some((q) => isEqualPosition(q, p))
           );
           if (cellsToAdd.length > 0) {
             cellsToHighlight = [...cellsToHighlight, ...cellsToAdd];
@@ -907,83 +903,60 @@ function createScannerStore() {
 
     const userSolution = getUserSolution(cellValues, clues.givens, clues.logic);
 
-    const wrongCells: Position[] = [];
+    let wrongCells: Position[] = [];
 
     if (solution != null) {
       userSolution.forEach((r, i) => {
         r.forEach((cell, j) => {
-          if (cell.digits != null) {
-            if (solution[i][j] !== cell.digits.join('')) {
-              wrongCells.push({ row: i, column: j });
-            }
+          if (cell.digits == null) return;
+
+          if (solution[i][j] !== cell.digits.join('')) {
+            wrongCells.push({ row: i, column: j });
           }
         });
       });
     } else {
       userSolution.forEach((r, i) => {
         r.forEach((cell, j) => {
-          if (cell.digits != null) {
-            getSeenCells({ row: i, column: j }, true).forEach((c) => {
-              cell.digits?.forEach((d) => {
-                if (
-                  userSolution[c.row][c.column].digits?.includes(d) === true &&
-                  !wrongCells.some((w) => w.row === c.row && w.column === c.column)
-                ) {
-                  wrongCells.push(c);
-                }
-              });
+          if (cell.digits == null) return;
+
+          getSeenCells({ row: i, column: j }, true).forEach((c) => {
+            cell.digits?.forEach((d) => {
+              if (userSolution[c.row][c.column].digits?.includes(d) === true) {
+                wrongCells.push(c);
+              }
             });
-          }
+          });
         });
       });
 
       clues.regions.forEach((r) => {
-        wrongCells.push(
-          ...verifyRegion(r, userSolution, clues).filter(
-            (c) => !wrongCells.some((w) => w.row === c.row && w.column === c.column)
-          )
-        );
+        wrongCells.push(...verifyRegion(r, userSolution, clues));
       });
 
       clues.paths.forEach((l) => {
-        wrongCells.push(
-          ...verifyPath(l, userSolution, clues).filter(
-            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
-          )
-        );
+        wrongCells.push(...verifyPath(l, userSolution, clues));
       });
 
       clues.borderclues.forEach((b) => {
-        wrongCells.push(
-          ...verifyBorderClue(b, userSolution).filter(
-            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
-          )
-        );
+        wrongCells.push(...verifyBorderClue(b, userSolution));
       });
 
       clues.cellclues.forEach((c) => {
-        wrongCells.push(
-          ...verifyCellClue(c, userSolution, clues).filter(
-            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
-          )
-        );
+        wrongCells.push(...verifyCellClue(c, userSolution, clues));
       });
 
       clues.extendedcages.forEach((k) => {
-        wrongCells.push(
-          ...verifyCage(k, userSolution).filter(
-            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
-          )
-        );
+        wrongCells.push(...verifyCage(k, userSolution));
       });
 
       if (clues.logic.flags) {
-        wrongCells.push(
-          ...verifyLogic(clues.logic, userSolution, clues).filter(
-            (p) => !wrongCells.some((q) => q.row === p.row && q.column === p.column)
-          )
-        );
+        wrongCells.push(...verifyLogic(clues.logic, userSolution, clues));
       }
+    }
+
+    if (wrongCells.length > 0) {
+      wrongCells = uniqWith(wrongCells, isEqualPosition);
     }
 
     return wrongCells;

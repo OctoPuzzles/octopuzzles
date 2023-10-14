@@ -1,4 +1,29 @@
-import type { Position } from '@octopuzzles/models';
+import { type Digit, Digits, type Position } from '@octopuzzles/models';
+
+export function isConsecutive(a: Digit, b: Digit): boolean {
+  const u = Digits.indexOf(a);
+  const v = Digits.indexOf(b);
+
+  return Math.abs(u - v) === 1;
+}
+
+export function isWithin(a: Digit, b: Digit, diff: number): boolean {
+  const u = Digits.indexOf(a);
+  const v = Digits.indexOf(b);
+
+  return Math.abs(u - v) < diff;
+}
+
+export function isInRatio(a: Digit, b: Digit, ratio: number): boolean {
+  const u = Digits.indexOf(a);
+  const v = Digits.indexOf(b);
+
+  return u === ratio * v || v === ratio * u;
+}
+
+export function isEqualPosition(a: Position, b: Position): boolean {
+  return a.row === b.row && a.column === b.column;
+}
 
 export function comparePositions(a: Position, b: Position): number {
   if (a.row < b.row) {

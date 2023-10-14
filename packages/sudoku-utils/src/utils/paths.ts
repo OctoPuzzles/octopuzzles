@@ -11,7 +11,7 @@ import type {
 } from '@octopuzzles/models';
 import { Digits } from '@octopuzzles/models';
 import { deepCopy } from '@octopuzzles/utils';
-import { comparePositions } from './killer-cages';
+import { comparePositions, isEqualPosition, isWithin } from './general';
 
 export function emptyPath(positions: Position[], type?: PathType): Path {
   return {
@@ -256,352 +256,373 @@ export function getPathsToDraw(path: Path): Path[] {
 /*Checks the inputted digits against the standard constraint logic for the path
 and returns any cells that have errors*/
 export function verifyPath(path: Path, solution: CellValues, clues: EditorHistoryStep): Position[] {
+  if (path.nonStandard === true) {
+    return [];
+  }
+
   let regionNos: Map<string, number> | null = null;
 
   let isValid = true;
-  if (!(path.nonStandard ?? false)) {
-    switch (path.type) {
-      case 'Arrow': {
-        let target: number | undefined = undefined;
-        const position = path.positions[0];
-        const pill = clues.paths.find(
-          (l) =>
-            l.type === 'Pill' &&
-            l.positions.some((q) => q.row === position.row && q.column === position.column)
-        );
 
-        if (pill) {
-          let t = '';
-          if (
-            deepCopy(pill.positions)
-              .sort(comparePositions)
-              .every((p) => {
-                const cell = solution[p.row][p.column];
-                if (cell.digits == null) {
-                  return false;
-                }
+  switch (path.type) {
+    case 'Arrow': {
+      let target: number | undefined = undefined;
+      const position = path.positions[0];
+      const pill = clues.paths.find(
+        (l) => l.type === 'Pill' && l.positions.some((q) => isEqualPosition(q, position))
+      );
 
-                t += cell.digits?.join('');
+      if (pill) {
+        let t = '';
+        if (
+          deepCopy(pill.positions)
+            .sort(comparePositions)
+            .every((p) => {
+              const cell = solution[p.row][p.column];
+              if (cell.digits == null) {
+                return false;
+              }
 
-                return true;
-              })
-          ) {
-            target = parseInt(t);
-          }
-        } else {
-          target = solution[position.row][position.column].value;
+              t += cell.digits?.join('');
+
+              return true;
+            })
+        ) {
+          target = parseInt(t);
         }
-        if (target == null) {
+      } else {
+        target = solution[position.row][position.column].value;
+      }
+      if (target == null) {
+        break;
+      }
+
+      let total = 0;
+
+      const incrementTotal = (position: Position, index: number): boolean => {
+        if (index === 0) return true;
+
+        const value = solution[position.row][position.column].value;
+        if (value == null) return false;
+
+        total += value;
+        return true;
+      };
+
+      if (path.positions.every(incrementTotal)) {
+        isValid = total === target;
+      }
+
+      if (!isValid && pill) {
+        return [...pill.positions, ...path.positions.filter((_, i) => i !== 0)];
+      }
+
+      break;
+    }
+    case 'Thermo': {
+      let max = NaN;
+
+      for (let n = 0; n < path.positions.length; ++n) {
+        const position = path.positions[n];
+        const digits = solution[position.row][position.column].digits;
+        if (digits == null) continue;
+
+        if (!isNaN(max) && digits.some((d) => Digits.indexOf(d) <= max)) {
+          isValid = false;
           break;
         }
 
-        let total = 0;
-
-        if (
-          path.positions.every((p, i) => {
-            if (i === 0) return true;
-
-            const value = solution[p.row][p.column].value;
-            if (value != null) {
-              total += value;
-              return true;
-            } else {
-              return false;
-            }
-          })
-        ) {
-          isValid = total === target;
-        }
-
-        if (!isValid && pill) {
-          return [...pill.positions, ...path.positions.filter((_, i) => i !== 0)];
-        }
-
-        break;
+        max = Digits.indexOf(digits[digits.length - 1]);
       }
-      case 'Thermo': {
-        let prev: Digit | null = null;
+      break;
+    }
+    case 'Between':
+    case 'Lockout': {
+      const position1 = path.positions[0];
+      const position2 = path.positions[path.positions.length - 1];
+      const cell1 = solution[position1.row][position1.column];
+      const cell2 = solution[position2.row][position2.column];
+      const value1 = cell1.value;
+      const value2 = cell2.value;
 
-        for (let n = 0; n < path.positions.length; ++n) {
-          const position = path.positions[n];
-          const digits = solution[position.row][position.column].digits;
-          if (digits != null) {
-            if (
-              prev != null &&
-              digits.some((d) => Digits.indexOf(d) <= Digits.indexOf(prev as Digit))
-            ) {
-              isValid = false;
-              break;
-            }
+      if (value1 == null || value2 == null) break;
 
-            prev = digits[digits.length - 1];
+      const min = Math.min(value1, value2);
+      const max = Math.max(value1, value2);
+
+      if (path.type === 'Lockout' && max - min < 4) {
+        isValid = false;
+      } else {
+        const checkDigits = (position: Position, index: number): boolean => {
+          if (index === 0 || index === path.positions.length - 1) return true;
+
+          const cell = solution[position.row][position.column];
+          const digits = cell.digits;
+          if (digits == null) return true;
+
+          if (path.type === 'Lockout') {
+            return digits.every((d) => Digits.indexOf(d) < min || Digits.indexOf(d) > max);
+          } else {
+            return digits.every((d) => Digits.indexOf(d) > min && Digits.indexOf(d) < max);
           }
-        }
-        break;
+        };
+
+        isValid = path.positions.every(checkDigits);
       }
-      case 'Between':
-      case 'Lockout': {
-        const position1 = path.positions[0];
-        const position2 = path.positions[path.positions.length - 1];
+
+      break;
+    }
+    case 'Renban': {
+      let min = NaN;
+      let max = NaN;
+      let count = 0;
+
+      const incrementCount = (position: Position): boolean => {
+        const cell = solution[position.row][position.column];
+        if (cell.digits == null) return false;
+
+        if (isNaN(min) || isNaN(max)) {
+          min = Digits.indexOf(cell.digits[0]);
+          max = Digits.indexOf(cell.digits[cell.digits.length - 1]);
+        } else {
+          min = Math.min(Digits.indexOf(cell.digits[0]), min);
+          max = Math.max(Digits.indexOf(cell.digits[cell.digits.length - 1]), max);
+        }
+        count += cell.digits.length;
+        return true;
+      };
+
+      if (path.positions.every(incrementCount)) {
+        if (!isNaN(min) && !isNaN(max)) {
+          isValid = max - min < count;
+        }
+      }
+      break;
+    }
+    case 'Whisper':
+    case 'DutchWhisper': {
+      const diff = path.type === 'DutchWhisper' ? 4 : 5;
+      let previousDigits: Digit[] = [];
+
+      for (let n = 0; n < path.positions.length; ++n) {
+        const position = path.positions[n];
+        const cell = solution[position.row][position.column];
+        const digits = cell.digits;
+
+        if (digits == null) {
+          previousDigits = [];
+        } else {
+          if (
+            previousDigits.length > 0 &&
+            digits.some((digit1) => previousDigits.some((digit2) => isWithin(digit1, digit2, diff)))
+          ) {
+            isValid = false;
+            break;
+          }
+
+          previousDigits = digits;
+        }
+      }
+      break;
+    }
+    case 'Palindrome': {
+      const unmirrored: Position[] = [];
+      for (let n = 0; n < Math.floor(path.positions.length / 2); ++n) {
+        const position1 = path.positions[n];
+        const position2 = path.positions[path.positions.length - n - 1];
         const cell1 = solution[position1.row][position1.column];
         const cell2 = solution[position2.row][position2.column];
-
-        if (cell1.value != null && cell2.value != null) {
-          const min = cell1.value < cell2.value ? cell1.value : cell2.value;
-          const max = cell1.value > cell2.value ? cell1.value : cell2.value;
-
-          if (path.type === 'Lockout' && max - min < 4) {
-            isValid = false;
-          } else {
-            isValid = path.positions.every((p, i) => {
-              if (i === 0 || i === path.positions.length - 1) return true;
-
-              const cell = solution[p.row][p.column];
-              if (cell.digits == null) {
-                return true;
-              }
-
-              if (path.type === 'Lockout') {
-                return cell.digits.every((d) => Digits.indexOf(d) < min || Digits.indexOf(d) > max);
-              } else {
-                return cell.digits.every((d) => Digits.indexOf(d) > min && Digits.indexOf(d) < max);
-              }
-            });
-          }
+        if (cell1.value != null && cell2.value != null && cell1.value !== cell2.value) {
+          unmirrored.push(position1, position2);
         }
-        break;
       }
-      case 'Renban': {
-        let min: number | undefined = undefined;
-        let max: number | undefined = undefined;
-        let count = 0;
-        if (
-          path.positions.every((p) => {
-            const cell = solution[p.row][p.column];
-            if (cell.digits == null) return false;
+      return unmirrored;
+    }
+    case 'AntiFactor': {
+      const factor = path.positions.length;
+      let total = 0;
+      let count = 0;
 
-            if (min == null || max == null) {
-              min = Digits.indexOf(cell.digits[0]);
-              max = Digits.indexOf(cell.digits[cell.digits.length - 1]);
-            } else {
-              min = Math.min(Digits.indexOf(cell.digits[0]), min);
-              max = Math.max(Digits.indexOf(cell.digits[cell.digits.length - 1]), max);
-            }
-            count += cell.digits.length;
-            return true;
-          })
-        ) {
-          if (min != null && max != null) {
-            isValid = max - min < count;
-          }
-        }
-        break;
-      }
-      case 'Whisper':
-      case 'DutchWhisper': {
-        const diff = path.type === 'DutchWhisper' ? 4 : 5;
-        let prev: Digit[] = [];
-
-        for (let n = 0; n < path.positions.length; ++n) {
-          const position = path.positions[n];
-          const cell = solution[position.row][position.column];
-          if (cell.digits != null) {
-            if (
-              prev.length > 0 &&
-              cell.digits.some((d) =>
-                prev.some((e) => Math.abs(Digits.indexOf(d) - Digits.indexOf(e)) < diff)
-              )
-            ) {
-              isValid = false;
-              break;
-            }
-
-            prev = cell.digits;
-          } else {
-            prev = [];
-          }
-        }
-        break;
-      }
-      case 'Palindrome': {
-        const unmirrored: Position[] = [];
-        for (let n = 0; n < Math.floor(path.positions.length / 2); ++n) {
-          const position1 = path.positions[n];
-          const position2 = path.positions[path.positions.length - n - 1];
-          const cell1 = solution[position1.row][position1.column];
-          const cell2 = solution[position2.row][position2.column];
-          if (cell1.value != null && cell2.value != null && cell1.value !== cell2.value) {
-            unmirrored.push(position1, position2);
-          }
-        }
-        return unmirrored;
-      }
-      case 'AntiFactor': {
-        const factor = path.positions.length;
-        let total = 0;
-        let count = 0;
-        const invalidCells = path.positions.filter((p) => {
-          const cell = solution[p.row][p.column];
-          if (cell.digits != null) {
-            if (cell.value != null) {
-              total += cell.value;
-              ++count;
-            }
-
-            return cell.digits.some((d) => {
-              const n = Digits.indexOf(d);
-              return n !== 1 && (factor % n === 0 || n % factor === 0);
-            });
+      const isFactorOrMultiple = (position: Position): boolean => {
+        const cell = solution[position.row][position.column];
+        if (cell.digits != null) {
+          if (cell.value != null) {
+            total += cell.value;
+            ++count;
           }
 
-          return false;
-        });
-
-        if (count === path.positions.length) {
-          isValid = total % factor === 0;
-        }
-        if (isValid) {
-          return invalidCells;
-        }
-        break;
-      }
-      case 'EqualSum': {
-        if (regionNos == null) {
-          regionNos = new Map<string, number>();
-          clues.regions.forEach((r, n) => {
-            if (r.type === 'Normal') {
-              r.positions.forEach((p) => {
-                regionNos?.set('R' + p.row + 'C' + p.column, n);
-              });
-            }
+          return cell.digits.some((d) => {
+            const n = Digits.indexOf(d);
+            return n !== 1 && (factor % n === 0 || n % factor === 0);
           });
         }
 
-        let target: number | null = null;
-        let prevRegionNo: number | undefined = undefined;
-        let total = 0;
-        let skip = false;
-        for (let n = 0; n < path.positions.length; ++n) {
-          const position = path.positions[n];
-          const cell = solution[position.row][position.column];
-          const regionNo = regionNos.get('R' + position.row + 'C' + position.column);
-          if (regionNo !== prevRegionNo) {
-            if (prevRegionNo != null) {
-              if (!skip) {
-                if (target == null) {
-                  target = total;
-                } else if (total !== target) {
-                  break;
-                }
-              }
-              total = 0;
-              skip = false;
-            }
-            prevRegionNo = regionNo;
-          } else if (skip) {
-            continue;
-          }
-          if (cell.value == null) {
-            skip = true;
-          } else {
-            total += cell.value;
-          }
-        }
+        return false;
+      };
 
-        isValid = target == null || (!skip && total === target);
-        break;
+      const invalidCells = path.positions.filter(isFactorOrMultiple);
+
+      if (count === path.positions.length) {
+        isValid = total % factor === 0;
       }
-      case 'ProductSum': {
-        const position1 = path.positions[0];
-        const position2 = path.positions[path.positions.length - 1];
-        const cell1 = solution[position1.row][position1.column];
-        const cell2 = solution[position2.row][position2.column];
-
-        if (cell1.value != null && cell2.value != null) {
-          const product = cell1.value * cell2.value;
-          let total = 0;
-
-          if (
-            path.positions.every((p, i) => {
-              if (i === 0 || i === path.positions.length - 1) return true;
-
-              const cell = solution[p.row][p.column];
-              if (cell.value != null) {
-                total += cell.value;
-                return true;
-              }
-
-              return false;
-            })
-          ) {
-            isValid = total === product;
-          }
-        }
-        break;
-      }
-      case 'Entropic': {
-        const invalidCells: Position[] = [];
-        let lastInvalidIndex = -1;
-        for (let i = 2; i < path.positions.length; ++i) {
-          const position1 = path.positions[i - 2];
-          const position2 = path.positions[i - 1];
-          const position3 = path.positions[i];
-          const cell1 = solution[position1.row][position1.column];
-          const cell2 = solution[position2.row][position2.column];
-          const cell3 = solution[position3.row][position3.column];
-          if (cell1.digits != null && cell2.digits != null && cell3.digits != null) {
-            const entropySets = [...cell1.digits, ...cell2.digits, ...cell3.digits].map((d) =>
-              Math.ceil(Digits.indexOf(d) / 3)
-            );
-            if (!entropySets.includes(1) || !entropySets.includes(2) || !entropySets.includes(3)) {
-              isValid = false;
-              if (i - 2 > lastInvalidIndex) invalidCells.push(position1);
-              if (i - 1 > lastInvalidIndex) invalidCells.push(position2);
-              if (i > lastInvalidIndex) invalidCells.push(position3);
-              lastInvalidIndex = i;
-            }
-          }
-        }
+      if (isValid) {
         return invalidCells;
       }
-      case 'Odd':
-      case 'Even': {
-        const invalidCells: Position[] = [];
-        path.positions.forEach((p) => {
-          const cell = solution[p.row][p.column];
-          if (cell.digits != null) {
-            cell.digits.some((d) => {
-              if (Digits.indexOf(d) % 2 !== (path.type === 'Odd' ? 1 : 0)) {
-                invalidCells.push(p);
-              }
+      break;
+    }
+    case 'EqualSum': {
+      if (regionNos == null) {
+        regionNos = new Map<string, number>();
+        clues.regions.forEach((r, n) => {
+          if (r.type === 'Normal') {
+            r.positions.forEach((p) => {
+              regionNos?.set('R' + p.row + 'C' + p.column, n);
             });
           }
         });
-        return invalidCells;
       }
-      case 'Parity': {
-        const invalidCells: Position[] = [];
-        let lastInvalidIndex = -1;
-        for (let i = 1; i < path.positions.length; ++i) {
-          const position1 = path.positions[i - 1];
-          const position2 = path.positions[i];
-          const cell1 = solution[position1.row][position1.column];
-          const cell2 = solution[position2.row][position2.column];
-          if (cell1.digits != null && cell2.digits != null) {
-            if (
-              cell1.digits.some((d) =>
-                cell2.digits?.some((e) => Digits.indexOf(d) % 2 === Digits.indexOf(e) % 2)
-              )
-            ) {
-              isValid = false;
-              if (i - 1 > lastInvalidIndex) invalidCells.push(position1);
-              if (i > lastInvalidIndex) invalidCells.push(position2);
-              lastInvalidIndex = i;
+
+      let target: number | null = null;
+      let prevRegionNo: number | undefined = undefined;
+      let total = 0;
+      let skip = false;
+      for (let n = 0; n < path.positions.length; ++n) {
+        const position = path.positions[n];
+        const cell = solution[position.row][position.column];
+        const regionNo = regionNos.get('R' + position.row + 'C' + position.column);
+        if (regionNo !== prevRegionNo) {
+          if (prevRegionNo != null) {
+            if (!skip) {
+              if (target == null) {
+                target = total;
+              } else if (total !== target) {
+                break;
+              }
             }
+            total = 0;
+            skip = false;
           }
+          prevRegionNo = regionNo;
+        } else if (skip) {
+          continue;
         }
-        return invalidCells;
+        if (cell.value == null) {
+          skip = true;
+        } else {
+          total += cell.value;
+        }
       }
+
+      isValid = target == null || (!skip && total === target);
+      break;
+    }
+    case 'ProductSum': {
+      const position1 = path.positions[0];
+      const position2 = path.positions[path.positions.length - 1];
+      const cell1 = solution[position1.row][position1.column];
+      const cell2 = solution[position2.row][position2.column];
+      const value1 = cell1.value;
+      const value2 = cell2.value;
+
+      if (value1 == null || value2 == null) break;
+
+      const product = value1 * value2;
+
+      let total = 0;
+      const incrementTotal = (position: Position, index: number): boolean => {
+        if (index === 0 || index === path.positions.length - 1) return true;
+
+        const cell = solution[position.row][position.column];
+        const value = cell.value;
+
+        if (value == null) return false;
+
+        total += value;
+        return true;
+      };
+
+      if (path.positions.every(incrementTotal)) {
+        isValid = total === product;
+      }
+
+      break;
+    }
+    case 'Entropic': {
+      const invalidCells: Position[] = [];
+      let lastInvalidIndex = -1;
+      for (let i = 2; i < path.positions.length; ++i) {
+        const position1 = path.positions[i - 2];
+        const position2 = path.positions[i - 1];
+        const position3 = path.positions[i];
+        const cell1 = solution[position1.row][position1.column];
+        const cell2 = solution[position2.row][position2.column];
+        const cell3 = solution[position3.row][position3.column];
+        const digits1 = cell1.digits;
+        const digits2 = cell2.digits;
+        const digits3 = cell3.digits;
+
+        if (digits1 == null || digits2 == null || digits3 == null) continue;
+
+        const entropySets = [...digits1, ...digits2, ...digits3].map((d) =>
+          Math.ceil(Digits.indexOf(d) / 3)
+        );
+        if (!entropySets.includes(1) || !entropySets.includes(2) || !entropySets.includes(3)) {
+          isValid = false;
+          if (i - 2 > lastInvalidIndex) invalidCells.push(position1);
+          if (i - 1 > lastInvalidIndex) invalidCells.push(position2);
+          if (i > lastInvalidIndex) invalidCells.push(position3);
+          lastInvalidIndex = i;
+        }
+      }
+      return invalidCells;
+    }
+    case 'Odd':
+    case 'Even': {
+      const invalidCells: Position[] = [];
+      const checkDigits = (position: Position): void => {
+        const cell = solution[position.row][position.column];
+        const digits = cell.digits;
+
+        if (digits == null) return;
+
+        digits.some((digit) => {
+          if (Digits.indexOf(digit) % 2 !== (path.type === 'Odd' ? 1 : 0)) {
+            invalidCells.push(position);
+          }
+        });
+      };
+      path.positions.forEach(checkDigits);
+      return invalidCells;
+    }
+    case 'Parity': {
+      const invalidCells: Position[] = [];
+      let lastInvalidIndex = -1;
+      for (let i = 1; i < path.positions.length; ++i) {
+        const position1 = path.positions[i - 1];
+        const position2 = path.positions[i];
+        const cell1 = solution[position1.row][position1.column];
+        const cell2 = solution[position2.row][position2.column];
+        const digits1 = cell1.digits;
+        const digits2 = cell2.digits;
+
+        if (digits1 == null || digits2 == null) continue;
+
+        if (
+          digits1.some((digit1) => {
+            const value1 = Digits.indexOf(digit1);
+            return digits2.some((digit2) => {
+              const value2 = Digits.indexOf(digit2);
+              return value1 % 2 === value2 % 2;
+            });
+          })
+        ) {
+          isValid = false;
+          if (i - 1 > lastInvalidIndex) invalidCells.push(position1);
+          if (i > lastInvalidIndex) invalidCells.push(position2);
+          lastInvalidIndex = i;
+        }
+      }
+      return invalidCells;
     }
   }
 

@@ -7,7 +7,7 @@ import type {
   RegionType
 } from '@octopuzzles/models';
 import { deepCopy } from '@octopuzzles/utils';
-import { comparePositions } from './killer-cages';
+import { comparePositions } from './general';
 
 export function emptyRegion(positions: Position[], type?: RegionType): Region {
   return { type, positions, borders: undefined, color: undefined, nonStandard: undefined };
@@ -67,63 +67,32 @@ export function verifyRegion(
   solution: CellValues,
   clues: EditorHistoryStep
 ): Position[] {
-  if (region.nonStandard !== true) {
-    switch (region.type) {
-      case 'MagicSquare': {
-        const n = Math.sqrt(region.positions.length);
-        const positions = deepCopy(region.positions).sort(comparePositions);
-        const values: number[][] = [];
-        for (let i = 0; i < n; ++i) {
-          values[i] = [];
-          for (let j = 0; j < n; ++j) {
-            const position = positions[i * n + j];
-            const cell = solution[position.row][position.column];
-            if (cell.value == null) {
-              return [];
-            }
-            values[i].push(cell.value);
-          }
-        }
-        let target: number | null = null;
-        let total: number;
-        //rows
-        for (let i = 0; i < n; ++i) {
-          total = 0;
-          for (let j = 0; j < n; ++j) {
-            total += values[i][j];
-          }
-          if (target == null) {
-            target = total;
-          } else if (total !== target) {
-            return positions;
-          }
-        }
-        //columns
-        for (let j = 0; j < n; ++j) {
-          total = 0;
-          for (let i = 0; i < n; ++i) {
-            total += values[i][j];
-          }
-          if (target == null) {
-            target = total;
-          } else if (total !== target) {
-            return positions;
-          }
-        }
-        //diagonals
-        total = 0;
-        for (let i = 0; i < n; ++i) {
-          total += values[i][i];
-        }
-        if (target == null) {
-          target = total;
-        } else if (total !== target) {
-          return positions;
-        }
+  if (region.nonStandard === true) {
+    return [];
+  }
 
+  switch (region.type) {
+    case 'MagicSquare': {
+      const n = Math.sqrt(region.positions.length);
+      const positions = deepCopy(region.positions).sort(comparePositions);
+      const values: number[][] = [];
+      for (let i = 0; i < n; ++i) {
+        values[i] = [];
+        for (let j = 0; j < n; ++j) {
+          const position = positions[i * n + j];
+          const cell = solution[position.row][position.column];
+          if (cell.value == null) {
+            return [];
+          }
+          values[i].push(cell.value);
+        }
+      }
+      let target: number | null = null;
+      let total: number;
+      //rows
+      for (let i = 0; i < n; ++i) {
         total = 0;
-        for (let i = 0; i < n; ++i) {
-          const j = n - i - 1;
+        for (let j = 0; j < n; ++j) {
           total += values[i][j];
         }
         if (target == null) {
@@ -131,35 +100,68 @@ export function verifyRegion(
         } else if (total !== target) {
           return positions;
         }
-        break;
       }
-      case 'Clone': {
-        const clones = clues.regions.filter(
-          (r) => r !== region && r.type === 'Clone' && r.color === region.color
-        );
-        const positions = deepCopy(region.positions).sort(comparePositions);
-        const uncloned: Position[] = [];
-        clones.forEach((r) => {
-          const clonePositions = deepCopy(r.positions).sort(comparePositions);
-          positions.forEach((p, i) => {
-            const cell1 = solution[p.row][p.column];
-            if (cell1.value != null) {
-              const position2 = clonePositions[i];
-              const cell2 = solution[position2.row][position2.column];
-              if (cell2.value != null && cell2.value !== cell1.value) {
-                if (!uncloned.includes(p)) {
-                  uncloned.push(p);
-                }
-                uncloned.push(position2);
-              }
-            }
-          });
-        });
-        if (uncloned.length > 0) {
-          return uncloned;
+      //columns
+      for (let j = 0; j < n; ++j) {
+        total = 0;
+        for (let i = 0; i < n; ++i) {
+          total += values[i][j];
         }
-        break;
+        if (target == null) {
+          target = total;
+        } else if (total !== target) {
+          return positions;
+        }
       }
+      //diagonals
+      total = 0;
+      for (let i = 0; i < n; ++i) {
+        total += values[i][i];
+      }
+      if (target == null) {
+        target = total;
+      } else if (total !== target) {
+        return positions;
+      }
+
+      total = 0;
+      for (let i = 0; i < n; ++i) {
+        const j = n - i - 1;
+        total += values[i][j];
+      }
+      if (target == null) {
+        target = total;
+      } else if (total !== target) {
+        return positions;
+      }
+      break;
+    }
+    case 'Clone': {
+      const clones = clues.regions.filter(
+        (r) => r !== region && r.type === 'Clone' && r.color === region.color
+      );
+      const positions = deepCopy(region.positions).sort(comparePositions);
+      const uncloned: Position[] = [];
+      clones.forEach((r) => {
+        const clonePositions = deepCopy(r.positions).sort(comparePositions);
+        positions.forEach((p, i) => {
+          const cell1 = solution[p.row][p.column];
+          if (cell1.value != null) {
+            const position2 = clonePositions[i];
+            const cell2 = solution[position2.row][position2.column];
+            if (cell2.value != null && cell2.value !== cell1.value) {
+              if (!uncloned.includes(p)) {
+                uncloned.push(p);
+              }
+              uncloned.push(position2);
+            }
+          }
+        });
+      });
+      if (uncloned.length > 0) {
+        return uncloned;
+      }
+      break;
     }
   }
 

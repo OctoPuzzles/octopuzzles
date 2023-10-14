@@ -6,7 +6,8 @@ import {
   getPathsToDraw,
   getRegionsToDraw,
   defaultRegions,
-  topLeftPosition
+  topLeftPosition,
+  isEqualPosition
 } from '@octopuzzles/sudoku-utils';
 import {
   Digits,
@@ -145,11 +146,7 @@ export function getFPuzzlesJson(
     switch (r.type) {
       case 'Normal': {
         r.positions.forEach((p) => {
-          if (
-            !defaultNormalRegions[regionNumber]?.positions.some(
-              (q) => q.row === p.row && q.column === p.column
-            )
-          ) {
+          if (!defaultNormalRegions[regionNumber]?.positions.some((q) => isEqualPosition(p, q))) {
             fPuzzle.grid[p.row - (dimensions.margins?.top ?? 0)][
               p.column - (dimensions.margins?.left ?? 0)
             ].region = regionNumber;

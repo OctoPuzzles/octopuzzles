@@ -23,57 +23,64 @@ export function cageDefaults(type: CageType | null | 'CUSTOM'): {
 /*Checks the inputted digits against the standard constraint logic for the cage
 and returns any cells that have errors*/
 export function verifyCage(cage: Extendedcage, solution: CellValues): Position[] {
+  if (cage.nonStandard === true) {
+    return [];
+  }
+
   let isValid = true;
 
-  if (!(cage.nonStandard ?? false)) {
-    switch (cage.type) {
-      case 'Killer': {
-        if (cage.text != null) {
-          const target = parseFloat(cage.text);
+  switch (cage.type) {
+    case 'Killer': {
+      if (cage.text != null) {
+        const target = parseFloat(cage.text);
 
-          let total = 0;
-          if (
-            cage.positions.every((p) => {
-              const value = solution[p.row][p.column].value;
-              if (value != null) {
-                total += value;
-                return true;
-              }
-            })
-          ) {
-            isValid = total === target;
+        let total = 0;
+        const incrementTotal = (position: Position): boolean => {
+          const value = solution[position.row][position.column].value;
+          if (value == null) {
+            return false;
           }
-        }
-        break;
-      }
-      case 'LookAndSay': {
-        if (cage.text != null) {
-          const keys = cage.text.split('');
-          const counts = new Map<string, number>();
-          if (
-            !cage.positions.every((p) => {
-              const cell = solution[p.row][p.column];
-              if (cell.digits != null) {
-                cell.digits.forEach((d) => {
-                  counts.set(d, (counts.get(d) ?? 0) + 1);
-                });
-                return true;
-              }
-            })
-          ) {
-            for (let n = 0; n < keys.length; n += 2) {
-              const count = parseInt(keys[n]);
-              const digit = keys[n];
 
-              if (counts.get(digit) !== count) {
-                isValid = false;
-                break;
-              }
+          total += value;
+          return true;
+        };
+
+        if (cage.positions.every(incrementTotal)) {
+          isValid = total === target;
+        }
+      }
+      break;
+    }
+    case 'LookAndSay': {
+      if (cage.text != null) {
+        const keys = cage.text.split('');
+
+        const counts = new Map<string, number>();
+        const incrementCounts = (position: Position): boolean => {
+          const cell = solution[position.row][position.column];
+          if (cell.digits == null) {
+            return false;
+          }
+
+          cell.digits.forEach((digit) => {
+            counts.set(digit, (counts.get(digit) ?? 0) + 1);
+          });
+          return true;
+        };
+
+        if (!cage.positions.every(incrementCounts)) {
+          for (let n = 0; n < keys.length; n += 2) {
+            const count = parseInt(keys[n]);
+            const digit = keys[n];
+
+            if (counts.get(digit) !== count) {
+              isValid = false;
+              break;
             }
           }
         }
-        break;
       }
+      break;
     }
   }
 
@@ -84,5 +91,4 @@ export function verifyCage(cage: Extendedcage, solution: CellValues): Position[]
   }
 }
 
-export * from './topLeftPosition';
 export * from './createOutlines';

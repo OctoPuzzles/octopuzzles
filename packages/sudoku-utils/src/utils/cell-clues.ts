@@ -174,193 +174,202 @@ export function verifyCellClue(
   solution: CellValues,
   clues: EditorHistoryStep
 ): Position[] {
-  if (!(cellclue.nonStandard ?? false)) {
-    switch (cellclue.type) {
-      case 'LittleKillerNW':
-      case 'LittleKillerNE':
-      case 'LittleKillerSE':
-      case 'LittleKillerSW': {
-        if (cellclue.text != null) {
-          const target = parseInt(cellclue.text);
-          let rowStep = 0;
-          let colStep = 0;
-          if (cellclue.type === 'LittleKillerNW') {
-            rowStep = -1;
-            colStep = -1;
-          } else if (cellclue.type === 'LittleKillerNE') {
-            rowStep = -1;
-            colStep = 1;
-          } else if (cellclue.type === 'LittleKillerSE') {
-            rowStep = 1;
-            colStep = 1;
-          } else if (cellclue.type === 'LittleKillerSW') {
-            rowStep = 1;
-            colStep = -1;
-          }
+  if (cellclue.nonStandard === true) {
+    return [];
+  }
 
-          let total = 0;
-          const cells: Position[] = [];
-          for (
-            let i = cellclue.position.row + rowStep, j = cellclue.position.column + colStep;
-            i >= (clues.dimensions.margins?.top ?? 0) &&
-            i < clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) &&
-            j >= (clues.dimensions.margins?.left ?? 0) &&
-            j < clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0);
-            i += rowStep, j += colStep
-          ) {
-            const cell = solution[i][j];
-            if (cell.value == null) {
-              return [];
-            }
-            total += cell.value;
-            cells.push({ row: i, column: j });
-          }
+  switch (cellclue.type) {
+    case 'LittleKillerNW':
+    case 'LittleKillerNE':
+    case 'LittleKillerSE':
+    case 'LittleKillerSW': {
+      if (cellclue.text == null) break;
 
-          if (total !== target) {
-            return [cellclue.position, ...cells];
-          }
+      const firstRow = clues.dimensions.margins?.top ?? 0;
+      const lastRow = clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) - 1;
+      const firstCol = clues.dimensions.margins?.left ?? 0;
+      const lastCol = clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0) - 1;
+
+      let rowStep = 0;
+      let colStep = 0;
+      if (cellclue.type === 'LittleKillerNW') {
+        rowStep = -1;
+        colStep = -1;
+      } else if (cellclue.type === 'LittleKillerNE') {
+        rowStep = -1;
+        colStep = 1;
+      } else if (cellclue.type === 'LittleKillerSE') {
+        rowStep = 1;
+        colStep = 1;
+      } else if (cellclue.type === 'LittleKillerSW') {
+        rowStep = 1;
+        colStep = -1;
+      }
+
+      const target = parseInt(cellclue.text);
+      let total = 0;
+      const cells: Position[] = [];
+
+      let i = cellclue.position.row + rowStep;
+      let j = cellclue.position.column + colStep;
+
+      while (i >= firstRow && i <= lastRow && j >= firstCol && j <= lastCol) {
+        const cell = solution[i][j];
+        if (cell.value == null) {
+          return [];
         }
+        total += cell.value;
+        cells.push({ row: i, column: j });
+
+        i += rowStep;
+        j += colStep;
+      }
+
+      if (total !== target) {
+        return [cellclue.position, ...cells];
+      }
+
+      break;
+    }
+    case 'Sandwich':
+    case 'Skyscraper':
+    case 'XSum':
+    case 'NumberedRoom': {
+      if (cellclue.text == null) break;
+
+      const firstRow = clues.dimensions.margins?.top ?? 0;
+      const lastRow = clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0) - 1;
+      const firstCol = clues.dimensions.margins?.left ?? 0;
+      const lastCol = clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0) - 1;
+
+      let rowStep = 0;
+      let colStep = 0;
+      if (cellclue.position.row === firstRow - 1) {
+        rowStep = 1;
+      } else if (cellclue.position.row === lastRow + 1) {
+        rowStep = -1;
+      }
+      if (cellclue.position.column === firstCol - 1) {
+        colStep = 1;
+      } else if (cellclue.position.column === lastCol + 1) {
+        colStep = -1;
+      }
+      if (rowStep === 0 && colStep === 0) {
         break;
       }
-      case 'Sandwich':
-      case 'Skyscraper':
-      case 'XSum':
-      case 'NumberedRoom': {
-        if (cellclue.text != null) {
-          const target = parseFloat(cellclue.text);
-          let rowStep = 0;
-          let colStep = 0;
-          if (cellclue.position.row === (clues.dimensions.margins?.top ?? 0) - 1) {
-            rowStep = 1;
-          } else if (
-            cellclue.position.row ===
-            clues.dimensions.rows - (clues.dimensions.margins?.bottom ?? 0)
-          ) {
-            rowStep = -1;
-          }
-          if (cellclue.position.column === (clues.dimensions.margins?.left ?? 0) - 1) {
-            colStep = 1;
-          } else if (
-            cellclue.position.column ===
-            clues.dimensions.columns - (clues.dimensions.margins?.right ?? 0)
-          ) {
-            colStep = -1;
-          }
-          if (rowStep === 0 && colStep === 0) {
-            break;
-          }
 
-          let i = cellclue.position.row + rowStep;
-          let j = cellclue.position.column + colStep;
-          let key = 0;
-          if (cellclue.type === 'XSum' || cellclue.type === 'NumberedRoom') {
-            let cell = solution[i][j];
+      const target = parseFloat(cellclue.text);
+      let total = 0;
+      let count = 0;
+      const cells: Position[] = [];
+
+      let i = cellclue.position.row + rowStep;
+      let j = cellclue.position.column + colStep;
+      let key = 0;
+      if (cellclue.type === 'XSum' || cellclue.type === 'NumberedRoom') {
+        let cell = solution[i][j];
+        if (cell.value == null) {
+          break;
+        } else {
+          key = cell.value;
+          if (cellclue.type === 'NumberedRoom') {
+            i += (key - 1) * rowStep;
+            j += (key - 1) * colStep;
+            cell = solution[i][j];
             if (cell.value == null) {
               break;
             } else {
-              key = cell.value;
-              if (cellclue.type === 'NumberedRoom') {
-                i += (key - 1) * rowStep;
-                j += (key - 1) * colStep;
-                cell = solution[i][j];
-                if (cell.value == null) {
-                  break;
-                } else {
-                  if (cell.value !== key) {
-                    return [cellclue.position];
-                  }
-                }
+              if (cell.value !== key) {
+                return [cellclue.position];
               }
             }
-          }
-
-          let total = 0;
-          let count = 0;
-          const cells: Position[] = [];
-          for (
-            ;
-            i >= (clues.dimensions.margins?.top ?? 0) &&
-            i < (clues.dimensions.margins?.top ?? 0) + clues.dimensions.rows &&
-            j >= (clues.dimensions.margins?.left ?? 0) &&
-            i < (clues.dimensions.margins?.left ?? 0) + clues.dimensions.columns;
-            i += rowStep, j += colStep
-          ) {
-            const cell = solution[i][j];
-            if (cell.value != null) {
-              const value = cell.value;
-              if (cellclue.type === 'Skyscraper') {
-                if (value > key) {
-                  ++total;
-                  key = value;
-                }
-              } else if (cellclue.type === 'Sandwich') {
-                if (value === 1 || value === 9) {
-                  if (key === 0) {
-                    key = value;
-                  } else {
-                    ++count;
-                    cells.push({ row: i, column: j });
-                    break;
-                  }
-                } else if (key !== 0) {
-                  total += value;
-                } else {
-                  continue;
-                }
-              } else if (cellclue.type === 'XSum') {
-                total += value;
-              }
-              ++count;
-            }
-            if (cellclue.type !== 'Sandwich' || key !== 0) {
-              cells.push({ row: i, column: j });
-            }
-
-            if (cellclue.type === 'XSum' && cells.length === key) {
-              break;
-            }
-          }
-
-          if (count > 0 && count === cells.length && total !== target) {
-            return [cellclue.position, ...cells];
           }
         }
-        break;
       }
-      case 'Maximum':
-      case 'Minimum': {
-        const cell = solution[cellclue.position.row][cellclue.position.column];
-        if (cell.digits != null) {
-          const nbrCells = [];
-          for (const step of [
-            { x: -1, y: 0 },
-            { x: 1, y: 0 },
-            { x: 0, y: -1 },
-            { x: 0, y: 1 }
-          ]) {
-            const row = cellclue.position.row + step.x;
-            const column = cellclue.position.column + step.y;
-            if (row >= 0 && row < solution.length && column >= 0 && column < solution[0].length) {
-              if (solution[row][column].digits != null) {
-                nbrCells.push({ row, column });
-              }
-            }
-          }
 
-          const invalidCells = nbrCells.filter((c) => {
-            return cell.digits?.some((v) =>
-              solution[c.row][c.column].digits?.some((u) =>
-                cellclue.type === 'Maximum' ? v < u : u < v
-              )
-            );
-          });
-          if (invalidCells.length > 0) {
-            return [cellclue.position, ...invalidCells];
+      while (i >= firstRow && i <= lastRow && j >= firstCol && i <= lastCol) {
+        const cell = solution[i][j];
+        if (cell.value != null) {
+          const value = cell.value;
+          if (cellclue.type === 'Skyscraper') {
+            if (value > key) {
+              ++total;
+              key = value;
+            }
+          } else if (cellclue.type === 'Sandwich') {
+            if (value === 1 || value === 9) {
+              if (key === 0) {
+                key = value;
+              } else {
+                ++count;
+                cells.push({ row: i, column: j });
+                break;
+              }
+            } else if (key !== 0) {
+              total += value;
+            } else {
+              i += rowStep;
+              j += colStep;
+              continue;
+            }
+          } else if (cellclue.type === 'XSum') {
+            total += value;
           }
+          ++count;
+        }
+        if (cellclue.type !== 'Sandwich' || key !== 0) {
+          cells.push({ row: i, column: j });
+        }
+
+        if (cellclue.type === 'XSum' && cells.length === key) {
           break;
         }
+
+        i += rowStep;
+        j += colStep;
       }
+
+      if (count > 0 && count === cells.length && total !== target) {
+        return [cellclue.position, ...cells];
+      }
+
+      break;
+    }
+    case 'Maximum':
+    case 'Minimum': {
+      const cell = solution[cellclue.position.row][cellclue.position.column];
+      const digits = cell.digits;
+
+      if (digits == null) break;
+
+      const nbrCells = [];
+      for (let x = -1; x <= 1; ++x) {
+        for (let y = -1; y <= 1; ++y) {
+          if (Math.abs(x) + Math.abs(y) !== 1) continue;
+
+          const row = cellclue.position.row + x;
+          const column = cellclue.position.column + y;
+          if (row >= 0 && row < solution.length && column >= 0 && column < solution[0].length) {
+            if (solution[row][column].digits != null) {
+              nbrCells.push({ row, column });
+            }
+          }
+        }
+      }
+
+      const invalidCells = nbrCells.filter((c) => {
+        return digits.some((v) =>
+          solution[c.row][c.column].digits?.some((u) =>
+            cellclue.type === 'Maximum' ? v < u : u < v
+          )
+        );
+      });
+      if (invalidCells.length > 0) {
+        return [cellclue.position, ...invalidCells];
+      }
+      break;
     }
   }
+
   return [];
 }

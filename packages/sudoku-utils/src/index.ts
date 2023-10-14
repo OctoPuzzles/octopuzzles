@@ -1,3 +1,4 @@
+export * from './utils/general';
 export * from './utils/killer-cages';
 export * from './utils/paths';
 export * from './utils/regions';

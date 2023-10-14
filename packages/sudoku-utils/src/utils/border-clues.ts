@@ -4,9 +4,11 @@ import type {
   Borderclue,
   Shape,
   Color,
-  CellValues
+  CellValues,
+  Digit
 } from '@octopuzzles/models';
 import { Digits } from '@octopuzzles/models';
+import { isConsecutive, isInRatio } from './general';
 
 export function emptyBorderClue(
   positions: [Position, Position],
@@ -96,72 +98,72 @@ export function getBorderCluesToDraw(clue: Borderclue): Borderclue[] {
 /*Checks the inputted digits against the standard constraint logic for the border clue
 and returns any cells that have errors*/
 export function verifyBorderClue(borderclue: Borderclue, solution: CellValues): Position[] {
+  if (borderclue.nonStandard === true) {
+    return [];
+  }
+
   let isValid = true;
 
-  if (!(borderclue.nonStandard ?? false)) {
-    if (borderclue.type === 'Quadruple') {
-      if (borderclue.text != null) {
-        const position1 = borderclue.positions[0];
-        const position2 = borderclue.positions[1];
-        const cells = [
-          position1,
-          { row: position1.row, column: position2.column },
-          position2,
-          { row: position2.row, column: position1.column }
-        ];
-        const digits: string[] = [];
-        if (
-          cells.every((pos) => {
-            const cell = solution[pos.row][pos.column];
-            if (cell.digits == null) {
-              return false;
-            }
-            digits.push(...cell.digits);
-            return true;
-          })
-        ) {
-          isValid = borderclue.text.split(',').every((v) => digits.includes(v));
-          if (!isValid) {
-            return cells;
-          }
-        }
-      }
-    } else {
+  if (borderclue.type === 'Quadruple') {
+    if (borderclue.text != null) {
       const position1 = borderclue.positions[0];
       const position2 = borderclue.positions[1];
-      const cell1 = solution[position1.row][position1.column];
-      const cell2 = solution[position2.row][position2.column];
+      const positions = [
+        position1,
+        { row: position1.row, column: position2.column },
+        position2,
+        { row: position2.row, column: position1.column }
+      ];
 
-      if (cell1.digits == null || cell2.digits == null) return [];
-
-      if (borderclue.type === 'XvX' || borderclue.type === 'XvV') {
-        const x = cell1.value;
-        const y = cell2.value;
-        if (x != null && y != null) {
-          isValid = x + y === (borderclue.type === 'XvX' ? 10 : 5);
+      const digits: string[] = [];
+      const findDigits = (pos: Position): boolean => {
+        const cell = solution[pos.row][pos.column];
+        if (cell.digits == null) {
+          return false;
         }
-      } else if (
-        !cell1.digits.every(
-          (v) =>
-            cell2.digits?.every((u) => {
-              const x = Digits.indexOf(v);
-              const y = Digits.indexOf(u);
-              switch (borderclue.type) {
-                case 'Inequality':
-                  isValid = x < y;
-                  break;
-                case 'KropkiBlack':
-                  isValid = x === 2 * y || y === 2 * x;
-                  break;
-                case 'KropkiWhite':
-                  isValid = Math.abs(x - y) === 1;
-                  break;
-              }
-            }) !== true
-        )
-      ) {
-        isValid = false;
+        digits.push(...cell.digits);
+        return true;
+      };
+
+      if (positions.every(findDigits)) {
+        isValid = borderclue.text.split(',').every((digit) => digits.includes(digit));
+        if (!isValid) {
+          return positions;
+        }
       }
+    }
+  } else {
+    const position1 = borderclue.positions[0];
+    const position2 = borderclue.positions[1];
+    const cell1 = solution[position1.row][position1.column];
+    const cell2 = solution[position2.row][position2.column];
+    const digits1 = cell1.digits;
+    const digits2 = cell1.digits;
+
+    if (digits1 == null || digits2 == null) return [];
+
+    if (borderclue.type === 'XvX' || borderclue.type === 'XvV') {
+      const value1 = cell1.value;
+      const value2 = cell2.value;
+      if (value1 != null && value2 != null) {
+        isValid = value1 + value2 === (borderclue.type === 'XvX' ? 10 : 5);
+      }
+    } else {
+      const checkConstraint = (digit1: Digit, digit2: Digit): boolean => {
+        switch (borderclue.type) {
+          case 'Inequality':
+            return Digits.indexOf(digit1) < Digits.indexOf(digit2);
+          case 'KropkiBlack':
+            return isInRatio(digit1, digit2, 2);
+          case 'KropkiWhite':
+            return isConsecutive(digit1, digit2);
+        }
+        return true;
+      };
+
+      isValid = digits1.every((digit1) =>
+        digits2.every((digit2) => checkConstraint(digit1, digit2))
+      );
     }
   }
 
